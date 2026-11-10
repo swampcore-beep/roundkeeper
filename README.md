@@ -42,7 +42,9 @@ Each screen shows what its people need, and only that. Monster HP, statblocks, h
 
 ## The DM's laptop
 
-<img src="media/dm.jpg" width="100%" alt="The DM's laptop: the initiative order with monster HP, and the Adult Red Dragon's statblock open on the right">
+https://github.com/user-attachments/assets/cff93cd3-a013-483b-ad36-ead686d68efe
+
+<p align="center"><sub>A fight from the DM's seat: adding monsters, the statblock, a roll call, Hit several, conditions, Ctrl+K and Atmosphere (80 seconds, no sound).</sub></p>
 
 - **Initiative and turns:** add players and monsters, roll or type initiative, step through turns and rounds. Undo is always there.
 - **Statblocks you click:** an attack bonus rolls the attack, a damage number rolls damage, a save sends a roll call to the players it targets. Recharge, X/Day and Legendary actions are tracked as you use them.
