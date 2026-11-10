@@ -1,0 +1,17 @@
+# your table's data stays on your computer
+state.json
+library.json
+dm-devices.json
+backups/
+backgrounds/
+5etools/
+img/
+cert.pem
+key.pem
+*.log
+# builds
+go/assets/
+go/ti-linux
+*.exe
+*.zip
+__pycache__/

@@ -1,0 +1,37 @@
+name: Release
+# Push a tag like v1.0 and GitHub builds the Windows program and the Python version, and attaches them to a release.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - name: Put the app into the program
+        run: |
+          mkdir -p go/assets
+          cp initiative.html icon-192.png icon-512.png srd/srd-5.2.1.json go/assets/
+          cp -r fonts go/assets/fonts
+      - name: Build Roundkeeper.exe
+        working-directory: go
+        run: GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o Roundkeeper.exe .
+      - name: Zip
+        run: |
+          (cd go && zip -q ../Roundkeeper-windows.zip Roundkeeper.exe)
+          zip -q Roundkeeper-windows.zip README.md THIRD-PARTY-NOTICES.txt LICENSE allow-network.bat
+          zip -qr Roundkeeper-python.zip initiative.html server.py start.bat allow-network.bat icon-192.png icon-512.png fonts srd README.md THIRD-PARTY-NOTICES.txt LICENSE
+          sha256sum *.zip > SHA256SUMS.txt
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            Roundkeeper-windows.zip
+            Roundkeeper-python.zip
+            SHA256SUMS.txt

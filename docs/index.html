@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roundkeeper · initiative at the table</title>
+<meta name="description" content="A free, offline combat tracker for in-person 5e games: the DM's laptop, a tablet on the table, a TV across the room, and the players' phones.">
+<style>
+@font-face{font-family:"Alegreya SC";font-weight:800;src:url(fonts/alegreya-sc-latin-800-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Alegreya Sans";font-weight:400;src:url(fonts/alegreya-sans-latin-400-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Alegreya Sans";font-weight:700;src:url(fonts/alegreya-sans-latin-700-normal.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Cinzel";font-weight:700;src:url(fonts/cinzel-latin-700-normal.woff2) format("woff2");font-display:swap}
+:root{--bg:#0e0908;--bg2:#160f0c;--panel:#1d1512;--line:#3a2a1f;--fg:#f1e6d2;--muted:#b9a68c;--faint:#7d6b57;--gold:#f0b43c;--ember:#ff6a2a;--pc:#7fb7d0;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 18px/1.6 "Alegreya Sans",system-ui,sans-serif}
+a{color:var(--gold)}
+img,video{display:block;max-width:100%}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+h1,h2,h3{font-family:"Alegreya SC",Georgia,serif;font-weight:800;line-height:1.05;margin:0}
+.eb{font:700 13px/1 "Alegreya Sans",sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.lead{font-size:1.2rem;color:var(--muted);max-width:640px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:12px;font-weight:700;text-decoration:none;border:1.5px solid var(--line);color:var(--fg);background:var(--panel)}
+.btn.primary{background:var(--gold);color:#1a1006;border-color:var(--gold)}
+.btn:hover{filter:brightness(1.08)}
+/* hero */
+.hero{position:relative;overflow:hidden;padding:72px 0 64px;background:radial-gradient(ellipse at 70% 110%,rgba(255,106,42,.28),transparent 60%),radial-gradient(ellipse at 10% -10%,rgba(240,180,60,.10),transparent 50%),var(--bg)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:48px;align-items:center}
+.hero h1{font-size:clamp(48px,7vw,92px);letter-spacing:.01em;text-shadow:0 6px 40px rgba(255,106,42,.35)}
+.hero h1 small{display:block;font:700 15px/1 "Alegreya Sans";letter-spacing:.28em;color:var(--gold);margin-bottom:16px;text-transform:uppercase}
+.hero .lead{margin:22px 0 30px}
+.hero .cta{display:flex;flex-wrap:wrap;gap:12px}
+.hero .facts{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:28px;color:var(--muted);font-size:.95rem}
+.hero .facts span::before{content:"✦ ";color:var(--gold)}
+.device{border-radius:28px;border:10px solid #050304;box-shadow:0 0 0 1px var(--line),0 40px 90px rgba(0,0,0,.6),0 0 120px rgba(255,106,42,.18);overflow:hidden;background:#000}
+.hero .device{max-width:420px;justify-self:center;transform:rotate(1.5deg)}
+/* four screens */
+section{padding:84px 0;border-top:1px solid var(--line)}
+.sh{display:grid;gap:12px;margin-bottom:36px}
+.sh h2{font-size:clamp(32px,4.2vw,52px)}
+.quad{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.quad a{display:grid;gap:10px;text-decoration:none;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}
+.quad .ic{font-size:30px}.quad b{font-family:"Alegreya SC";font-size:1.3rem}.quad span{color:var(--muted);font-size:.98rem;line-height:1.45}
+/* feature rows */
+.feat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:center}
+.feat.flip>.media{order:2}
+.feat h2{font-size:clamp(30px,3.6vw,46px);margin:10px 0 14px}
+.feat ul{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.feat li{padding-left:28px;position:relative;color:var(--fg)}
+.feat li::before{content:"";position:absolute;left:4px;top:.62em;width:9px;height:9px;border-radius:2px;transform:rotate(45deg);background:var(--gold)}
+.feat li b{color:var(--gold);font-weight:700}
+.media{display:grid;gap:14px;justify-items:center}
+.media .wide{border-radius:14px;border:1px solid var(--line);box-shadow:0 30px 70px rgba(0,0,0,.55);overflow:hidden}
+.media .tall{max-width:360px}
+.media .phone{max-width:300px;border-radius:36px;border-width:9px}
+.cap{font-size:.92rem;color:var(--faint);text-align:center}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+/* themes */
+.themes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
+.themes figure{margin:0;display:grid;gap:8px}
+.themes img{border-radius:12px;border:1px solid var(--line);aspect-ratio:2/3;object-fit:cover;object-position:top}
+.themes figcaption{font-size:.85rem;color:var(--muted);text-align:center}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;counter-reset:s}
+.steps div{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;counter-increment:s}
+.steps div::before{content:counter(s);display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--gold);color:#1a1006;font:800 20px "Alegreya SC";margin-bottom:12px}
+.steps b{display:block;font-family:"Alegreya SC";font-size:1.25rem;margin-bottom:6px}.steps span{color:var(--muted)}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}
+.card h3{font-size:1.35rem;margin-bottom:8px}.card p{margin:0;color:var(--muted)}
+.note{border:1px dashed var(--line);border-radius:16px;padding:18px 22px;color:var(--muted)}
+footer{padding:48px 0 64px;border-top:1px solid var(--line);color:var(--faint);font-size:.88rem}
+footer p{margin:0 0 10px;max-width:900px}
+@media (max-width:900px){
+  .hero .wrap,.feat{grid-template-columns:1fr;gap:32px}.feat.flip>.media{order:0}
+  .quad{grid-template-columns:1fr 1fr}.steps,.cols{grid-template-columns:1fr}.themes{grid-template-columns:repeat(4,minmax(0,1fr))}
+  section{padding:60px 0}.hero{padding:48px 0}
+}
+@media (max-width:520px){.quad{grid-template-columns:1fr}.themes{grid-template-columns:repeat(2,minmax(0,1fr))}.pair{grid-template-columns:1fr}body{font-size:17px}}
+@media (prefers-reduced-motion:reduce){.hero .device{transform:none}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <h1><small>Initiative at the table</small>Roundkeeper</h1>
+      <p class="lead">A free, offline combat tracker for in-person 5e games. The DM runs the fight on a laptop, the turn order glows on a tablet in the middle of the table, a TV shows whose turn it is across the room, and players keep their HP on their own phones.</p>
+      <div class="cta"><a class="btn primary" href="https://github.com/swampcore-beep/roundkeeper/releases">Download for Windows</a><a class="btn" href="https://github.com/swampcore-beep/roundkeeper">Source on GitHub</a></div>
+      <div class="facts"><span>No account</span><span>No internet</span><span>No subscription</span><span>Paper players welcome</span></div>
+    </div>
+    <video class="device" src="media/tablet.mp4" poster="media/tablet-poster.jpg" autoplay muted loop playsinline aria-label="The tablet on the table during a fight: the turn passes, a goblin falls prone, is bloodied, and turns to ash"></video>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="sh"><div class="eb">One fight, four screens</div><h2>Everyone sees what they need</h2><p class="lead">Everything runs on your computer and everyone connects over your Wi-Fi with a browser. Nothing to install on the tablet, the TV or the phones.</p></div>
+    <div class="quad">
+      <a href="#dm"><span class="ic">💻</span><b>The DM's laptop</b><span>Initiative, monster HP, conditions, statblocks with dice you click, rules lookup.</span></a>
+      <a href="#tablet"><span class="ic">📜</span><b>The tablet</b><span>The turn order in the middle of the table, with themes, scenes and boss intros.</span></a>
+      <a href="#tv"><span class="ic">📺</span><b>The TV</b><span>Whose turn it is, huge, plus title cards and a break timer.</span></a>
+      <a href="#phones"><span class="ic">📱</span><b>The phones</b><span>Each player's HP, spell slots, character sheet and roll calls.</span></a>
+    </div>
+  </div>
+</section>
+
+<section id="dm">
+  <div class="wrap feat">
+    <div class="media"><img class="wide" src="media/dm.jpg" alt="The DM's laptop: the order with monster HP, players' HP from their phones, and the Adult Red Dragon's statblock with a rolled Fire Breath"><div class="cap">The Adult Red Dragon's statblock, its Fire Breath just rolled. Monsters from the SRD 5.2.1.</div></div>
+    <div>
+      <div class="eb">The DM's laptop</div><h2>Run the fight, not the bookkeeping</h2>
+      <ul>
+        <li><b>Initiative and turns.</b> Roll or type it, step through turns and rounds, undo anything.</li>
+        <li><b>Monster HP that only you see.</b> Damage, healing and temp HP in a click; Bloodied and Down stay your call.</li>
+        <li><b>Statblocks you click.</b> Paste or drop a statblock: attack bonuses roll, damage rolls, a save sends a roll call to the players it hits. Recharge and X/Day are tracked.</li>
+        <li><b>Hit several.</b> One breath weapon on five targets, with saves, half damage and resistances.</li>
+        <li><b>The rules keep time.</b> Conditions end when they should, Concentration saves are asked for you, Bless counts down.</li>
+        <li><b>Your players' sheets and HP.</b> See their bonuses, spells and current HP as they track it on their phones.</li>
+        <li><b>Recap.</b> Who fell, who rolled nat 20s, how long turns took. Save it for your campaign notes.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="tablet">
+  <div class="wrap feat flip">
+    <div class="media"><video class="device tall" src="media/boss.mp4" poster="media/boss-poster.jpg" autoplay muted loop playsinline aria-label="A hidden Adult Red Dragon is revealed with a full-screen intro"></video><div class="cap">Reveal a hidden boss and the table gets an entrance.</div></div>
+    <div>
+      <div class="eb">The tablet on the table</div><h2>The order, where everyone can see it</h2>
+      <ul>
+        <li><b>Readable from every seat,</b> portrait or landscape, rows growing to fit their conditions.</li>
+        <li><b>Every condition has its moment:</b> stone for Petrified, chains for Restrained, claws when an enemy is Bloodied, ash when it falls.</li>
+        <li><b>Boss intros</b> with a name, a title and your own picture, and "How do you want to do this?" for whoever lands the last blow.</li>
+        <li><b>Roll calls</b> show a tile for each player that fills in as they answer.</li>
+        <li><b>Only what you show.</b> Hidden enemies, monster HP and secret countdowns never leave your laptop.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="tv">
+  <div class="wrap feat">
+    <div class="media"><video class="wide" src="media/tv.mp4" poster="media/tv-poster.jpg" autoplay muted loop playsinline aria-label="The TV: the spotlight passes from player to player, then a new round"></video><div class="cap">Spotlight mode: who's up, who's next, and a new round.</div></div>
+    <div>
+      <div class="eb">The TV</div><h2>One big thing at a time</h2>
+      <ul>
+        <li><b>Spotlight:</b> whose turn it is, huge, with their conditions and who's on deck.</li>
+        <li><b>Order:</b> the whole initiative as cards.</li>
+        <li><b>Scene and title cards</b> for a location or a chapter, and a <b>break timer</b> ("we continue at 21:40").</li>
+        <li><b>Its own look,</b> with a live preview, and you choose which big moments play on the tablet, the TV, or both.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="phones">
+  <div class="wrap feat flip">
+    <div class="media"><div class="pair"><video class="device phone" src="media/phone.mp4" poster="media/phone-poster.jpg" autoplay muted loop playsinline aria-label="A phone answers a Dexterity save from its character sheet, then takes 30 damage"></video><img class="device phone" src="media/phone-sheet.jpg" alt="A character sheet on the phone, with checks, saves, skills and attacks to tap and roll"></div><div class="cap">A roll call answered from the sheet; the character sheet with tap-to-roll.</div></div>
+    <div>
+      <div class="eb">The players' phones</div><h2>Their character, in their hand</h2>
+      <ul>
+        <li><b>Join with a QR code.</b> Nothing to install, nothing to sign up for.</li>
+        <li><b>HP, temp HP and death saves</b> with big buttons and a keypad. The DM sees it too, and only the DM.</li>
+        <li><b>Spell slots and class resources</b> set up from class and level; short and long rests reset them.</li>
+        <li><b>A character sheet</b> filled in step by step or pasted from an existing one: checks, saves, skills and attacks roll with the real bonuses.</li>
+        <li><b>Roll calls and Concentration saves</b> arrive with a buzz: "Roll Dex save +2".</li>
+        <li><b>Simple mode</b> for players who keep the rest on paper: just their HP and whatever the DM sends.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sh"><div class="eb">Atmosphere</div><h2>Thirteen themes, thirty-five scenes</h2><p class="lead">Pick a theme, then change any part of it: colours, fonts, rows, an animated scene or your own background picture, with rain, snow or fog over it and the light of dawn, dusk or night. A live preview shows it before the table does. In a fight the scene answers: spells burst over the order, battlefield spells hang in the air while they last, and a nat 20 or a lair action shakes it.</p></div>
+    <div class="themes">
+      <figure><img src="media/theme-hoard.jpg" alt="Dragon's hoard theme"><figcaption>Dragon's hoard</figcaption></figure>
+      <figure><img src="media/theme-tavern.jpg" alt="Candlelit tavern theme"><figcaption>Candlelit tavern</figcaption></figure>
+      <figure><img src="media/theme-oldmap.jpg" alt="Old map theme"><figcaption>Old map</figcaption></figure>
+      <figure><img src="media/theme-gothic.jpg" alt="Gothic horror theme"><figcaption>Gothic horror</figcaption></figure>
+      <figure><img src="media/theme-marble.jpg" alt="Marble and gold theme"><figcaption>Marble &amp; gold</figcaption></figure>
+      <figure><img src="media/theme-feywild.jpg" alt="Fey glade theme"><figcaption>Fey glade</figcaption></figure>
+      <figure><img src="media/theme-astral.jpg" alt="Astral Plane theme"><figcaption>Astral Plane</figcaption></figure>
+    </div>
+    <div class="media" style="margin-top:28px"><img class="wide" src="media/atmosphere.jpg" alt="The Atmosphere window: themes, colours, fonts and scenes on the left, a live preview of the tablet on the right"></div>
+  </div>
+</section>
+
+<section id="start">
+  <div class="wrap">
+    <div class="sh"><div class="eb">Getting started</div><h2>Three minutes before the first roll</h2></div>
+    <div class="steps">
+      <div><b>Download and run</b><span>Unzip <code>Roundkeeper-windows.zip</code> and double-click the program. On Mac or Linux, run <code>python3 server.py</code>.</span></div>
+      <div><b>Scan the QR code</b><span>The tablet, the TV and the phones open the address it shows and pick "This is the tablet", "This is the TV", or their character.</span></div>
+      <div><b>Roll for initiative</b><span>Add the party once, add monsters by name or statblock, and start the turns.</span></div>
+    </div>
+    <div class="cols" style="margin-top:18px">
+      <div class="card"><h3>Offline and private</h3><p>Everything runs on your computer. No accounts, no analytics, no cloud. Your fights and settings are plain files in the program's folder, backed up daily.</p></div>
+      <div class="card"><h3>Bring your own data</h3><p>Paste or drop a statblock and it becomes clickable. If you have monster and spell data as JSON in the common homebrew format, the app reads it. Nothing is downloaded.</p></div>
+      <div class="card"><h3>Made for your home Wi-Fi</h3><p>Player pages have no password, so run it on a network you trust, not in a café or at a convention.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="note"><b style="color:var(--fg)">How it was made.</b> Roundkeeper was designed for one real table and tested in real sessions. The code was written with an AI assistant (Claude). There is no AI-generated art in it: the scenes, icons and animations are drawn in code, and the fonts are open-licensed. The source is public, so you can see exactly what it does.</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b>Roundkeeper</b> is free and open source under the GNU AGPL v3. Found a bug or have an idea? <a href="https://github.com/swampcore-beep/roundkeeper/issues">Open an issue</a>.</p>
+    <p>This work includes material from the System Reference Document 5.2.1 ("SRD 5.2.1") by Wizards of the Coast LLC, available at <a href="https://www.dndbeyond.com/srd">https://www.dndbeyond.com/srd</a>. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at <a href="https://creativecommons.org/licenses/by/4.0/legalcode">https://creativecommons.org/licenses/by/4.0/legalcode</a>. The monsters shown on this page are from the SRD 5.2.1.</p>
+    <p>An unofficial fan tool, not affiliated with or endorsed by Wizards of the Coast. Dungeons &amp; Dragons is a trademark of Wizards of the Coast LLC. Fonts under the SIL Open Font License.</p>
+  </div>
+</footer>
+</body>
+</html>
