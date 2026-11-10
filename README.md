@@ -42,7 +42,7 @@ Each screen shows what its people need, and only that. Monster HP, statblocks, h
 
 ## The DM's laptop
 
-VIDEO_LINK_HERE
+https://github.com/user-attachments/assets/cff93cd3-a013-483b-ad36-ead686d68efe
 
 <p align="center"><sub>A fight from the DM's seat: adding monsters, the statblock, a roll call, Hit several, conditions, Ctrl+K and Atmosphere (80 seconds, no sound).</sub></p>
 
