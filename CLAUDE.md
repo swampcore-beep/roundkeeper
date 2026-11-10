@@ -44,3 +44,9 @@ Both servers must behave the same. Any change to routes, `public_view` (what pla
 - Commit as the owner with the Claude committer so commits show as Verified and no personal email appears:
   `GIT_AUTHOR_NAME=swampcore-beep GIT_AUTHOR_EMAIL=swampcore-beep@users.noreply.github.com git -c user.name=Claude -c user.email=noreply@anthropic.com commit …`
 - When the owner asks a question, answer it; build only when asked.
+
+## Models and helpers
+
+The owner has given standing permission (10. 11. 2026) to hand routine work to helper agents on a cheaper model (Sonnet or Haiku) without asking each time: running `dev/test.sh` and summarising failures, searching the code, porting a server change from `server.py` to `main.go` (or back) against the tests, regenerating media with `dev/media/`, and drafting text. Give the helper a short, exact brief, then review its diff and test results yourself before any pull request. Keep design decisions, hard bugs, changes across `initiative.html`, anything about what players may see, and licensing questions for the main session. Say briefly in the reply what was handed off.
+
+If a task looks too hard for the model this session runs on, or a helper's result isn't good enough, ask the owner to switch to a stronger model instead of pushing on.
