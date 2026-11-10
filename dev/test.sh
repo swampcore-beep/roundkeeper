@@ -7,7 +7,7 @@
 # Logs: dev/.work/out/<server>-<suite>.log
 cd "$(dirname "$0")/.." || exit 1
 ROOT=$PWD; OUT=$ROOT/dev/.work/out; mkdir -p "$OUT"
-SRD="verify t2 t4 t9 t10 t11 t12 t13 t14 t15 rulestest_v2 mob2_v2 t29 t30"
+SRD="verify t2 t4 t9 t10 t11 t12 t13 t14 t15 rulestest_v2 mob2_v2 t29 t30 t31"
 PRIVS="t5 t7 t8"; DATA="t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t28 ui hov"
 which=${1:-go}; shift 2>/dev/null
 case $which in go|py) servers=$which;; both) servers="go py";; *) set -- "$which" "$@"; servers=go;; esac
