@@ -1,6 +1,14 @@
 # Roundkeeper
 
-**A free, offline combat tracker for in-person D&D 5e (2024 rules).** The DM runs the fight from a laptop, the turn order lies on a tablet in the middle of the table, the TV across the room shows whose turn it is, and players follow along on their phones.
+<p>
+  <a href="../../releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/swampcore-beep/roundkeeper?label=release&color=e3a54a"></a>
+  <a href="../../releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/swampcore-beep/roundkeeper/total?color=6cb4cc"></a>
+  <img alt="Windows, Mac, Linux" src="https://img.shields.io/badge/runs%20on-Windows%20%C2%B7%20Mac%20%C2%B7%20Linux-8fa0b5">
+  <img alt="Works offline" src="https://img.shields.io/badge/works-offline-5ea37a">
+  <a href="LICENSE"><img alt="License: AGPL-3.0" src="https://img.shields.io/badge/license-AGPL--3.0-d66a5b"></a>
+</p>
+
+**A free, offline combat tracker for in-person 5e games (2024 rules).** The DM runs the fight from a laptop, the turn order lies on a tablet in the middle of the table, the TV across the room shows whose turn it is, and players follow along on their phones.
 
 It comes with the **SRD 5.2.1** built in: 331 monsters with clickable statblocks, 339 spells, magic items, conditions and rules. No account, no subscription, no internet: it runs on your own computer, and everyone at the table connects over your Wi-Fi with a browser.
 
@@ -10,7 +18,13 @@ It comes with the **SRD 5.2.1** built in: 331 monsters with clickable statblocks
   &nbsp;·&nbsp; <a href="#getting-started">Getting started</a>
   &nbsp;·&nbsp; <a href="#faq">FAQ</a>
 </p>
-<p align="center"><sub>Unzip, double-click <code>Roundkeeper.exe</code>, scan the QR code on the tablet and the phones. That's it.</sub></p>
+
+> **Quick start on Windows**
+> 1. [Download `Roundkeeper-windows.zip`](../../releases/latest) and unzip it.
+> 2. Double-click `Roundkeeper.exe`. If Windows says *"Windows protected your PC"*, click **More info → Run anyway** (the app isn't signed; GitHub builds it from this code).
+> 3. Scan the QR code with the tablet, the TV and the players' phones.
+>
+> *Not a virtual tabletop:* there are no maps or tokens, and it isn't for online play. It's made for a group sitting around a real table.
 
 <p align="center">
   <img src="media/tablet.gif" width="760" alt="The tablet on the table: the turn moves on, Gregori's Fireball bursts over the goblins, a goblin falls, and Styx rolls a natural 20">
@@ -199,7 +213,7 @@ Run the app on a desktop (on a cable, or connected to the TV), then pair your la
 
 **Does it come with monsters and spells?** Yes, the SRD 5.2.1: 331 monsters, 339 spells, magic items, conditions and rules. You can add your own homebrew as JSON, and paste or drop statblocks.
 
-**Which rules?** D&D 5e as revised in 2024 (conditions, durations, Concentration, death saves, Exhaustion). Players can switch their spell list to the 2014 versions when your files have them.
+**Which rules?** Fifth edition as revised in 2024 (conditions, durations, Concentration, death saves, Exhaustion). Players can switch their spell list to the 2014 versions when your files have them.
 
 **Mac or Linux?** Yes, with Python 3 (`python3 server.py`). The ready-made program is for Windows 10 and 11.
 
