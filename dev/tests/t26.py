@@ -1,0 +1,81 @@
+import sys as _sys,os as _os;_sys.path.insert(0,_os.path.dirname(_os.path.abspath(__file__)));_sys.path.insert(0,_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))));import rk  # dev/rk.py: paths and addresses
+# round 1: TV animations on cards (83), player HP for the DM (80), simple phone (78), always-prepared spells (81), lore tab (82), "tablet" wording
+import asyncio,json,sys,urllib.request
+pass
+from cap import SETUP as S0
+from playwright.async_api import async_playwright
+SETUP=S0.replace('THEME','"tavern"').replace('SCENE','"none"')
+ok=True
+def chk(n,c,x=""):
+    global ok; ok&=bool(c); print(("PASS " if c else "FAIL ")+n,x if not c else "")
+async def T(pg,js): return await pg.evaluate("(js)=>__t(js)",js)
+def get(u): return urllib.request.urlopen(u,timeout=5).read().decode()
+async def main():
+    async with async_playwright() as p:
+        b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
+        dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append('dm '+str(e)))
+        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5); await T(dm,SETUP)
+        tv=await (await b.new_context(viewport={'width':1920,'height':1080})).new_page(); tv.on("pageerror",lambda e:errs.append('tv '+str(e)))
+        await tv.goto('http://127.0.0.1:8765/players?shared=1&screen=tv'); await asyncio.sleep(2.5)
+        # 83: animations land on the TV's cards
+        await T(dm,"byId('m').conds.push('Prone');commit()"); await asyncio.sleep(1.4)
+        r=await tv.evaluate("(()=>{const m=document.querySelector('#moments .mo'),c=document.querySelector('#tvLayer [data-tid=m]');if(!m||!c)return null;const a=m.getBoundingClientRect(),b=c.getBoundingClientRect();return Math.abs(a.left-b.left)<3&&Math.abs(a.top-b.top)<3})()")
+        chk("TV: a condition plays on the Spotlight card",r)
+        await T(dm,"byId('g1').conds.push('Poisoned');commit()"); await asyncio.sleep(1.4)
+        chk("TV: off-screen creature gets a strip",'Kobold A' in await tv.evaluate("[...document.querySelectorAll('.tvstrip')].map(x=>x.innerText).join('|')"))
+        await T(dm,"const k=byId('g1');k.down=true;commit()"); await asyncio.sleep(1.4)
+        chk("TV: off-screen enemy leaves quietly (no ghost)",await tv.evaluate("!document.querySelector('.tvghost')"))
+        await T(dm,"const k=byId('g2');k.down=true;commit()"); await asyncio.sleep(.7)
+        chk("TV: on-deck enemy turns to ash on its card",await tv.evaluate("!!document.querySelector('.tvghost')"))
+        await T(dm,"state.roll={id:'r'+Date.now(),at:Date.now(),kind:'nat20',by:'Mira',text:'Attack',total:20};commit()"); await asyncio.sleep(2.6)
+        chk("TV: the cards step back for a big moment",await tv.evaluate("parseFloat(getComputedStyle(document.querySelector('#tvLayer .tvsp')).opacity)<.5"))
+        # 80 + 78 on a phone
+        await T(dm,"state.playerEdits=false;commit()")
+        ph=await (await b.new_context(viewport={'width':390,'height':844})).new_page(); ph.on("pageerror",lambda e:errs.append('ph '+str(e)))
+        await ph.goto(rk.PL+'/players'); await asyncio.sleep(1.2)
+        chk("join page says tablet",'This is the tablet' in await ph.locator('[data-act=pshared]').inner_text())
+        await ph.click('[data-act=pickme][data-n=Mira]'); await asyncio.sleep(1)
+        await T(ph,"hpSet({cur:23,max:32,temp:5,auto:true})"); await asyncio.sleep(3)
+        chk("HP reaches the DM even when changes are locked",await T(dm,"JSON.stringify(byId('m').php&&[byId('m').php.cur,byId('m').php.max,byId('m').php.temp])")=='[23,32,5]')
+        chk("DM row shows it",'23/32' in (await dm.evaluate("document.querySelector('#roster .pchp')?.innerText||''")))
+        pub=get(rk.PL+'/state'); chk("players' state never has it",'"php"' not in pub)
+        tvs=get('http://127.0.0.1:8765/state?pub=1&screen=tv'); chk("TV's state never has it",'"php"' not in tvs)
+        await T(ph,"pSheet='hp';renderPSheet()"); await asyncio.sleep(.3); await ph.click('#pHpShare'); await asyncio.sleep(3)
+        chk("turning sharing off removes it",not await T(dm,"!!byId('m').php"))
+        await T(ph,"pSheet=null;renderPSheet()")
+        await ph.click('[data-act=pmore]'); await asyncio.sleep(.3); await ph.click('[data-act=psimple]'); await asyncio.sleep(.4)
+        await T(ph,"pSheet=null;renderPSheet()"); await asyncio.sleep(2.5)
+        chk("simple phone: just the HP tile",await ph.evaluate("[...document.querySelectorAll('.ptiles .tile')].map(t=>t.dataset.act).join()")=='php')
+        chk("DM sees 'simple phone'",await dm.evaluate("!!document.querySelector('#roster .simpletag')"))
+        await T(dm,"state.call={id:'c1',text:'Dexterity save',dc:15,answers:{},at:Date.now()};commit()"); await asyncio.sleep(2.5)
+        chk("simple phone still gets the roll call",await ph.evaluate("!!document.querySelector('#overlay .callhead')"))
+        await T(ph,"ls.set('pSimple',false);pmodeSync(true);pSheet=null;renderPlayer()"); await asyncio.sleep(2.5)
+        chk("back to everything clears the tag",not await dm.evaluate("!!document.querySelector('#roster .simpletag')"))
+        # 81: always prepared
+        await T(ph,"ls.set(profKey(),{cls:[{n:'Cleric',s:'XPHB',lvl:5,sub:{n:'Life Domain',s:'XPHB',sn:'Life'}}],feats:[],mods:{}});ls.set(prepKey(),[{n:'Guiding Bolt',s:'XPHB'}])")
+        await T(ph,"pcLoad()"); await asyncio.sleep(1.5)
+        al=json.loads(await T(ph,"JSON.stringify(alwNow().map(a=>a.n))"))
+        chk("Life Domain spells are always prepared at level 5",'bless' in al and 'revivify' in al,al)
+        chk("…not the ones from higher levels",'death ward' not in al,al)
+        await T(ph,"pSheet='book';spellScope='prep';bookQ='';renderPSheet()"); await asyncio.sleep(2)
+        lab=await ph.evaluate("document.querySelector('[data-act=pspellscope][data-v=prep]').innerText")
+        chk("they don't count toward the limit",'Prepared 1' in lab and 'always' in lab,lab)
+        chk("a lock in the list",await ph.locator('#pBookList .spalw').count()>=6)
+        await T(ph,"spellScope='all';bookQ='shield of faith';renderPSheet()"); await asyncio.sleep(.6)
+        await ph.click('#pBookList .sprow'); await asyncio.sleep(1.5); await ph.click('[data-act=palwform]'); await asyncio.sleep(.3)
+        await ph.fill('#pAlwFrom','Storm Domain'); await ph.fill('#pAlwLvl','3'); await ph.click('#pAlwForm button[type=submit]'); await asyncio.sleep(.5)
+        chk("homebrew: marked by hand",await T(ph,"alwHas('Shield of Faith')") and 'Storm Domain' in await ph.locator('.spalwbox').inner_text())
+        await T(ph,"ls.set(alwKey(),[{n:'Fireball',s:'XPHB',from:'Storm Domain',lvl:9}])")
+        chk("…and waits for its level",not await T(ph,"alwHas('Fireball')"))
+        # 82: lore in its own tab
+        await T(dm,"state.list.push(Object.assign(newCombatant({id:'z',name:'Zombie',kind:'enemy',init:2}),{sb:{raw:'## Zombie\\n**Armor Class** 8',uses:[],rech:[],know:[]}}));commit()"); await asyncio.sleep(.4)
+        await dm.click('#roster .row[data-id=z] [data-act=sbview]'); await asyncio.sleep(.4)
+        chk("statblock opens on the statblock",await dm.evaluate("document.querySelector('#sbDrawer [data-act=sbtab0]').getAttribute('aria-pressed')")=='true' and 'Armor Class' in await dm.locator('#sbDrawer .sbbody').inner_text())
+        await dm.click('#sbDrawer [data-act=sblore]'); await asyncio.sleep(.3)
+        t=await dm.locator('#sbDrawer .sbbody').inner_text()
+        chk("Picture tab shows the picture part only",'Armor Class' not in t,t[:120])
+        chk("Atmosphere says tablet",'tablet' in (await T(dm,"atmoT='surface';atmoD=null;atmoSheet();document.querySelector('[data-act=atmogo]').innerText")).lower())
+        chk("no page errors",not errs,errs)
+        await b.close()
+    print("t26: ",("fails=0" if ok else "fails=1"))
+asyncio.run(main())

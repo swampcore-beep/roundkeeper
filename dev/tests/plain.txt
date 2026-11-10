@@ -1,0 +1,7 @@
+Goblin Warrior
+Small Fey (Goblinoid), Chaotic Neutral
+AC 15 Initiative +2 (12)
+HP 10 (3d6)
+Speed 30 ft.
+Str 8 −1 −1 Dex 15 +2 +2
+Challenge 1/4 (XP 50; PB +2)

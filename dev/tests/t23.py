@@ -1,0 +1,177 @@
+import sys as _sys,os as _os;_sys.path.insert(0,_os.path.dirname(_os.path.abspath(__file__)));_sys.path.insert(0,_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))));import rk  # dev/rk.py: paths and addresses
+import asyncio,json,urllib.request
+from playwright.async_api import async_playwright
+ok=True
+def chk(n,c,x=""):
+    global ok; ok&=bool(c); print(("PASS " if c else "FAIL ")+n,x if not c or x else "")
+async def T(pg,js): return await pg.evaluate("(js)=>__t(js)",js)
+def req(url,body=None,cookie=None,method=None):
+    rq=urllib.request.Request(url,data=json.dumps(body).encode() if body is not None else None,headers={'Content-Type':'application/json',**({'Cookie':cookie} if cookie else {})},method=method)
+    try:
+        r=urllib.request.urlopen(rq,timeout=5);return r.status,r.read()
+    except urllib.error.HTTPError as e: return e.code,b""
+async def main():
+    async with async_playwright() as p:
+        b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
+        dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append("dm "+str(e)))
+        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(2)
+        # ---- 31 pairing
+        code=json.loads(req('http://127.0.0.1:8765/dm-pair',{"name":"Laptop"})[1])['code']
+        chk("pairing code made on the host",len(code)==8)
+        chk("a phone can't make pairing codes",req(rk.PL+'/dm-pair',{"name":"x"})[0]==403)
+        lap=await b.new_context(viewport={'width':1440,'height':900}); lp=await lap.new_page(); lp.on("pageerror",lambda e:errs.append("lap "+str(e)))
+        await lp.goto(rk.PL+'/'); await asyncio.sleep(1)
+        chk("before pairing: the laptop is sent to /players",lp.url.endswith('/players'))
+        await lp.goto(f'{rk.PL}/pair/{code}'); await asyncio.sleep(2)
+        chk("after pairing: DM screen on the laptop",await lp.evaluate("!document.getElementById('dm').hidden") and not lp.url.endswith('/players'),lp.url)
+        ck=[c for c in await lap.cookies() if c['name']=='ti_dm']; chk("cookie is HttpOnly",ck and ck[0]['httpOnly'])
+        cookie=f"ti_dm={ck[0]['value']}"
+        chk("the code works once",req(f'{rk.PL}/pair/{code}')[0]==410)
+        await T(lp,"state.list.push(newCombatant({id:'m',name:'Mira',kind:'pc',cls:'wizard',init:12}),Object.assign(newCombatant({id:'h',name:'Hidden Imp',kind:'enemy',init:3}),{hidden:true}));commit()"); await asyncio.sleep(1.5)
+        st=json.loads(req('http://127.0.0.1:8765/state')[1]); chk("the paired laptop changes the state",any(c['name']=='Mira' for c in st['list']))
+        chk("…and sees hidden ones",any(c['name']=='Hidden Imp' for c in json.loads(req(rk.PL+'/state',cookie=cookie)[1])['list']))
+        chk("…and reads 5e.tools",req(rk.PL+'/5et/status',cookie=cookie)[0]==200)
+        chk("a phone still can't",req(rk.PL+'/5et/status')[0]==403 and not any(c['name']=='Hidden Imp' for c in json.loads(req(rk.PL+'/state')[1])['list']))
+        dev=json.loads(req(rk.PL+'/dm-devices',cookie=cookie)[1]); chk("device list: Laptop, me, not host",dev['host'] is False and dev['list'][0]['name']=='Laptop' and dev['list'][0]['me'])
+        chk("the laptop can't remove devices",req(rk.PL+'/dm-unpair',{"id":dev['list'][0]['id']},cookie=cookie)[0]==403)
+        await dm.reload(); await asyncio.sleep(2)
+        await T(dm,"(dmPair=null,dmDevLoad().then(dmDevSheet))"); await asyncio.sleep(.8)
+        chk("host: DM devices sheet lists the laptop",'Laptop' in await dm.locator('.sheet').inner_text())
+        await dm.click('[data-act=dmunpair]'); await asyncio.sleep(.8)
+        chk("removed: the laptop is a player again",req(rk.PL+'/5et/status',cookie=cookie)[0]==403)
+        await dm.keyboard.press('Escape'); await lap.close()
+        # ---- setup a fight
+        idx=(await dm.evaluate("fetch('/5et/index').then(r=>r.json())"))['list']
+        mid=lambda n,s:next(e[0] for e in idx if e[1]==n and e[2]==s)
+        await T(dm,"state.list=[];commit()")
+        for n,s in [('Young Red Dragon','XMM'),('Goblin Warrior','XMM')]:
+            await T(dm,"sbSheet()"); await T(dm,f"fetPick({mid(n,s)})"); await asyncio.sleep(.7)
+            if n=='Goblin Warrior': await T(dm,"sbItems[sbItems.length-1].count=3")
+            await T(dm,"sbAdd()"); await asyncio.sleep(.3)
+        await T(dm,"state.list.push(newCombatant({id:'m',name:'Mira',kind:'pc',cls:'wizard',init:14}),newCombatant({id:'s',name:'Styx',kind:'pc',cls:'bard',init:12}));state.list.forEach(c=>{if(c.base==='Goblin Warrior')c.init=9;if(c.base==='Young Red Dragon')c.init=20});commit()"); await asyncio.sleep(.3)
+        D=lambda n:f"state.list.find(c=>c.name.startsWith('{n}'))"
+        did=await T(dm,f"{D('Young Red Dragon')}.id"); chk("monster remembers its 5e.tools name",await T(dm,f"JSON.stringify(byId('{did}').sb.fet)")=='{"n":"Young Red Dragon","s":"XMM"}')
+        sf=await (await b.new_context(viewport={'width':912,'height':1368})).new_page(); sf.on("pageerror",lambda e:errs.append("sf "+str(e)))
+        await sf.goto(rk.PL+'/players?shared=1'); await asyncio.sleep(2.5)
+        async def phone(name):
+            ctx=await b.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True)
+            await ctx.add_init_script(f"localStorage.setItem('it.meName','\"{name}\"')")
+            ph=await ctx.new_page(); ph.on('pageerror',lambda e:errs.append('ph '+str(e))); await ph.goto(rk.PL+'/players'); await asyncio.sleep(2.5); return ph
+        mira=await phone('Mira'); styx=await phone('Styx')
+        # ---- 2 statblock damage to targets
+        await T(dm,f"sbViewId='{did}';renderSbDrawer()")
+        await T(dm,"sbRoll({dataset:{k:'dmg',d:'16d6',t:'Fire',n:'Fire Breath'}})"); await asyncio.sleep(.2)
+        sv=json.loads(await T(dm,f"JSON.stringify(sbActSave(byId('{did}'),'Fire Breath'))")); chk("Fire Breath: Dex DC 17, half",sv=={'dc':17,'ab':'Dex','half':True},sv)
+        await dm.click('#sbDrawer [data-act=sbapply]'); await asyncio.sleep(.3)
+        chk("Hit several filled in",await T(dm,"mtOn&&mt.type==='fire'&&mt.ab==='Dex'&&mt.dc==='17'&&mt.on==='half'&&Number(mt.n)>=16"))
+        g1=await T(dm,f"{D('Goblin Warrior A')}.id")
+        await T(dm,f"mtToggle('{g1}');mtToggle('m')"); await T(dm,"Math.__r=Math.random;Math.random=()=>0.01;mtRoll();Math.random=Math.__r"); await asyncio.sleep(2.5)
+        chk("goblin failed its own save: full",await T(dm,f"mt.modes['{g1}']==='full'&&mt.rolls['{g1}'].ok===false"))
+        chk("Mira asked on her phone",await T(dm,"state.call&&state.call.to.join()==='m'&&mt.rolls['m'].wait"))
+        ov=await mira.locator('#overlay').inner_text(); chk("Mira's phone shows the call",'Dex save DC 17' in ov,(ov[:200],await T(mira,"JSON.stringify(state.call)"),await T(mira,"JSON.stringify(meChar()&&meChar().id)")))
+        req(rk.PL+'/player',{"id":"m","action":"answer","call":await T(dm,"state.call.id"),"value":19}); await asyncio.sleep(2.5)
+        chk("her 19 makes it half",await T(dm,"mt.modes['m']==='half'&&mt.rolls['m'].ok===true"))
+        n=int(await T(dm,"mt.n")); await T(dm,"mtApply()"); await asyncio.sleep(.3)
+        chk("goblin took it all",await T(dm,f"byId('{g1}').hp===0||byId('{g1}').down"))
+        # ---- 38 the phone remembers prepared reaction spells and buzzes
+        await T(mira,"(()=>{ls.set(prepKey(),[{n:'Shield',s:'XPHB',rx:'attack'},{n:'Counterspell',s:'XPHB',rx:'spell'}]);renderPSheet()})()")
+        await T(dm,f"sbViewId='{did}';sbRoll({{dataset:{{k:'hit',m:'10',n:'Rend'}}}})"); await asyncio.sleep(2.5)
+        chk("Shield ping on Mira's phone",await mira.locator('#reactPing').count()==1 and 'Shield?' in await mira.locator('#reactPing').inner_text())
+        chk("…not on Styx's (nothing prepared)",await styx.locator('#reactPing').count()==0)
+        await mira.click('[data-act=preactno]')
+        await T(dm,f"dEffSheet({{name:'Fear',src:'XPHB',by:'{did}',targets:new Set(['s'])}});dEffAdd()"); await asyncio.sleep(2.5)
+        chk("Counterspell ping when the dragon casts",'Counterspell?' in (await mira.locator('#reactPing').inner_text() if await mira.locator('#reactPing').count() else ''))
+        await mira.click('[data-act=preactuse]'); await asyncio.sleep(2.5)
+        chk("using it marks the reaction",await T(dm,"(byId('m').tags||[]).includes('reaction')"))
+        chk("prepKind reads the trigger",await T(mira,"prepKind({time:[{number:1,unit:'reaction',condition:'which you take when you see a creature within 60 feet of yourself casting a spell'}]})")=='spell')
+        # ---- 65 prepared list
+        await T(mira,"pSheet=null;spellScope='prep';pSheet='book';renderPSheet()"); await asyncio.sleep(.8)
+        chk("Prepared filter shows them",'Shield' in await mira.locator('#pBookList').inner_text() and 'Fireball' not in await mira.locator('#pBookList').inner_text())
+        # ---- 45 Bardic Inspiration to another player
+        await T(styx,"(()=>{resSet([{name:'Bardic Inspiration',max:3,cur:3,reset:'long',auto:true}]);ls.set(profKey(),{cls:[{n:'Bard',s:'XPHB',lvl:5}],feats:[],mods:{}});pSheet='res';renderPSheet()})()"); await asyncio.sleep(.4)
+        await styx.click('[data-act=pgive]'); await asyncio.sleep(.3)
+        chk("Bard 5 gives a d8",await T(styx,"giveDraft.die")=='d8')
+        await styx.click('[data-act=pgiveto][data-id=m]'); await asyncio.sleep(2.8)
+        chk("Styx has 2 left",await T(styx,"resGet()[0].cur")==2)
+        chk("Mira has the die",await T(dm,"(byId('m').gifts||[]).some(g=>g.die==='d8'&&g.from==='Styx')"))
+        await asyncio.sleep(.5); await T(mira,"pSheet=null;renderPSheet();renderPlayer()")
+        chk("…on her phone",await mira.locator('.pgift').count()==1)
+        await mira.click('.pgift'); await asyncio.sleep(2.8)
+        chk("used: gone",not await T(dm,"(byId('m').gifts||[]).length"))
+        chk("server refuses a gift to yourself",req(rk.PL+'/player',{"id":"s","action":"gift","to":"s","name":"Bardic Inspiration","die":"d8"})[0]==404)
+        # ---- 46 party numbers
+        await T(mira,"(()=>{statsSet({ac:15,pp:14,pi:12,pv:11,dc:15});pSend({action:'stats',ac:15,pp:14,pi:12,pv:11,dc:15})})()"); await asyncio.sleep(2.8)
+        chk("DM got Mira's numbers",await T(dm,"JSON.stringify([byId('m').pst.ac,byId('m').pst.pp,byId('m').pst.dc])")=='[15,14,15]')
+        await dm.click('[data-act=party]'); await asyncio.sleep(.3); await dm.fill('#partyDC','13'); await dm.dispatch_event('#partyDC','input'); await asyncio.sleep(.3)
+        chk("party sheet: Mira notices DC 13",await dm.locator('.partyt td.ok').count()>=1)
+        await dm.keyboard.press('Escape')
+        # ---- 13/30 companion
+        await T(dm,"compD={owner:'m',q:'',pick:null,lvl:3,eff:''};compSheet()"); await dm.fill('#compQ','owl'); await dm.dispatch_event('#compQ','input'); await asyncio.sleep(.4)
+        await dm.locator('#compList [data-act=comppick]').first.click(); await asyncio.sleep(.2); await dm.click('[data-act=compadd]'); await asyncio.sleep(1)
+        cid=await T(dm,"(state.list.find(c=>c.owner==='m')||{}).id"); chk("companion added",bool(cid))
+        chk("acts right after Mira",await T(dm,"(()=>{const o=sorted().map(c=>c.id),i=o.indexOf('m');return o[i+1]})()")==cid)
+        await asyncio.sleep(2.5); await T(mira,"renderPlayer()")
+        chk("Mira's phone shows it with HP",await mira.locator('.pcomp').count()==1 and 'HP' in await mira.locator('.pcomp').inner_text())
+        chk("a phone sees its HP (it's hers), not the dragon's",await T(mira,f"(()=>{{const c=state.list.find(x=>x.id==='{cid}'),d=state.list.find(x=>x.id==='{did}');return c.hpMax>0&&d.hpMax===undefined&&!d.sb}})()"))
+        hp0=await T(dm,f"byId('{cid}').hp")
+        req(rk.PL+'/player',{"id":cid,"action":"chp","kind":"dmg","n":1}); await asyncio.sleep(2.5)
+        chk("damage from the phone",await T(dm,f"byId('{cid}').hp")==max(0,hp0-1))
+        chk("chp refused for a monster",req(rk.PL+'/player',{"id":did,"action":"chp","kind":"dmg","n":5})[0]==404)
+        scaled=await T(dm,"compScale('**Hit Points** 30 + 10 for each spell level above 2nd, **Armor Class** 11 + the level of the spell',4)"); chk("summon scaling",scaled=='**Hit Points** 50, **Armor Class** 15',scaled)
+        await T(dm,"dEffSheet({name:'Summon Beast',src:'XPHB',by:'m',targets:new Set(['m'])});dEff.conc=true;dEffAdd()"); eid=await T(dm,"state.effects.find(e=>e.name==='Summon Beast').id")
+        await T(dm,f"state.list.push(newCombatant({{id:'bs',name:'Bestial Spirit (Mira)',kind:'ally',owner:'m',hp:30,hpMax:30,byEff:'{eid}'}}));commit()")
+        await T(dm,"concLose(byId('m'),'test','x');commit()"); await asyncio.sleep(.3)
+        chk("summon vanishes with the concentration",not await T(dm,"!!byId('bs')"))
+        # ---- 35 one row
+        await T(dm,f"menuId=null;(()=>{{const c={D('Goblin Warrior B')};[c,...grpKin(c)].forEach(x=>x.sgrp=true)}})();commit()"); await asyncio.sleep(2.5)
+        rows=await sf.evaluate("[...document.querySelectorAll('ol.plist > li .nm')].map(x=>x.textContent)")
+        chk("Surface: one 'Goblin Warrior ×3' row",any('Goblin Warrior ×3' in r for r in rows) and not any(r=='Goblin Warrior B' for r in rows),rows)
+        # ---- 58 countdown
+        await T(dm,"state.clocks=[{id:'k1',name:'The ritual completes',n:2,max:2},{id:'k2',name:'Secret reinforcements',n:1,max:1,secret:true}];state.turn={id:sorted()[0].id,round:1,init:20};commit()"); await asyncio.sleep(1)
+        pub=json.loads(req(rk.PL+'/state')[1]); chk("secret countdown never leaves the DM",[k['name'] for k in pub.get('clocks',[])]==['The ritual completes'])
+        for i in range(len(json.loads(await T(dm,"JSON.stringify(turnOrder().map(c=>c.id))")))): await T(dm,"moveTurn(1)")
+        chk("new round: both go down",await T(dm,"state.clocks.map(k=>k.n).join()")=='1,0')
+        await asyncio.sleep(2.5); chk("Surface shows the countdown",'The ritual completes' in await sf.locator('#player').inner_text())
+        for i in range(len(json.loads(await T(dm,"JSON.stringify(turnOrder().map(c=>c.id))")))): await T(dm,"moveTurn(1)")
+        await asyncio.sleep(2.5); chk("at 0 the Surface shows the big moment",await sf.locator('#moment.clk').count()==1)
+        # ---- 48 damage each turn
+        gb=await T(dm,"(()=>{const o=turnOrder(),i=o.findIndex(c=>c.id==='s');return o[(i+1)%o.length].id})()")
+        await T(dm,f"dEffSheet({{name:'Heat Metal',src:'XPHB',by:'s',targets:new Set(['{gb}'])}});dEff.ong={{d:'2d8',t:'fire',when:'start'}};dEffAdd()")
+        await T(dm,f"state.turn={{id:'s',round:3,init:12}};moveTurn(1)"); await asyncio.sleep(.3)
+        chk("its turn: Heat Metal card rolled",await dm.locator('#concAsk .cac.ong').count()==1)
+        hpb=await T(dm,f"byId('{gb}').hp"); tot=int(await T(dm,"dmCards.find(k=>k.type==='ong').tot"))
+        await dm.click('#concAsk [data-act=ongapply]'); await asyncio.sleep(.2)
+        chk("applied",await T(dm,f"byId('{gb}').hp")==max(0,hpb-tot))
+        # ---- 59 killing blow on the boss
+        await T(dm,f"byId('{did}').boss=true;hpDo(byId('{did}'),'dmg',999,'test');commit()"); await asyncio.sleep(.3)
+        chk("boss falls: who landed it?",await dm.locator('#concAsk .cac.hd').count()==1)
+        await dm.click('#concAsk [data-act=hdgo][data-pc=m]'); await asyncio.sleep(2.5)
+        chk("Surface: 'Mira, how do you want to do this?'",await sf.locator('#moment.hd').count()==1 and 'how do you want to do this' in await sf.locator('#moment').inner_text())
+        # ---- 25 lore and picture
+        await T(dm,f"sbViewId='{did}';sbLoreOn=true;renderSbDrawer()"); await asyncio.sleep(1.5)
+        chk("lore shown",'red dragon' in (await dm.locator('#sbDrawer .sblore').inner_text()).lower())
+        chk("picture from the image zip",await dm.locator('#sbDrawer .lorepics img').count()==1)
+        await dm.click('#sbDrawer [data-act=loreimg]'); await asyncio.sleep(1)
+        f=await T(dm,f"byId('{did}').introImg"); chk("copied as a Surface background",f and req(f'{rk.PL}/bg/{f}')[0]==200,f)
+        chk("phones can't read 5e.tools pictures",req(rk.PL+'/5et/img?p=bestiary/xmm/red%20dragon.webp')[0]==403)
+        # ---- 61 edit and save as new
+        await T(dm,f"sbEditSheet('{g1}')"); await dm.fill('#sbEdName','Goblin Boss Frost'); await dm.fill('#sbEdHP','21')
+        await dm.click('[data-act=sbednew]'); await asyncio.sleep(.5)
+        chk("saved to the library",await T(dm,"lib.some(e=>e.name==='Goblin Boss Frost'&&/Hit Points\\*\\* 21/.test(e.raw)&&e.edited)"))
+        await T(dm,f"sbEditSheet('{gb}')"); await dm.fill('#sbEdAC','17'); await dm.click('[data-act=sbedthis]'); await asyncio.sleep(.3)
+        chk("this one only: AC 17",await T(dm,f"byId('{gb}').ac")==17)
+        # ---- 7 reveal preview
+        await T(dm,"state.list.push(Object.assign(newCombatant({id:'lich',name:'Lich',kind:'enemy',init:18}),{hidden:true,boss:true,title:'Master of Death'}));commit()")
+        await T(dm,"revealPreview('lich')"); await asyncio.sleep(4)
+        fr=dm.frames[1]; chk("preview shows the Lich",'Lich' in await fr.evaluate("document.body.innerText"))
+        chk("the real Surface doesn't",'Lich' not in await sf.locator('#player').inner_text())
+        await dm.keyboard.press('Escape')
+        # ---- 18/75 recap document and stats
+        await T(dm,"natAdd('m',20);natAdd('m',20);natAdd('s',1);state.tstat={m:{n:2,ms:90000,max:60000}};commit()")
+        t=await T(dm,"recapText()"); chk("recap: turns and dice",'Mira: 2 turns · 45 s on average' in t and 'Mira: 2 × 20, 0 × 1' in t,t[-300:])
+        doc=await T(dm,"recapDoc()"); chk("recap document",doc.startswith('<!doctype html>') and 'Natural 20s and 1s' in doc and 'Damage dealt' in doc)
+        pub=json.loads(req(rk.PL+'/state')[1]); chk("stats stay with the DM",'tstat' not in pub and 'nstat' not in pub)
+        chk("no page errors",not errs,errs)
+        await b.close()
+    print("t23: ",("fails=0" if ok else "fails=1"))
+asyncio.run(main())
