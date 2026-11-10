@@ -15,3 +15,5 @@ go/ti-linux
 *.exe
 *.zip
 __pycache__/
+# dev scripts: servers, screenshots, recordings
+dev/.work/
