@@ -611,13 +611,11 @@ ol.plist.port li .acw,ol.plist.stack li .acw{order:2}
 ol.plist.port li .ic,ol.plist.stack li .ic{order:3;flex:1 0 100%;justify-content:flex-start;padding-left:3.7em;font-size:.5em;max-height:none;row-gap:.3em}
 ol.plist.port li .ic:empty,ol.plist.stack li .ic:empty{display:none}
 ol.plist.stack li .ic{font-size:.46em;padding-left:3.9em}
-.ic .st,.ic .ab{display:none}
+.ic .st{display:none}
 .ic .effm{display:none}
 li.c1 .ic .lt{display:none}li.c1 .ic .st{display:inline}
 li.c1 .ic .effi{display:none}li.c1 .ic .effm{display:inline-block}
 li.c1 .badge .t{display:none}li.c1 .badge.blood{padding:.15em .45em}
-li.c2 .ic .st{display:none}li.c2 .ic .ab{display:inline;letter-spacing:.04em}
-li.c2 .ic .seg{display:none}
 .ic .morec{font-weight:800;border-style:dashed;cursor:pointer}
 .p-empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--muted)}
 .p-empty strong{display:block;font-family:var(--display);font-size:clamp(2rem,5vw,4.5rem);color:var(--fg)}
@@ -6340,12 +6338,10 @@ function deco(st){
   if(st.has("burning"))h+='<i class="deco em"><b></b><b></b><b></b><b></b></i>';
   return h;
 }
-const SHORT={Concentrating:"Conc.",Incapacitated:"Incap.",Frightened:"Fright.",Restrained:"Restr.",Unconscious:"Uncon.",Paralyzed:"Para.",Petrified:"Petr.",Invisible:"Invis."};
-const ABBR={Blinded:"BLD",Charmed:"CHM",Deafened:"DEF",Frightened:"FRT",Grappled:"GRP",Incapacitated:"INC",Invisible:"INV",Paralyzed:"PAR",Petrified:"PET",Poisoned:"PSN",Burning:"BRN",Prone:"PRN",Restrained:"RST",Stunned:"STN",Unconscious:"UNC",Concentrating:"CON"};
+const SHORT={Concentrating:"Conc.",Incapacitated:"Incap."};
 const BIG_COND=new Set(["unconscious","paralyzed","petrified","stunned","incapacitated"]);
-// full label, short label, abbreviation: the row shows the smallest one that still fits
-const L3=(full,short,abbr)=>`<span class="lt">${full}</span><span class="st">${short??full}</span><span class="ab">${abbr??short??full}</span>`;
-const ab3=t=>String(t).replace(/[^A-Za-z]/g,"").slice(0,3).toUpperCase();
+// full label and a shorter one that is still a word ("Exh 3", "Conc."): no three-letter codes, players have to read these across the table
+const L2=(full,short)=>`<span class="lt">${full}</span><span class="st">${short??full}</span>`;
 function icons(c,isNew){
   const ds=dsOf(c),B=[];const add=(p,html)=>B.push([p,B.length,html]);
   if(c.insp)add(6,`<span class="${isNew(c,"insp").trim()}" data-info="insp" title="Heroic Inspiration">${I.star.replace("<svg",'<svg class="star"')}</span>`);
@@ -6359,19 +6355,18 @@ function icons(c,isNew){
   const exh=(c.conds||[]).some(x=>slug(x.n||x)==="exhaustion")?exhOf(c):0;
   if(exh>=6&&!isDead(c))add(0,`<span class="badge dead${isNew(c,"dead")}" data-info="exhaustion">Dead</span>`);
   (c.conds||[]).forEach(x=>{const n=x.n||x,k=slug(n);
-    if(k==="exhaustion")return add(4,`<span class="cond c-exhaustion lv${exh}${isNew(c,k)||isNew(c,"exh"+exh)}" data-info="exhaustion">${L3(`Exhaustion ${exh}<span class="seg">${[0,1,2,3,4,5].map(i=>`<i${i<exh?' class="on"':""}></i>`).join("")}</span>`,`Exh ${exh}`,`EX${exh}`)}</span>`);
-    add(BIG_COND.has(k)?2:k==="concentrating"?3:5,`<span class="cond c-${k}${isNew(c,k)}" data-info="${k}">${L3(esc(n),SHORT[n]?esc(SHORT[n]):null,ABBR[n]||ab3(n))}</span>`)});
+    if(k==="exhaustion")return add(4,`<span class="cond c-exhaustion lv${exh}${isNew(c,k)||isNew(c,"exh"+exh)}" data-info="exhaustion">${L2(`Exhaustion ${exh}<span class="seg">${[0,1,2,3,4,5].map(i=>`<i${i<exh?' class="on"':""}></i>`).join("")}</span>`,`Exh ${exh}`)}</span>`);
+    add(BIG_COND.has(k)?2:k==="concentrating"?3:5,`<span class="cond c-${k}${isNew(c,k)}" data-info="${k}">${L2(esc(n),SHORT[n]?esc(SHORT[n]):null)}</span>`)});
   const effs=state.effects.filter(e=>e.targets.includes(c.id));
-  effs.forEach(e=>add(6,`<span class="cond eff${effs.length>1?" effi":""}${isNew(c,"eff"+e.id)}" data-eff="${esc(e.id)}">${L3("✦ "+esc(e.name)+effN(e),null,"✦ "+ab3(e.name)+effN(e))}</span>`));
+  effs.forEach(e=>add(6,`<span class="cond eff${effs.length>1?" effi":""}${isNew(c,"eff"+e.id)}" data-eff="${esc(e.id)}">${L2("✦ "+esc(e.name)+effN(e))}</span>`));
   if(effs.length>1){const nm=effs.map(e=>e.name);
-    add(6.5,`<span class="cond eff effm" data-more="${esc(effs.map(e=>{const by=byId(e.by);return "✦ "+e.name+(by?" · from "+by.name:"")}).join("|"))}">${L3("✦ "+esc(nm.join(" · ")),"✦ "+esc(nm[0])+" +"+(nm.length-1),"✦ "+nm.length)}</span>`)}
-  if(c.cover){const cv={half:["½ +2","½"],tq:["¾ +5","¾"],total:["Total","TOT"]}[c.cover]||["Cover","CV"];
-    add(7,`<span class="covc${isNew(c,"cover"+c.cover)}" data-info="cover_${c.cover}">${L3(COVER_CHIP[c.cover],cv[0],cv[1])}</span>`)}
-  (c.tags||[]).forEach(t=>{const sh={reaction:["Reaction","RXN"],readied:["Readied","RDY"],dodge:["Dodge","DDG"]}[t]||[t,ab3(t)];
-    add(7,`<span class="tagc ${t}${isNew(c,"tag"+t)}" data-info="${t}">${L3((TAGS.find(x=>x[0]===t)||[t,t])[1],sh[0],sh[1])}</span>`)});
-  (c.know||[]).forEach((k,i)=>{const sh=k.replace(/^immune\w*:?\s*/i,"Imm: ").replace(/^resist\w*:?\s*/i,"Res: ").replace(/^vulnerab\w*:?\s*/i,"Vul: "),
-      m=sh.match(/^(Imm|Res|Vul): (.*)$/),abk=m?m[1].toUpperCase()+" "+ab3(m[2]):ab3(k);
-    add(8,`<span class="know${isNew(c,"know"+i+k)}" data-info="${knowKey(k)}">${L3(esc(k),esc(sh),esc(abk))}</span>`)});
+    add(6.5,`<span class="cond eff effm" data-more="${esc(effs.map(e=>{const by=byId(e.by);return "✦ "+e.name+(by?" · from "+by.name:"")}).join("|"))}">${L2("✦ "+esc(nm.join(" · ")),"✦ "+esc(nm[0])+" +"+(nm.length-1))}</span>`)}
+  if(c.cover){const cv={half:"½ +2",tq:"¾ +5",total:"Total"}[c.cover]||"Cover";
+    add(7,`<span class="covc${isNew(c,"cover"+c.cover)}" data-info="cover_${c.cover}">${L2(COVER_CHIP[c.cover],cv)}</span>`)}
+  (c.tags||[]).forEach(t=>{const sh={reaction:"Reaction",readied:"Readied",dodge:"Dodge"}[t]||t;
+    add(7,`<span class="tagc ${t}${isNew(c,"tag"+t)}" data-info="${t}">${L2((TAGS.find(x=>x[0]===t)||[t,t])[1],sh)}</span>`)});
+  (c.know||[]).forEach((k,i)=>{const sh=k.replace(/^immune\w*:?\s*/i,"Imm: ").replace(/^resist\w*:?\s*/i,"Res: ").replace(/^vulnerab\w*:?\s*/i,"Vul: ");
+    add(8,`<span class="know${isNew(c,"know"+i+k)}" data-info="${knowKey(k)}">${L2(esc(k),esc(sh))}</span>`)});
   return B.sort((a,b)=>a[0]-b[0]||a[1]-b[1]).map(x=>x[2]).join("");
 }
 function endScreen(e,anim){
@@ -6540,7 +6535,12 @@ $("#player").addEventListener("animationend",e=>{
 });
 function layoutMode(){if(TV)return "land";const o=state.layout||"auto";return o==="portrait"?"port":o==="landscape"?"land":innerHeight>innerWidth*1.05?"port":"land"}
 const badgeCount=li=>{const ic=li.querySelector(".ic");return ic?ic.children.length:0};
-function resetBadges(li){li.classList.remove("c1","c2");const ic=li.querySelector(".ic");if(!ic)return;
+// how many lines a row's badges take (visible ones only)
+function badgeLines(li){const ic=li.querySelector(".ic");if(!ic)return 0;
+  const k=[...ic.children].filter(ch=>ch.offsetParent!==null&&getComputedStyle(ch).display!=="none");if(!k.length)return 0;
+  const h=Math.min(...k.map(ch=>ch.offsetHeight))/2;let n=1,last=null;
+  k.map(ch=>ch.offsetTop+ch.offsetHeight/2).sort((a,b)=>a-b).forEach(y=>{if(last!=null&&y-last>h)n++;last=y});return n}
+function resetBadges(li){li.classList.remove("c1");const ic=li.querySelector(".ic");if(!ic)return;
   ic.querySelectorAll(".morec").forEach(m=>m.remove());[...ic.children].forEach(ch=>{ch.style.display=""})}
 // last resort: hide the least important badges (they come last) behind a "+N" chip
 function trimRow(li,over){
@@ -6573,10 +6573,12 @@ function fitList(n){
     const normal=Math.min(64,innerWidth*0.056)*ts,cut=()=>[...el.querySelectorAll("li .nm")].some(x=>x.scrollWidth>x.clientWidth+1);
     while(fs>normal&&cut())set(Math.max(normal,fs*0.94));
     while(over()&&fs>floor)set(Math.max(floor,fs*0.94));
-    const heavy=[...rows].sort((a,b)=>badgeCount(b)-badgeCount(a));
-    for(const lvl of ["c1","c2"])for(const li of heavy){if(!over())break;if(badgeCount(li)>1)li.classList.add(lvl)}
+    // badges sit under the name here, so only a row whose badges take two lines or more can get shorter:
+    // first their short forms (only if that saves a line), then a smaller font for everyone, then "+N" on those rows
+    const heavy=[...rows].filter(li=>badgeLines(li)>1).sort((a,b)=>badgeLines(b)-badgeLines(a)||badgeCount(b)-badgeCount(a));
+    for(const li of heavy){if(!over())break;const n=badgeLines(li);li.classList.add("c1");if(badgeLines(li)>=n)li.classList.remove("c1")}
     while(over()&&fs>minFs)set(Math.max(minFs,fs*0.94));
-    for(const li of heavy){if(!over())break;trimRow(li,over)}
+    for(const li of heavy){if(!over())break;trimRow(li,()=>over()&&badgeLines(li)>1)}
     return;
   }
   el.classList.remove("port");
@@ -6596,7 +6598,7 @@ function fitList(n){
       twoLines=()=>{const f=ic.firstElementChild;return !!f&&ic.scrollHeight>f.offsetHeight*1.5};
     const ov0=stack?()=>li.scrollHeight>li.clientHeight+1||ic.scrollWidth>ic.clientWidth+1:()=>ic.scrollHeight>ic.clientHeight+1||ic.scrollWidth>ic.clientWidth+1,
       ov=tab?()=>ov0()||twoLines():ov0;
-    for(const lvl of ["c1","c2"]){if(!ov())break;li.classList.add(lvl)}
+    if(ov())li.classList.add("c1");
     if(ov())trimRow(li,ov)});
 }
 addEventListener("resize",()=>{if(MODE==="player")fitList(withLair(sorted().filter(shownToPlayers)).length)});
