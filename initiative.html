@@ -728,8 +728,26 @@ li.me{outline:.07em solid var(--accent);outline-offset:-.07em}
 .rn small{display:block;font-weight:500;color:var(--muted);font-size:.78rem}
 .rp{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;align-items:center;max-width:62vw}
 .rp b{font-family:var(--display);font-size:1.4rem;min-width:2ch;text-align:center}
-.rpip{width:24px;height:24px;border-radius:50%;border:2px solid var(--arcane);background:transparent;padding:0}
+/* phone trackers: name row (tap = change or delete), pips below in groups of five */
+.rcard{display:grid;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px 12px 12px}
+.rtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.trkhead{display:flex;align-items:center;gap:8px;flex:1 1 12em;min-width:0;min-height:42px;background:none;border:0;padding:6px 0 0;text-align:left}
+.trkhead .rnm{flex:1 1 auto;min-width:0;font-weight:800}
+.trkhead .rnm small{display:block;font-weight:500;color:var(--muted);font-size:.78rem}
+.trkhead .rct{font-family:var(--display);font-weight:800;font-size:1.1rem;white-space:nowrap}
+.trkhead .rct.zero{color:var(--faint)}
+.trkhead svg{width:14px;height:14px;flex:none;fill:none;stroke:var(--faint);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.rpips{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.rgrp{display:flex;gap:8px}
+.rpips b{font-family:var(--display);font-size:1.4rem;min-width:2ch;text-align:center}
+.rpip{width:28px;height:28px;border-radius:50%;border:2px solid var(--arcane);background:transparent;padding:0}
 .rpip.on{background:var(--arcane)}
+.redrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.redrow .btn{min-width:46px;min-height:46px;font-size:1.25rem}
+.redrow b{font-family:var(--display);font-size:1.6rem;min-width:2ch;text-align:center}
+.rdelbtn{width:100%;padding:13px 14px;border-color:var(--enemy);color:var(--enemy);background:transparent}
+.toast .tundo{margin-left:12px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:7px 14px;font-weight:800}
+.toast.wact{display:flex;align-items:center;padding:6px 6px 6px 16px;width:max-content;max-width:calc(100vw - 32px)}
 .rest{display:flex;gap:8px;justify-content:flex-end}
 .resform{display:grid;grid-template-columns:minmax(0,1fr) 6em;gap:8px}
 .seg2{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
@@ -4682,7 +4700,10 @@ async function push(){
   pushing=false;
 }
 let toastT=null;
-function toast(msg,ms){const t=$("#toast");if(!t)return;t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,ms||2600)}
+let toastUndoFn=null;
+function toast(msg,ms){const t=$("#toast");if(!t)return;toastUndoFn=null;t.classList.remove("wact");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,ms||2600)}
+function toastUndo(msg,fn,ms){const t=$("#toast");if(!t)return;toast(msg,ms||7000);toastUndoFn=fn;t.classList.add("wact");
+  t.insertAdjacentHTML("beforeend",`<button type="button" class="tundo" data-act="toastundo">Undo</button>`)}
 
 /* ---------- DM render ---------- */
 let pendingRender=false,freshIds=new Set();
@@ -5098,7 +5119,7 @@ function renderDM(){
       +(c.know||[]).map((k,i)=>`<button type="button" class="cond knowdm" data-act="knowrm" data-id="${esc(c.id)}" data-i="${i}" title="Remove">${esc(k)}</button>`).join("")
       +`<button type="button" class="cond add addc" data-act="conds" title="Add a condition (C)" aria-label="Add a condition">+</button>`;
     const K=(k)=>`<kbd>${k}</kbd>`;
-    const sb=c.sb,pips=(k,o,j)=>Array.from({length:o.max},(_,q)=>`<button type="button" class="sbpip${q<o.used?" used":""}" data-act="sbuse" data-k="${k}"${j!=null?` data-j="${j}"`:""} data-q="${q}" aria-label="${q<o.used?"Restore":"Use"}"></button>`).join("");
+    const sb=c.sb,pips=(k,o,j)=>Array.from({length:o.max},(_,q)=>`<button type="button" class="sbpip${q>=o.max-o.used?" used":""}" data-act="sbuse" data-k="${k}"${j!=null?` data-j="${j}"`:""} data-q="${q}" aria-label="${q>=o.max-o.used?"Get one back":"Use one"}"></button>`).join("");
     const hasLair=sb&&((sb.lair||[]).length||(sb.reg||[]).length||sb.laLair||sb.lrLair);
     const sbHtml=sb&&(sb.lr||sb.la||(sb.uses||[]).length||(sb.rech||[]).length||hasLair)?`<div class="sbline" title="Only you see these">
         ${hasLair?`<button type="button" class="sbc sblair" data-act="sblair" aria-pressed="${!!sb.inLair}" title="${esc(lairTip(sb))}">${ic("castle")} In lair</button>`:""}
@@ -7517,7 +7538,7 @@ function pcBuild(){   // new numbers, but what you've already spent stays spent
   const next=made.map(x=>{const was=old.find(o=>o.name===x.name),spent=was?Math.max(0,(was.max||0)-(was.cur||0)):0;return Object.assign(x,{cur:Math.max(0,x.max-spent)})});
   resSet(next.concat(keep));profSet(prof);pcDraft=null;return next.length;
 }
-let effDraft={name:"",conc:false,area:false,targets:new Set(),custom:false},resDraft={name:"",max:"",reset:"long",custom:false};
+let effDraft={name:"",conc:false,area:false,targets:new Set(),custom:false},resDraft={name:"",max:"",reset:"long",custom:false},resEditI=-1;
 /* the phone's own number pad: the system keyboard would cover the buttons under the field */
 let padVal="",padFor=null,spellQ="",spellScope=null,resAll=false;
 const padHtml=(ph,neg)=>`<div class="padshow" id="padShow" data-ph="${esc(ph)}" aria-live="polite">${esc(padVal)}</div>
@@ -7607,7 +7628,7 @@ function renderPSheet(){
   }else{
     const me=meChar();if(me&&!me.down&&pSheet!=="dsave")dsLast=null;
     const padKeyNow=pSheet+(hpEditMax?":max":"");if(padFor!==padKeyNow){padFor=padKeyNow;padVal=""}
-    const free=pSheet==="res"||pSheet==="pcset"||pSheet==="pcfeat"||pSheet==="give"||pSheet==="comphp"||pSheet==="compsb"||pSheet==="hp"||pSheet==="dice"||pSheet==="more"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||(pSheet==="spell"&&(!spView||spView.from!=="effs"));
+    const free=pSheet==="res"||pSheet==="resedit"||pSheet==="pcset"||pSheet==="pcfeat"||pSheet==="give"||pSheet==="comphp"||pSheet==="compsb"||pSheet==="hp"||pSheet==="dice"||pSheet==="more"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||(pSheet==="spell"&&(!spView||spView.from!=="effs"));
     if(!me||(!canEdit()&&!free&&pSheet!=="call")){pSheet=null;return renderPSheet()}
     if(pSheet==="dsave"){
       const ds=dsOf(me),done=isDead(me)||isStable(me);
@@ -7762,10 +7783,9 @@ function renderPSheet(){
       const prof=profGet(),pdesc=prof.cls.map(e=>`${e.n} ${e.lvl}${e.sub?` (${e.sub.sn||e.sub.n})`:""}`).join(" / ");
       body=`<h2>Resources · ${esc(me.name)}</h2><p class="psub">Only you can see these; they're saved on this phone.</p>
         ${served?`<button type="button" class="pcline" data-act="pcset">${prof.cls.length?`<b>${esc(pdesc)}</b><small>Level up or change: your trackers follow</small>`:`<b>Set up from my class</b><small>Class and level make your spell slots, Rage, Focus Points, Hit Dice…</small>`}</button>`:""}
-        ${res.length?`<div class="reslist">${res.map((r,i)=>`<div class="res"><div class="rn">${esc(r.name)}<small>${r.cur}/${r.max}${r.note?" · "+esc(r.note):""} · ${RESET_LABEL[r.reset]||"long rest"}</small>${/bardic inspiration/i.test(r.name)&&r.cur>0&&state.list.some(x=>x.kind==="pc"&&!x.hidden&&x.id!==me.id)?`<button type="button" class="linkbtn" data-act="pgive" data-i="${i}">Give one…</button>`:""}</div>
-          <div class="rp">${r.max<=12?Array.from({length:r.max},(_,k)=>`<button type="button" class="rpip${k<r.cur?" on":""}" data-act="rpip" data-i="${i}" data-k="${k}" aria-label="${k<r.cur?"Use":"Restore"}"></button>`).join("")
-            :`<button type="button" class="btn" data-act="rstep" data-i="${i}" data-d="-1">−</button><b>${r.cur}</b><button type="button" class="btn" data-act="rstep" data-i="${i}" data-d="1">+</button>`}</div>
-          <button type="button" class="icon-btn" data-act="rdel" data-i="${i}" aria-label="Delete ${esc(r.name)}">${I.x}</button></div>`).join("")}</div>`:`<p class="psub">Add spell slots, Hit Dice, Rage, Focus and anything else you count.</p>`}
+        ${res.length?`<p class="psub">Tap a full circle to use one, an empty one to get one back. Tap the name to change or delete it.</p><div class="reslist">${res.map((r,i)=>`<div class="rcard"><div class="rtop"><button type="button" class="trkhead" data-act="redit" data-i="${i}" aria-label="Change or delete ${esc(r.name)}"><span class="rnm">${esc(r.name)}<small>${r.note?esc(r.note)+" · ":""}${RESET_LABEL[r.reset]||"long rest"}</small></span><span class="rct${r.cur?"":" zero"}">${r.cur}/${r.max}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>${/bardic inspiration/i.test(r.name)&&r.cur>0&&state.list.some(x=>x.kind==="pc"&&!x.hidden&&x.id!==me.id)?`<button type="button" class="linkbtn" data-act="pgive" data-i="${i}">Give one…</button>`:""}</div>
+          <div class="rpips">${r.max<=12?Array.from({length:Math.ceil(r.max/5)},(_,g)=>`<span class="rgrp">${Array.from({length:Math.min(5,r.max-g*5)},(_,q)=>{const k=g*5+q,on=k<r.cur;return `<button type="button" class="rpip${on?" on":""}" data-act="rpip" data-i="${i}" aria-label="${on?"Use one":"Get one back"}"></button>`}).join("")}</span>`).join("")
+            :`<button type="button" class="btn" data-act="rstep" data-i="${i}" data-d="-1" aria-label="Use one">−</button><b>${r.cur}</b><button type="button" class="btn" data-act="rstep" data-i="${i}" data-d="1" aria-label="Get one back">+</button>`}</div></div>`).join("")}</div>`:`<p class="psub">Add spell slots, Hit Dice, Rage, Focus and anything else you count.</p>`}
         <div class="rest"><button type="button" class="btn" data-act="rrest" data-r="short">Short rest</button><button type="button" class="btn" data-act="rrest" data-r="long">Long rest</button></div>
         ${!resDraft.name&&!resDraft.custom?(()=>{const have=new Set(res.map(r=>r.name));
           const row=r=>`<button type="button" class="sprow${have.has(r[0])?" has":""}" data-act="presp" data-n="${esc(r[0])}" data-h="${esc(r[2])}" data-r="${r[1]}"><b>${esc(r[0])}</b><small>${esc(RESET_LABEL[r[1]])}${r[2]?" · max "+esc(r[2]):""}${have.has(r[0])?" · already tracked":""}</small></button>`;
@@ -7781,6 +7801,14 @@ function renderPSheet(){
           <div class="seg2"><span class="psub">Recovers:</span>${[["long","Long rest"],["short","Short rest"],["shortOne","1 per short, all on long"],["none","Never"]].map(([k,l])=>`<button type="button" data-act="rreset" data-r="${k}" aria-pressed="${resDraft.reset===k}">${l}</button>`).join("")}</div>
           <button class="btn primary e-send" type="button" data-act="presadd">Add tracker</button></div>`}
         <div style="display:flex;justify-content:flex-end"><button class="btn" type="button" data-act="pclose">Close</button></div>`;
+    }else if(pSheet==="resedit"){
+      const r=resGet()[resEditI];if(!r){pSheet="res";return renderPSheet()}
+      body=`<h2>${esc(r.name)}</h2><p class="psub">${r.cur}/${r.max}${r.note?" · "+esc(r.note):""} · ${RESET_LABEL[r.reset]||"long rest"}</p>
+        <div class="redrow"><b style="font-family:var(--body);font-size:1rem">Maximum</b><span style="display:flex;align-items:center;gap:10px"><button type="button" class="btn" data-act="rmax" data-d="-1" aria-label="One less">−</button><b>${r.max}</b><button type="button" class="btn" data-act="rmax" data-d="1" aria-label="One more">+</button></span></div>
+        <div class="seg2"><span class="psub">Recovers:</span>${[["long","Long rest"],["short","Short rest"],["shortOne","1 per short, all on long"],["none","Never"]].map(([k,l])=>`<button type="button" data-act="reditreset" data-r="${k}" aria-pressed="${(r.reset||"long")===k}">${l}</button>`).join("")}</div>
+        <button type="button" class="btn rdelbtn" data-act="rdel">Delete this tracker</button>
+        <p class="psub" style="text-align:center;margin:0">Two taps, so it can't happen by accident. You can undo it right after.</p>
+        <div style="display:flex;justify-content:flex-end"><button class="btn" type="button" data-act="pres">Back</button></div>`;
     }else if(pSheet==="init"){
       body=`<h2>Initiative · ${esc(me.name)}</h2>${state.surprise?`<p class="surpnote">You're surprised: roll initiative with <b>disadvantage</b> (two d20, keep the lower).</p>`:""}
         <div class="psec padsec">${padHtml(typeof me.init==="number"?`Now ${me.init}`:"d20 + mod",true)}<button class="btn primary e-send" type="button" data-act="pinitsend">Send</button></div>
@@ -8474,7 +8502,7 @@ document.addEventListener("click",e=>{
     case "sbinit":{const x=sbItems[Number(t.dataset.i)];if(x){x.im=t.dataset.m;sbInitMode=t.dataset.m;ls.set("initMode",sbInitMode);sbSheet()}break}
     case "sbcount":{const x=sbItems[Number(t.dataset.i)];if(x){x.count=Math.max(1,Math.min(12,x.count+Number(t.dataset.d)));sbSheet()}break}
     case "sbadd": sbAdd();break;
-    case "sbuse":{if(!c||!c.sb)break;const o=t.dataset.k==="use"?c.sb.uses[Number(t.dataset.j)]:c.sb[t.dataset.k];if(!o)break;const q=Number(t.dataset.q);o.used=o.used>q?q:q+1;commit();break}
+    case "sbuse":{if(!c||!c.sb)break;const o=t.dataset.k==="use"?c.sb.uses[Number(t.dataset.j)]:c.sb[t.dataset.k];if(!o)break;o.used=Math.max(0,Math.min(o.max,o.used+(t.classList.contains("used")?-1:1)));commit();break}   // full ones first: a full pip uses one, a spent one gives one back
     case "sbstep":{if(!c||!c.sb)break;const o=c.sb.uses[Number(t.dataset.j)];if(o){o.used=Math.min(o.max,o.used+1);commit()}break}
     case "sbla0": if(c&&c.sb&&c.sb.la){c.sb.la.used=0;commit()}break;
     case "sblair":{if(!c||!c.sb)break;const s2=c.sb;s2.inLair=!s2.inLair;
@@ -8646,9 +8674,18 @@ document.addEventListener("click",e=>{
     case "pcbuild":{if(!pcDraft)break;const n=pcBuild();pSheet="res";renderPSheet();toast(n?`${n} trackers from your class`:"Nothing to track yet");break}
     case "ptgt":{const id=t.dataset.id;if(effDraft.targets.has(id))effDraft.targets.delete(id);else effDraft.targets.add(id);t.setAttribute("aria-pressed",String(effDraft.targets.has(id)));break}
     case "peffrm": pSend({action:"effect_rm",eid:t.dataset.e});t.closest(".pchip").remove();break;
-    case "rpip":{const r=resGet(),x=r[Number(t.dataset.i)],k=Number(t.dataset.k);if(!x)break;x.cur=k<x.cur?k:k+1;resSet(r);renderPSheet();break}
+    case "rpip":{const r=resGet(),x=r[Number(t.dataset.i)];if(!x)break;   // a full circle uses one, an empty one gives one back: always from the end of the full ones
+      x.cur=Math.max(0,Math.min(x.max,x.cur+(t.classList.contains("on")?-1:1)));resSet(r);renderPSheet();break}
+    case "redit": resEditI=Number(t.dataset.i);pSheet="resedit";renderPSheet();break;
+    case "rmax":{const r=resGet(),x=r[resEditI];if(!x)break;x.max=Math.max(1,Math.min(99,x.max+Number(t.dataset.d)));x.cur=Math.min(x.cur,x.max);resSet(r);renderPSheet();break}
+    case "reditreset":{const r=resGet(),x=r[resEditI];if(!x)break;x.reset=t.dataset.r;resSet(r);renderPSheet();break}
     case "rstep":{const r=resGet(),x=r[Number(t.dataset.i)];if(!x)break;x.cur=Math.max(0,Math.min(x.max,x.cur+Number(t.dataset.d)));resSet(r);renderPSheet();break}
-    case "rdel":{const r=resGet();r.splice(Number(t.dataset.i),1);resSet(r);renderPSheet();break}
+    case "rdel":{   // two taps, then an Undo in the toast
+      if(!t.classList.contains("armed")){t.classList.add("armed");t.textContent="Tap again to delete";clearTimeout(chipT);
+        chipT=setTimeout(()=>{if(t.isConnected){t.classList.remove("armed");t.textContent="Delete this tracker"}},3500);break}
+      clearTimeout(chipT);const r=resGet(),i=resEditI,gone=r[i];if(!gone)break;r.splice(i,1);resSet(r);pSheet="res";renderPSheet();
+      toastUndo(`${gone.name} deleted`,()=>{const r2=resGet();r2.splice(Math.min(i,r2.length),0,gone);resSet(r2);if(pSheet==="res")renderPSheet()});break}
+    case "toastundo":{const f=toastUndoFn;toastUndoFn=null;const tt=$("#toast");if(tt){tt.hidden=true;tt.classList.remove("wact")}clearTimeout(toastT);if(f)f();break}
     case "rrest":{const kind=t.dataset.r;
       const r=resGet().map(x=>{const rs=x.reset||"long";if(rs==="none")return x;
         if(kind==="long")return Object.assign(x,{cur:x.max});
