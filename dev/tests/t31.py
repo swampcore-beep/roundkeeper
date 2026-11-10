@@ -57,6 +57,18 @@ async def main():
         await T(dm,"state.tv=Object.assign({},state.tv,{pause:{until:Date.now()+600000,msg:''}});commit()"); await asyncio.sleep(1.5)
         s=await tv.evaluate("()=>(document.querySelector('.tvpz .s')||{}).textContent||''")
         chk("pause time has no AM/PM",s and 'AM' not in s and 'PM' not in s,s)
+        # ---- no three-letter codes: a crowded fight on an upright tablet keeps full names on its badges
+        js="state.layout='auto';state.effects=[{id:'e1',name:'Bless',by:'x0',targets:['x0','x1'],conc:true}];state.turn={id:'x0',round:2,init:20};state.list=["+",".join(f"{{id:'x{i}',name:'{n}',kind:'{k}',init:{20-i},conds:{c},ds:{{s:0,f:0}}}}" for i,(n,k,c) in enumerate([
+          ('Isandros','pc',"['Prone','Frightened']"),('Styx','pc',"['Concentrating','Restrained','Blinded','Deafened','Charmed']"),('Astrea','pc',"['Concentrating']"),
+          ('Goblin A','enemy',"['Prone']"),('Goblin B','enemy',"['Frightened','Grappled']"),('Goblin C','enemy',"[]"),('Wolf A','enemy',"['Prone']"),('Wolf B','enemy',"[]"),
+          ('Skeleton A','enemy',"['Incapacitated','Poisoned','Blinded']"),('Zombie','enemy',"['Grappled']"),('Bandit','enemy',"['Charmed','Frightened']")]))+"];state.ended=null;commit()"
+        await T(dm,js); await asyncio.sleep(.5)
+        up=await (await b.new_context(viewport={'width':800,'height':1200})).new_page(); up.on("pageerror",lambda e:errs.append(str(e)))
+        await up.goto(rk.PL+'/players?shared=1'); await asyncio.sleep(3)
+        codes=await up.evaluate(r"()=>[...document.querySelectorAll('#plist .ic > *')].filter(e=>getComputedStyle(e).display!=='none').map(e=>e.textContent.trim()).filter(t=>/^(✦ )?[A-Z]{2,3}\d?( \d+)?$/.test(t))")
+        chk("no three-letter codes",not codes,codes)
+        full=await up.evaluate("()=>[...document.querySelectorAll('#plist .ic .lt')].filter(e=>getComputedStyle(e).display!=='none').length")
+        chk("badges show full names",full>=15,full)
         chk("no errors",not errs,errs)
         await b.close()
 asyncio.run(main()); print("ALL OK" if ok else "SOME FAILED")
