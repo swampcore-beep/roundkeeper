@@ -26,9 +26,9 @@ It comes with the **SRD 5.2.1** built in: 331 monsters with clickable statblocks
 >
 > *Not a virtual tabletop:* there are no maps or tokens, and it isn't for online play. It's made for a group sitting around a real table.
 
-<p align="center">
-  <img src="media/tablet.gif" width="760" alt="The tablet on the table: the turn moves on, Gregori's Fireball bursts over the goblins, a goblin falls, and Styx rolls a natural 20">
-</p>
+https://github.com/user-attachments/assets/fba6e344-bb64-44ef-b0d0-e989beacb2e5
+
+<p align="center"><sub>One fight on all four screens at once: the DM's laptop, the tablet, the TV and a phone (50 seconds, no sound).</sub></p>
 
 ---
 
@@ -80,6 +80,10 @@ Each screen shows what its people need, and only that. Monster HP, statblocks, h
 ---
 
 ## On the table
+
+<p align="center">
+  <img src="media/tablet.gif" width="760" alt="The tablet on the table: the turn moves on, Gregori's Fireball bursts over the goblins, a goblin falls, and Styx rolls a natural 20">
+</p>
 
 <table>
 <tr>
