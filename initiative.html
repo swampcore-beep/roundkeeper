@@ -31,6 +31,7 @@ html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.4}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
+input[type=checkbox],input[type=radio],input[type=range]{accent-color:var(--accent)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 svg{display:block}
 .k-pc{--k:var(--pc)} .k-enemy{--k:var(--enemy)} .k-ally{--k:var(--ally)} .k-lair{--k:var(--accent)}
@@ -870,7 +871,7 @@ li.st-petrified .pos{color:var(--stone)}
 .fx-restrained::before{background:repeating-linear-gradient(-45deg,rgba(255,255,255,.13) 0 .14em,transparent .14em .85em)}
 
 /* Prone: knocked over */
-li.st-prone{transform:rotate(-1deg) translateY(.06em)}
+li.st-prone .nm{display:inline-block;transform:rotate(-2.2deg) translateY(.05em);transform-origin:0 90%}   /* only the name lies down: a tilted row would cut into its neighbours */
 .fx-prone::before{background:linear-gradient(0deg,rgba(0,0,0,.5),transparent 60%)}
 
 /* Blinded: vision shut down to a slit */
@@ -1059,7 +1060,7 @@ li.st-dead .frame i,li.st-dead .sig{opacity:.4}
 }
 
 /* ---------- status decorations anchored to the name, so they never cover the initiative number ---------- */
-.nmw{flex:1 1 auto;min-width:min(50%,7em);display:flex;align-items:center}
+.nmw{flex:1 1 auto;min-width:min(50%,5.5em);display:flex;align-items:center}   /* enough to keep a name readable without squeezing a lone badge */
 .nmb{position:relative;display:inline-flex;flex-direction:column;min-width:0;max-width:100%}
 .deco{position:absolute;pointer-events:none;z-index:2}
 .deco b{position:absolute;display:block}
@@ -1416,6 +1417,10 @@ body.sbopen main.dmgrid{grid-template-columns:minmax(0,1fr);padding-right:calc(m
 .sbopts{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.sbopts b{min-width:1.4em;text-align:center}.sbopts .chk{margin-left:8px}
 .sbpaste{width:100%;resize:vertical;font-family:ui-monospace,Consolas,monospace;font-size:.8rem}
 .sbfoot{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.sbfoot .psub{flex:1}
+.sbsheet .sbfoot{position:sticky;bottom:-18px;z-index:2;margin:0 -18px -18px;padding:12px 18px 16px;background:var(--panel);border-top:1px solid var(--line);justify-content:flex-end}   /* Add to combat always in reach */
+.sbsheet .sbfoot label.btn{margin-right:auto}
+.sbcard.just{animation:sbjust 1.6s ease-out}
+@keyframes sbjust{0%{box-shadow:0 0 0 2px var(--accent),0 0 18px color-mix(in srgb,var(--accent) 45%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
 .quick .sbbtn{order:5;flex:1 0 100%;border-style:dashed}
 body.sbdrag::after{content:"Drop the statblock to add it";position:fixed;inset:12px;border:3px dashed var(--accent);border-radius:18px;display:grid;place-items:center;
   font-family:var(--display);font-size:2rem;color:var(--accent);background:color-mix(in srgb,var(--bg) 70%,transparent);z-index:60;pointer-events:none}
@@ -1703,6 +1708,7 @@ html[data-plight]{--bg:#f2eee5;--panel:#fffcf6;--panel2:#f6f1e6;--line:#dcd2bf;-
  --accent:#a86a0e;--accent-ink:#fffaf0;--pc:#2c7a94;--enemy:#b5462f;--ally:#4b8636;--blood:#b3203a;--arcane:#6248c9;--poison:#4a8628;--fire:#c55a18;--charm:#ad4a89;--stun:#93730c;--stone:#77726b;
  --save:#2c8543;--fail:#bf3542;--boss:#94660f;--pbg:#f2eee5;--rowimg:none;color-scheme:light}
 html[data-plight] .btn.primary{color:#fff}
+html[data-plight] .cond.eff{color:#5e3f05!important;background:#fbedc6!important;border-color:#d4aa4c!important}html[data-plight] .cond.eff *{color:inherit}   /* effects: the dark theme's pale gold vanishes on cream */
 .morelist .btn svg{width:18px;height:18px;display:inline-block;vertical-align:-3px;margin-right:4px}
 html[data-plight] .scrim{background:rgba(60,48,30,.38)}
 /* ---------- a phone's character setup ---------- */
@@ -5420,7 +5426,9 @@ const libListHtml=()=>{const q=libQ.trim().toLowerCase(),hit=lib.filter(e=>!q||e
     :`<p class="psub">${lib.length?"Nothing matches.":""}</p>`};
 const sbMeta=x=>[x.size&&x.ctype?`${x.size} ${(CTYPES.find(t=>t[0]===x.ctype)||["",""])[1]}`:"",x.ac!=null?"AC "+x.ac:"",x.hp!=null?"HP "+x.hp:"",x.ib!=null?"Init "+(x.ib>=0?"+":"")+x.ib:"",x.cr?"CR "+x.cr:""].filter(Boolean).join(" · ");
 const sbCounters=x=>[x.lr?`Legendary Resistance ${x.lr}/Day`:"",x.la?`${x.la} Legendary Actions`:""].concat(x.rech.map(r=>`${r.n} (Recharge ${r.min}${r.min<6?"–6":""})`),x.uses.map(u=>`${u.n} ${u.max}/Day`)).filter(Boolean);
+let sbShownN=-1;
 function sbSheet(){
+  const old=$(".sbsheet"),top=old?old.scrollTop:0,prevN=old?sbShownN:sbItems.length;sbShownN=sbItems.length;   // a click redraws the window: it stays where it was
   $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet sbsheet" role="dialog" aria-modal="true"><h2>Add monsters</h2>
     <div id="fetWrap">${fetBoxHtml()}</div>
     ${lib.length?`<div class="libbox"><div class="eyebrow2">Library · ${lib.length} saved</div><input class="field" id="libQ" type="search" placeholder="Search the library" value="${esc(libQ)}" autocomplete="off"><div class="liblist" id="libList">${libListHtml()}</div></div>`:""}
@@ -5435,7 +5443,11 @@ function sbSheet(){
     <textarea class="field sbpaste" id="sbPaste" rows="${sbItems.length?2:6}" placeholder="Paste a statblock here"></textarea>
     <div class="sbfoot"><label class="btn"><input type="file" id="sbFile" accept=".md,.txt,text/markdown,text/plain" multiple hidden>Choose .md files</label>
       
-      <button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="button" data-act="sbadd" ${sbItems.length?"":"disabled"}>Add to combat</button></div></div></div>`;
+      <button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="button" data-act="sbadd" ${sbItems.length?"":"disabled"}>Add to combat${sbItems.length?` (${sbItems.reduce((a,x)=>a+Math.max(1,Math.min(12,x.count||1)),0)})`:""}</button></div></div></div>`;
+  const sh=$(".sbsheet");if(!sh)return;sh.scrollTop=top;
+  if(sbItems.length>prevN){const cards=sh.querySelectorAll(".sbcard"),c=cards[cards.length-1];   // a monster just picked: show its card if it's out of sight, and light it up
+    if(c){c.classList.add("just");const r=c.getBoundingClientRect(),R=sh.getBoundingClientRect(),f=sh.querySelector(".sbfoot"),fh=f?f.offsetHeight:0;
+      const d=r.top<R.top?r.top-R.top-12:r.bottom>R.bottom-fh?r.bottom-(R.bottom-fh)+12:0;if(d)sh.scrollTo({top:sh.scrollTop+d,behavior:reduced?"auto":"smooth"})}}
 }
 function sbTake(texts){
   let got=0;texts.forEach(t=>{
@@ -6579,7 +6591,11 @@ function fitList(n){
   // a row whose badges don't fit: shorter labels, then abbreviations, then "+N"
   const stack=cols>1;
   rows.forEach(li=>{const ic=li.querySelector(".ic");if(!ic||!ic.children.length)return;
-    const ov=stack?()=>li.scrollHeight>li.clientHeight+1||ic.scrollWidth>ic.clientWidth+1:()=>ic.scrollHeight>ic.clientHeight+1||ic.scrollWidth>ic.clientWidth+1;
+    // the NOW / NEXT tab sits in the top right corner: on those rows a second line of badges would run under it
+    const tab=!stack&&(li.classList.contains("turn")||li.classList.contains("next")),
+      twoLines=()=>{const f=ic.firstElementChild;return !!f&&ic.scrollHeight>f.offsetHeight*1.5};
+    const ov0=stack?()=>li.scrollHeight>li.clientHeight+1||ic.scrollWidth>ic.clientWidth+1:()=>ic.scrollHeight>ic.clientHeight+1||ic.scrollWidth>ic.clientWidth+1,
+      ov=tab?()=>ov0()||twoLines():ov0;
     for(const lvl of ["c1","c2"]){if(!ov())break;li.classList.add(lvl)}
     if(ov())trimRow(li,ov)});
 }
@@ -7942,7 +7958,7 @@ function tvRender(list,first){
   const who=c=>c.kind==="pc"?(LABEL[c.cls]||"Player"):c.kind==="ally"?"Ally":c.kind==="lair"?"Lair":c.boss?"Boss":"Enemy";
   let h="";
   if(mode==="scene"){const t=T.title;h=t&&t.t?`<div class="tvex"><div class="eb">${esc(t.eb||"")}</div><div class="ti">${esc(t.t)}</div><div class="ln"></div>${t.sub?`<div class="sub">${esc(t.sub)}</div>`:""}</div>`:""}
-  else if(mode==="pause"){const left=Math.max(0,Math.round((T.pause.until-dmNow())/1000));h=`<div class="tvpz"><div class="in"><div class="k">${esc(T.pause.msg||"Short break")}</div><div class="t">${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}</div><div class="s">We continue at ${new Date(T.pause.until-(dmNow()-Date.now())).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}</div></div></div>`;
+  else if(mode==="pause"){const left=Math.max(0,Math.round((T.pause.until-dmNow())/1000));h=`<div class="tvpz"><div class="in"><div class="k">${esc(T.pause.msg||"Short break")}</div><div class="t">${Math.floor(left/60)}:${String(left%60).padStart(2,"0")}</div><div class="s">We continue at ${new Date(T.pause.until-(dmNow()-Date.now())).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hourCycle:"h23"})}</div></div></div>`;
     clearTimeout(tvTick);tvTick=setTimeout(()=>{if(TV)tvRender(grpRows(withLair(sorted().filter(shownToPlayers))),false)},1000)}
   else if(mode==="order"){h=`${top}<div class="tvord"><div class="orow">${list.map(c=>{const on=state.turn&&(state.turn.id===c.id||(c.grpIds||[]).includes(state.turn.id));
       return `<div class="cd k-${c.kind}${fk(c)?" fr fr-"+fk(c):""}${on?" on":""}" data-tid="${esc(c.id)}">${on?`<span class="tag">NOW</span>`:""}<span class="ce"></span><div class="cn">${esc(c.name)}</div><div class="hx">${c.kind==="lair"?20:initOf(c)>-999?initOf(c):"–"}</div><small>${esc(who(c))}</small></div>`}).join("")}</div></div>`}
@@ -8029,7 +8045,7 @@ function partySheet(){
   const cell=(c,k)=>{const v=c.pst&&c.pst[k];return v?`<td class="${dc&&k!=="ac"&&k!=="dc"?(v>=dc?"ok":"no"):""}">${v}</td>`:`<td class="psub">–</td>`};
   $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true" aria-label="Party"><h2>Party numbers</h2>
     <p class="psub">Each player sends these from their phone (Resources → Set up from my class → Your numbers for the DM). Only you see this page.</p>
-    <label class="rangerow">Passive check DC <input class="field" id="partyDC" type="number" min="0" max="40" value="${dc||""}" style="width:5em" placeholder="15"> <small class="psub">who notices is green</small></label>
+    <label class="rangerow">Passive check DC <input class="field" id="partyDC" type="number" min="0" max="40" value="${dc||""}" style="width:5em" aria-label="Passive check DC"> <small class="psub">type a DC: who notices turns green</small></label>
     <table class="partyt"><thead><tr><th>Character</th><th>AC</th><th>Perception</th><th>Insight</th><th>Investigation</th><th>Spell DC</th><th></th></tr></thead>
     <tbody>${pcs.map(c=>`<tr><td><b>${esc(c.name)}</b></td>${cell(c,"ac")}${cell(c,"pp")}${cell(c,"pi")}${cell(c,"pv")}${cell(c,"dc")}<td class="psub">${c.pst?agoTxt(c.pst.at/1000):"not sent"}</td></tr>`).join("")}</tbody></table>
     <div style="display:flex;justify-content:flex-end"><button class="btn" type="button" data-act="close">Close</button></div></div></div>`;
@@ -8116,7 +8132,10 @@ function surfaceEvents(first){
   // nat 20 / nat 1 / shared rolls
   const r=state.roll;
   if(first)rollSeen=r?r.id:null;
-  else if(r&&r.id!==rollSeen){rollSeen=r.id;if(Math.abs(dmNow()-r.at)<15000&&screenWants("dice")){if(!reduced&&meName==="*")fxDie(r,()=>showRoll(r));else showRoll(r)}}
+  else if(r&&r.id!==rollSeen){rollSeen=r.id;
+    // your own ordinary roll: the sheet you rolled from already shows it, so no second popup over it (nat 20 / nat 1 still celebrate)
+    const own=meName!=="*"&&pSheet&&r.kind==="roll"&&meChar()&&r.by===meChar().name;
+    if(!own&&Math.abs(dmNow()-r.at)<15000&&screenWants("dice")){if(!reduced&&meName==="*")fxDie(r,()=>showRoll(r));else showRoll(r)}}
   // a roll call: phones of the called players get a prompt and a buzz
   const me=meChar(),call=state.call;
   if(call&&call.id!==seenCall){seenCall=call.id;
