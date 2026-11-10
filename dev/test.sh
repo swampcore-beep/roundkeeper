@@ -19,6 +19,8 @@ fi
 bad=0
 for s in $servers; do for t in $suites; do
   mode=srd; case " $DATA " in *" $t "*) mode=data;; esac
+  if [ $mode = data ] && [ ! -d "$RK_5ETOOLS" ]; then echo "$s $t: skipped (needs RK_5ETOOLS)"; continue; fi
+  case " $PRIVS " in *" $t "*) [ -f "${RK_PRIVATE:-$ROOT/dev/.work/private}/sb/gyreguard.md" ] || { echo "$s $t: skipped (needs RK_PRIVATE)"; continue; };; esac
   bash dev/serve.sh "$s" "$mode" > /dev/null 2>&1 || { echo "$s $t: server did not start"; bad=1; continue; }
   log=$OUT/$s-$t.log
   (cd "$OUT" && timeout 400 python3 "$ROOT/dev/tests/$t.py" > "$log" 2>&1); rc=$?

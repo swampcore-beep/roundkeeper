@@ -45,7 +45,7 @@ async def main():
         await dm.click('#tvPop [data-act=tvlayout][data-v=B]') if await dm.locator('#tvPop [data-act=tvlayout][data-v=B]').count() else await T(dm,"state.tv.layout='B';commit()")
         await asyncio.sleep(2); chk("layout B: on deck below, 4 cards",await tv.locator('.tvsp.B .card').count()==4,await tv.locator('.tvsp .card').count())
         # title card: a moment, then on the scene
-        await dm.fill('#tvT','The Misty Woods'); await dm.fill('#tvSub','North of Daggerford'); await dm.evaluate("document.querySelector('#tvTitleForm').requestSubmit()"); await asyncio.sleep(2)
+        await dm.fill('#tvT','The Misty Woods'); await dm.fill('#tvSub','North of Emberfall'); await dm.evaluate("document.querySelector('#tvTitleForm').requestSubmit()"); await asyncio.sleep(2)
         chk("title card shows big on the TV",await tv.locator('#moment.tvtitle').count()==1 and 'Misty' in await tv.locator('#moment').inner_text())
         chk("…not on the Surface",await sf.locator('#moment.tvtitle').count()==0)
         await dm.click('#tvPop [data-act=tvmode][data-v=scene]'); await asyncio.sleep(2)

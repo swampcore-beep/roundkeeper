@@ -29,7 +29,7 @@ async def main():
         dmc=await b.new_context(viewport={'width':1440,'height':900});dm=await dmc.new_page()
         await dm.goto(rk.DM+'/');await asyncio.sleep(1.5)
         async def S(js,w=0): await T(dm,js);await asyncio.sleep(w)
-        st=setup(TH,SC,True,"i").replace("Scourge of the Sword Coast","Scourge of the Ashen Peaks")+BASE
+        st=setup(TH,SC,True,"i")+BASE
         await S(st,.8)
         tb=tv=ph=None
         if TGT=='tablet':
