@@ -64,13 +64,17 @@ python3 dev/media/phones.py        # four phones side by side (Reddit gallery)
 python3 dev/media/publish.py       # copy into media/ with the README's names and sizes
 ```
 
-The two videos at the top of the README are uploaded to GitHub, not kept in the repo:
+The README's four videos are uploaded to GitHub, not kept in the repo. Each stays under a minute:
 
 ```bash
+# one fight on all four screens, at the top
 for s in dm tablet tv phone; do python3 dev/media/video_four_rec.py $s; done && python3 dev/media/video_four.py
-for s in dm tablet phone; do python3 dev/media/video_dm_rec.py $s; done && python3 dev/media/video_dm.py
+# the three tours: the DM's laptop, the tablet and the TV, a player's phone
+for s in dm tablet phone; do python3 dev/media/video_dm_rec.py $s; done && python3 dev/media/video_make.py dm
+for s in tablet tv; do python3 dev/media/video_table_rec.py $s; done && python3 dev/media/video_make.py table
+for s in phone tablet; do python3 dev/media/video_phone_rec.py $s; done && python3 dev/media/video_make.py phone
 ```
 
-Each screen is recorded in its own pass because a two-core machine can't record four at once smoothly. The passes are lined up by the captions' marks. To put a new video in the README, drag the mp4 into a comment on a pull request, then use the link GitHub gives.
+Each screen is recorded in its own pass because a two-core machine can't record several at once smoothly. The passes are lined up by the captions' marks. `vrec.py` has the recording helpers (the DM's drawn cursor, the phone's taps, and `present()`, which makes the Devices window show every screen and phone as connected). `video_make.py` stops if a video would run over a minute. To put a new video in the README, drag the mp4 into a comment on a pull request, then use the link GitHub gives.
 
 `scene.py` holds the party and the fight every script starts from. The names in it are invented ("Scourge of the Ashen Peaks"), so keep setting names out of it.

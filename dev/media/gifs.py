@@ -22,7 +22,7 @@ async def main():
         dm=await (await b.new_context(viewport={'width':1440,'height':900},device_scale_factor=2)).new_page()
         await dm.goto('http://127.0.0.1:8765/');await asyncio.sleep(1.5)
         async def S(js,w=0): await T(dm,js);await asyncio.sleep(w)
-        base=";state.weather='none';state.tod='none';state.tune={};state.sceneFx={};state.sceneReact=true;state.layout='landscape';commit()"
+        base=";state.ended=null;state.clocks=[];state.call=null;state.roll=null;state.tv={mode:'auto'};state.weather='none';state.tod='none';state.tune={};state.sceneFx={};state.sceneReact=true;state.layout='landscape';commit()"
         # 1. the tablet in a fight (landscape)
         await S(setup(TH,SC,False,"i")+base,.6)
         async def fight(pg):

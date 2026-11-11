@@ -26,9 +26,11 @@ It comes with the **SRD 5.2.1** built in: 331 monsters with clickable statblocks
 >
 > *Not a virtual tabletop:* there are no maps or tokens, and it isn't for online play. It's made for a group sitting around a real table.
 
-https://github.com/user-attachments/assets/fba6e344-bb64-44ef-b0d0-e989beacb2e5
+https://github.com/user-attachments/assets/4d3b44c7-e150-4005-b65d-dd7908910168
 
 <p align="center"><sub>One fight on all four screens at once: the DM's laptop, the tablet, the TV and a phone (50 seconds, no sound).</sub></p>
+
+**Three short tours, under a minute each:** [the DM's laptop](#the-dms-laptop) · [the tablet and the TV](#the-tablet-and-the-tv) · [the players' phones](#on-players-phones)
 
 ---
 
@@ -42,15 +44,16 @@ Each screen shows what its people need, and only that. Monster HP, statblocks, h
 
 ## The DM's laptop
 
-https://github.com/user-attachments/assets/cff93cd3-a013-483b-ad36-ead686d68efe
+https://github.com/user-attachments/assets/b81615ca-5366-434b-b284-847e599f6170
 
-<p align="center"><sub>A fight from the DM's seat: adding monsters, the statblock, a roll call, Hit several, conditions, Ctrl+K and Atmosphere (80 seconds, no sound).</sub></p>
+<p align="center"><sub>From the DM's seat: monsters from the built-in SRD, the statblock, a roll call, Hit several, conditions, Ctrl+K, Devices and Atmosphere (under a minute, no sound).</sub></p>
 
 - **Initiative and turns:** add players and monsters, roll or type initiative, step through turns and rounds. Undo is always there.
 - **Statblocks you click:** an attack bonus rolls the attack, a damage number rolls damage, a save sends a roll call to the players it targets. Recharge, X/Day and Legendary actions are tracked as you use them.
 - **Monster HP that only you see:** damage, healing, temp HP and a history you can undo one entry at a time. Bloodied and Down stay your call.
 - **Hit several:** one Fireball or breath weapon on several targets, with saves rolled from each statblock, resistances applied, and players asked on their phones.
 - **Conditions and spells with their 2024 durations**, ending by themselves at the right turn; Concentration saves worked out for you.
+- **Devices:** one window with the QR code, every screen and phone, whether it's connected, and its full address.
 
 <details>
 <summary><b>More for the DM</b></summary>
@@ -81,18 +84,20 @@ https://github.com/user-attachments/assets/cff93cd3-a013-483b-ad36-ead686d68efe
 
 ---
 
-## On the table
+## The tablet and the TV
 
-<p align="center">
-  <img src="media/tablet.gif" width="760" alt="The tablet on the table: the turn moves on, Gregori's Fireball bursts over the goblins, a goblin falls, and Styx rolls a natural 20">
-</p>
+https://github.com/user-attachments/assets/6dbe8379-623c-4993-b656-51e934ca1090
+
+<p align="center"><sub>What the players see: the tablet on the table and the TV across the room, side by side through one fight (under a minute, no sound).</sub></p>
+
+### On the table
 
 <table>
 <tr>
 <td width="42%" valign="top"><img src="media/boss.gif" width="100%" alt="A hidden Adult Red Dragon is revealed: its name and title fill the tablet"></td>
 <td valign="top">
 
-- The turn order, big and readable from every seat, in portrait or landscape.
+- The turn order, big and readable from every seat, in portrait or landscape. Even with many conditions on screen, labels stay whole words.
 - **Boss intros:** reveal a hidden enemy and its name and title fill the screen. When a boss falls, the player who landed the blow gets *"How do you want to do this?"*
 - **Roll calls:** "Dexterity save DC 21" shows a tile for each player as they answer.
 - **Conditions with their own animation:** stone for Petrified, chains for Restrained.
@@ -111,6 +116,31 @@ https://github.com/user-attachments/assets/cff93cd3-a013-483b-ad36-ead686d68efe
 </tr>
 </table>
 
+### On a TV
+
+One big thing at a time, readable from across the room. In **Auto** the TV follows the fight by itself:
+
+- **Before the fight:** your scene or picture (it drifts and zooms slowly), title cards for locations and chapters, and a **break timer** ("we continue at 21:40").
+- **Roll for initiative:** each player's number arrives as a card, and it shows who hasn't rolled yet.
+- **Spotlight:** whose turn it is, huge, with who's up next. **Order:** the whole initiative as cards.
+- **Roll calls as cards** that flip as players answer, with the DC and "3 of 4 succeeded".
+- **Its own dice:** a shared roll lands big on the TV; a nat 20 or nat 1 stays longer.
+- **Death saves:** on a downed player's turn, a heartbeat and three plus three boxes.
+- **Each new round:** what happened last round, then the countdown as a big ring.
+- **End of the fight:** victory, the MVP, the biggest hit, the luckiest roll, the final blow and the XP. Hidden creatures are never named.
+- Its own look (theme, colours, fonts, scene) with a live preview, and a Light mode for a slow TV browser. You choose which big moments show on the tablet, on the TV, or on both.
+
+<table>
+<tr>
+<td width="50%"><img src="media/tv-roll-call.jpg" width="100%" alt="A roll call on the TV: a card for each player with their result and the DC"><br><sub>A roll call on the TV.</sub></td>
+<td width="50%"><img src="media/tv-end.jpg" width="100%" alt="The end of the fight on the TV: Victory, the MVP, the luckiest roll, the final blow and the XP"><br><sub>The end of the fight.</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="media/tv-title.jpg" width="100%" alt="A title card on the TV: The Ashen Peaks, where the road climbs into smoke"><br><sub>A title card.</sub></td>
+<td width="50%"><img src="media/tv-break.jpg" width="100%" alt="A break timer on the TV"><br><sub>A short break, counting down.</sub></td>
+</tr>
+</table>
+
 ### 13 themes and 35 animated scenes
 
 <p align="center"><img src="media/scenes.gif" width="720" alt="Animated scenes: Infernal wastes, Blood moon, Ritual circle, Forest with rain at dusk, Graveyard at night, Festival, Northern lights with snow"></p>
@@ -119,36 +149,22 @@ Pick a theme, then change any part of it: colours, fonts, row style, an animated
 
 ---
 
-## On a TV
-
-<img src="media/tv.gif" width="100%" alt="The TV shows the creature whose turn it is, huge, with the next three on the side">
-
-- **Spotlight:** whose turn it is, huge, with who's up next. **Order:** the whole initiative as cards.
-- **Title cards** for locations and chapters, and a **break timer** ("we continue at 21:40").
-- Its own look (theme, colours, fonts, scene) with a live preview, and a Light mode for a slow TV browser. You choose which big moments show on the tablet, on the TV, or on both.
-
-<table>
-<tr>
-<td width="50%"><img src="media/tv-title.jpg" width="100%" alt="A title card on the TV: The Burning Pass, two days north of Daggerford"><br><sub>A title card.</sub></td>
-<td width="50%"><img src="media/tv-break.jpg" width="100%" alt="A break timer on the TV"><br><sub>A short break, counting down.</sub></td>
-</tr>
-</table>
-
----
-
 ## On players' phones
 
+https://github.com/user-attachments/assets/74e67b4d-6e6c-4e54-afd7-6e985122e99a
+
+<p align="center"><sub>A player's phone with the tablet beside it: joining, initiative, a spell on the table, resources, the sheet, a roll call, Concentration and death saves (under a minute, no sound).</sub></p>
+
 <table>
 <tr>
-<td width="30%" valign="top"><img src="media/phone.gif" width="100%" alt="A phone answers the dragon's Dexterity save roll call, then takes 30 damage"></td>
 <td width="30%" valign="top"><img src="media/phone-sheet.jpg" width="100%" alt="A character sheet on a phone with tap-to-roll checks, saves and attacks"></td>
 <td valign="top">
 
 - Join by scanning a QR code. Nothing to install.
-- **Their own HP**, temp HP and death saves, with big buttons and a keypad.
+- **Their own HP**, temp HP and death saves, with big buttons and the app's own keypad.
 - **Character sheet (optional):** fill it in step by step or paste the text of an existing sheet. Checks, saves, skills and attacks roll with the real bonuses, and a roll call offers "Roll Dex save +2".
 - **Spellbook** with full spell cards and prepared spells, including the ones a subclass always prepares. "Show it on the table" plays a spell in the tablet's scene.
-- **Spell slots and class resources** (Rage, Focus, Channel Divinity…) that short and long rests reset.
+- **Spell slots and class resources** (Rage, Focus, Channel Divinity…) as circles: tap a full one to use it, an empty one to get it back. Short and long rests reset them.
 - They answer your **roll calls** and **Concentration saves**, give Bardic Inspiration to a friend, and run their familiar or summon.
 - **Simple mode** for players who keep the rest on paper: just their HP, plus whatever you send them.
 
@@ -171,10 +187,12 @@ Pick a theme, then change any part of it: colours, fonts, row style, an animated
 
 ### Windows
 1. Download `Roundkeeper-windows.zip` from [Releases](../../releases) and unzip it anywhere.
-2. Double-click `Roundkeeper.exe`. Your browser opens the DM screen and shows a QR code.
-3. On the table screen, the TV and the phones, scan the QR code or type the address it shows. Pick **This is the tablet**, **This is the TV**, or your character.
+2. Double-click `Roundkeeper.exe`. Your browser opens the DM screen.
+3. Click **Devices**: it shows a QR code for the players and the full address for the tablet and the TV. Scan the code or type the address, then pick **This is the tablet**, **This is the TV**, or your character.
 
 Windows may say *"Windows protected your PC"* because the app isn't signed. Click **More info → Run anyway**. The exe is built by GitHub from the code in this repository; see [`.github/workflows`](.github/workflows).
+
+<p align="center"><img src="media/devices.jpg" width="460" alt="The Devices window: the QR code and address for players, the tablet and the TV with their addresses, and which phones are connected"><br><sub><b>Devices:</b> who is connected, and where each screen goes.</sub></p>
 
 ### Mac and Linux
 You need Python 3 (no extra packages).
@@ -189,6 +207,7 @@ Then open the address it prints.
 Run the app on a desktop (on a cable, or connected to the TV), then pair your laptop as the DM under **Devices → DM devices**. Phones stay players.
 
 ### If someone can't connect
+**Devices → Can't connect?** in the app has the same list.
 - Everyone must be on the same Wi-Fi.
 - On Windows, allow the app through the firewall when asked (private networks).
 - Guest networks often block devices from seeing each other.
