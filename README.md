@@ -14,7 +14,8 @@ It comes with the **SRD 5.2.1** built in: 331 monsters with clickable statblocks
 
 <p align="center">
   <a href="../../releases/latest"><b>⬇&nbsp;&nbsp;Download for Windows</b></a>
-  &nbsp;·&nbsp; <a href="#mac-and-linux">Mac and Linux</a>
+  &nbsp;·&nbsp; <a href="#mac">Mac</a>
+  &nbsp;·&nbsp; <a href="#linux">Linux</a>
   &nbsp;·&nbsp; <a href="#getting-started">Getting started</a>
   &nbsp;·&nbsp; <a href="#faq">FAQ</a>
 </p>
@@ -194,14 +195,18 @@ Windows may say *"Windows protected your PC"* because the app isn't signed. Clic
 
 <p align="center"><img src="media/devices.jpg" width="460" alt="The Devices window: the QR code and address for players, the tablet and the TV with their addresses, and which phones are connected"><br><sub><b>Devices:</b> who is connected, and where each screen goes.</sub></p>
 
-### Mac and Linux
-You need Python 3 (no extra packages).
+### Mac
+1. Download `Roundkeeper-mac.zip` from [Releases](../../releases) and unzip it into a normal folder, e.g. `Documents/Roundkeeper`. It's one program for both Intel and Apple Silicon Macs.
+2. Double-click `Roundkeeper`. A Terminal window opens and keeps the server running, and your browser opens the DM screen.
+3. The first time, the Mac says it can't check the developer, because the app isn't signed with an Apple account. Click **Done**, open **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to Roundkeeper. When the Mac asks whether to accept incoming network connections, choose **Allow**.
 
-```
-python3 server.py
-```
+The Mac version is new. If it doesn't start, please [open an issue](../../issues) and use the Python version below meanwhile.
 
-Then open the address it prints.
+### Linux
+Download `Roundkeeper-linux.zip`, unzip it, and run `./roundkeeper` (on a Raspberry Pi or another ARM computer, `./roundkeeper-arm64`). Nothing else to install. Then open the address it prints.
+
+### Python version (any computer with Python 3)
+`Roundkeeper-python.zip` does the same with Python 3 and no extra packages: run `python3 server.py` and open the address it prints. It's kept for now, alongside the programs above.
 
 ### Server on a desktop, DM on a laptop
 Run the app on a desktop (on a cable, or connected to the TV), then pair your laptop as the DM under **Devices → DM devices**. Phones stay players.
@@ -240,7 +245,7 @@ Run the app on a desktop (on a cable, or connected to the TV), then pair your la
 
 **Which rules?** Fifth edition as revised in 2024 (conditions, durations, Concentration, death saves, Exhaustion). Players can switch their spell list to the 2014 versions when your files have them.
 
-**Mac or Linux?** Yes, with Python 3 (`python3 server.py`). The ready-made program is for Windows 10 and 11.
+**Mac or Linux?** Yes. There is a ready-made program for Windows 10 and 11, for Mac (Intel and Apple Silicon) and for Linux (x86-64 and ARM). The Python version runs anywhere with Python 3.
 
 **Can I use it online, with players at home?** It's made for a table in one room, on one Wi-Fi network.
 

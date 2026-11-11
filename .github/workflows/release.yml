@@ -1,5 +1,5 @@
 name: Release
-# Push a tag like v1.0 and GitHub builds the Windows program and the Python version, and attaches them to a release.
+# Push a tag like v1.0 and GitHub builds the program for Windows, Mac and Linux and the Python version, and attaches them to a release.
 on:
   push:
     tags: ["v*"]
@@ -24,8 +24,22 @@ jobs:
       - name: Build Roundkeeper.exe
         working-directory: go
         run: GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o Roundkeeper.exe .
+      - name: Build for Mac (one universal program) and Linux
+        working-directory: go
+        env:
+          CGO_ENABLED: "0"
+        run: |
+          GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o rk-mac-x86_64 .
+          GOOS=darwin GOARCH=arm64 go build -trimpath -ldflags "-s -w" -o rk-mac-arm64 .
+          python3 ../tools/makefat.py Roundkeeper rk-mac-x86_64 rk-mac-arm64
+          GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o roundkeeper .
+          GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "-s -w" -o roundkeeper-arm64 .
       - name: Zip
         run: |
+          (cd go && zip -q ../Roundkeeper-mac.zip Roundkeeper)
+          zip -q Roundkeeper-mac.zip README.md THIRD-PARTY-NOTICES.txt LICENSE
+          (cd go && zip -q ../Roundkeeper-linux.zip roundkeeper roundkeeper-arm64)
+          zip -q Roundkeeper-linux.zip README.md THIRD-PARTY-NOTICES.txt LICENSE
           (cd go && zip -q ../Roundkeeper-windows.zip Roundkeeper.exe)
           zip -q Roundkeeper-windows.zip README.md THIRD-PARTY-NOTICES.txt LICENSE allow-network.bat
           zip -qr Roundkeeper-python.zip initiative.html server.py start.bat allow-network.bat icon-192.png icon-512.png fonts srd README.md THIRD-PARTY-NOTICES.txt LICENSE
@@ -35,5 +49,7 @@ jobs:
         with:
           files: |
             Roundkeeper-windows.zip
+            Roundkeeper-mac.zip
+            Roundkeeper-linux.zip
             Roundkeeper-python.zip
             SHA256SUMS.txt

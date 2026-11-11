@@ -72,8 +72,8 @@ var (
 	mu         sync.Mutex
 	state      map[string]any
 	lastPlayer time.Time
-	lastTV     time.Time // when the TV last asked for the state
-	lastTablet time.Time // when the tablet last asked (pages that say screen=tablet)
+	lastTV     time.Time                // when the TV last asked for the state
+	lastTablet time.Time                // when the tablet last asked (pages that say screen=tablet)
 	phoneSeen  = map[string]time.Time{} // character id -> when that player's phone last asked; only the DM gets this, from /info
 	pending    []map[string]any
 	hasTLS     bool
@@ -1237,7 +1237,11 @@ func main() {
 		f.Close()
 		os.Remove(f.Name())
 	} else {
-		fmt.Printf("This folder can't be written to:\n  %s\nMove Roundkeeper.exe to a normal folder, e.g. Documents\\Roundkeeper.\n", here)
+		where := "Documents\\Roundkeeper"
+		if runtime.GOOS != "windows" {
+			where = "Documents/Roundkeeper"
+		}
+		fmt.Printf("This folder can't be written to:\n  %s\nMove Roundkeeper to a normal folder, e.g. %s.\n", here, where)
 		waitAndExit()
 	}
 
@@ -1293,7 +1297,12 @@ func main() {
 		fmt.Println("  (the first time, the browser warns about the certificate: Advanced -> Proceed)")
 	}
 	fmt.Printf("  Your data is kept in:          %s\n", here)
-	fmt.Println("  If Windows asks whether to allow network access, choose Allow (private networks).")
+	switch runtime.GOOS {
+	case "windows":
+		fmt.Println("  If Windows asks whether to allow network access, choose Allow (private networks).")
+	case "darwin":
+		fmt.Println("  If the Mac asks whether to accept incoming network connections, choose Allow.")
+	}
 	fmt.Println("  Close this window to stop the server.")
 	fmt.Println("  When the tablet or a phone opens the page, it shows up here.")
 	fmt.Println(line)
