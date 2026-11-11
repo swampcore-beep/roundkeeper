@@ -47,7 +47,7 @@ Never commit those files.
 | t16–t24 | the 5e.tools library: lair actions, 2014/2024 printings, effects, damage popover, Concentration, themes, Legendary Resistance, DM pairing, pictures |
 | t25–t28 | the TV, round 1–3 features (player HP for the DM, character sheets, scenes and reactions) |
 | t29 | the SRD with no data folder, and Settings → Game data → Import JSON |
-| t30–t32 | the phone's tracker circles, UI polish (Add monsters, badges without codes), the Devices window and who is connected |
+| t30–t33 | the phone's tracker circles, UI polish (Add monsters, badges without codes), the Devices window and who is connected, TV pack 2 (dice, roll call, death saves, countdown, initiative, end of the fight) |
 | ui, hov | the monster search sheet; hover cards for spells and rules |
 
 ## Media for the README
