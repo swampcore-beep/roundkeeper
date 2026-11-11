@@ -6,23 +6,25 @@ A free, offline combat tracker for in-person 5e (2024 rules). The DM runs it on 
 
 | Path | What |
 |---|---|
-| `initiative.html` | The whole app in one file (~9000 lines, long lines: use Grep with a pattern, then Read with offset/limit around the hit; never read it whole) |
+| `src/` | The app's source in parts (`NN-name.css`, `.js`, `.html`): **edit these** |
+| `initiative.html` | The whole app in one file, put together from `src/` by `tools/build.py`; never edit it by hand (the exe embeds it, the Python server serves it) |
 | `server.py` | Python server, standard library only (Mac/Linux and the Python zip) |
 | `go/main.go`, `go/fivetools.go` | Go server, the same behaviour, built into `Roundkeeper.exe` |
 | `srd/srd-5.2.1.json` | The built-in SRD (made by `tools/srd_from_open5e.py`) |
 | `media/` | README pictures and GIFs (regenerate with `dev/media/`) |
 | `dev/` | Test servers, test suites, media scripts: see `dev/README.md` |
 | `.github/workflows/release.yml` | A `v*` tag builds the Windows exe and both zips and attaches them to the release |
+| `.github/workflows/check.yml` | Every pull request: `initiative.html` must match `src/` |
 
-### Inside `initiative.html`
+### Inside the app (`src/`)
 
-Lines 15–1857 are CSS, then the markup. The first `<script>` is the QR code library (MIT). The app is the second script, one IIFE from `(function(){` (about line 4251) to the end. Find things by name:
+`python3 tools/build.py` joins `src/*` in the order of their numbers into `initiative.html` (`--check` only compares). `dev/serve.sh` and `dev/test.sh` build first, so a test always runs the current `src/`. Commit the built `initiative.html` together with the `src/` change. The parts are pieces of one file, not modules: `00-head.html` opens the page and the `<style>`, `10-`…`30-` are the CSS (DM, tablet, phone, status effects, frames, themes, TV…), `40-body.html` is the markup, `50-qrcode.js` the QR code library (MIT, leave it as it is), and `60-`…`86-` are the app, one IIFE from `(function(){` (first line of `60-data.js`; `dev/serve.sh` adds the test hook there) to `})();` at the end of `86-boot.js`. A new part takes a free number between its neighbours. Keep lines under about 160 characters (long HTML strings and data URIs may run over); `node dev/wrap/wrap.js` breaks long ones where whitespace means nothing and proves the JS tree and CSS rules didn't change. Find things by name with Grep in `src/`:
 
 - Mode and sync: `const MODE` ("dm" or "player"), `meName` ("*" on the tablet/TV), `commit()` → `finish()` → POST /state. Phones send actions to POST /player.
 - DM screen: `renderDM`, statblocks `parseStatblock` / `sbSheet`, Hit several `mtStart` / `mtRender`, Ctrl+K `qkLoad` / `qk…`, Atmosphere `atmoSheet`, conditions `condSheet`, Game data `gdSheet`, monster search `fetBoxHtml` / `fetRedraw`, rules cards `refGet`.
 - Tablet and phones: `renderPlayer`; phone sheets `renderPSheet`; spells `spLoad`; class data `pcLoad`.
 - TV: `tvRender`. Scenes: `SCENES`, `THEMES`, the `Scene` engine, `sceneReact`.
-- One delegated click handler: `document.addEventListener('click'`, keyed by `data-act` (search for `case "name"` or the name in quotes).
+- One delegated click handler in `85-events.js`: `document.addEventListener('click'`, keyed by `data-act` (search for `case "name"` or the name in quotes).
 
 ### Servers
 

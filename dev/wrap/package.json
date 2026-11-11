@@ -1,0 +1,6 @@
+{
+  "name": "roundkeeper-wrap",
+  "private": true,
+  "description": "Breaks long lines in src/ and proves nothing else changed (dev tool only)",
+  "dependencies": { "acorn": "^8.15.0", "postcss": "^8.5.0" }
+}

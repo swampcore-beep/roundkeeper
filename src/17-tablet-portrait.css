@@ -1,0 +1,48 @@
+/* ---------- portrait Tablet + badges that shrink instead of disappearing ---------- */
+ol.plist.port{grid-auto-flow:row;grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-auto-rows:max-content;align-content:start}
+ol.plist.port li,ol.plist.stack li{flex-wrap:wrap;align-content:center;row-gap:.12em;column-gap:.5em}
+ol.plist.port li{min-height:2.3em;padding-top:.28em;padding-bottom:.28em}
+ol.plist.port li .nmw,ol.plist.stack li .nmw{flex:1 1 0;min-width:0}
+ol.plist.port li .acw,ol.plist.stack li .acw{order:2}
+ol.plist.port li .ic,ol.plist.stack li .ic{order:3;flex:1 0 100%;justify-content:flex-start;padding-left:3.7em;font-size:.5em;max-height:none;row-gap:.3em}
+ol.plist.port li .ic:empty,ol.plist.stack li .ic:empty{display:none}
+ol.plist.stack li .ic{font-size:.46em;padding-left:3.9em}
+.ic .st{display:none}
+.ic .effm{display:none}
+li.c1 .ic .lt{display:none}li.c1 .ic .st{display:inline}
+li.c1 .ic .effi{display:none}li.c1 .ic .effm{display:inline-block}
+li.c1 .badge .t{display:none}li.c1 .badge.blood{padding:.15em .45em}
+.ic .morec{font-weight:800;border-style:dashed;cursor:pointer}
+.p-empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--muted)}
+.p-empty strong{display:block;font-family:var(--display);font-size:clamp(2rem,5vw,4.5rem);color:var(--fg)}
+.offline{position:absolute;left:12px;bottom:12px;background:var(--enemy);color:#fff;font-weight:800;border-radius:999px;padding:6px 14px;
+  font-size:.9rem;z-index:6}
+.fsbtn{position:absolute;right:12px;bottom:12px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:6px 12px;color:var(--muted);
+  opacity:.4;font-weight:700;transition:opacity .4s;z-index:6}
+.fsbtn:hover,.fsbtn:focus-visible{opacity:1}
+.idle .fsbtn{opacity:0;pointer-events:none}
+.idle #player{cursor:none}
+.ghost{position:absolute;z-index:3;pointer-events:none;margin:0;overflow:hidden;isolation:isolate}
+.ghost .pos,.ghost .nmw,.ghost .ic{position:relative;z-index:1}
+.ash{position:absolute;z-index:4;pointer-events:none;width:.5vw;height:.5vw;min-width:4px;min-height:4px;border-radius:1px}
+
+/* boss intro */
+.intro{position:fixed;inset:0;z-index:8;display:grid;place-items:center;text-align:center;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 50% 50%,color-mix(in srgb,var(--fc,#8c1a20) 42%,rgba(20,4,6,.6)),rgba(5,4,8,.94) 70%)}
+.intro-inner{display:grid;gap:2vh;justify-items:center;padding:0 6vw}
+.intro-kicker{font-weight:800;letter-spacing:.5em;text-transform:uppercase;font-size:clamp(.8rem,1.6vw,1.3rem);color:var(--boss)}
+.intro-name{font-family:var(--display);font-weight:800;font-size:clamp(2.8rem,9vw,8.5rem);line-height:1;color:#fff;
+  text-shadow:0 0 .4em color-mix(in srgb,var(--fc,#dc3c28) 65%,transparent),0 .05em 0 #000;text-wrap:balance}
+.intro-rule{height:2px;width:min(60vw,700px);background:linear-gradient(90deg,transparent,var(--boss),transparent)}
+.intro-title{font-family:var(--body);font-style:italic;font-size:clamp(1.1rem,2.6vw,2.3rem);color:var(--fg)}
+
+/* end of combat */
+.endscr{position:absolute;inset:0;z-index:7;display:grid;place-items:center;text-align:center;
+  background:radial-gradient(ellipse 70% 55% at 50% 45%,color-mix(in srgb,var(--accent) 16%,transparent),color-mix(in srgb,var(--bg) 92%,transparent) 70%)}
+.end-inner{display:grid;gap:2.2vh;justify-items:center;padding:0 6vw}
+.end-kicker{font-weight:800;letter-spacing:.45em;text-transform:uppercase;font-size:clamp(.8rem,1.5vw,1.2rem);color:var(--accent)}
+.end-title{font-family:var(--display);font-weight:800;font-size:clamp(2.6rem,8vw,7rem);line-height:1;text-wrap:balance}
+.end-rule{height:2px;width:min(50vw,560px);background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.end-stats{display:flex;gap:4vw;flex-wrap:wrap;justify-content:center;font-size:clamp(1rem,2vw,1.7rem);color:var(--muted)}
+.end-stats b{display:block;font-family:var(--display);font-size:2em;color:var(--fg);line-height:1.1}
+

@@ -1,0 +1,105 @@
+/* ---------- shared screen: battlefield, roll calls, hourglass, celebrations ---------- */
+.field-strip{display:flex;flex-wrap:wrap;gap:.5em;align-items:center;font-size:clamp(.8rem,1.4vw,1.15rem)}
+.field-strip .cond{font-size:1em;padding:.15em .8em;cursor:pointer}.field-strip small{opacity:.7;font-weight:500;margin-left:.45em}
+.callbar{display:flex;align-items:center;gap:.7em;flex-wrap:wrap;border:2px solid var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--panel));
+  border-radius:.6em;padding:.45em .9em;font-size:clamp(.9rem,1.8vw,1.5rem)}
+.callbar .d20{width:1.5em;height:1.5em;color:var(--accent)}
+.calltext{font-family:var(--display);font-weight:800}
+.callwho{display:flex;gap:.4em;flex-wrap:wrap;margin-left:auto;font-size:.8em}
+.cw{border-radius:999px;padding:.1em .7em;background:var(--panel2);border:1px solid var(--line)}
+.cw.pass,.cw.done{border-color:var(--save);color:var(--save)}.cw.fail{border-color:var(--fail);color:var(--fail)}.cw.wait{color:var(--muted)}
+.cw .rn{margin-right:.35em}.cw .rv{font-weight:800}
+/* Tablet: a panel with one tile per player (name, big tick or cross, the number they rolled) */
+body.shared #player .callbar{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:.5em .6em;padding:.6em .8em;
+  font-size:clamp(1.4rem,min(3vw,3vh),2.4rem)}
+body.shared #player .callbar .d20{width:1.3em;height:1.3em}
+body.shared #player .callbar .calltext{font-size:1.25em}
+body.shared #player .callbar .callsum{grid-row:1;grid-column:3;font-size:1.1em}
+body.shared #player .callbar .callwho{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(5.2em,1fr));gap:.45em;margin-left:0;
+  width:100%;font-size:1em}
+body.shared #player .callbar .cw{display:flex;flex-direction:column;align-items:center;gap:.05em;border-radius:.45em;padding:.35em .4em;border-width:.08em;
+  min-width:0}
+body.shared #player .callbar .cw .rn{margin:0;font-size:.8em;color:var(--fg);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.shared #player .callbar .cw .rv{font-family:var(--display);font-size:1.5em;line-height:1}
+body.shared #player .callbar .cw.pass,body.shared #player .callbar .cw.done{background:color-mix(in srgb,var(--save) 16%,var(--panel))}
+body.shared #player .callbar .cw.fail{background:color-mix(in srgb,var(--fail) 16%,var(--panel))}
+body.shared #player .callbar.mini{display:flex;flex-wrap:wrap;align-items:center;font-size:clamp(1rem,min(1.9vw,1.9vh),1.5rem);padding:.3em .7em;gap:.3em .6em;
+  animation:none}
+body.shared #player .callbar.mini .d20{width:1.1em;height:1.1em}body.shared #player .callbar.mini .calltext{font-size:1em}
+body.shared #player .callbar.mini .callwho{display:flex;flex-wrap:wrap;gap:.3em;width:auto;grid-column:auto}
+body.shared #player .callbar.mini .cw{flex-direction:row;gap:.35em;padding:.08em .55em;border-radius:999px;border-width:1px}
+body.shared #player .callbar.mini .cw .rn{font-size:.85em}body.shared #player .callbar.mini .cw .rv{font-size:.95em;font-family:inherit}
+body.shared #player .callbar.mini .callsum{margin-left:auto;font-size:1em}
+.callbar.mini{animation:none}
+@media (prefers-reduced-motion:no-preference){.callbar{animation:callpulse 2s ease-in-out infinite}@keyframes callpulse{50%{
+  box-shadow:0 0 1.2em color-mix(in srgb,var(--accent) 40%,transparent)}}}
+.ic .tagc{font-size:.85em;padding:.15em .7em;border-radius:999px;border:1px dashed var(--muted);color:var(--muted);white-space:nowrap}
+.ic .tagc.readied{border-color:var(--accent);color:var(--accent)}.ic .tagc.dodge{border-color:var(--pc);color:var(--pc)}
+.ic .covc{font-size:.85em;padding:.15em .7em;border-radius:.3em;border:1px solid var(--stone);background:color-mix(in srgb,var(--stone) 22%,var(--panel2));
+  white-space:nowrap}
+.ic .know{font-size:.85em;padding:.15em .7em;border-radius:.3em;border:1px dotted var(--arcane);color:var(--fg);white-space:nowrap}
+#hourglass{position:fixed;left:50%;top:max(10px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:35;display:flex;align-items:center;gap:.6em;
+  background:var(--panel);border:2px solid var(--accent);border-radius:999px;padding:.4em 1em;font-size:clamp(1rem,2vw,1.6rem);
+    box-shadow:0 10px 40px rgba(0,0,0,.5)}
+#hourglass svg{width:1.4em;height:1.4em;color:var(--accent)}
+.hg-name{font-family:var(--display);font-weight:800}.hg-left{font-variant-numeric:tabular-nums;font-weight:800;min-width:3ch}
+.hg-bar{width:min(22vw,220px);height:.45em;border-radius:99px;background:var(--bg);overflow:hidden}.hg-bar i{display:block;height:100%;background:var(--accent);
+  transition:width .25s linear}
+#dmTimer{position:fixed;left:16px;bottom:calc(18px + var(--covered,0px));z-index:40;display:flex;align-items:center;gap:10px;background:var(--panel);
+  border:2px solid var(--accent);border-radius:999px;padding:6px 8px 6px 14px;box-shadow:0 10px 40px rgba(0,0,0,.5);font-size:1.05rem}
+#dmTimer svg{width:1.3em;height:1.3em;color:var(--accent)}
+#dmTimer .hg-left{min-width:3.6ch;font-variant-numeric:tabular-nums}
+#dmTimer .btn.sm{padding:5px 12px;font-size:.88rem;border-radius:999px}
+#dmTimer.low{border-color:var(--fail)}#dmTimer.done{border-color:var(--fail)}#dmTimer.done .hg-left{color:var(--fail)}
+/* on the tablet the hourglass is read from across the table */
+body.shared #hourglass{top:auto;bottom:max(18px,env(safe-area-inset-bottom,0px));width:min(92vw,980px);box-sizing:border-box;justify-content:center;
+  flex-wrap:wrap;row-gap:.3em;column-gap:.5em;
+  font-size:clamp(1.7rem,4.4vw,3.2rem);padding:.35em .9em .5em;border-width:4px;border-radius:.7em;background:color-mix(in srgb,var(--panel) 94%,transparent);
+    box-shadow:0 14px 60px rgba(0,0,0,.7)}
+body.shared #hourglass svg{width:1.3em;height:1.3em}
+body.shared .hg-left{font-family:var(--display);font-size:1.9em;line-height:1;color:var(--accent);min-width:2.2ch;text-align:right}
+body.shared #hourglass.low .hg-left{color:var(--fail)} body.shared #hourglass.done .hg-left{color:#fff}
+body.shared .hg-bar{order:5;flex:1 0 100%;width:auto;height:.32em}
+.hg-left small{font-family:var(--body);font-weight:700;font-size:.5em;margin-left:.06em}
+#hourglass.low{border-color:var(--fail)}#hourglass.low .hg-bar i{background:var(--fail)}
+#hourglass.done{border-color:var(--fail);background:var(--fail);color:#fff}#hourglass.done svg{color:#fff}
+@media (prefers-reduced-motion:no-preference){#hourglass svg{animation:hgflip 3s ease-in-out infinite}@keyframes hgflip{0%,85%{transform:none}100%{
+  transform:rotate(180deg)}}#hourglass.low{animation:hgshake .4s linear infinite}@keyframes hgshake{25%{transform:translateX(calc(-50% - 3px))}75%{
+  transform:translateX(calc(-50% + 3px))}}}
+.rollbanner{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:36;display:flex;
+  align-items:center;gap:.7em;
+  background:var(--panel);border:1px solid var(--accent);border-radius:14px;padding:.5em 1.1em;font-size:clamp(1rem,2vw,1.5rem);
+    box-shadow:0 10px 40px rgba(0,0,0,.5);max-width:92vw}
+.rollbanner .d20{width:1.4em;height:1.4em;color:var(--accent)}.rollbanner strong{font-family:var(--display);font-size:1.6em;color:var(--accent)}
+.has-bar~.rollbanner{bottom:140px}
+body.shared.hg-on .rollbanner{bottom:calc(var(--hgh,150px) + 30px)}
+body.shared .rollbanner{width:max-content;font-size:clamp(1.7rem,4.4vw,3.2rem);bottom:max(28px,env(safe-area-inset-bottom,0px));padding:.45em 1em;
+  border-width:3px;border-radius:.6em;gap:.6em;box-shadow:0 14px 60px rgba(0,0,0,.7)}
+body.shared .rollbanner .d20{width:1.3em;height:1.3em}
+body.shared .rollbanner strong{font-size:1.8em;line-height:1}
+.celebrate{position:fixed;inset:0;z-index:45;display:grid;place-items:center;pointer-events:none;overflow:hidden}
+.cel-inner{display:grid;justify-items:center;text-align:center;position:relative}
+.cel-k{font-weight:800;letter-spacing:.5em;text-transform:uppercase;font-size:clamp(.9rem,2vw,1.6rem)}
+.cel-n{font-family:var(--display);font-weight:800;font-size:clamp(7rem,28vw,22rem);line-height:.9}
+.cel-who{font-family:var(--display);font-size:clamp(1.4rem,4vw,3rem)}
+.celebrate.n20{background:radial-gradient(circle at 50% 50%,rgba(255,214,120,.35),rgba(10,8,4,.82) 65%);color:#ffe3a0}
+.celebrate.n20 .cel-n{color:#ffd36b;text-shadow:0 0 .15em #fff3,0 0 .4em #ffb63a}
+.celebrate.n20 .rays{position:absolute;width:160vmax;height:160vmax;background:repeating-conic-gradient(rgba(255,214,120,.18) 0 6deg,transparent 6deg 18deg);
+  border-radius:50%}
+.celebrate.n20 i{position:absolute;left:50%;top:50%;width:.9vmin;height:.9vmin;min-width:5px;min-height:5px;background:#ffd36b;border-radius:1px}
+.celebrate.n1{background:radial-gradient(circle at 50% 50%,rgba(120,10,20,.45),rgba(6,4,6,.88) 65%);color:#ff8a8a}
+.celebrate.n1 .cel-n{color:#ff5a5a;text-shadow:0 .03em 0 #000}
+.celebrate.n1 .crack{position:absolute;inset:0;width:100%;height:100%;color:rgba(255,255,255,.55)}
+@media (prefers-reduced-motion:no-preference){
+  .celebrate{animation:celin 3.6s ease-in-out forwards}@keyframes celin{0%{opacity:0}8%{opacity:1}80%{opacity:1}100%{opacity:0}}
+  .celebrate.n20 .cel-inner{animation:n20pop 1s cubic-bezier(.2,1.6,.4,1)}@keyframes n20pop{0%{transform:scale(.2) rotate(-12deg)}100%{transform:none}}
+  .celebrate.n20 .rays{animation:raysp 3.6s linear}@keyframes raysp{to{transform:rotate(60deg)}}
+  .celebrate.n20 i{animation:spark 1.6s cubic-bezier(.1,.7,.3,1) both}
+  @keyframes spark{0%{transform:rotate(var(--a)) translateX(0) scale(1.4);opacity:1}100%{transform:rotate(var(--a)) translateX(var(--d)) scale(.3);opacity:0}}
+  .celebrate.n1 .cel-inner{animation:n1shake .6s linear 2}@keyframes n1shake{20%{transform:translate(-8px,3px) rotate(-2deg)}40%{transform:translate(7px,-4px)}
+    60%{transform:translate(-5px,-2px) rotate(1.5deg)}80%{transform:translate(4px,3px)}}
+  .celebrate.n1 .crack path{stroke-dasharray:300;stroke-dashoffset:300;animation:crackdraw .5s ease-out .1s forwards}@keyframes crackdraw{to{
+    stroke-dashoffset:0}}
+  .rollbanner{animation:bannerin .4s ease-out}@keyframes bannerin{from{transform:translate(-50%,20px);opacity:0}}
+}
+

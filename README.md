@@ -265,7 +265,7 @@ I designed this for my own table, decided how every part should work, and tested
 
 Found a bug or have an idea? [Open an issue](../../issues). It helps to say how your table is set up: which screens you use, and whether your players use phones or paper.
 
-Pull requests are welcome. By opening one, you agree that your contribution is licensed under the AGPL-3.0 (or later) like the rest of the code, and that the maintainer may also license it under other terms.
+Pull requests are welcome. The app is edited in [`src/`](src) and put together into `initiative.html` with `python3 tools/build.py`; [`dev/README.md`](dev/README.md) has the test servers and suites. By opening one, you agree that your contribution is licensed under the AGPL-3.0 (or later) like the rest of the code, and that the maintainer may also license it under other terms.
 
 ---
 
