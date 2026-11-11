@@ -2,7 +2,8 @@
 let undoStack=[],redoStack=[],snap=null,pushing=false,pushAgain=false,pushTimer=null;
 function setSync(s,t){const el=$("#sync");if(!el)return;el.dataset.s=s;el.lastElementChild.textContent=t}
 /* combat recap: what happened, kept on the laptop only (the server never sends state.clog to players) */
-function clogPush(t){if(MODE!=="dm")return;state.clog=state.clog||[];state.clog.push({r:state.turn?state.turn.round:null,at:Date.now(),t});if(state.clog.length>300)state.clog.shift()}
+function clogPush(t){if(MODE!=="dm")return;state.clog=state.clog||[];state.clog.push({r:state.turn?state.turn.round:null,at:Date.now(),t});
+  if(state.clog.length>300)state.clog.shift()}
 let clogSeen=null;
 function clogScan(){
   if(!state.list.length||state.ended){clogSeen=null;return}
@@ -27,21 +28,27 @@ function turnTime(prevId){const pc=prevId&&byId(prevId);if(pc&&pc.kind==="pc"&&s
 const mmss=ms=>{const s=Math.round(ms/1000);return s<60?s+" s":Math.floor(s/60)+" min "+String(s%60).padStart(2,"0")+" s"};
 function recapStats(){
   const pcs=sorted().filter(c=>c.kind==="pc"),T=state.tstat||{},N=state.nstat||{};
-  const turns=pcs.filter(c=>T[c.id]&&T[c.id].n).map(c=>({c,n:T[c.id].n,avg:T[c.id].ms/T[c.id].n,max:T[c.id].max})),dice=pcs.filter(c=>N[c.id]&&(N[c.id].n20||N[c.id].n1)).map(c=>({c,n20:N[c.id].n20,n1:N[c.id].n1}));
+  const turns=pcs.filter(c=>T[c.id]&&T[c.id].n).map(c=>({c,n:T[c.id].n,avg:T[c.id].ms/T[c.id].n,max:T[c.id].max})),dice=pcs.filter(c=>N[c.id]&&(N[c.id].n20||
+    N[c.id].n1)).map(c=>({c,n20:N[c.id].n20,n1:N[c.id].n1}));
   return {turns,dice};
 }
 function recapText(){
   const out=[],f=state.fightAt,e=state.ended,end=e?e.at:Date.now(),d=new Date(f||end),log=state.clog||[];
   const dur=f?Math.max(1,Math.round((end-f)/60000)):null,rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
-  out.push(`Combat · ${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}${dur?` · ${dur} min`:""}${rounds?` · ${rounds} round${rounds>1?"s":""}`:""}`);
+  out.push(`Combat · ${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}${dur?` · ${dur} min`:""}${rounds?
+    ` · ${rounds} round${rounds>1?"s":""}`:""}`);
   const pcs=sorted().filter(c=>c.kind==="pc"),foes=sorted().filter(c=>c.kind!=="pc"&&c.kind!=="lair");
-  if(pcs.length)out.push("","Party: "+pcs.map(c=>`${c.name}${typeof c.init==="number"?` (init ${c.init})`:""}${c.down?(isDead(c)?" · dead":isStable(c)?" · stable at 0 HP":" · at 0 HP"):""}`).join(", "));
-  if(foes.length)out.push("Enemies: "+foes.map(c=>`${c.name}${c.down?" · defeated":c.hidden?" · never seen":c.bloodied?" · Bloodied":" · still standing"}`).join(", "));
+  if(pcs.length)out.push("","Party: "+pcs.map(c=>`${c.name}${typeof c.init==="number"?` (init ${c.init})`:""}${c.down?(isDead(c)?" · dead":isStable(c)?
+    " · stable at 0 HP":" · at 0 HP"):""}`).join(", "));
+  if(foes.length)out.push("Enemies: "+foes.map(c=>`${c.name}${c.down?" · defeated":c.hidden?" · never seen":c.bloodied?" · Bloodied":
+    " · still standing"}`).join(", "));
   const S=Object.entries(state.cstat||{}).filter(([,x])=>x.d>0).sort((a,b)=>b[1].d-a[1].d);
   if(S.length){out.push("","Damage dealt (to creatures whose HP you tracked, by whose turn it was):");
-    S.forEach(([n,x],i)=>out.push(`- ${n}: ${x.d}${x.top?` · biggest hit ${x.top.n} on ${x.top.t}${x.top.w?` (${x.top.w})`:""}`:""}${x.k?` · ${x.k} defeated`:""}${i===0&&S.length>1?" · most damage":""}`))}
+    S.forEach(([n,x],i)=>out.push(`- ${n}: ${x.d}${x.top?` · biggest hit ${x.top.n} on ${x.top.t}${x.top.w?` (${x.top.w})`:""}`:""}${x.k?` · ${x.k} defeated`:
+      ""}${i===0&&S.length>1?" · most damage":""}`))}
   {const {turns,dice}=recapStats();
-    if(turns.length){out.push("","Turns (players):");turns.sort((a,b)=>b.avg-a.avg).forEach(x=>out.push(`- ${x.c.name}: ${x.n} turn${x.n>1?"s":""} · ${mmss(x.avg)} on average · longest ${mmss(x.max)}`))}
+    if(turns.length){out.push("","Turns (players):");turns.sort((a,b)=>b.avg-a.avg).forEach(x=>out.push(`- ${x.c.name}: ${x.n} turn${x.n>1?"s":
+      ""} · ${mmss(x.avg)} on average · longest ${mmss(x.max)}`))}
     if(dice.length){out.push("","Natural 20s and 1s (rolled in the app):");dice.forEach(x=>out.push(`- ${x.c.name}: ${x.n20} × 20, ${x.n1} × 1`))}}
   if(log.length){out.push("","What happened:");let r;log.forEach(x=>{if(x.r!==r){r=x.r;if(r!=null)out.push(`Round ${r}`)}out.push(`- ${x.t}`)})}
   else out.push("","Nothing noted yet: defeats, 0 HP, Bloodied, saves, roll calls and natural 20s and 1s appear here as they happen.");
@@ -54,18 +61,23 @@ function recapDoc(){
   const pcs=sorted().filter(c=>c.kind==="pc"),foes=sorted().filter(c=>c.kind!=="pc"&&c.kind!=="lair"&&!c.hidden);
   const S=Object.entries(state.cstat||{}).filter(([,x])=>x.d>0).sort((a,b)=>b[1].d-a[1].d),{turns,dice}=recapStats(),top=S[0];
   const sec=(t,h)=>h?`<section><h2>${t}</h2>${h}</section>`:"";
-  const rows=(head,L)=>`<table><thead><tr>${head.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${L.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
-  let byR="",r;log.forEach(x=>{if(x.r!==r){if(r!==undefined)byR+="</ul>";r=x.r;byR+=`<h3>${r!=null?"Round "+r:"Before the first turn"}</h3><ul>`}byR+=`<li>${esc(x.t)}</li>`});if(byR)byR+="</ul>";
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Combat · ${esc(d.toLocaleDateString())}</title>
+  const rows=(head,L)=>`<table><thead><tr>${head.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${L.map(r=>`<tr>${r.map(x=>
+    `<td>${x}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  let byR="",r;log.forEach(x=>{if(x.r!==r){if(r!==undefined)byR+="</ul>";r=x.r;
+    byR+=`<h3>${r!=null?"Round "+r:"Before the first turn"}</h3><ul>`}byR+=`<li>${esc(x.t)}</li>`});if(byR)byR+="</ul>";
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Combat · ${esc(
+    d.toLocaleDateString())}</title>
 <style>:root{--fg:#221d16;--muted:#6b6254;--line:#dcd2bf;--accent:#a86a0e;--bg:#fbf7ef}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 Georgia,"Times New Roman",serif}
 main{max-width:760px;margin:0 auto;padding:40px 20px 60px}h1{font-size:2.1rem;margin:0 0 4px;letter-spacing:.01em}.meta{color:var(--muted);margin:0 0 24px;font-family:system-ui,sans-serif;font-size:.9rem}
 h2{font-size:1.15rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px;margin:30px 0 10px;font-family:system-ui,sans-serif}
 h3{font-size:1rem;margin:16px 0 4px}table{border-collapse:collapse;width:100%;font-family:system-ui,sans-serif;font-size:.92rem}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}
 ul{margin:0;padding-left:1.2em}li{margin:2px 0}.hl{background:#fbedc6;border:1px solid #e3c27a;border-radius:10px;padding:12px 14px;font-family:system-ui,sans-serif}@media print{body{background:#fff}main{padding:0}}</style></head><body><main>
 <h1>Combat${foes.length?" · "+esc(foes.filter(c=>c.boss).map(c=>c.name)[0]||foes[0].name):""}</h1>
-<p class="meta">${esc(d.toLocaleDateString())} ${esc(d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}))}${dur?` · ${dur} min`:""}${rounds?` · ${rounds} round${rounds>1?"s":""}`:""}</p>
+<p class="meta">${esc(d.toLocaleDateString())} ${esc(d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}))}${dur?` · ${dur} min`:""}${rounds?
+  ` · ${rounds} round${rounds>1?"s":""}`:""}</p>
 ${top?`<p class="hl"><b>Most damage:</b> ${esc(top[0])} with ${top[1].d}${top[1].top?` · biggest hit ${top[1].top.n} on ${esc(top[1].top.t)}`:""}</p>`:""}
-${sec("Party",pcs.length?rows(["Character","Initiative","At the end"],pcs.map(c=>[esc(c.name),typeof c.init==="number"?c.init:"",c.down?(isDead(c)?"dead":isStable(c)?"stable at 0 HP":"at 0 HP"):"standing"])):"")}
+${sec("Party",pcs.length?rows(["Character","Initiative","At the end"],pcs.map(c=>[esc(c.name),typeof c.init==="number"?c.init:"",c.down?(isDead(c)?"dead":
+  isStable(c)?"stable at 0 HP":"at 0 HP"):"standing"])):"")}
 ${sec("Enemies",foes.length?rows(["Creature","At the end"],foes.map(c=>[esc(c.name),c.down?"defeated":c.bloodied?"Bloodied":"still standing"])):"")}
 ${sec("Damage dealt",S.length?rows(["Who","Damage","Biggest hit","Defeated"],S.map(([n,x])=>[esc(n),x.d,x.top?`${x.top.n} on ${esc(x.top.t)}`:"",x.k||""])):"")}
 ${sec("Turns",turns.length?rows(["Player","Turns","Average","Longest"],turns.map(x=>[esc(x.c.name),x.n,mmss(x.avg),mmss(x.max)])):"")}
@@ -74,7 +86,8 @@ ${sec("What happened",byR)}
 </main></body></html>`;
 }
 function recapSheet(){
-  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true"><h2>Combat recap</h2><p class="psub">For your campaign notes. Only you see this.</p>
+  $(
+    "#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true"><h2>Combat recap</h2><p class="psub">For your campaign notes. Only you see this.</p>
     <textarea class="field recapbox" id="recapText" rows="14" readonly>${esc(recapText())}</textarea>
     <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button class="btn" type="button" data-act="recapdl">Save as .txt</button><button class="btn" type="button" data-act="recapdoc" title="A page to keep, print or send to the players">Save as a document</button><button class="btn primary" type="button" data-act="recapcopy">Copy</button><button class="btn" type="button" data-act="close">Close</button></div></div></div>`;
 }
@@ -93,10 +106,12 @@ function finish(){
   state.vanish=(state.vanish||[]).filter(v=>Date.now()-v.at<60000);
   {const gone=state.list.filter(c=>(c.byEff&&!state.effects.some(e=>e.id===c.byEff))||(c.owner&&!state.list.some(x=>x.id===c.owner)));
    state.list.forEach(c=>{const o=ownerOf(c);if(o)c.init=o.init});   // a companion's initiative is its owner's
-   if(gone.length){state.list=state.list.filter(c=>!gone.includes(c));gone.forEach(c=>clogPush(`${c.name} vanishes`));setTimeout(()=>toast(gone.map(c=>c.name).join(", ")+" vanishes"),0)}}
+   if(gone.length){state.list=state.list.filter(c=>!gone.includes(c));gone.forEach(c=>clogPush(`${c.name} vanishes`));
+     setTimeout(()=>toast(gone.map(c=>c.name).join(", ")+" vanishes"),0)}}
   // 0 HP or Incapacitated (Unconscious, Paralyzed, Petrified and Stunned include it) ends Concentration
   const lost=[];state.list.forEach(c=>{const cs=c.conds||[],nm=x=>x.n||x;if(!cs.some(x=>nm(x)==="Concentrating"))return;
-    if(c.down||cs.some(x=>["Incapacitated","Unconscious","Paralyzed","Petrified","Stunned"].includes(nm(x)))){c.conds=cs.filter(x=>nm(x)!=="Concentrating");lost.push(c.name)}});
+    if(c.down||cs.some(x=>["Incapacitated","Unconscious","Paralyzed","Petrified","Stunned"].includes(nm(x)))){c.conds=cs.filter(x=>nm(x)!=="Concentrating");
+      lost.push(c.name)}});
   if(lost.length)setTimeout(()=>toast(`Concentration ends: ${lost.join(", ")}`),0);
   if(MODE==="dm"){
     if(state.clogAt!==state.fightAt){state.clog=[];state.cstat={};state.tstat={};state.nstat={};state.clogAt=state.fightAt;clogSeen=null}
@@ -124,7 +139,8 @@ async function push(){
 }
 let toastT=null;
 let toastUndoFn=null;
-function toast(msg,ms){const t=$("#toast");if(!t)return;toastUndoFn=null;t.classList.remove("wact");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,ms||2600)}
+function toast(msg,ms){const t=$("#toast");if(!t)return;toastUndoFn=null;t.classList.remove("wact");t.textContent=msg;t.hidden=false;clearTimeout(toastT);
+  toastT=setTimeout(()=>t.hidden=true,ms||2600)}
 function toastUndo(msg,fn,ms){const t=$("#toast");if(!t)return;toast(msg,ms||7000);toastUndoFn=fn;t.classList.add("wact");
   t.insertAdjacentHTML("beforeend",`<button type="button" class="tundo" data-act="toastundo">Undo</button>`)}
 

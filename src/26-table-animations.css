@@ -1,36 +1,51 @@
 /* ---------- table animations ---------- */
 .fxo{position:fixed;pointer-events:none;z-index:9}
-.fxbaton{border:.12em solid var(--accent);background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 30%,transparent),color-mix(in srgb,var(--accent) 8%,transparent));box-shadow:0 0 1.6em color-mix(in srgb,var(--accent) 70%,transparent),inset 0 0 1.4em color-mix(in srgb,var(--accent) 35%,transparent);font-size:clamp(14px,2vw,40px)}
-.fxround{inset:0;display:grid;place-items:center;z-index:31;background:radial-gradient(ellipse at center,rgba(8,9,14,.92) 0,rgba(8,9,14,.8) 35%,rgba(0,0,0,.35) 75%)}
-.fxround>div{display:grid;justify-items:center;font-family:var(--display);color:var(--accent);text-shadow:0 0 .4em color-mix(in srgb,var(--accent) 55%,transparent),0 .05em 0 #000}
+.fxbaton{border:.12em solid var(--accent);background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 30%,transparent),color-mix(in srgb,var(--accent) 8%,
+  transparent));box-shadow:0 0 1.6em color-mix(in srgb,var(--accent) 70%,transparent),inset 0 0 1.4em color-mix(in srgb,var(--accent) 35%,transparent);
+  font-size:clamp(14px,2vw,40px)}
+.fxround{inset:0;display:grid;place-items:center;z-index:31;background:radial-gradient(ellipse at center,rgba(8,9,14,.92) 0,rgba(8,9,14,.8) 35%,rgba(0,0,
+  0,.35) 75%)}
+.fxround>div{display:grid;justify-items:center;font-family:var(--display);color:var(--accent);
+  text-shadow:0 0 .4em color-mix(in srgb,var(--accent) 55%,transparent),0 .05em 0 #000}
 .fxround small{font-family:var(--body);font-weight:800;letter-spacing:.35em;text-transform:uppercase;color:var(--fg);font-size:clamp(1rem,2.6vw,2rem)}
 .fxround b{font-size:clamp(6rem,26vw,16rem);line-height:.95}
-.fxround i{display:block;width:clamp(8rem,40vw,26rem);height:.12em;background:linear-gradient(90deg,transparent,var(--accent),transparent);font-size:clamp(1rem,2vw,2rem)}
+.fxround i{display:block;width:clamp(8rem,40vw,26rem);height:.12em;background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  font-size:clamp(1rem,2vw,2rem)}
 .fxsig{overflow:visible}
-.fxsig .ring{position:absolute;left:-.6em;top:-.6em;width:1.2em;height:1.2em;border-radius:50%;border:.08em solid currentColor;box-shadow:0 0 .6em currentColor;animation:fxring .8s ease-out forwards}
+.fxsig .ring{position:absolute;left:-.6em;top:-.6em;width:1.2em;height:1.2em;border-radius:50%;border:.08em solid currentColor;box-shadow:0 0 .6em currentColor;
+  animation:fxring .8s ease-out forwards}
 @keyframes fxring{0%{transform:scale(.4);opacity:1}100%{transform:scale(3.2);opacity:0}}
 .fxsig i{position:absolute;left:0;top:0;font-style:normal;animation:fxfly 1.3s cubic-bezier(.2,.7,.3,1) both}
-@keyframes fxfly{0%{transform:translate(-50%,-50%) scale(.3) rotate(0);opacity:0}20%{opacity:1}100%{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1) rotate(var(--r));opacity:0}}
+@keyframes fxfly{0%{transform:translate(-50%,-50%) scale(.3) rotate(0);opacity:0}20%{opacity:1}100%{
+  transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1) rotate(var(--r));opacity:0}}
 .fxsig.note i{font-size:1.05em;font-weight:900;text-shadow:0 0 .3em currentColor}
-.fxsig.spark i{width:.5em;height:.5em;background:currentColor;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);filter:drop-shadow(0 0 .15em currentColor)}
+.fxsig.spark i{width:.5em;height:.5em;background:currentColor;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);
+  filter:drop-shadow(0 0 .15em currentColor)}
 .fxsig.leaf i{width:.45em;height:.28em;background:currentColor;border-radius:0 80% 0 80%;opacity:.9}
-.fxsig.ray i{width:.09em;height:1.5em;background:linear-gradient(transparent,currentColor,transparent);transform-origin:50% 50%;filter:drop-shadow(0 0 .15em currentColor)}
+.fxsig.ray i{width:.09em;height:1.5em;background:linear-gradient(transparent,currentColor,transparent);transform-origin:50% 50%;
+  filter:drop-shadow(0 0 .15em currentColor)}
 .fxsig.ember i{width:.2em;height:.2em;border-radius:50%;background:currentColor;box-shadow:0 0 .3em currentColor}
 .fxclaw svg,.fxscar{position:absolute;right:9%;top:-8%;height:116%;width:auto;aspect-ratio:3/2;overflow:visible}
 .fxclaw path,.fxscar path{fill:none;stroke-linecap:round}
-.fxclaw path{stroke:#ff5252;stroke-width:6;filter:drop-shadow(0 0 3px #ff1a1a) drop-shadow(0 0 8px #a00);stroke-dasharray:80;stroke-dashoffset:80;animation:fxclaw .2s ease-in forwards,fxclawfade 1s ease-in .45s forwards}
+.fxclaw path{stroke:#ff5252;stroke-width:6;filter:drop-shadow(0 0 3px #ff1a1a) drop-shadow(0 0 8px #a00);stroke-dasharray:80;stroke-dashoffset:80;
+  animation:fxclaw .2s ease-in forwards,fxclawfade 1s ease-in .45s forwards}
 .fxclaw path:nth-child(2){animation-delay:.06s,.31s}.fxclaw path:nth-child(3){animation-delay:.12s,.37s}
 @keyframes fxclaw{to{stroke-dashoffset:0}}@keyframes fxclawfade{to{opacity:0;stroke-width:3}}
 .fxclaw::after{content:"";position:absolute;inset:0;border-radius:inherit;background:rgba(200,20,30,.35);animation:flashOut .5s ease-out forwards}
 .fxscar{z-index:0;pointer-events:none}.fxscar path{stroke:color-mix(in srgb,var(--blood) 80%,#000);stroke-width:3.2;opacity:.5}
 ol.plist li .fxscar{position:absolute}
-.fxshatter .ring{position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 .09em #c9a7ff,inset 0 0 1.2em color-mix(in srgb,var(--arcane) 70%,transparent),0 0 1.2em var(--arcane);animation:fxcrack .4s ease-out forwards}
+.fxshatter .ring{position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 .09em #c9a7ff,
+  inset 0 0 1.2em color-mix(in srgb,var(--arcane) 70%,transparent),0 0 1.2em var(--arcane);animation:fxcrack .4s ease-out forwards}
 @keyframes fxcrack{0%{opacity:0}30%{opacity:1}70%{opacity:1;filter:brightness(1.6)}100%{opacity:0}}
-.fxshatter i{position:absolute;width:.3em;height:.42em;margin:-.21em 0 0 -.15em;background:linear-gradient(135deg,#f1e6ff,#a77bff 60%,#6b3fd6);clip-path:polygon(50% 0,100% 70%,20% 100%);opacity:0;animation:fxshard 1.2s cubic-bezier(.3,.2,.6,1) forwards;filter:drop-shadow(0 0 .1em #b48cff)}
-@keyframes fxshard{0%{opacity:1;transform:translate(0,0) rotate(0) scale(var(--s))}60%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--r)) scale(calc(var(--s)*.6))}}
+.fxshatter i{position:absolute;width:.3em;height:.42em;margin:-.21em 0 0 -.15em;background:linear-gradient(135deg,#f1e6ff,#a77bff 60%,#6b3fd6);
+  clip-path:polygon(50% 0,100% 70%,20% 100%);opacity:0;animation:fxshard 1.2s cubic-bezier(.3,.2,.6,1) forwards;filter:drop-shadow(0 0 .1em #b48cff)}
+@keyframes fxshard{0%{opacity:1;transform:translate(0,0) rotate(0) scale(var(--s))}60%{opacity:1}100%{opacity:0;
+  transform:translate(var(--dx),var(--dy)) rotate(var(--r)) scale(calc(var(--s)*.6))}}
 .fxdie{inset:0;display:grid;place-items:end center;padding-bottom:22vh;z-index:37}
-.fxdie .die{position:relative;width:clamp(7rem,22vw,13rem);height:clamp(7rem,22vw,13rem);color:var(--accent);filter:drop-shadow(0 0 1.2em color-mix(in srgb,var(--accent) 60%,transparent)) drop-shadow(0 .4em 1em rgba(0,0,0,.8))}
+.fxdie .die{position:relative;width:clamp(7rem,22vw,13rem);height:clamp(7rem,22vw,13rem);color:var(--accent);
+  filter:drop-shadow(0 0 1.2em color-mix(in srgb,var(--accent) 60%,transparent)) drop-shadow(0 .4em 1em rgba(0,0,0,.8))}
 .fxdie .die .d20{width:100%;height:100%}.fxdie .die .d20 path:first-child{fill:#1d1f2c}
-.fxdie .die b{position:absolute;inset:0;display:grid;place-items:center;padding-top:8%;font-family:var(--display);font-size:clamp(2.2rem,7vw,4.4rem);color:var(--fg);text-shadow:0 .06em .2em #000}
+.fxdie .die b{position:absolute;inset:0;display:grid;place-items:center;padding-top:8%;font-family:var(--display);font-size:clamp(2.2rem,7vw,4.4rem);
+  color:var(--fg);text-shadow:0 .06em .2em #000}
 .fxdie.n20 .die{color:#ffd76a}.fxdie.n1 .die{color:#ff5a5a}
 

@@ -1,28 +1,34 @@
 /* ---------- phone: sheets with a fixed header, my-status strip, compact rows ---------- */
 .sheet.psheet{display:flex;flex-direction:column;padding:0;gap:0;max-height:min(88vh,calc(100dvh - 16px));overflow:hidden}
-.psheet .shead{display:flex;align-items:center;gap:10px;padding:16px 12px 12px 18px;border-bottom:1px solid var(--line);position:relative;flex:none;touch-action:none;cursor:grab}
+.psheet .shead{display:flex;align-items:center;gap:10px;padding:16px 12px 12px 18px;border-bottom:1px solid var(--line);position:relative;flex:none;
+  touch-action:none;cursor:grab}
 .psheet .shead h2{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .grab{position:absolute;left:50%;top:6px;width:42px;height:4px;border-radius:9px;background:var(--line);transform:translateX(-50%)}
-.sx{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);display:grid;place-items:center;color:var(--fg);padding:0;flex:none}
+.sx{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);display:grid;place-items:center;color:var(--fg);
+  padding:0;flex:none}
 .sx svg{width:18px;height:18px;fill:currentColor}
-.psheet .sbody{overflow:auto;overscroll-behavior:contain;padding:14px 18px calc(18px + env(safe-area-inset-bottom,0px));display:grid;gap:14px;align-content:start}
+.psheet .sbody{overflow:auto;overscroll-behavior:contain;padding:14px 18px calc(18px + env(safe-area-inset-bottom,0px));display:grid;gap:14px;
+  align-content:start}
 @media (max-width:599px){
   .pscrim{place-items:end stretch;padding:0}
   .pscrim .psheet{width:100%;border-radius:20px 20px 0 0;border-bottom:0;max-height:calc(100dvh - 36px)}
   .fsbtn{display:none}
 }
-.hp-amt{width:100%;font-family:var(--body);font-weight:800;font-size:2.2rem;text-align:center;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px;color:var(--fg);font-variant-numeric:tabular-nums}
+.hp-amt{width:100%;font-family:var(--body);font-weight:800;font-size:2.2rem;text-align:center;background:var(--bg);border:1px solid var(--line);
+  border-radius:12px;padding:10px;color:var(--fg);font-variant-numeric:tabular-nums}
 .hp-amt::placeholder{font-size:1.15rem;font-weight:600;color:var(--faint)}
 .hpmaxlink{justify-self:start}
 .mystat{display:flex;flex-wrap:wrap;gap:6px}
-.mychip{border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:999px;padding:6px 12px;font-weight:700;font-size:.92rem;line-height:1.2}
+.mychip{border:1px solid var(--line);background:var(--panel2);color:var(--fg);border-radius:999px;padding:6px 12px;font-weight:700;font-size:.92rem;
+  line-height:1.2}
 button.mychip::after{content:" ×";color:var(--muted);font-weight:600}
 .mychip.conc{border-color:color-mix(in srgb,var(--arcane) 60%,var(--line))}
 .mychip.eff{color:color-mix(in srgb,var(--accent) 80%,var(--fg))}
 .mychip.down{background:var(--blood);border-color:var(--blood);color:#fff}
 .mychip.armed{background:var(--fail);border-color:var(--fail);color:#fff}.mychip.armed::after{content:""}
 .mychip.gone{opacity:.35}
-.morebtn{border:1px solid var(--line);background:var(--panel);border-radius:12px;width:40px;height:40px;display:grid;place-items:center;color:var(--fg);padding:0}
+.morebtn{border:1px solid var(--line);background:var(--panel);border-radius:12px;width:40px;height:40px;display:grid;place-items:center;
+  color:var(--fg);padding:0}
 .morebtn svg{width:20px;height:20px;fill:currentColor}
 .morelist{display:grid;gap:10px}.morelist .btn{padding:14px;font-size:1rem;text-align:left}
 .acw{display:flex;align-items:center;flex:none;font-size:.55em}

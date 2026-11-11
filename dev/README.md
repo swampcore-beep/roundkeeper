@@ -13,7 +13,13 @@ python3 tools/build.py           # join src/* into initiative.html (dev/serve.sh
 python3 tools/build.py --check   # only check that initiative.html matches src/ (also run on every pull request)
 ```
 
-The parts are joined in the order of their numbers and are pieces of one file, not modules: the CSS parts sit in one `<style>`, the app's JS parts in one function. Commit `initiative.html` together with the change in `src/`. A change made only in `initiative.html` would be lost at the next build, so the build refuses to overwrite one that was edited after `src/`.
+The parts are joined in the order of their numbers and are pieces of one file, not modules: the CSS parts sit in one `<style>`, the app's JS parts in one function. Commit `initiative.html` together with the change in `src/`. Lines stay under about 160 characters; to break long ones (Node 18 or later):
+
+```bash
+cd dev/wrap && npm install && node wrap.js   # breaks long CSS and JS lines in src/, then rebuilds initiative.html
+```
+
+It breaks only where whitespace means nothing (after `;` `,` `{` and similar, never inside a string or right after `return`), and stops without writing anything unless the JS parses to the same tree, the CSS to the same rules, and only spaces and newlines differ. The QR code library and the markup are left as they are. A change made only in `initiative.html` would be lost at the next build, so the build refuses to overwrite one that was edited after `src/`.
 
 ## Servers
 

@@ -11,7 +11,8 @@
 /* Deafened: muffled sound rings fading out past the end of the name */
 .deco.df{right:-.95em;top:50%;width:.7em;height:.7em;margin-top:-.35em}
 .deco.df b{inset:0;border-radius:50%;border:.05em solid color-mix(in srgb,var(--muted) 80%,transparent);opacity:0}
-.deco.df::after{content:"";position:absolute;left:50%;top:-.15em;bottom:-.15em;width:.05em;background:color-mix(in srgb,var(--muted) 85%,transparent);transform:rotate(45deg)}
+.deco.df::after{content:"";position:absolute;left:50%;top:-.15em;bottom:-.15em;width:.05em;background:color-mix(in srgb,var(--muted) 85%,transparent);
+  transform:rotate(45deg)}
 /* Charmed: hearts rising from the end of the name */
 .deco.hr{right:-.7em;bottom:0;width:.6em;height:1em}
 .deco.hr b{left:0;bottom:0;width:.42em;height:.42em;background:var(--charm);opacity:0;
@@ -27,7 +28,8 @@
   .deco.dz b:nth-child(2){animation-delay:calc(var(--ph,0s) - .5s)}
   .deco.dz b:nth-child(3){animation-delay:calc(var(--ph,0s) - 1s)}
   @keyframes dizzy{0%{transform:translate(-.9em,0) scale(.75);opacity:.55}25%{transform:translate(0,.2em) scale(1.05);opacity:1}
-    50%{transform:translate(.9em,0) scale(.75);opacity:.55}75%{transform:translate(0,-.16em) scale(.5);opacity:.3}100%{transform:translate(-.9em,0) scale(.75);opacity:.55}}
+    50%{transform:translate(.9em,0) scale(.75);opacity:.55}75%{transform:translate(0,-.16em) scale(.5);opacity:.3}100%{transform:translate(-.9em,0) scale(.75);
+      opacity:.55}}
   .deco.df b{animation:muffle var(--t-mid) ease-out infinite var(--ph,0s)}
   .deco.df b:nth-child(2){animation-delay:calc(var(--ph,0s) - 1.5s)}
   @keyframes muffle{0%{transform:scale(.4);opacity:0}20%{opacity:.8}100%{transform:scale(1.9);opacity:0}}

@@ -36,12 +36,14 @@ ol.plist li .pos,ol.plist li .nmw,ol.plist li .ic{position:relative;z-index:1}
 
 /* Exhaustion: heavier with every level (--exh 1-6) */
 .fx-exhaustion::before{background:linear-gradient(0deg,rgba(20,12,4,calc(.24 + var(--exh,1)*.08)),transparent calc(35% + var(--exh,1)*9%))}
-.fx-exhaustion::after{box-shadow:inset 0 0 0 .05em color-mix(in srgb,var(--boss) calc(25% + var(--exh,1)*8%),transparent),inset 0 0 calc(var(--exh,1)*.35em) rgba(0,0,0,calc(var(--exh,1)*.08))}
+.fx-exhaustion::after{box-shadow:inset 0 0 0 .05em color-mix(in srgb,var(--boss) calc(25% + var(--exh,1)*8%),transparent),
+  inset 0 0 calc(var(--exh,1)*.35em) rgba(0,0,0,calc(var(--exh,1)*.08))}
 li.st-exhaustion .nm{filter:saturate(calc(1 - var(--exh,1)*.13));opacity:calc(1 - var(--exh,1)*.06)}
 
 /* Bloodied: heartbeat glow from the left edge, pulsing red rim, slow drips from the top */
 .fx-bloodied::before{background:radial-gradient(130% 160% at 0% 50%,color-mix(in srgb,var(--blood) 60%,transparent) 0%,transparent 62%);opacity:.55}
-.fx-bloodied::after{box-shadow:inset 0 0 0 .06em color-mix(in srgb,var(--blood) 80%,transparent),inset 0 0 1.1em color-mix(in srgb,var(--blood) 45%,transparent);opacity:.7}
+.fx-bloodied::after{box-shadow:inset 0 0 0 .06em color-mix(in srgb,var(--blood) 80%,transparent),
+  inset 0 0 1.1em color-mix(in srgb,var(--blood) 45%,transparent);opacity:.7}
 .fx-bloodied i{background:
   linear-gradient(var(--blood),color-mix(in srgb,var(--blood) 40%,transparent)) 24% 0/.16em 0 no-repeat,
   linear-gradient(var(--blood),color-mix(in srgb,var(--blood) 40%,transparent)) 47% 0/.12em 0 no-repeat,
@@ -50,12 +52,15 @@ li.st-exhaustion .nm{filter:saturate(calc(1 - var(--exh,1)*.13));opacity:calc(1 
 /* 0 HP / Unconscious: dimmed row, a faint heart monitor still blipping */
 .fx-down::before{background:rgba(5,6,10,.55)}
 .fx-down::after{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 20H92l5-11 6 24 6-19 4 6H200' fill='none' stroke='%23e07a6c' stroke-width='2' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") 0 88%/9em 38% repeat-x;opacity:.4;
-  -webkit-mask:linear-gradient(90deg,transparent 0 2.4em,#000 4em,#000 70%,transparent);mask:linear-gradient(90deg,transparent 0 2.4em,#000 4em,#000 70%,transparent)}
+  -webkit-mask:linear-gradient(90deg,transparent 0 2.4em,#000 4em,#000 70%,transparent);
+    mask:linear-gradient(90deg,transparent 0 2.4em,#000 4em,#000 70%,transparent)}
 li.st-down .nm,li.st-unconscious .nm{opacity:.6}
 
 /* Concentrating: a violet ring orbiting the row edge, soft inner aura */
-.fx-concentrating::before{padding:.07em;background:conic-gradient(from var(--ang),transparent 0 55%,color-mix(in srgb,var(--arcane) 60%,transparent) 70%,#fff 76%,var(--arcane) 82%,transparent 95%);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.fx-concentrating::before{padding:.07em;background:conic-gradient(from var(--ang),transparent 0 55%,color-mix(in srgb,var(--arcane) 60%,transparent) 70%,
+  #fff 76%,var(--arcane) 82%,transparent 95%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
 .fx-concentrating::after{box-shadow:inset 0 0 1.4em color-mix(in srgb,var(--arcane) 30%,transparent)}
 
 /* Invisible: ghostly, dashed outline, light sweeping through */
@@ -72,7 +77,8 @@ li.st-invisible{background:color-mix(in srgb,var(--panel) 45%,transparent);borde
 .fx-charmed::after{background:linear-gradient(90deg,color-mix(in srgb,var(--charm) 16%,transparent),transparent 65%)}
 
 /* Burning: fire licking up from the bottom edge, a hot glow, embers rising */
-.fx-burning::before{background:linear-gradient(0deg,color-mix(in srgb,var(--fire) 20%,transparent),color-mix(in srgb,var(--fire) 5%,transparent) 45%,transparent 75%)}
+.fx-burning::before{background:linear-gradient(0deg,color-mix(in srgb,var(--fire) 20%,transparent),color-mix(in srgb,var(--fire) 5%,transparent) 45%,
+  transparent 75%)}
 .fx-burning::after{box-shadow:inset 0 0 0 .05em color-mix(in srgb,var(--fire) 70%,transparent),inset 0 -.55em 1em color-mix(in srgb,#ff5a1f 28%,transparent)}
 .fx-burning i{inset:auto 0 0 0;height:32%;overflow:hidden;
   background:linear-gradient(0deg,#ffd27a 0%,#ff8a3d 30%,#e8401c 62%,transparent 100%);opacity:.28;transform-origin:50% 100%;
@@ -103,7 +109,8 @@ li.st-petrified .pos{color:var(--stone)}
 .fx-restrained::before{background:repeating-linear-gradient(-45deg,rgba(255,255,255,.13) 0 .14em,transparent .14em .85em)}
 
 /* Prone: knocked over */
-li.st-prone .nm{display:inline-block;transform:rotate(-2.2deg) translateY(.05em);transform-origin:0 90%}   /* only the name lies down: a tilted row would cut into its neighbours */
+li.st-prone .nm{display:inline-block;transform:rotate(-2.2deg) translateY(.05em);transform-origin:0 90%}
+  /* only the name lies down: a tilted row would cut into its neighbours */
 .fx-prone::before{background:linear-gradient(0deg,rgba(0,0,0,.5),transparent 60%)}
 
 /* Blinded: vision shut down to a slit */

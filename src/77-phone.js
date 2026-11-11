@@ -38,47 +38,60 @@ function myStatus(me){
   if(conds.some(x=>(x.n||x)==="Exhaustion"))out.push({k:"exh",t:"Exhaustion "+exhOf(me)});
   (me.tags||[]).forEach(t=>{const L=TAGS.find(x=>x[0]===t);out.push({k:"tag:"+t,t:L?L[1]:t})});
   if(me.cover)out.push({k:"cover",t:COVER_CHIP[me.cover]||"Cover"});
-  state.effects.filter(e=>(e.targets||[]).includes(me.id)).forEach(e=>{const by=byId(e.by);out.push({k:"",t:"✦ "+e.name+(by&&by.id!==me.id?" · "+by.name:""),cls:"eff",x:effN(e)})});
+  state.effects.filter(e=>(e.targets||[]).includes(me.id)).forEach(e=>{const by=byId(e.by);
+    out.push({k:"",t:"✦ "+e.name+(by&&by.id!==me.id?" · "+by.name:""),cls:"eff",x:effN(e)})});
   return out;
 }
 let chipT=null,hpEditMax=false;
 function playerBar(){
   if(!served||!meName||meName==="*")return "";
   const me=meChar();
-  if(!me)return `<div class="pbar"><div class="pmeline"><span class="pme">${esc(meName)}<small>Your character isn't in the combat yet</small></span><button class="pb" type="button" data-act="pwho">Change character</button></div></div>`;
+  if(!me)return `<div class="pbar"><div class="pmeline"><span class="pme">${esc(
+    meName)}<small>Your character isn't in the combat yet</small></span><button class="pb" type="button" data-act="pwho">Change character</button></div></div>`;
   const ed=canEdit(),hp=hpGet(),simple=pSimple();
   const hpTxt=hp.max?`<b>${hp.cur}</b>/${hp.max}${hp.temp?` <i>+${hp.temp}</i>`:""}`:"Set HP";
   const hpCls=!hp.max?"":hp.cur===0?" zero":hp.cur<=Math.floor(hp.max/2)?" low":"";
-  const chips=myStatus(me).map(x=>x.k&&ed?`<button type="button" class="mychip ${x.cls||""}" data-act="mychip" data-k="${esc(x.k)}">${esc(x.t)}</button>`:`<span class="mychip ${x.cls||""}">${esc(x.t)}${x.x||""}</span>`).join("");
+  const chips=myStatus(me).map(x=>x.k&&ed?`<button type="button" class="mychip ${x.cls||""}" data-act="mychip" data-k="${esc(x.k)}">${esc(x.t)}</button>`:
+    `<span class="mychip ${x.cls||""}">${esc(x.t)}${x.x||""}</span>`).join("");
   /* six big tiles (Init · HP · Roll / Conditions · Effects · Spells); Resources and ⋯ sit beside the name.
      A long fight gets slimmer tiles so the order above keeps its room. */
   const many=sorted().filter(shownToPlayers).length>6,book=!!spRows,pct=hp.max?Math.max(0,Math.min(100,Math.round(100*hp.cur/hp.max))):0;
-  const tile=(act,inner,cls,label)=>`<button class="tile${cls?" "+cls:""}" type="button" data-act="${act}"${label?` aria-label="${esc(label)}"`:""}>${inner}</button>`;
+  const tile=(act,inner,cls,label)=>`<button class="tile${cls?" "+cls:""}" type="button" data-act="${act}"${label?` aria-label="${esc(label)}"`:
+    ""}>${inner}</button>`;
   const T=[];
   if(simple){   // 78: just my HP (and initiative when it's asked for); what the DM sends still pops up
     if(ed&&typeof me.init!=="number")T.push(tile("pinit",`<small>Init</small><b>?</b>`,"want","Initiative"));
-    T.push(tile("php",hp.max?`<small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?`<i>+${hp.temp}</i>`:""}</b><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span>Set HP</span>`,"hp"+hpCls,"Hit points"));
-    return `<div class="pbar simple"><div class="pmeline"><span class="pme">${esc(me.name)}<small>Simple</small></span><span class="pmeright"><button class="ptop sq" type="button" data-act="pmore" aria-label="More">${DOTS}</button></span></div>
-      ${chips?`<div class="mystat" aria-label="Your status">${myStatus(me).map(x=>`<span class="mychip ${x.cls||""}">${esc(x.t)}${x.x||""}</span>`).join("")}</div>`:""}
+    T.push(tile("php",hp.max?`<small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?`<i>+${hp.temp}</i>`:
+      ""}</b><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span>Set HP</span>`,"hp"+hpCls,"Hit points"));
+    return `<div class="pbar simple"><div class="pmeline"><span class="pme">${esc(
+      me.name)}<small>Simple</small></span><span class="pmeright"><button class="ptop sq" type="button" data-act="pmore" aria-label="More">${
+      DOTS}</button></span></div>
+      ${chips?`<div class="mystat" aria-label="Your status">${myStatus(me).map(x=>`<span class="mychip ${x.cls||""}">${esc(x.t)}${x.x||
+        ""}</span>`).join("")}</div>`:""}
       ${giftsHtml(me)}<div class="ptiles">${T.join("")}</div></div>`}
   if(ed)T.push(tile("pinit",`<small>Init</small><b>${typeof me.init==="number"?me.init:"?"}</b>`,typeof me.init==="number"?"":"want","Initiative"));
-  T.push(tile("php",hp.max?`<small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?`<i>+${hp.temp}</i>`:""}</b><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span>Set HP</span>`,"hp"+hpCls,"Hit points"));
+  T.push(tile("php",hp.max?`<small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?`<i>+${hp.temp}</i>`:
+    ""}</b><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span>Set HP</span>`,"hp"+hpCls,"Hit points"));
   T.push(tile("pdice",`${D20}<span>Roll</span>`,"","Dice"));
   if(ed){T.push(tile("pconds",`${TI.cond}<span>Conditions</span>`));T.push(tile("peffs",`${TI.spark}<span>Effects</span>`))}
   T.push(book?tile("pbook",`${TI.book}<span>Spells</span>`):tile("pres",`${TI.pips}<span>Resources</span>`));
   return `<div class="pbar${many?" many":""}"><div class="pmeline"><span class="pme">${esc(me.name)}</span>
-      <span class="pmeright">${book?`<button class="ptop" type="button" data-act="pres">${TI.pips}Resources</button>`:""}<button class="ptop sq" type="button" data-act="pmore" aria-label="More">${DOTS}</button></span></div>
+      <span class="pmeright">${book?`<button class="ptop" type="button" data-act="pres">${TI.pips}Resources</button>`:
+        ""}<button class="ptop sq" type="button" data-act="pmore" aria-label="More">${DOTS}</button></span></div>
     ${chips?`<div class="mystat" aria-label="Your status">${chips}</div>`:""}${ed?"":`<div class="pnote">The DM has locked changes</div>`}
     ${giftsHtml(me)}<div class="ptiles">${T.join("")}</div>${compHtml(me)}</div>`;
 }
 /* 45: dice someone gave you (Bardic Inspiration…), to use when you want */
 function giftsHtml(me){const G=me.gifts||[];if(!G.length)return "";
-  return `<div class="pgifts">${G.map(g=>`<button type="button" class="pgift" data-act="pgiftuse" data-id="${esc(g.id)}" title="Roll it and use it"><b>${esc(g.die)}</b><span>${esc(g.n)}<small>from ${esc(g.from)} · tap to roll</small></span></button>`).join("")}</div>`}
+  return `<div class="pgifts">${G.map(g=>`<button type="button" class="pgift" data-act="pgiftuse" data-id="${esc(g.id)}" title="Roll it and use it"><b>${esc(
+    g.die)}</b><span>${esc(g.n)}<small>from ${esc(g.from)} · tap to roll</small></span></button>`).join("")}</div>`}
 /* 13/30: your companions (Find Familiar, summons): their HP is yours to keep */
 const myComps=me=>state.list.filter(c=>c.owner===me.id&&!c.hidden);
 function compHtml(me){const L=myComps(me);if(!L.length)return "";
-  return `<div class="pcomps">${L.map(c=>`<div class="pcomp"><span class="pcn">${esc(c.name)}<small>${c.hpMax!=null?`${c.hp??c.hpMax}/${c.hpMax} HP${c.thp?` +${c.thp}`:""}`:""}${c.ac!=null?` · AC ${c.ac}`:""}</small></span>
-    ${c.hpMax!=null?`<button type="button" class="pb sm" data-act="pcomphp" data-id="${esc(c.id)}">HP</button>`:""}${c.sb&&c.sb.raw?`<button type="button" class="pb sm" data-act="pcompsb" data-id="${esc(c.id)}">Statblock</button>`:""}</div>`).join("")}</div>`}
+  return `<div class="pcomps">${L.map(c=>`<div class="pcomp"><span class="pcn">${esc(c.name)}<small>${c.hpMax!=null?`${c.hp??c.hpMax}/${c.hpMax} HP${c.thp?
+    ` +${c.thp}`:""}`:""}${c.ac!=null?` · AC ${c.ac}`:""}</small></span>
+    ${c.hpMax!=null?`<button type="button" class="pb sm" data-act="pcomphp" data-id="${esc(c.id)}">HP</button>`:""}${c.sb&&c.sb.raw?
+      `<button type="button" class="pb sm" data-act="pcompsb" data-id="${esc(c.id)}">Statblock</button>`:""}</div>`).join("")}</div>`}
 /* 65: prepared spells; 38: the reactions among them buzz when they could matter */
 const prepKey=()=>"spPrep:"+(meName||"").toLowerCase();
 const prepGet=()=>{const v=ls.get(prepKey(),[]);return Array.isArray(v)?v:[]};
@@ -92,7 +105,8 @@ function alwaysList(){
   if(pcData){
     prof.cls.forEach(e=>{const c=pcClass(e);if(!c||!e.sub)return;const sub=pcSubs(c).find(x=>x.n===e.sub.n&&x.s===e.sub.s);
       (sub&&sub.as||[]).forEach(([l,n,src])=>add(n,src,sub.sn||sub.n,l,true,(e.lvl||1)>=l))});
-    (prof.feats||[]).forEach(f=>{const row=(pcData.feats||[]).find(r=>r[0]===f.t&&r[1]===f.n&&r[2]===f.s);(row&&row[7]||[]).forEach(([l,n,src])=>add(n,src,f.n,l,true,tot>=l))});
+    (prof.feats||[]).forEach(f=>{const row=(pcData.feats||[]).find(r=>r[0]===f.t&&r[1]===f.n&&r[2]===f.s);
+      (row&&row[7]||[]).forEach(([l,n,src])=>add(n,src,f.n,l,true,tot>=l))});
   }
   alwOwn().forEach(a=>add(a.n,a.s,a.from||"By hand",a.lvl||1,false,tot>=(a.lvl||1)));
   return out}
@@ -100,8 +114,10 @@ const alwNow=()=>alwaysList().filter(a=>a.have);
 const alwHas=(n,s)=>alwNow().some(a=>a.n.toLowerCase()===String(n).toLowerCase());
 const alwOf=n=>alwaysList().find(a=>a.n.toLowerCase()===String(n).toLowerCase());
 function prepMax(){const prof=profGet();if(!pcData||!prof.cls.length)return null;let t=0,any=false;
-  prof.cls.forEach(e=>{const c=pcClass(e);if(!c)return;(c.tb||[]).forEach(g=>{const i=g.c.map(pcTxt).findIndex(x=>/^prepared spells$/i.test(x));if(i>=0){const v=pcNum((g.r[(e.lvl||1)-1]||[])[i]);if(v>0){t+=v;any=true}}})});return any?t:null}
-const REACT_KIND=t=>/cast(s|ing)? a spell|casting a spell/i.test(t)?"spell":/hit by an attack|targeted by|an attack roll/i.test(t)?"attack":/damage|damaged/i.test(t)?"dmg":"";
+  prof.cls.forEach(e=>{const c=pcClass(e);if(!c)return;(c.tb||[]).forEach(g=>{const i=g.c.map(pcTxt).findIndex(x=>/^prepared spells$/i.test(x));
+    if(i>=0){const v=pcNum((g.r[(e.lvl||1)-1]||[])[i]);if(v>0){t+=v;any=true}}})});return any?t:null}
+const REACT_KIND=t=>/cast(s|ing)? a spell|casting a spell/i.test(t)?"spell":/hit by an attack|targeted by|an attack roll/i.test(t)?"attack":
+  /damage|damaged/i.test(t)?"dmg":"";
 let reactSeen=null;
 function reactCheck(first){
   const r=state.react,me=meChar();if(!r||r.id===reactSeen)return;reactSeen=r.id;if(first||!me||me.down||dmNow()-r.at>20000)return;
@@ -110,8 +126,10 @@ function reactCheck(first){
   reactShow(r,hit);
 }
 function reactShow(r,hit){let el=$("#reactPing");if(el)el.remove();el=document.createElement("div");el.id="reactPing";el.className="reactping";
-  el.innerHTML=`<div class="rp-t">${r.k==="spell"?`<b>${esc(r.by)}</b> casts ${esc(r.what)}`:r.k==="attack"?`<b>${esc(r.by)}</b> attacks${r.tot?` (${r.tot} to hit)`:""}`:`<b>${esc(r.by||"Something")}</b> hurts you${r.t?` (${esc(r.t)})`:""}`}</div>
-    <div class="rp-b">${hit.map(p=>`<button type="button" class="btn primary" data-act="preactuse" data-n="${esc(p.n)}" data-s="${esc(p.s||"")}">${esc(p.n)}?</button>`).join("")}<button type="button" class="btn" data-act="preactno">No</button></div>`;
+  el.innerHTML=`<div class="rp-t">${r.k==="spell"?`<b>${esc(r.by)}</b> casts ${esc(r.what)}`:r.k==="attack"?`<b>${esc(r.by)}</b> attacks${r.tot?
+    ` (${r.tot} to hit)`:""}`:`<b>${esc(r.by||"Something")}</b> hurts you${r.t?` (${esc(r.t)})`:""}`}</div>
+    <div class="rp-b">${hit.map(p=>`<button type="button" class="btn primary" data-act="preactuse" data-n="${esc(p.n)}" data-s="${esc(p.s||
+      "")}">${esc(p.n)}?</button>`).join("")}<button type="button" class="btn" data-act="preactno">No</button></div>`;
   document.body.appendChild(el);try{navigator.vibrate&&navigator.vibrate([120,60,120,60,220])}catch(e){}
   clearTimeout(reactShow.t);reactShow.t=setTimeout(()=>el.remove(),15000)}
 const prepKind=item=>{const T=fetArr(item&&item.time);const r=T.find(x=>x&&x.unit==="reaction");return r?REACT_KIND(pcTxt(r.condition||""))||"other":""};

@@ -1,7 +1,11 @@
 /* ---------- Player (Tablet) ---------- */
 const slug=x=>String(x).toLowerCase().replace(/[^a-z]/g,"");
-const FX={bossrim:"bossrim",bloodied:"bloodied",down:"down",unconscious:"down",dead:"dead",stable:"stable",boss:"boss",lair:"lair",concentrating:"concentrating",invisible:"invisible",frightened:"frightened",charmed:"charmed",poisoned:"poisoned",burning:"burning",stunned:"stunned",incapacitated:"stunned",paralyzed:"paralyzed",petrified:"petrified",restrained:"restrained",grappled:"restrained",prone:"prone",blinded:"blinded",deafened:"deafened",exhaustion:"exhaustion"};
-const RIMS=[["","Automatic (by type)"],["orbit","Light around the edge"],["holy","Divine light"],["fire","Fire"],["necro","Necrotic"],["ooze","Ooze"],["eldritch","Eldritch"],["storm","Storm"],["frost","Frost"],["shadow","Shadow"],["calm","Calm glow"],["none","None"]];
+const FX={bossrim:"bossrim",bloodied:"bloodied",down:"down",unconscious:"down",dead:"dead",stable:"stable",boss:"boss",lair:"lair",concentrating:
+  "concentrating",invisible:"invisible",frightened:"frightened",charmed:"charmed",poisoned:"poisoned",burning:"burning",stunned:"stunned",incapacitated:
+  "stunned",paralyzed:"paralyzed",petrified:"petrified",restrained:"restrained",grappled:"restrained",prone:"prone",blinded:"blinded",deafened:"deafened",
+  exhaustion:"exhaustion"};
+const RIMS=[["","Automatic (by type)"],["orbit","Light around the edge"],["holy","Divine light"],["fire","Fire"],["necro","Necrotic"],["ooze","Ooze"],
+  ["eldritch","Eldritch"],["storm","Storm"],["frost","Frost"],["shadow","Shadow"],["calm","Calm glow"],["none","None"]];
 const rimOf=c=>c.rim?c.rim:(frameKey(c)?(RIM[frameKey(c)]||"orbit"):"");   // "" = the plain gold boss look
 function statusesOf(c){
   const s=new Set((c.conds||[]).map(x=>slug(x.n||x)));
@@ -19,11 +23,13 @@ let gotServer=false;
 const pv={hadData:false,seen:null,introSeen:new Map(),ended:undefined,introQ:[],introOn:false};
 function renderPlayer(){
   const P=$("#player");
-  const A=PREVIEW&&pvDraft&&!pvDraft.same?pvDraft:TV&&tvOwn()?state.tv.look:state;   // the DM's preview shows the draft, not what's on the table; the TV may have its own look
+  const A=PREVIEW&&pvDraft&&!pvDraft.same?pvDraft:TV&&tvOwn()?state.tv.look:
+    state;   // the DM's preview shows the draft, not what's on the table; the TV may have its own look
   document.body.classList.toggle("tvscreen",TV);document.body.classList.toggle("tvlite",TV&&!!A.lite);
   applyLook(lookOf(A));
   Scene.set(TV&&A.lite?"none":A.scene||"none",sfx("fade")&&!PREVIEW);P.classList.toggle("has-scene",(A.scene||"none")!=="none"||!!A.bg);sceneLook(A,P);
-  {const bi=$("#bgimg");if(bi){if(A.bg){if(pv.bg!==A.bg){bi.style.backgroundImage=`url(/bg/${A.bg})`;pv.bg=A.bg}bi.style.setProperty("--dim",A.bgDim??.45);bi.classList.add("on")}else{bi.classList.remove("on");pv.bg=null}}}
+  {const bi=$("#bgimg");if(bi){if(A.bg){if(pv.bg!==A.bg){bi.style.backgroundImage=`url(/bg/${A.bg})`;pv.bg=A.bg}bi.style.setProperty("--dim",A.bgDim??.45);
+    bi.classList.add("on")}else{bi.classList.remove("on");pv.bg=null}}}
   const list=grpRows(withLair(sorted().filter(shownToPlayers)));
   const pRect=P.getBoundingClientRect();
   const oldRects=new Map(),oldNodes=new Map();
@@ -39,15 +45,19 @@ function renderPlayer(){
   const dealing=!first&&!reduced&&list.length>0&&!state.ended&&!!state.fightAt&&state.fightAt!==pv.fightAt;   // a new fight began
   if(dealing)pv.fightAt=state.fightAt;
   const kinds=[...new Set(list.map(c=>c.kind).filter(k=>k!=="lair"))];
-  const legend=kinds.length>1?`<div class="p-legend">${["pc","ally","enemy"].filter(k=>kinds.includes(k)).map(k=>`<span class="k-${k}"><i></i>${KIND[k]}</span>`).join("")}</div>`:"";
-  const tail=`<button class="fsbtn" type="button" data-act="fs">${fsLabel()}</button><div class="offline" id="offline" hidden>Lost connection to the laptop…</div>`;
+  const legend=kinds.length>1?`<div class="p-legend">${["pc","ally","enemy"].filter(k=>kinds.includes(k)).map(k=>
+    `<span class="k-${k}"><i></i>${KIND[k]}</span>`).join("")}</div>`:"";
+  const tail=`<button class="fsbtn" type="button" data-act="fs">${fsLabel(
+    )}</button><div class="offline" id="offline" hidden>Lost connection to the laptop…</div>`;
   if(state.ended){pv.introQ=[];document.querySelectorAll(".intro").forEach(el=>el.remove())}   // the end screen takes priority over an intro
   const endAnim=state.ended&&pv.ended!==state.ended.at&&!first;
   pv.ended=state.ended?state.ended.at:null;
   const endHtml=state.ended?endScreen(state.ended,endAnim):"";
   let n=0;
-  const tIdx=state.turn&&state.turn.id?list.findIndex(c=>c.id===state.turn.id||(c.grpIds||[]).includes(state.turn.id)):-1,nowId=tIdx>=0?list[tIdx].id:null,nextId=tIdx>=0&&list.length>1?list[(tIdx+1)%list.length].id:null;
-  const body=list.length?`<div class="p-head"><div class="p-title">Initiative${state.turn?` <span class="p-round">Round <b>${state.turn.round}</b></span>`:""}</div>${legend}</div>${callHtml()}${battlefieldHtml()}${clocksHtml()}
+  const tIdx=state.turn&&state.turn.id?list.findIndex(c=>c.id===state.turn.id||(c.grpIds||[]).includes(state.turn.id)):-1,nowId=tIdx>=0?list[tIdx].id:null,
+    nextId=tIdx>=0&&list.length>1?list[(tIdx+1)%list.length].id:null;
+  const body=list.length?`<div class="p-head"><div class="p-title">Initiative${state.turn?` <span class="p-round">Round <b>${state.turn.round}</b></span>`:
+    ""}</div>${legend}</div>${callHtml()}${battlefieldHtml()}${clocksHtml()}
     <ol class="plist" id="plist">${list.map(c=>{
       const st=pv.seen.get(c.id);
       const cls=[`k-${c.kind}`,...[...st].map(k=>"st-"+k)];
@@ -55,15 +65,22 @@ function renderPlayer(){
       if(c.bloodied&&isNew(c,"bloodied"))cls.push("flash");
       const isMe=meChar()===c;if(isMe)cls.push("me");
       if(c.id===nowId)cls.push("turn");else if(c.id===nextId)cls.push("next");
-      let fx=[...new Set([...st].map(k=>FX[k]).filter(Boolean))].map(k=>`<span class="fx fx-${k}${[...st].some(x=>FX[x]===k&&isNew(c,x))?" fx-new":""}"><i></i></span>`).join("");
+      let fx=[...new Set([...st].map(k=>FX[k]).filter(Boolean))].map(k=>`<span class="fx fx-${k}${[...st].some(x=>FX[x]===k&&isNew(c,x))?" fx-new":
+        ""}"><i></i></span>`).join("");
       if(cls.includes("reveal"))fx+=`<span class="fx fx-reveal"></span>`;
       if(c.id===nowId||c.id===nextId)fx+=`<span class="turnmark" aria-hidden="true"></span>`;
       const fk=frameKey(c);
       const rim=c.boss?rimOf(c):"";if(rim&&rim!=="none")cls.push("rim-"+rim);if(c.boss&&c.rim)cls.push("rimset");
-      if(fk){cls.push("fr","fr-"+fk);fx+=`<span class="frame" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></span>`}
+      if(fk){cls.push("fr","fr-"+fk);
+        fx+=`<span class="frame" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></span>`}
       const iv=c.kind==="lair"?20:c.owner&&initOf(c)>-999?initOf(c):(typeof c.init==="number"?c.init:"–");
       const dealI=dealing?list.indexOf(c):-1;
-      return `<li data-id="${esc(c.id)}" class="${cls.join(" ")}"${st.has("exhaustion")||dealI>=0?` style="${st.has("exhaustion")?`--exh:${exhOf(c)};`:""}${dealI>=0?`--i:${dealI}`:""}"`:""}>${fx}<span class="pos" title="Initiative">${I.hex}<b>${iv}</b></span>${fk?`<span class="sig" title="${esc(LABEL[fk])}"></span>`:""}<span class="nmw"><span class="nmb">${deco(st)}<span class="nm">${esc(c.name)}${c.boss&&c.title?`<small>${esc(c.title)}</small>`:""}</span></span></span>${c.kind!=="lair"&&c.showAc&&c.ac!=null?`<span class="acw"><span class="shield${isNew(c,"ac")}" data-info="ac" title="AC">${I.shield}<span>${esc(c.ac)}</span></span></span>`:""}<span class="ic">${isMe?'<span class="badge you">You</span>':""}${c.kind==="lair"?"":icons(c,isNew)}</span></li>`}).join("")}</ol>`
+      return `<li data-id="${esc(c.id)}" class="${cls.join(" ")}"${st.has("exhaustion")||dealI>=0?` style="${st.has("exhaustion")?`--exh:${exhOf(c)};`:
+        ""}${dealI>=0?`--i:${dealI}`:""}"`:""}>${fx}<span class="pos" title="Initiative">${I.hex}<b>${iv}</b></span>${fk?
+        `<span class="sig" title="${esc(LABEL[fk])}"></span>`:""}<span class="nmw"><span class="nmb">${deco(st)}<span class="nm">${esc(c.name)}${c.boss&&
+        c.title?`<small>${esc(c.title)}</small>`:""}</span></span></span>${c.kind!=="lair"&&c.showAc&&c.ac!=null?
+        `<span class="acw"><span class="shield${isNew(c,"ac")}" data-info="ac" title="AC">${I.shield}<span>${esc(c.ac)}</span></span></span>`:
+        ""}<span class="ic">${isMe?'<span class="badge you">You</span>':""}${c.kind==="lair"?"":icons(c,isNew)}</span></li>`}).join("")}</ol>`
     :`<div class="p-empty"><div><strong>Waiting for combat</strong>The initiative order will appear here.${meName==="*"?joinCard(false):""}</div></div>`;
   const bar=playerBar();P.classList.toggle("has-bar",!!bar);document.body.classList.toggle("shared",meName==="*");
   const qrOver=state.showQr&&meName==="*"&&list.length?`<div class="joinover">${joinCard(true)}</div>`:"";
@@ -80,11 +97,15 @@ function renderPlayer(){
   // defeated and hidden: a ghost of the old row stays in place and fades
   if(tvCover())leaving.forEach(id=>{
     const o=pv.tvOld&&pv.tvOld.get(id),c=byId(id),hiddenNow=state.vanish.some(v=>v.id===id);if(!o||hiddenNow||(c&&c.kind==="pc"))return;
-    const L=$("#tvLayer"),r=o.rect,g=o.node.cloneNode(true);g.classList.add("tvghost");g.style.cssText=`position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;margin:0;box-sizing:border-box`;
+    const L=$("#tvLayer"),r=o.rect,g=o.node.cloneNode(true);g.classList.add("tvghost");
+      g.style.cssText=`position:fixed;left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;margin:0;box-sizing:border-box`;
     // empty copies of the card's containers, so the ghost keeps its look; removed with it
-    let host=g,shell=null;for(let a=o.node.parentElement;a&&a!==L&&a.id!=="tvLayer";a=a.parentElement){const sh=a.cloneNode(false);sh.classList.add("tvshell");sh.appendChild(host);host=sh}
+    let host=g,shell=null;for(let a=o.node.parentElement;a&&a!==L&&a.id!=="tvLayer";a=a.parentElement){const sh=a.cloneNode(false);sh.classList.add("tvshell");
+      sh.appendChild(host);host=sh}
     shell=host;L.appendChild(shell);
-    g.animate([{opacity:1,filter:"none"},{opacity:1,filter:"grayscale(1) brightness(1.9)",offset:.12},{opacity:.9,filter:"grayscale(1) brightness(.7)",offset:.4},{opacity:0,filter:"grayscale(1) blur(6px)",transform:"translateY(.35em) scale(.95)"}],{duration:1600,easing:"ease-in",fill:"forwards"}).onfinish=()=>shell.remove();
+    g.animate([{opacity:1,filter:"none"},{opacity:1,filter:"grayscale(1) brightness(1.9)",offset:.12},{opacity:.9,filter:"grayscale(1) brightness(.7)",offset:
+      .4},{opacity:0,filter:"grayscale(1) blur(6px)",transform:"translateY(.35em) scale(.95)"}],{duration:1600,easing:"ease-in",fill:"forwards"}).onfinish=()=>
+      shell.remove();
     ash(L,r,{left:0,top:0});
   });
   else leaving.forEach(id=>{
@@ -95,7 +116,9 @@ function renderPlayer(){
     const c=byId(id),hiddenNow=state.vanish.some(v=>v.id===id);
     const dying=!hiddenNow&&id!=="__lair"&&(c?c.kind!=="pc"&&c.down:g.classList.contains("k-enemy"));
     if(dying){
-      g.animate([{opacity:1,filter:"none",transform:"none"},{opacity:1,filter:"grayscale(1) brightness(1.9)",offset:.12},{opacity:.9,filter:"grayscale(1) brightness(.7)",offset:.4},{opacity:0,filter:"grayscale(1) blur(6px)",transform:"translateY(.35em) scale(.95)"}],{duration:1600,easing:"ease-in",fill:"forwards"}).onfinish=()=>g.remove();
+      g.animate([{opacity:1,filter:"none",transform:"none"},{opacity:1,filter:"grayscale(1) brightness(1.9)",offset:.12},{opacity:.9,filter:
+        "grayscale(1) brightness(.7)",offset:.4},{opacity:0,filter:"grayscale(1) blur(6px)",transform:"translateY(.35em) scale(.95)"}],{duration:1600,easing:
+        "ease-in",fill:"forwards"}).onfinish=()=>g.remove();
       ash(P,r,pRect);
     }else g.animate([{opacity:1,filter:"none"},{opacity:0,filter:"blur(8px)",transform:"scale(.97)"}],{duration:700,fill:"forwards"}).onfinish=()=>g.remove();
   });
@@ -129,17 +152,22 @@ function icons(c,isNew){
     if(isDead(c))add(0,`<span class="badge dead${isNew(c,"dead")}" data-info="dead">Dead</span>`);
     else if(isStable(c))add(0,`<span class="badge stable${isNew(c,"stable")}" data-info="stable">Stable</span>`);
     else{add(0,`<span class="badge down${isNew(c,"down")}" data-info="zerohp">0 HP</span>`);
-      add(0,`<span class="dsp${isNew(c,"ds"+ds.s+ds.f)}" data-info="zerohp" title="Death saves">${[0,1,2].map(k=>`<i class="s${ds.s>k?" on":""}"></i>`).join("")}<b></b>${[0,1,2].map(k=>`<i class="f${ds.f>k?" on":""}"></i>`).join("")}</span>`)}
+      add(0,`<span class="dsp${isNew(c,"ds"+ds.s+ds.f)}" data-info="zerohp" title="Death saves">${[0,1,2].map(k=>`<i class="s${ds.s>k?" on":
+        ""}"></i>`).join("")}<b></b>${[0,1,2].map(k=>`<i class="f${ds.f>k?" on":""}"></i>`).join("")}</span>`)}
   }
   const exh=(c.conds||[]).some(x=>slug(x.n||x)==="exhaustion")?exhOf(c):0;
   if(exh>=6&&!isDead(c))add(0,`<span class="badge dead${isNew(c,"dead")}" data-info="exhaustion">Dead</span>`);
   (c.conds||[]).forEach(x=>{const n=x.n||x,k=slug(n);
-    if(k==="exhaustion")return add(4,`<span class="cond c-exhaustion lv${exh}${isNew(c,k)||isNew(c,"exh"+exh)}" data-info="exhaustion">${L2(`Exhaustion ${exh}<span class="seg">${[0,1,2,3,4,5].map(i=>`<i${i<exh?' class="on"':""}></i>`).join("")}</span>`,`Exh ${exh}`)}</span>`);
+    if(k==="exhaustion")return add(4,`<span class="cond c-exhaustion lv${exh}${isNew(c,k)||isNew(c,"exh"+
+      exh)}" data-info="exhaustion">${L2(`Exhaustion ${exh}<span class="seg">${[0,1,2,3,4,5].map(i=>`<i${i<exh?' class="on"':""}></i>`).join("")}</span>`,
+      `Exh ${exh}`)}</span>`);
     add(BIG_COND.has(k)?2:k==="concentrating"?3:5,`<span class="cond c-${k}${isNew(c,k)}" data-info="${k}">${L2(esc(n),SHORT[n]?esc(SHORT[n]):null)}</span>`)});
   const effs=state.effects.filter(e=>e.targets.includes(c.id));
-  effs.forEach(e=>add(6,`<span class="cond eff${effs.length>1?" effi":""}${isNew(c,"eff"+e.id)}" data-eff="${esc(e.id)}">${L2("✦ "+esc(e.name)+effN(e))}</span>`));
+  effs.forEach(e=>add(6,`<span class="cond eff${effs.length>1?" effi":""}${isNew(c,"eff"+e.id)}" data-eff="${esc(e.id)}">${L2("✦ "+esc(e.name)+
+    effN(e))}</span>`));
   if(effs.length>1){const nm=effs.map(e=>e.name);
-    add(6.5,`<span class="cond eff effm" data-more="${esc(effs.map(e=>{const by=byId(e.by);return "✦ "+e.name+(by?" · from "+by.name:"")}).join("|"))}">${L2("✦ "+esc(nm.join(" · ")),"✦ "+esc(nm[0])+" +"+(nm.length-1))}</span>`)}
+    add(6.5,`<span class="cond eff effm" data-more="${esc(effs.map(e=>{const by=byId(e.by);
+      return "✦ "+e.name+(by?" · from "+by.name:"")}).join("|"))}">${L2("✦ "+esc(nm.join(" · ")),"✦ "+esc(nm[0])+" +"+(nm.length-1))}</span>`)}
   if(c.cover){const cv={half:"½ +2",tq:"¾ +5",total:"Total"}[c.cover]||"Cover";
     add(7,`<span class="covc${isNew(c,"cover"+c.cover)}" data-info="cover_${c.cover}">${L2(COVER_CHIP[c.cover],cv)}</span>`)}
   (c.tags||[]).forEach(t=>{const sh={reaction:"Reaction",readied:"Readied",dodge:"Dodge"}[t]||t;
@@ -150,8 +178,10 @@ function icons(c,isNew){
 }
 function endScreen(e,anim){
   const down=(e.down||[]);
-  return `<div class="endscr${anim&&!reduced?" in":""}"><div class="end-inner"><div class="end-kicker">End of combat</div><div class="end-title">The battle is over</div><div class="end-rule"></div>
-    <div class="end-stats"><span><b>${esc(e.defeated||0)}</b>enemies defeated</span><span><b>${down.length||"✓"}</b>${down.length?"at 0 HP: "+down.map(esc).join(", "):"everyone is still standing"}</span></div></div></div>`;
+  return `<div class="endscr${anim&&!reduced?" in":
+    ""}"><div class="end-inner"><div class="end-kicker">End of combat</div><div class="end-title">The battle is over</div><div class="end-rule"></div>
+    <div class="end-stats"><span><b>${esc(e.defeated||0)}</b>enemies defeated</span><span><b>${down.length||"✓"}</b>${down.length?"at 0 HP: "+
+      down.map(esc).join(", "):"everyone is still standing"}</span></div></div></div>`;
 }
 function ash(P,r,pRect){
   const cols=["#8f8b85","#6c6a7a","#c22a40","#3c3a46","#b8b2a8"];

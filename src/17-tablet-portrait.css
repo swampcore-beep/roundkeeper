@@ -15,8 +15,10 @@ li.c1 .badge .t{display:none}li.c1 .badge.blood{padding:.15em .45em}
 .ic .morec{font-weight:800;border-style:dashed;cursor:pointer}
 .p-empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--muted)}
 .p-empty strong{display:block;font-family:var(--display);font-size:clamp(2rem,5vw,4.5rem);color:var(--fg)}
-.offline{position:absolute;left:12px;bottom:12px;background:var(--enemy);color:#fff;font-weight:800;border-radius:999px;padding:6px 14px;font-size:.9rem;z-index:6}
-.fsbtn{position:absolute;right:12px;bottom:12px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:6px 12px;color:var(--muted);opacity:.4;font-weight:700;transition:opacity .4s;z-index:6}
+.offline{position:absolute;left:12px;bottom:12px;background:var(--enemy);color:#fff;font-weight:800;border-radius:999px;padding:6px 14px;
+  font-size:.9rem;z-index:6}
+.fsbtn{position:absolute;right:12px;bottom:12px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:6px 12px;color:var(--muted);
+  opacity:.4;font-weight:700;transition:opacity .4s;z-index:6}
 .fsbtn:hover,.fsbtn:focus-visible{opacity:1}
 .idle .fsbtn{opacity:0;pointer-events:none}
 .idle #player{cursor:none}
@@ -29,7 +31,8 @@ li.c1 .badge .t{display:none}li.c1 .badge.blood{padding:.15em .45em}
   background:radial-gradient(ellipse 80% 60% at 50% 50%,color-mix(in srgb,var(--fc,#8c1a20) 42%,rgba(20,4,6,.6)),rgba(5,4,8,.94) 70%)}
 .intro-inner{display:grid;gap:2vh;justify-items:center;padding:0 6vw}
 .intro-kicker{font-weight:800;letter-spacing:.5em;text-transform:uppercase;font-size:clamp(.8rem,1.6vw,1.3rem);color:var(--boss)}
-.intro-name{font-family:var(--display);font-weight:800;font-size:clamp(2.8rem,9vw,8.5rem);line-height:1;color:#fff;text-shadow:0 0 .4em color-mix(in srgb,var(--fc,#dc3c28) 65%,transparent),0 .05em 0 #000;text-wrap:balance}
+.intro-name{font-family:var(--display);font-weight:800;font-size:clamp(2.8rem,9vw,8.5rem);line-height:1;color:#fff;
+  text-shadow:0 0 .4em color-mix(in srgb,var(--fc,#dc3c28) 65%,transparent),0 .05em 0 #000;text-wrap:balance}
 .intro-rule{height:2px;width:min(60vw,700px);background:linear-gradient(90deg,transparent,var(--boss),transparent)}
 .intro-title{font-family:var(--body);font-style:italic;font-size:clamp(1.1rem,2.6vw,2.3rem);color:var(--fg)}
 

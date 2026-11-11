@@ -1,7 +1,9 @@
 /* ---------- moments: what just happened, played once over the row ---------- */
 const MO_COND={petrified:"stone",paralyzed:"zap",prone:"fall",unconscious:"fall",restrained:"chain",grappled:"chain",invisible:"vanish",charmed:"hearts",
-  poisoned:"cloud",burning:"ignite",stunned:"stars",incapacitated:"stars",frightened:"shudder",blinded:"dark",deafened:"ring",concentrating:"focus",exhaustion:"drain"};
-const MO_SPELL=[[/^bless/i,"bless"],[/^(bane|hex|bestow curse|hunger)/i,"curse"],[/^haste/i,"haste"],[/^hunter'?s mark/i,"mark"],[/^(shield of faith|shield|mage armou?r|sanctuary|protection|warding bond|aid)/i,"ward"]];
+  poisoned:"cloud",burning:"ignite",stunned:"stars",incapacitated:"stars",frightened:"shudder",blinded:"dark",deafened:"ring",concentrating:"focus",
+    exhaustion:"drain"};
+const MO_SPELL=[[/^bless/i,"bless"],[/^(bane|hex|bestow curse|hunger)/i,"curse"],[/^haste/i,"haste"],[/^hunter'?s mark/i,"mark"],
+  [/^(shield of faith|shield|mage armou?r|sanctuary|protection|warding bond|aid)/i,"ward"]];
 const R_=(a,b)=>a+Math.random()*(b-a);
 function moLayer(){let m=$("#moments");if(!m){m=document.createElement("div");m.id="moments";document.body.appendChild(m)}return m}
 function moment(li,kind,extra){
@@ -13,29 +15,39 @@ function moment(li,kind,extra){
   const zig=(y0,amp,steps)=>{let d=`M0 ${y0}`;for(let k=1;k<=steps;k++)d+=` L${(k/steps*100).toFixed(1)} ${(y0+R_(-amp,amp)).toFixed(1)}`;return d};
   let ms=1800;
   if(kind==="drain"){li.animate([{filter:"none"},{filter:"saturate(.3) brightness(.8)",offset:.5},{filter:"none"}],{duration:1800})}
-  else if(kind==="zap"){el.innerHTML=`<svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${zig(50,28,14)}"/><path d="${zig(35,20,10)}" style="animation-delay:.12s,.12s"/></svg>`;ms=1300}
+  else if(kind==="zap"){el.innerHTML=`<svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${zig(50,28,14)}"/><path d="${zig(35,20,
+    10)}" style="animation-delay:.12s,.12s"/></svg>`;ms=1300}
   else if(kind==="fall"){add("i",7,(x,k)=>{x.style.left=(5+k*14+R_(-3,3))+"%";x.style.animationDelay=R_(0,.25)+"s"});
-    li.animate([{transform:"none"},{transform:"rotate(-1.2deg) translateY(.12em)",offset:.35},{transform:"rotate(.4deg)",offset:.6},{transform:"none"}],{duration:900,easing:"ease-out"})}
-  else if(kind==="chain"){add("b",2,()=>{});li.animate([{transform:"none"},{transform:"translateX(.06em)",offset:.45},{transform:"translateX(-.06em)",offset:.55},{transform:"none"}],{duration:1500})}
-  else if(kind==="vanish"){add("i",10,x=>{x.style.left=R_(5,95)+"%";x.style.top=R_(15,80)+"%";x.style.animationDelay=R_(0,.5)+"s"});li.animate([{opacity:1},{opacity:.25,offset:.5},{opacity:1}],{duration:1300})}
+    li.animate([{transform:"none"},{transform:"rotate(-1.2deg) translateY(.12em)",offset:.35},{transform:"rotate(.4deg)",offset:.6},{transform:"none"}],{
+      duration:900,easing:"ease-out"})}
+  else if(kind==="chain"){add("b",2,()=>{});li.animate([{transform:"none"},{transform:"translateX(.06em)",offset:.45},{transform:"translateX(-.06em)",offset:
+    .55},{transform:"none"}],{duration:1500})}
+  else if(kind==="vanish"){add("i",10,x=>{x.style.left=R_(5,95)+"%";x.style.top=R_(15,80)+"%";x.style.animationDelay=R_(0,.5)+"s"});
+    li.animate([{opacity:1},{opacity:.25,offset:.5},{opacity:1}],{duration:1300})}
   else if(kind==="hearts"){add("i",9,x=>{x.textContent="♥";x.style.left=R_(4,92)+"%";x.style.animationDelay=R_(0,.5)+"s";x.style.fontSize=R_(.6,1.1)+"em"})}
-  else if(kind==="ignite"){add("i",16,x=>{x.style.left=R_(2,96)+"%";x.style.animationDelay=R_(0,.45)+"s";x.style.setProperty("--dx",R_(-.6,.6)+"em");x.style.fontSize=R_(.7,1.3)+"em"});
+  else if(kind==="ignite"){add("i",16,x=>{x.style.left=R_(2,96)+"%";x.style.animationDelay=R_(0,.45)+"s";x.style.setProperty("--dx",R_(-.6,.6)+"em");
+    x.style.fontSize=R_(.7,1.3)+"em"});
     li.animate([{filter:"none"},{filter:"brightness(1.35) saturate(1.3)",offset:.2},{filter:"none"}],{duration:1400});ms=1900}
   else if(kind==="cloud"){add("i",6,x=>{x.style.left=R_(0,85)+"%";x.style.top=R_(-20,40)+"%";x.style.animationDelay=R_(0,.4)+"s"})}
-  else if(kind==="stars"){add("i",10,(x,k)=>{x.textContent="★";const a=k/10*6.28;x.style.setProperty("--x",Math.cos(a)*R_(2,5)+"em");x.style.setProperty("--y",Math.sin(a)*R_(.6,1.2)+"em")})}
+  else if(kind==="stars"){add("i",10,(x,k)=>{x.textContent="★";const a=k/10*6.28;x.style.setProperty("--x",Math.cos(a)*R_(2,5)+"em");
+    x.style.setProperty("--y",Math.sin(a)*R_(.6,1.2)+"em")})}
   else if(kind==="shudder"){li.animate([0,1,2,3,4,5,6,7,8].map(k=>({transform:`translateX(${k%2?.07:-.07}em)`})).concat([{transform:"none"}]),{duration:700})}
   else if(kind==="ring"){add("i",3,(x,k)=>{x.style.animationDelay=k*.22+"s"})}
   else if(kind==="heal"){add("i",8,x=>{x.textContent="+";x.style.left=R_(4,94)+"%";x.style.animationDelay=R_(0,.5)+"s"})}
-  else if(kind==="revive"){add("i",16,x=>{x.style.left=R_(2,98)+"%";x.style.animationDelay=R_(0,.6)+"s"});li.animate([{transform:"scale(1)"},{transform:"scale(1.025)",offset:.3},{transform:"scale(1)"}],{duration:1200});ms=2000}
-  else if(kind==="dsok"){li.animate([{transform:"scale(1)"},{transform:"scale(1.02)",offset:.15},{transform:"scale(1)",offset:.3},{transform:"scale(1.015)",offset:.45},{transform:"scale(1)"}],{duration:1000})}
-  else if(kind==="dsfail"){el.innerHTML=`<svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${zig(50,35,9)}"/></svg>`;li.animate([0,1,2,3,4,5].map(k=>({transform:`translateX(${k%2?.08:-.08}em)`})).concat([{transform:"none"}]),{duration:500});ms=1500}
+  else if(kind==="revive"){add("i",16,x=>{x.style.left=R_(2,98)+"%";x.style.animationDelay=R_(0,.6)+"s"});
+    li.animate([{transform:"scale(1)"},{transform:"scale(1.025)",offset:.3},{transform:"scale(1)"}],{duration:1200});ms=2000}
+  else if(kind==="dsok"){li.animate([{transform:"scale(1)"},{transform:"scale(1.02)",offset:.15},{transform:"scale(1)",offset:.3},{transform:"scale(1.015)",
+    offset:.45},{transform:"scale(1)"}],{duration:1000})}
+  else if(kind==="dsfail"){el.innerHTML=`<svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${zig(50,35,9)}"/></svg>`;
+    li.animate([0,1,2,3,4,5].map(k=>({transform:`translateX(${k%2?.08:-.08}em)`})).concat([{transform:"none"}]),{duration:500});ms=1500}
   else if(kind==="death"){add("i",6,x=>{x.style.left=R_(8,40)+"%";x.style.top="40%";x.style.animationDelay=R_(0,.8)+"s"});
     li.animate([{filter:"none"},{filter:"grayscale(1) brightness(.6)",offset:.6},{filter:"grayscale(1) brightness(.6)"}],{duration:2600});ms=2700}
   else if(kind==="sp"){
     if(extra==="bless")add("i",18,x=>{x.style.left=R_(2,98)+"%";x.style.bottom=R_(0,30)+"%";x.style.animationDelay=R_(0,.7)+"s"});
     else if(extra==="curse")add("i",6,x=>{x.style.left=R_(0,85)+"%";x.style.top=R_(-20,40)+"%";x.style.animationDelay=R_(0,.4)+"s"});
     else if(extra==="haste")add("b",8,x=>{x.style.top=R_(10,85)+"%";x.style.left="70%";x.style.animationDelay=R_(0,.6)+"s"});
-    else if(extra==="mark")el.innerHTML=`<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="15" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="24" r="3" fill="currentColor"/><path d="M24 2v10M24 36v10M2 24h10M36 24h10" stroke="currentColor" stroke-width="2.5"/></svg>`;
+    else if(extra==="mark")el.innerHTML=
+      `<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="15" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="24" r="3" fill="currentColor"/><path d="M24 2v10M24 36v10M2 24h10M36 24h10" stroke="currentColor" stroke-width="2.5"/></svg>`;
     else if(extra==="gen")add("i",12,x=>{x.style.left=R_(2,98)+"%";x.style.bottom=R_(0,30)+"%";x.style.animationDelay=R_(0,.6)+"s"});
   }
   moLayer().appendChild(el);setTimeout(()=>el.remove(),ms);
@@ -49,7 +61,8 @@ function queueMoments(list,prev){
     const play=(kind,extra,delay,label)=>momentQ.push({id:c.id,kind,extra,delay:delay||0,label});
     let d=0;
     add.forEach(k=>{if(MO_COND[k]&&!(k==="unconscious"&&add.includes("down"))){play(MO_COND[k],"",d,k[0].toUpperCase()+k.slice(1));d+=250}});
-    add.filter(k=>k.startsWith("eff")).forEach(k=>{const e=state.effects.find(x=>"eff"+x.id===k);if(!e)return;const m=MO_SPELL.find(([re])=>re.test(e.name));play("sp",m?m[1]:"gen",d,e.name);d+=200});
+    add.filter(k=>k.startsWith("eff")).forEach(k=>{const e=state.effects.find(x=>"eff"+x.id===k);if(!e)return;const m=MO_SPELL.find(([re])=>re.test(e.name));
+      play("sp",m?m[1]:"gen",d,e.name);d+=200});
     const dsN=s=>{const k=[...s].find(x=>/^ds\d\d$/.test(x));return k?{s:+k[2],f:+k[3]}:null},a=dsN(was),b=dsN(now);
     if(add.includes("dead"))play("death");
     else if(add.includes("stable"))play("stable");
@@ -61,13 +74,15 @@ function queueMoments(list,prev){
 }
 function flushMoments(P){
   const q=momentQ;momentQ=[];
-  q.forEach(m=>setTimeout(()=>{const li=fxRow(P,m.id);if(li)moment(li,m.kind,m.extra);else{const c=byId(m.id);if(!(m.kind==="death"&&c&&c.kind!=="pc"))tvStrip(m.id,m.label||MO_LABEL[m.kind]||"")}},m.delay+80));
+  q.forEach(m=>setTimeout(()=>{const li=fxRow(P,m.id);if(li)moment(li,m.kind,m.extra);else{const c=byId(m.id);
+    if(!(m.kind==="death"&&c&&c.kind!=="pc"))tvStrip(m.id,m.label||MO_LABEL[m.kind]||"")}},m.delay+80));
 }
 /* K1–K3 on this screen: weather, time of day, how calm or wild the scene is */
 function sceneLook(A,P){
   const lite=TV&&!!A.lite,t=tuneOf(A);Scene.lite=lite;if(lite){Scene.fx=[];Scene.SP=[];Scene.bf={}}
   Scene.opts({D:t[0],V:t[1],weather:lite?"none":A.weather||"none"});
-  Scene.pos=id=>{const li=fxRow(P,id);if(!li)return null;const r=li.getBoundingClientRect();return r.width&&r.bottom>0&&r.top<innerHeight?{x:r.left+r.width/2,y:r.top+r.height/2,w:r.width,h:r.height}:null};Scene.posT=0;
+  Scene.pos=id=>{const li=fxRow(P,id);if(!li)return null;const r=li.getBoundingClientRect();
+    return r.width&&r.bottom>0&&r.top<innerHeight?{x:r.left+r.width/2,y:r.top+r.height/2,w:r.width,h:r.height}:null};Scene.posT=0;
   const tt=$("#todTint");if(tt){const c=A.tod&&A.tod!=="none"?"tod-"+A.tod:"";if(tt.className!==c)tt.className=c}
 }
 /* R1–R5: the scene answers what happens in the fight */
@@ -77,7 +92,8 @@ function sceneReact(A,P,first,prev){
   const ck=(state.clocks||[]).filter(k=>!k.secret&&k.max>0&&k.n>0).map(k=>k.n/k.max);Scene.rit=sfx("clock")&&ck.length?1+(1-Math.min(...ck))*3.5:1;
   // battlefield spells, while they last
   const vis=id=>{const c=byId(id);return c&&shownToPlayers(c)};
-  Scene.field(lite||!sfx("spells")?[]:state.effects.filter(e=>BF_FX[String(e.name).toLowerCase()]).map(e=>({key:BF_FX[String(e.name).toLowerCase()],tg:e.targets.filter(vis),by:vis(e.by)?e.by:null})));
+  Scene.field(lite||!sfx("spells")?[]:state.effects.filter(e=>BF_FX[String(e.name).toLowerCase()]).map(e=>({key:BF_FX[String(e.name).toLowerCase()],tg:
+    e.targets.filter(vis),by:vis(e.by)?e.by:null})));
   const ids=new Set(state.effects.map(e=>e.id)),was=pv.effIds;pv.effIds=ids;
   const sp=state.spfx,spNew=sp&&sp.id!==pv.spfx;if(sp)pv.spfx=sp.id;
   if(first||lite||reduced||!was)return;
@@ -90,9 +106,12 @@ function sceneReact(A,P,first,prev){
     if(!T.length)T=sorted().filter(c=>shownToPlayers(c)&&!c.down&&(heal?c.kind==="pc":c.kind==="enemy")).map(c=>Scene.at(c.id)).filter(Boolean);
     Scene.spell(sp.n,sp.t,sp.from&&vis(sp.from)?Scene.at(sp.from):null,T,{tg:to,by:sp.from&&vis(sp.from)?sp.from:null})}
   // R4: a player drops to 0 HP and the colour drains for a moment
-  if(prev&&sfx("down")&&state.list.some(c=>c.kind==="pc"&&shownToPlayers(c)&&prev.has(c.id)&&pv.seen.has(c.id)&&!["down","dead","stable"].some(k=>prev.get(c.id).has(k))&&pv.seen.get(c.id).has("down")))Scene.tint("sgrey",2600);
+  if(prev&&sfx("down")&&state.list.some(c=>c.kind==="pc"&&shownToPlayers(c)&&prev.has(c.id)&&pv.seen.has(c.id)&&!["down","dead","stable"].some(k=>
+    prev.get(c.id).has(k))&&pv.seen.get(c.id).has("down")))Scene.tint("sgrey",2600);
   // a countdown reaches 0 on the Ritual circle
-  const cf=state.clockFx;if(cf&&cf.id!==pv.clockSc){pv.clockSc=cf.id;if(Math.abs(dmNow()-cf.at)<8000&&sfx("clock")&&Scene.kind==="ritual"){Scene.add({k:"flash",c:"200,120,255",a:.5,dur:900});Scene.add({k:"ring",x:Scene.w/2,y:Scene.h*.52,R:Math.min(Scene.w,Scene.h)*.6,c:"210,150,255",lw:14,dur:1200});Scene.jolt("3")}}
+  const cf=state.clockFx;if(cf&&cf.id!==pv.clockSc){pv.clockSc=cf.id;if(Math.abs(dmNow()-cf.at)<8000&&sfx("clock")&&Scene.kind==="ritual"){Scene.add({k:"flash",
+    c:"200,120,255",a:.5,dur:900});Scene.add({k:"ring",x:Scene.w/2,y:Scene.h*.52,R:Math.min(Scene.w,Scene.h)*.6,c:"210,150,255",lw:14,dur:1200});
+    Scene.jolt("3")}}
   else if(cf)pv.clockSc=cf.id;
 }
 /* the scene follows the boss fight: stronger while a boss is Bloodied, calm for a moment when one falls */
@@ -110,7 +129,8 @@ function rollForInitiative(){
   document.body.appendChild(el);setTimeout(()=>el.remove(),2200);
 }
 function lairTremor(P){
-  if(reduced)return;if(sfx("lair"))Scene.lair();P.classList.remove("tremor");void P.offsetWidth;P.classList.add("tremor");setTimeout(()=>P.classList.remove("tremor"),1000);
+  if(reduced)return;if(sfx("lair"))Scene.lair();P.classList.remove("tremor");void P.offsetWidth;P.classList.add("tremor");
+    setTimeout(()=>P.classList.remove("tremor"),1000);
   const f=document.createElement("div");f.className="lairflash";document.body.appendChild(f);setTimeout(()=>f.remove(),1500);
 }
 const callSeen={id:null,ans:{},done:false};
@@ -119,7 +139,8 @@ function callStamps(P,first){
   if(!call){callSeen.id=null;return}
   if(callSeen.id!==call.id){callSeen.id=call.id;callSeen.ans={};callSeen.done=false;if(first)Object.assign(callSeen.ans,call.answers||{})}
   const ans=call.answers||{};
-  P.querySelectorAll(".callbar .cw[data-id]").forEach(el=>{const id=el.dataset.id;if(ans[id]!=null&&callSeen.ans[id]==null&&!first){el.classList.add("stamp")}});
+  P.querySelectorAll(".callbar .cw[data-id]").forEach(el=>{const id=el.dataset.id;
+    if(ans[id]!=null&&callSeen.ans[id]==null&&!first){el.classList.add("stamp")}});
   Object.assign(callSeen.ans,ans);
   const sum=P.querySelector(".callbar .callsum");if(sum&&!callSeen.done){callSeen.done=true;if(!first)sum.classList.add("pop")}
 }
@@ -131,11 +152,14 @@ function afterRender(list,prev,first){
     if((!prev.has(c.id)&&was===undefined)||(key&&key!==was))queueIntro(c);
   });
 }
-function queueIntro(c){if(!screenWants("intro"))return;pv.introQ.push({name:c.name,title:c.title||"",fk:frameKey(c),img:c.introImg||""});if(!pv.introOn)nextIntro()}
+function queueIntro(c){if(!screenWants("intro"))return;pv.introQ.push({name:c.name,title:c.title||"",fk:frameKey(c),img:c.introImg||""});
+  if(!pv.introOn)nextIntro()}
 function nextIntro(){
   const it=pv.introQ.shift();if(!it){pv.introOn=false;return}pv.introOn=true;
   const el=document.createElement("div");el.className="intro"+(it.fk?" fr-"+it.fk:"")+(it.img?" withimg":"");
-  el.innerHTML=`${it.img&&/^[a-f0-9]{12}\.(jpg|png|webp)$/.test(it.img)?`<div class="intro-img" style="background-image:url(/bg/${it.img})"></div>`:""}<div class="intro-inner"><div class="intro-kicker">Enter</div><div class="intro-name">${esc(it.name)}</div><div class="intro-rule"></div>${it.title?`<div class="intro-title">${esc(it.title)}</div>`:""}</div>`;
+  el.innerHTML=`${it.img&&/^[a-f0-9]{12}\.(jpg|png|webp)$/.test(it.img)?`<div class="intro-img" style="background-image:url(/bg/${it.img})"></div>`:
+    ""}<div class="intro-inner"><div class="intro-kicker">Enter</div><div class="intro-name">${esc(it.name)}</div><div class="intro-rule"></div>${it.title?
+    `<div class="intro-title">${esc(it.title)}</div>`:""}</div>`;
   document.body.appendChild(el);setTimeout(()=>{el.remove();nextIntro()},reduced?3000:it.img?6200:4700);
 }
 let idleT=null;const wakeUi=()=>{document.body.classList.remove("idle");clearTimeout(idleT);idleT=setTimeout(()=>document.body.classList.add("idle"),4000)};
@@ -146,7 +170,8 @@ $("#player").addEventListener("animationend",e=>{
   if(e.animationName==="hit"){const li=t.closest("li");li&&li.classList.remove("flash")}
   if(e.animationName==="fxin")t.classList.remove("fx-new");
 });
-function layoutMode(){if(TV)return "land";const o=state.layout||"auto";return o==="portrait"?"port":o==="landscape"?"land":innerHeight>innerWidth*1.05?"port":"land"}
+function layoutMode(){if(TV)return "land";const o=state.layout||"auto";return o==="portrait"?"port":o==="landscape"?"land":innerHeight>innerWidth*1.05?
+  "port":"land"}
 const badgeCount=li=>{const ic=li.querySelector(".ic");return ic?ic.children.length:0};
 // how many lines a row's badges take (visible ones only)
 function badgeLines(li){const ic=li.querySelector(".ic");if(!ic)return 0;
@@ -158,7 +183,8 @@ function resetBadges(li){li.classList.remove("c1");const ic=li.querySelector(".i
 // last resort: hide the least important badges (they come last) behind a "+N" chip
 function trimRow(li,over){
   const ic=li.querySelector(".ic");if(!ic)return;
-  const vis=()=>[...ic.children].filter(ch=>!ch.classList.contains("you")&&!ch.classList.contains("morec")&&ch.style.display!=="none"&&getComputedStyle(ch).display!=="none");
+  const vis=()=>[...ic.children].filter(ch=>!ch.classList.contains("you")&&!ch.classList.contains("morec")&&ch.style.display!=="none"&&
+    getComputedStyle(ch).display!=="none");
   let more=null;const hidden=[];
   while(over()&&vis().length>1){const ch=vis().pop();ch.style.display="none";
     hidden.unshift(...(ch.dataset.more?ch.dataset.more.split("|"):[(ch.querySelector(".lt")||ch).textContent.trim()||ch.getAttribute("title")||""]));
@@ -209,11 +235,13 @@ function fitList(n){
     // the NOW / NEXT tab sits in the top right corner: on those rows a second line of badges would run under it
     const tab=!stack&&(li.classList.contains("turn")||li.classList.contains("next")),
       twoLines=()=>{const f=ic.firstElementChild;return !!f&&ic.scrollHeight>f.offsetHeight*1.5};
-    const ov0=stack?()=>li.scrollHeight>li.clientHeight+1||ic.scrollWidth>ic.clientWidth+1:()=>ic.scrollHeight>ic.clientHeight+1||ic.scrollWidth>ic.clientWidth+1,
+    const ov0=stack?()=>li.scrollHeight>li.clientHeight+1||ic.scrollWidth>ic.clientWidth+1:()=>ic.scrollHeight>ic.clientHeight+1||ic.scrollWidth>
+      ic.clientWidth+1,
       ov=tab?()=>ov0()||twoLines():ov0;
     if(ov())li.classList.add("c1");
     if(ov())trimRow(li,ov)});
 }
 addEventListener("resize",()=>{if(MODE==="player")fitList(withLair(sorted().filter(shownToPlayers)).length)});
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(MODE==="player")fitList(withLair(sorted().filter(shownToPlayers)).length)});   // names are measured again once the display font has loaded
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(MODE===
+  "player")fitList(withLair(sorted().filter(shownToPlayers)).length)});   // names are measured again once the display font has loaded
 

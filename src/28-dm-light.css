@@ -1,6 +1,7 @@
 /* ---------- the DM screen in light (this laptop only; the tablet and phones keep their themes) ---------- */
 html[data-dm=light]{--bg:#f2eee5;--panel:#fffcf6;--panel2:#f6f1e6;--line:#dcd2bf;--fg:#221d16;--muted:#655d50;--faint:#968c7b;
- --accent:#a86a0e;--accent-ink:#fffaf0;--pc:#2c7a94;--enemy:#b5462f;--ally:#4b8636;--blood:#b3203a;--arcane:#6248c9;--poison:#4a8628;--fire:#c55a18;--charm:#ad4a89;--stun:#93730c;--stone:#77726b;
+ --accent:#a86a0e;--accent-ink:#fffaf0;--pc:#2c7a94;--enemy:#b5462f;--ally:#4b8636;--blood:#b3203a;--arcane:#6248c9;--poison:#4a8628;--fire:#c55a18;
+   --charm:#ad4a89;--stun:#93730c;--stone:#77726b;
  --save:#2c8543;--fail:#bf3542;--boss:#94660f;color-scheme:light}
 html[data-dm=light] #roster .hpw{border-color:color-mix(in srgb,var(--arcane) 45%,transparent);background:color-mix(in srgb,var(--arcane) 6%,#fff)}
 html[data-dm=light] .btn.primary{color:#fff}
@@ -9,9 +10,11 @@ html[data-dm=light] .cond.eff{color:#5e3f05!important;background:#fbedc6!importa
 html[data-dm=light] .scrim{background:rgba(60,48,30,.38)}
 body:has(#overlay .scrim) #sbDrawer{z-index:15}   /* a window opened over the statblock (Ctrl+K, a spell effect) comes first */
 html[data-plight]{--bg:#f2eee5;--panel:#fffcf6;--panel2:#f6f1e6;--line:#dcd2bf;--fg:#221d16;--muted:#655d50;--faint:#968c7b;
- --accent:#a86a0e;--accent-ink:#fffaf0;--pc:#2c7a94;--enemy:#b5462f;--ally:#4b8636;--blood:#b3203a;--arcane:#6248c9;--poison:#4a8628;--fire:#c55a18;--charm:#ad4a89;--stun:#93730c;--stone:#77726b;
+ --accent:#a86a0e;--accent-ink:#fffaf0;--pc:#2c7a94;--enemy:#b5462f;--ally:#4b8636;--blood:#b3203a;--arcane:#6248c9;--poison:#4a8628;--fire:#c55a18;
+   --charm:#ad4a89;--stun:#93730c;--stone:#77726b;
  --save:#2c8543;--fail:#bf3542;--boss:#94660f;--pbg:#f2eee5;--rowimg:none;color-scheme:light}
 html[data-plight] .btn.primary{color:#fff}
-html[data-plight] .cond.eff{color:#5e3f05!important;background:#fbedc6!important;border-color:#d4aa4c!important}html[data-plight] .cond.eff *{color:inherit}   /* effects: the dark theme's pale gold vanishes on cream */
+html[data-plight] .cond.eff{color:#5e3f05!important;background:#fbedc6!important;border-color:#d4aa4c!important}html[data-plight] .cond.eff *{color:inherit}
+  /* effects: the dark theme's pale gold vanishes on cream */
 .morelist .btn svg{width:18px;height:18px;display:inline-block;vertical-align:-3px;margin-right:4px}
 html[data-plight] .scrim{background:rgba(60,48,30,.38)}

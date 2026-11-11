@@ -23,7 +23,8 @@
 .qhint b{color:var(--fg);font-weight:700}
 .tools2{border-top:1px solid var(--line);padding-top:12px}
 .keys{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:center}
-kbd{font-family:var(--body);font-weight:800;font-size:.85rem;background:var(--panel2);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:2px 8px;justify-self:start}
+kbd{font-family:var(--body);font-weight:800;font-size:.85rem;background:var(--panel2);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;
+  padding:2px 8px;justify-self:start}
 
 /* ================= visual pass (header pill, footer bar, compact counters, book statblock, colours, Tablet, phone, icons, radii) ================= */
 .ui-i{width:1em;height:1em;vertical-align:-.14em;flex:none}
@@ -45,28 +46,33 @@ html:root .joinpill b{margin-right:2px}
 .devrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}.psec .devrow:first-of-type{border-top:0}
 .devrow .jd{width:10px;height:10px;border-radius:50%;background:var(--faint);flex:none}.devrow .jd.on{background:var(--save);box-shadow:0 0 6px var(--save)}
 .devn{flex:1 1 12em;min-width:0;display:grid}.devn small{color:var(--muted);font-size:.82rem}
-.devlink{display:flex;align-items:center;gap:6px;flex:1 1 22em;min-width:0}.devlink code{flex:1;min-width:0;overflow-wrap:anywhere;font-size:.85rem;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:5px 8px;user-select:all}
-.devgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));column-gap:18px}.devgrid .devrow{border-top:0;border-bottom:1px solid var(--line)}
+.devlink{display:flex;align-items:center;gap:6px;flex:1 1 22em;min-width:0}.devlink code{flex:1;min-width:0;overflow-wrap:anywhere;font-size:.85rem;
+  background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:5px 8px;user-select:all}
+.devgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));column-gap:18px}.devgrid .devrow{border-top:0;
+  border-bottom:1px solid var(--line)}
 .devhelp summary{cursor:pointer;font-weight:800}.devhelp .qrhelp{margin-top:8px}
 html:root .previewic{display:inline-grid}html:root .previewic svg{fill:currentColor}
 html:root .brand{margin-right:auto}html:root .turnbox{margin-left:0}
 /* D2 the fight's buttons in a bar along the bottom; Clear all set apart */
 html:root .dmmain{display:flex;flex-direction:column;min-height:calc(100vh - var(--barh,72px) - var(--covered,0px) - 36px)}
-html:root .dmmain>.foot{margin-top:auto;position:sticky;bottom:var(--covered,0px);z-index:4;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);border-top:1px solid var(--line);padding:10px 0 12px}
+html:root .dmmain>.foot{margin-top:auto;position:sticky;bottom:var(--covered,0px);z-index:4;background:color-mix(in srgb,var(--bg) 92%,transparent);
+  backdrop-filter:blur(6px);border-top:1px solid var(--line);padding:10px 0 12px}
 html:root .dmmain>.foot .hint{display:none}
 html:root .dmmain>.foot .acts{width:100%}
 html:root .dmmain>.foot #wipe{margin-left:auto;position:relative}
 html:root .dmmain>.foot #wipe::before{content:"";position:absolute;left:-10px;top:15%;bottom:15%;border-left:1px solid var(--line)}
 /* D3 compact statblock counters */
 html:root #roster .row .sbline{gap:4px 6px;font-size:.74rem;padding-top:0}
-html:root .sbc,html:root .sbrech{border:1px solid var(--line);border-radius:999px;padding:1px 8px 1px 9px;background:color-mix(in srgb,var(--panel2) 70%,transparent)}
+html:root .sbc,html:root .sbrech{border:1px solid var(--line);border-radius:999px;padding:1px 8px 1px 9px;
+  background:color-mix(in srgb,var(--panel2) 70%,transparent)}
 html:root .sbpip{width:10px;height:10px;border-width:1.5px}
 html:root .sbmore{color:var(--muted);font:inherit;font-weight:700;cursor:pointer}html:root .sbmore b{color:var(--fg)}
 /* D4 side panel: search first, the manual form folded away */
 html:root #addForm .byhandbtn{display:flex;justify-content:space-between;grid-column:1/-1;order:0;background:transparent;border-style:dashed;color:var(--muted)}
 html:root #addForm .quick{order:-2}
 html:root #addForm:not(.byhand)>label,html:root #addForm:not(.byhand)>.go,html:root #addForm:not(.byhand)>.add-extra{display:none}
-html:root .quick .sbbtn{order:-1;flex:1 0 100%;border-style:solid;background:var(--accent);color:var(--accent-ink);border-color:var(--accent);padding:12px 16px;font-size:1.05rem;display:grid;justify-items:start;text-align:left;gap:2px}
+html:root .quick .sbbtn{order:-1;flex:1 0 100%;border-style:solid;background:var(--accent);color:var(--accent-ink);border-color:var(--accent);padding:12px 16px;
+  font-size:1.05rem;display:grid;justify-items:start;text-align:left;gap:2px}
 html:root .quick .sbbtn small{color:color-mix(in srgb,var(--accent-ink) 70%,transparent)!important}
 html:root .side .quick{border-bottom:0;padding-bottom:0}
 /* D5 the statblock in the drawer reads like a book */
@@ -88,7 +94,8 @@ html:root #roster .row.hid{background-image:repeating-linear-gradient(135deg,col
 html:root #roster .ac-wrap .tog[aria-pressed="false"]{color:var(--arcane)}
 html:root #sbDrawer{border-left-color:var(--arcane)}
 /* S1 who's up: a NOW tag and a stronger frame; NEXT clearly marked */
-html:root ol.plist li .turnmark::before{position:absolute;top:0;right:.9em;font-family:var(--body);font-weight:900;font-size:.36em;letter-spacing:.14em;padding:.15em .6em .2em;border-radius:0 0 .45em .45em}
+html:root ol.plist li .turnmark::before{position:absolute;top:0;right:.9em;font-family:var(--body);font-weight:900;font-size:.36em;letter-spacing:.14em;
+  padding:.15em .6em .2em;border-radius:0 0 .45em .45em}
 html:root ol.plist li.turn .turnmark{box-shadow:inset 0 0 0 .14em var(--accent),0 0 1.4em color-mix(in srgb,var(--accent) 55%,transparent)}
 html:root ol.plist li.turn .turnmark::before{content:"NOW";background:var(--accent);color:var(--accent-ink)}
 html:root ol.plist li.next .turnmark{box-shadow:inset 0 0 0 .07em color-mix(in srgb,var(--accent) 75%,transparent)}
@@ -96,7 +103,8 @@ html:root ol.plist li.next .turnmark::before{content:"NEXT";background:color-mix
 html:root ol.plist li.turn{background:color-mix(in srgb,var(--accent) 14%,var(--panel))}
 /* S2 the round, readable from across the table */
 html:root #player:not(.has-bar) .p-title{font-size:clamp(1.5rem,3.8vw,3.1rem)}
-html:root .p-round{font-family:var(--display);font-size:.72em;letter-spacing:.1em;color:var(--fg);border:.08em solid var(--accent);border-radius:.35em;padding:.05em .45em .1em;margin-left:.7em}
+html:root .p-round{font-family:var(--display);font-size:.72em;letter-spacing:.1em;color:var(--fg);border:.08em solid var(--accent);border-radius:.35em;
+  padding:.05em .45em .1em;margin-left:.7em}
 html:root .p-round b{color:var(--accent);font-size:1.45em;margin-left:.15em}
 /* S3 a short fight fills the screen: bigger rows, centred */
 html:root ol.plist.port.centered{align-content:center}
@@ -109,9 +117,11 @@ html:root .has-scene .p-head{background:color-mix(in srgb,var(--panel) 90%,trans
 .sprow.sp1::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--lvc,#888)}
 .sprow.sp1 .spi{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}.sprow.sp1 .spi small{font-size:.78rem}
 .sprow.sp1 .spc{color:#ffcf8a}.sprow.sp1 .spa{color:#9fd8ff}.sprow.sp1 .ui-i{width:16px;height:16px}
-.sp1.lv0{--lvc:#9aa0a6}.sp1.lv1{--lvc:#7fd1a8}.sp1.lv2{--lvc:#6cb4cc}.sp1.lv3{--lvc:#8a9cff}.sp1.lv4{--lvc:#b78cf0}.sp1.lv5{--lvc:#e38ad0}.sp1.lv6{--lvc:#f08a8a}.sp1.lv7{--lvc:#f0a35e}.sp1.lv8{--lvc:#e3c35a}.sp1.lv9{--lvc:#fff}
+.sp1.lv0{--lvc:#9aa0a6}.sp1.lv1{--lvc:#7fd1a8}.sp1.lv2{--lvc:#6cb4cc}.sp1.lv3{--lvc:#8a9cff}.sp1.lv4{--lvc:#b78cf0}.sp1.lv5{--lvc:#e38ad0}.sp1.lv6{
+  --lvc:#f08a8a}.sp1.lv7{--lvc:#f0a35e}.sp1.lv8{--lvc:#e3c35a}.sp1.lv9{--lvc:#fff}
 /* P2 your own row stands out on your phone */
-html:root ol.plist.compact li.me{background:color-mix(in srgb,var(--accent) 22%,var(--panel));outline:.16em solid var(--accent);outline-offset:-.16em;box-shadow:0 0 1.1em color-mix(in srgb,var(--accent) 45%,transparent);transform:scale(1.035);z-index:1;margin:.25em 0}
+html:root ol.plist.compact li.me{background:color-mix(in srgb,var(--accent) 22%,var(--panel));outline:.16em solid var(--accent);outline-offset:-.16em;
+  box-shadow:0 0 1.1em color-mix(in srgb,var(--accent) 45%,transparent);transform:scale(1.035);z-index:1;margin:.25em 0}
 html:root ol.plist.compact li:not(.me){opacity:.7}
 /* G2 one scale for corners and spacing */
 html:root{--r-s:8px;--r-m:12px;--r-l:16px}
