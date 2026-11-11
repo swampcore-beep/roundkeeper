@@ -1,0 +1,102 @@
+</style>
+</head>
+<body>
+
+<div id="dm" hidden>
+  <header class="bar">
+    <div class="bar-row">
+      <div class="brand">Roundkeeper</div>
+      <div class="sync" id="sync" data-s="off"><i></i><span>Connecting…</span></div>
+      <button class="btn joinpill" id="joinPill" type="button" data-act="devices" title="Devices: who is connected, the addresses and the QR code"></button>
+      <div class="turnbox" id="turnBox"></div>
+      <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Rules <kbd>Ctrl K</kbd></button>
+      <button class="btn tcardpill" id="tcardPill" type="button" data-act="tcardoff" hidden></button>
+      <button class="icon-btn lg dmlight" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button>
+      <button class="btn tvbtn" id="tvBtn" type="button" data-act="tvbar" title="What the TV shows" aria-expanded="false"><i class="jd"></i>TV</button>
+      <button class="btn atmobtn" id="atmoBtn" type="button" data-act="atmo" title="Theme, scene and background picture on the tablet">Atmosphere</button>
+      <div class="hgroup">
+        <button class="icon-btn lg" id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62A7.95 7.95 0 0112.5 10c3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 10.53 17.15 8 12.5 8z"/></svg></button>
+        <button class="icon-btn lg" id="redoBtn" type="button" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg viewBox="0 0 24 24"><path d="M11.5 8c2.65 0 5.05 1 6.9 2.6L22 7v9h-9l3.62-3.62A7.95 7.95 0 0011.5 10c-3.54 0-6.55 2.31-7.6 5.5l-2.37-.78C2.92 10.53 6.85 8 11.5 8z"/></svg></button>
+      </div>
+      <button class="btn" id="preview" type="button">Preview player screen</button>
+      <button class="icon-btn lg previewic" type="button" data-act="previewic" title="Preview the player screen" aria-label="Preview the player screen"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div>
+    <div class="addr-row" id="addr" hidden></div>
+  </header>
+  <main class="dmgrid">
+   <div class="dmmain">
+    <div class="note" id="fileNote" hidden>This file was opened directly, so the tablet can't see anything. Start the tracker by double-clicking <b>start.bat</b>.</div>
+    <div class="note ended" id="endedNote" hidden><span>Players are seeing the end-of-combat screen.</span><button class="btn" type="button" data-act="unend">Show the order again</button></div>
+    <section class="roster" id="roster" aria-label="Initiative order"></section>
+    <div class="foot">
+      <p class="hint">Players open the same address as the tablet on their phones and manage their own initiative, conditions and death saves. Ctrl+Z undoes the last change.</p>
+      <div class="acts">
+        <button class="btn" id="peBtn" type="button" data-act="peToggle" aria-pressed="true" title="Whether players may change their own initiative, conditions and death saves from their phones">Player edits</button>
+        <button class="btn" type="button" data-act="clearreact" title="Clear every Reaction used (R)">Clear reactions</button>
+        <button class="btn" type="button" data-act="mtstart" title="Damage several at once, like a Fireball (or Shift+click the rows)">Hit several</button>
+        <button class="btn" id="lairBtn" type="button" aria-pressed="false">Lair action</button>
+        <button class="btn" id="endBtn" type="button">End combat</button>
+        <button class="btn" id="recapBtn" type="button" data-act="recap" title="What happened in this fight, for your campaign notes">Recap</button>
+        <button class="btn" type="button" data-act="party" title="AC and passive scores from the players' phones">Party</button>
+        <button class="btn" id="newFight" type="button">New combat</button>
+        <button class="btn danger" id="wipe" type="button">Clear all</button>
+      </div>
+    </div>
+   </div>
+   <aside class="side" id="side" aria-label="Tools">
+    <details class="panel" data-k="add" open><summary>Add to combat</summary>
+    <form class="add" id="addForm" autocomplete="off">
+      <button type="button" class="btn byhandbtn" data-act="byhand" aria-expanded="false">Add by hand <span aria-hidden="true">▾</span></button>
+      <label class="wide fname"><span>Name</span><input class="field" id="fName" placeholder="e.g. Goblin" required></label>
+      <label><span>Side</span><select class="field" id="fKind"><option value="enemy">Enemy</option><option value="pc">Player</option><option value="ally">Ally</option></select></label>
+      <label><span>Class / type</span><select class="field" id="fType"></select></label>
+      <label><span>Count</span><input class="field" id="fCount" type="number" min="1" max="12" value="1"></label>
+      <label><span>Initiative</span><input class="field" id="fInit" type="number" placeholder="from 5etools"></label>
+      <label><span>AC</span><input class="field" id="fAc" type="number" placeholder="—"></label>
+      <label><span>HP</span><input class="field" id="fHp" type="number" min="1" placeholder="—"></label>
+      <button class="btn primary go" type="submit">Add</button>
+      <div class="add-extra">
+        <label><input type="checkbox" id="fHidden"> Hidden from players</label>
+        <label><input type="checkbox" id="fBoss"> Boss</label>
+        <span>Several of the same get letters A, B, C.</span>
+      </div>
+      <div class="quick"><label for="qAdd">Quick add</label><input class="field" id="qAdd" placeholder="Goblin 14 hp7, Orc x2 12 ac13 hp15 h, Astrea 18" autocomplete="off"><button type="button" class="btn" data-act="qadd">Add</button>
+        <button type="button" class="btn sbbtn" data-act="sbopen" title="Search the SRD and your data files, or drop a statblock .md, or paste one (Ctrl+V)">Add monsters… <small style="font-weight:500;color:var(--muted)">search, library, .md file or paste</small></button>
+        <span class="qhint">name, initiative, then optional <b>x3</b> (count), <b>ac15</b>, <b>hp45</b>, <b>h</b> (hidden), <b>boss</b>, <b>ally</b>. Player names just get their initiative.</span></div>
+    </form>
+    </details>
+    <details class="panel" data-k="log" open><summary>Player activity <span class="pcount" id="logCount" hidden></span></summary><div class="actlog" id="actLog"></div></details>
+    <details class="panel" data-k="call" open><summary>Roll call</summary><section class="strip call" id="callStrip" aria-label="Roll call"></section></details>
+    <details class="panel" data-k="field" open><summary>Battlefield</summary><section class="strip field" id="fieldStrip" aria-label="Battlefield effects"></section></details>
+    <details class="panel" data-k="party" open><summary>Party</summary><section class="strip party" id="party" aria-label="Party"></section><div id="partyTbl"></div></details>
+    <details class="panel" data-k="enc"><summary>Encounters</summary><section class="strip enc" id="enc" aria-label="Saved encounters"></section></details>
+    <details class="panel" data-k="more"><summary>Settings and files</summary>
+    <div class="foot tools2 side-tools">
+      <label class="scene-pick" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="30" style="width:5em"> s</label>
+      <label class="scene-pick"><input type="checkbox" id="autoTimer"> start it on every player's turn</label>
+      <label class="scene-pick" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> roll monsters' Concentration saves for me (otherwise the app asks)</label>
+      <div class="acts">
+        <button class="btn" type="button" data-act="keys">Shortcuts (?)</button>
+        <button class="btn" type="button" data-act="dmdev">DM devices</button>
+        <button class="btn" type="button" data-act="gdata">Game data</button>
+        <button class="btn" type="button" data-act="pics">Pictures</button>
+        <button class="btn" type="button" data-act="export">Export</button>
+        <label class="btn" for="importFile" tabindex="0">Import</label><input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+    </div>
+    </details>
+   </aside>
+  </main>
+</div>
+
+<div id="bgimg" aria-hidden="true"></div>
+<canvas id="scene" hidden></canvas>
+<canvas id="scene2" hidden aria-hidden="true"></canvas>
+<div id="todTint" aria-hidden="true"></div>
+<canvas id="sceneFx" aria-hidden="true"></canvas>
+<div id="player" hidden></div>
+<div id="entry" hidden></div>
+<div id="overlay"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>

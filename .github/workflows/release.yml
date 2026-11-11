@@ -14,6 +14,8 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: "1.24"
+      - name: Check that initiative.html is built from src/
+        run: python3 tools/build.py --check
       - name: Put the app into the program
         run: |
           mkdir -p go/assets

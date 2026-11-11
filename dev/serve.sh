@@ -6,6 +6,7 @@
 #   keep   keep the old state.json and library.json
 # The server's folder is dev/.work/srv. Stops any server already running on 8765.
 cd "$(dirname "$0")/.." || exit 1
+python3 tools/build.py --quiet || exit 1   # initiative.html from src/
 ROOT=$PWD; W=$ROOT/dev/.work; SRV=$W/srv; kind=${1:-go}; data=${2:-srd}; keep=$3
 pkill -x ti-linux 2>/dev/null; pkill -f "python3 [s]erver.py" 2>/dev/null; sleep .5
 if [ "$keep" = keep ]; then find "$SRV" -mindepth 1 -maxdepth 1 ! -name state.json ! -name library.json -exec rm -rf {} + 2>/dev/null

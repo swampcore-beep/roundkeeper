@@ -1,0 +1,69 @@
+/* ---------- DM: two columns, one-line rows, side panels, activity log ---------- */
+#dm .bar-row,#dm .addr-row{max-width:1760px}
+main.dmgrid{max-width:1760px;grid-template-columns:minmax(0,1fr) 390px;gap:18px;align-items:start}
+.dmmain{display:grid;gap:12px;min-width:0;align-content:start}
+.side{position:sticky;top:calc(var(--barh,72px) + 12px);max-height:calc(100vh - var(--barh,72px) - 24px);overflow:auto;overscroll-behavior:contain;display:grid;gap:10px;align-content:start;padding-right:2px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.panel>summary{list-style:none;cursor:pointer;padding:11px 14px;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:var(--muted);display:flex;align-items:center;gap:8px;user-select:none}
+.panel>summary::-webkit-details-marker{display:none}
+.panel>summary::after{content:"";margin-left:auto;width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s}
+.panel[open]>summary::after{transform:rotate(-135deg)}
+.panel>summary:hover{color:var(--fg)}
+.panel>:not(summary){margin:0 14px 14px}
+.panel.ping>summary{animation:ping 1.2s ease}
+@keyframes ping{0%,100%{background:transparent}30%{background:color-mix(in srgb,var(--accent) 22%,transparent)}}
+.pcount{background:var(--accent);color:var(--accent-ink);border-radius:99px;padding:1px 7px;font-size:.72rem;letter-spacing:0}
+.side .strip{background:none;border:0;padding:0;border-radius:0;align-items:flex-start}
+.side .strip-label{display:none}
+.side .strip .spacer{display:none}
+.side .strip form{flex-wrap:wrap}
+.side form.add{grid-template-columns:repeat(4,minmax(0,1fr));background:none;border:0;padding:0;border-radius:0}
+.side form.add .wide,.side form.add .go{grid-column:1/-1}
+.side form.add label:has(#fKind),.side form.add label:has(#fType){grid-column:span 2}
+.side .quick{order:-1;padding-bottom:10px;margin-bottom:2px;border-bottom:1px solid var(--line)}
+.side .quick .field{min-width:0}
+.side .add-extra{gap:10px}
+.side .add-extra span{flex-basis:100%;font-size:.78rem}
+.side .ptable{background:none;border:0;padding:0;margin-top:10px}
+.side .ptable .ph,.side .ptable .pr{grid-template-columns:minmax(4.5em,1.3fr) repeat(5,minmax(2.6em,1fr));gap:5px}
+.side .ptable .field{padding:4px 5px}
+.side-tools{border-top:0;padding-top:0;display:grid;gap:10px}
+.actlog{display:grid;gap:4px;max-height:260px;overflow:auto}
+.le{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;font-size:.86rem;padding:4px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent)}
+.le:last-child{border-bottom:0}
+.le .lt{color:var(--faint);font-size:.75rem;font-variant-numeric:tabular-nums}
+.le.undone .lx{text-decoration:line-through;color:var(--faint)}
+.le .btn.sm{padding:3px 9px;font-size:.78rem}
+.le.fresh{animation:lein 1s ease}
+@keyframes lein{from{background:color-mix(in srgb,var(--accent) 20%,transparent)}to{background:transparent}}
+@media (max-width:1100px){main.dmgrid{grid-template-columns:minmax(0,1fr)}.side{position:static;max-height:none}}
+/* one-line rows */
+#roster .row{grid-template-columns:52px minmax(150px,230px) minmax(0,1fr) auto;gap:10px;padding:6px 8px 6px 6px;min-height:54px;position:relative}
+#roster .init-in,#roster .lair-init{width:52px;font-size:1.25rem;padding:3px}
+#roster .who{display:flex;flex-direction:column;gap:0;min-width:0}
+#roster .name-in{font-size:1.05rem;padding:2px 6px}
+.typeline{display:flex;gap:6px;align-items:center;padding-left:7px;font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;min-width:0}
+.typeline .crown{color:var(--boss);display:inline-flex;align-items:center;gap:3px;font-weight:800}
+.typeline .crown svg{width:12px;height:12px;fill:currentColor}
+.typeline i{font-style:italic;overflow:hidden;text-overflow:ellipsis}
+.chips{display:flex;flex-wrap:wrap;gap:4px;align-items:center;min-width:0}
+.chips .ds{padding-left:0}
+.cond.dsask{display:inline-flex;align-items:center;gap:4px;text-transform:none;letter-spacing:0}.cond.dsask .d20{width:15px;height:15px}
+.chips .addc{opacity:0;transition:opacity .15s;padding:2px 9px}
+#roster .row:hover .addc,#roster .row.sel .addc,.chips .addc:focus-visible,.chips:empty+.x{opacity:1}
+#roster .row.out{opacity:1}#roster .row.out>:not(.chips):not(.rmenu),#roster .row.out .chips>:not(.hidchip){opacity:.45}   /* the ⋯ menu stays solid */
+.cond.hidchip{border-color:var(--accent);color:var(--fg);background:color-mix(in srgb,var(--accent) 12%,transparent);display:inline-flex;gap:4px;align-items:center}
+.cond.hidchip svg{width:13px;height:13px;fill:currentColor}
+.cond.inspchip{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 50%,var(--line));display:inline-flex;gap:4px;align-items:center}
+.cond.inspchip svg{width:12px;height:12px;fill:currentColor}
+#roster .tools{flex-wrap:nowrap}
+.morebtn2{width:34px;height:34px;border:1px solid var(--line);background:transparent;border-radius:8px;display:grid;place-items:center;color:var(--fg);padding:0}
+.morebtn2 svg{width:18px;height:18px;fill:currentColor}
+.morebtn2[aria-expanded="true"]{background:var(--panel2);border-color:var(--accent)}
+.rmenu{position:absolute;right:8px;top:calc(100% - 6px);z-index:30;min-width:250px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:6px;display:grid;gap:2px;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.rmenu button,.rmenu label{display:flex;align-items:center;justify-content:space-between;gap:12px;background:transparent;border:0;border-radius:8px;padding:8px 10px;font-size:.9rem;font-weight:600;color:var(--fg);text-align:left}
+.rmenu button:hover{background:color-mix(in srgb,var(--fg) 8%,transparent)}
+.rmenu .danger{color:var(--fail)}
+.rmenu kbd{font-size:.72rem;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:0 5px;font-family:var(--body)}
+.rmenu select{background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--fg);padding:3px 6px}
+.rmenu hr{border:0;border-top:1px solid var(--line);margin:3px 4px}

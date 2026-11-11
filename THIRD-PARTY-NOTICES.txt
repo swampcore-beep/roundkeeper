@@ -10,7 +10,7 @@ THIRD-PARTY NOTICES
 
 Roundkeeper bundles the following third-party components.
 
-1. qrcode-generator 1.4.4 (embedded in initiative.html)
+1. qrcode-generator 1.4.4 (embedded in initiative.html; source in src/50-qrcode.js)
 -----------------------------------------------------
 Copyright (c) 2009 Kazuhiko Arase
 URL: http://www.d-project.com/

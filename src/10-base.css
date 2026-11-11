@@ -1,0 +1,23 @@
+/* Layout: laptop = order editor; Tablet = full-screen ranked list over an animated scene; phones = same view plus own-character controls. Dark table-at-night look. */
+:root{
+  --bg:#14161f; --panel:#1c1f2c; --panel2:#242838; --line:#30354a;
+  --fg:#ece6d8; --muted:#9b98a8; --faint:#6c6a7a;
+  --accent:#e3a54a; --accent-ink:#22180a;
+  --pc:#6cb4cc; --enemy:#d66a5b; --ally:#8fc27c; --blood:#c22a40;
+  --arcane:#a594ff; --poison:#86c45e; --fire:#ff8a3d; --charm:#e891c6; --stun:#e8c75c; --stone:#8f8b85;
+  --save:#7cc48a; --fail:#d6505a; --boss:#c99a3e;
+  --display:"Alegreya SC","Palatino Linotype",Georgia,serif;
+  --body:"Alegreya Sans","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.4}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+input[type=checkbox],input[type=radio],input[type=range]{accent-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+svg{display:block}
+.k-pc{--k:var(--pc)} .k-enemy{--k:var(--enemy)} .k-ally{--k:var(--ally)} .k-lair{--k:var(--accent)}
+

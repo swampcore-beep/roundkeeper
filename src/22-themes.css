@@ -1,0 +1,129 @@
+/* ---------- themes (tablet and phones; the laptop keeps the default look) ---------- */
+/* ---------- the tablet's look, in parts: colours (data-skin), rows (data-rows), names font (data-font), title font (data-tfont).
+   A theme fills all four; the DM can change each on its own. ---------- */
+html[data-skin] body{background:var(--pbg,var(--bg))}
+html[data-skin] .p-title{color:var(--accent)}
+/* colours */
+html[data-skin="oldmap"]{--bg:#e6d8b8;--panel:#f4ead2;--panel2:#eadbb9;--line:#b99a6b;--fg:#2e2014;--muted:#6e5a42;--faint:#8f7a5c;
+  --accent:#8c2f1b;--accent-ink:#f8f0de;--pc:#2f5d73;--enemy:#9a3420;--ally:#4f6f2a;--blood:#9c1f1f;--arcane:#5b3f8c;--poison:#4d7a1e;
+  --charm:#a63b72;--stun:#9a6a00;--stone:#6f6a62;--save:#3d7a3d;--fail:#a8322f;--boss:#8a5a12;--eff:#9a6a12;--eff-ink:#6a430a;--para:#2f5d8c;color-scheme:light;
+  --pbg:radial-gradient(ellipse 90% 80% at 50% 40%,#f1e6cb 0%,#dcc79f 100%)}
+html[data-skin="oldmap"] .p-title{text-shadow:none}
+html[data-skin="oldmap"] .fx-down::before,html[data-skin="oldmap"] .fx-dead::before{background:rgba(70,45,20,.28)}
+html[data-skin="gothic"]{--bg:#0b090b;--panel:#171113;--panel2:#231a1d;--line:#3a2a2e;--fg:#ede1db;--muted:#a3938e;--faint:#73645f;
+  --accent:#c42a39;--accent-ink:#fff1ee;--pc:#8fa0b5;--enemy:#cf4242;--ally:#86a070;--blood:#a3101f;--boss:#b8955e;
+  --pbg:radial-gradient(ellipse 90% 70% at 50% 0%,#22101a 0%,#0b090b 70%)}
+html[data-skin="feywild"]{--bg:#0d1d18;--panel:#14302a;--panel2:#1b3b33;--line:#2c5247;--fg:#ecf7ef;--muted:#a8c6b8;--faint:#73968a;
+  --accent:#e8d48a;--accent-ink:#1a2a14;--pc:#8fd6c0;--enemy:#e57c9c;--ally:#b5e07a;--blood:#c23a5a;--arcane:#d9b8ff;--boss:#e8d48a;
+  --pbg:radial-gradient(ellipse 90% 70% at 50% 100%,#17402f 0%,#0d1d18 70%)}
+html[data-skin="forge"]{--bg:#17130f;--panel:#25201b;--panel2:#302922;--line:#4a4037;--fg:#f0e7dd;--muted:#b3a698;--faint:#807366;
+  --accent:#ff8a3d;--accent-ink:#1f1006;--pc:#8fb0c4;--enemy:#ff6a3d;--ally:#a8c47a;--blood:#c23a22;--boss:#ffb347;
+  --pbg:radial-gradient(ellipse 90% 60% at 50% 115%,#4a1e08 0%,#17130f 65%)}
+html[data-skin="astral"]{--bg:#080b1e;--panel:#111737;--panel2:#19214c;--line:#2c3672;--fg:#e9ecff;--muted:#a9b0dd;--faint:#7078ab;
+  --accent:#5ee1ff;--accent-ink:#06202a;--pc:#7fb2ff;--enemy:#ff7ab8;--ally:#9cf0c0;--blood:#d12f6a;--arcane:#c4a6ff;--boss:#ffd58a;
+  --pbg:radial-gradient(1.5px 1.5px at 12% 22%,#fff9,transparent),radial-gradient(1px 1px at 33% 68%,#fff8,transparent),radial-gradient(1.5px 1.5px at 57% 14%,#fffa,transparent),
+        radial-gradient(1px 1px at 76% 46%,#fff7,transparent),radial-gradient(1.5px 1.5px at 88% 82%,#fff9,transparent),radial-gradient(1px 1px at 22% 88%,#fff6,transparent),
+        radial-gradient(ellipse 80% 60% at 70% 20%,#1d1f57 0%,#080b1e 70%)}
+html[data-skin="frost"]{--bg:#0c1622;--panel:#152435;--panel2:#1c2e43;--line:#33506d;--fg:#eef6ff;--muted:#abc4da;--faint:#728ca5;
+  --accent:#a6dcff;--accent-ink:#06192a;--pc:#9fd8ff;--enemy:#ea8c9c;--ally:#a7e3c4;--blood:#b8344a;--arcane:#c4b5ff;--boss:#e0f0ff;
+  --pbg:radial-gradient(ellipse 90% 70% at 50% 0%,#1d3650 0%,#0c1622 70%)}
+html[data-skin="sun"]{--bg:#26190f;--panel:#382818;--panel2:#45321f;--line:#5e4429;--fg:#f8ecd8;--muted:#d3b892;--faint:#9e8160;
+  --accent:#3cc4b4;--accent-ink:#06211e;--pc:#3cc4b4;--enemy:#ef7a3c;--ally:#c4d46a;--blood:#b8321e;--boss:#f2c14e;
+  --pbg:radial-gradient(ellipse 90% 60% at 50% 115%,#6a3412 0%,#26190f 65%)}
+html[data-skin="hc"]{--bg:#000;--panel:#0d0d0d;--panel2:#1c1c1c;--line:#6a6a6a;--fg:#fff;--muted:#e6e6e6;--faint:#c4c4c4;
+  --accent:#ffd400;--accent-ink:#000;--pc:#4fc3ff;--enemy:#ff5a5a;--ally:#7dff7d;--blood:#ff3b3b;--arcane:#c9b6ff;--poison:#9dff6a;--charm:#ff9ad5;--stun:#ffe14d;--boss:#ffd400;--save:#7dff7d;--fail:#ff5a5a;
+  --body:"Atkinson Hyperlegible",system-ui,sans-serif}
+html[data-skin="marble"]{--bg:#ece9e2;--panel:#faf8f3;--panel2:#efebe2;--line:#c9bfa8;--fg:#1d2433;--muted:#5a6273;--faint:#8c93a1;
+  --accent:#1f5f99;--accent-ink:#f6f9ff;--pc:#1f5f99;--enemy:#a8452a;--ally:#4e7a3a;--blood:#a3202f;--arcane:#5a4bb0;--poison:#4d7a1e;--charm:#a63b72;--stun:#8a6a00;--stone:#6f6a62;
+  --save:#2f7a45;--fail:#b3373f;--boss:#a07c2c;--eff:#a07c2c;--eff-ink:#5f4810;--para:#2f5d8c;color-scheme:light;
+  --pbg:linear-gradient(115deg,transparent 0 38%,rgba(140,130,115,.10) 39%,transparent 41% 62%,rgba(140,130,115,.08) 63.5%,transparent 66%),
+        linear-gradient(35deg,transparent 0 55%,rgba(120,110,100,.07) 56%,transparent 58%),radial-gradient(ellipse 90% 70% at 50% 30%,#f8f6f1 0%,#dcd6ca 100%)}
+html[data-skin="marble"] .p-title{color:#1f4e7f;text-shadow:none}
+html[data-skin="marble"] .p-round{border-color:#b08d3c!important}html[data-skin="marble"] .p-round b{color:#b08d3c!important}
+html[data-skin="marble"] .fx-down::before,html[data-skin="marble"] .fx-dead::before{background:rgba(40,40,50,.22)}
+html[data-skin="amphora"]{--bg:#c2602c;--panel:#1b120d;--panel2:#2a1c14;--line:#3b2a1e;--fg:#f0c9a0;--muted:#c99a74;--faint:#8f6a4e;
+  --accent:#e88a4a;--accent-ink:#1b120d;--pc:#f0b27a;--enemy:#e8613c;--ally:#c9c27a;--blood:#d2412a;--boss:#f2c48a;--save:#c9d27a;--fail:#ff7a5a;
+  --pbg:radial-gradient(ellipse 80% 60% at 50% 40%,#d2703a 0%,#b0521f 70%,#8e3f16 100%)}
+html[data-skin="amphora"] .p-title{color:#1b120d;text-shadow:0 1px 0 rgba(255,200,150,.35)}
+html[data-skin="amphora"] .p-head{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+html[data-skin="amphora"] .p-round,html[data-skin="amphora"] .p-round b{color:#1b120d!important;border-color:#1b120d!important}
+html[data-skin="amphora"] .p-head .legend,html[data-skin="amphora"] .p-head small{color:#1b120d!important}
+html[data-skin="hoard"]{--bg:#0e0605;--panel:#1c0d0a;--panel2:#2a130e;--line:#4a2418;--fg:#f6e3c4;--muted:#c9a27a;--faint:#8a6648;
+  --accent:#f0b43c;--accent-ink:#2a1405;--pc:#e8c27a;--enemy:#ff5a36;--ally:#b8c96a;--blood:#d12a1a;--boss:#ffcf5a;--save:#b8d26a;--fail:#ff6a4a;
+  --pbg:radial-gradient(ellipse 120% 45% at 50% 108%,#ff8a2a 0%,#9a2a0a 28%,transparent 60%),radial-gradient(circle at 50% 50%,transparent 0 60%,rgba(0,0,0,.5) 100%),
+        radial-gradient(circle at 0 0,rgba(240,180,60,.05) 0 9px,transparent 10px) 0 0/22px 14px,radial-gradient(circle at 11px 7px,rgba(240,180,60,.05) 0 9px,transparent 10px) 0 0/22px 14px,#0e0605}
+html[data-skin="hoard"] .nm{color:#ffd77a;text-shadow:0 .04em 0 #7a3a08,0 0 .35em rgba(255,140,40,.35)}
+html[data-skin="hoard"] .p-title{text-shadow:0 0 .4em rgba(255,110,30,.6)}
+html[data-skin="wyrm"]{--bg:#06130f;--panel:#0e231c;--panel2:#143027;--line:#24493b;--fg:#e2f2e6;--muted:#9fc3ad;--faint:#678b77;
+  --accent:#c9a24a;--accent-ink:#13200f;--pc:#9ad6c0;--enemy:#e0784a;--ally:#b6e07a;--blood:#c23a3a;--boss:#e0c070;--save:#9be0a0;--fail:#ef6a5a;
+  --pbg:radial-gradient(circle at 50% 100%,rgba(70,140,105,.16) 0 13px,rgba(0,0,0,.25) 15px,transparent 16px) 0 0/30px 20px,
+        radial-gradient(circle at 50% 100%,rgba(70,140,105,.16) 0 13px,rgba(0,0,0,.25) 15px,transparent 16px) 15px 10px/30px 20px,radial-gradient(ellipse 90% 70% at 50% 20%,#123a2c 0%,#06130f 75%)}
+html[data-skin="wyrm"] .p-title{text-shadow:0 0 .35em color-mix(in srgb,var(--accent) 40%,transparent)}
+/* rows */
+html[data-rows="oldmap"]{--rowimg:radial-gradient(120% 160% at 0% 0%,rgba(255,255,255,.4),transparent 55%),repeating-linear-gradient(0deg,rgba(120,90,50,.04) 0 2px,transparent 2px 5px)}
+html[data-rows="oldmap"] ol.plist li{border-width:2px;box-shadow:inset 0 0 0 .1em var(--panel),inset 0 0 0 .14em color-mix(in srgb,var(--line) 70%,transparent)!important}
+html[data-rows="gothic"]{--rowimg:linear-gradient(90deg,rgba(140,12,24,.1),transparent 45%)}
+html[data-rows="feywild"]{--rowimg:radial-gradient(70% 140% at 100% 0%,rgba(232,212,138,.1),transparent 60%)}
+html[data-rows="forge"]{--rowimg:linear-gradient(180deg,rgba(255,255,255,.05),transparent 40%),repeating-linear-gradient(90deg,rgba(0,0,0,.14) 0 2px,transparent 2px 3.4em)}
+html[data-rows="forge"] ol.plist li{border-bottom:.08em solid #0f0c09}
+html[data-rows="astral"]{--rowimg:linear-gradient(90deg,rgba(94,225,255,.06),transparent 50%)}
+html[data-rows="astral"] ol.plist li{border-color:color-mix(in srgb,var(--accent) 28%,var(--line));box-shadow:0 0 .5em color-mix(in srgb,var(--accent) 14%,transparent)}
+html[data-rows="frost"]{--rowimg:linear-gradient(180deg,rgba(255,255,255,.08),transparent 45%)}
+html[data-rows="frost"] ol.plist li{border-top-color:rgba(225,242,255,.45)}
+html[data-rows="sun"]{--rowimg:linear-gradient(90deg,rgba(242,193,78,.08),transparent 50%),repeating-linear-gradient(135deg,rgba(0,0,0,.05) 0 .2em,transparent .2em .45em)}
+html[data-rows="hc"] ol.plist li{border-width:.06em;border-left-width:.3em}
+html[data-rows="hc"] .frame{display:none}
+html[data-rows="hc"] .fx{opacity:.6}
+html[data-rows="hc"] .pos b{font-size:.62em}
+/* the Greek key along the top and the bottom of the screen */
+html[data-rows="marble"] body.shared #player::before,html[data-rows="marble"] body.shared #player::after,html[data-rows="amphora"] body.shared #player::before,html[data-rows="amphora"] body.shared #player::after{content:"";position:fixed;left:0;right:0;z-index:3;pointer-events:none;background-repeat:repeat-x;background-position:center}
+html[data-rows="marble"] body.shared #player::before,html[data-rows="marble"] body.shared #player::after{height:22px;background-color:#1f4e7f;background-size:40px 22px;border-block:2px solid #d9b25a;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='22' viewBox='0 0 40 22'%3E%3Cpath d='M0 19H8V5H20V15H14V11' fill='none' stroke='%23d9b25a' stroke-width='2.4'/%3E%3Cpath d='M20 19H28V5H40V15H34V11' fill='none' stroke='%23d9b25a' stroke-width='2.4'/%3E%3C/svg%3E")}
+html[data-rows="amphora"] body.shared #player::before,html[data-rows="amphora"] body.shared #player::after{height:26px;background-color:#1b120d;background-size:40px 26px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='26' viewBox='0 0 40 26'%3E%3Cpath d='M0 22H8V6H22V17H15V12' fill='none' stroke='%23c2602c' stroke-width='3'/%3E%3Cpath d='M20 22H28V6H42V17H35V12' fill='none' stroke='%23c2602c' stroke-width='3'/%3E%3C/svg%3E")}
+html[data-rows="marble"] body.shared #player::before,html[data-rows="amphora"] body.shared #player::before{top:0}
+html[data-rows="marble"] body.shared #player::after,html[data-rows="amphora"] body.shared #player::after{bottom:0}
+html[data-rows="marble"] body.shared #player{padding-top:30px}html[data-rows="amphora"] body.shared #player{padding-top:32px}
+html[data-rows="marble"]{--rowimg:linear-gradient(180deg,rgba(255,255,255,.7),transparent 50%),linear-gradient(115deg,transparent 0 60%,rgba(150,140,125,.08) 61%,transparent 64%)}
+html[data-rows="marble"] ol.plist li{border:2px solid #cdb67a;box-shadow:inset 0 0 0 .12em var(--panel),inset 0 0 0 .17em rgba(176,141,60,.55),0 .15em .6em rgba(60,50,30,.15)!important}
+html[data-rows="marble"] .frame{filter:sepia(.6) saturate(1.6) hue-rotate(-10deg) brightness(.85)}
+html[data-rows="amphora"]{--rowimg:linear-gradient(180deg,rgba(232,138,74,.08),transparent 50%)}
+html[data-rows="amphora"] ol.plist li{border:0;border-radius:.6em;box-shadow:0 .25em 0 #6e2e10,0 .4em 1em rgba(60,20,0,.35)!important}
+html[data-rows="amphora"] .frame{filter:sepia(1) saturate(2.2) hue-rotate(-18deg)}
+html[data-rows="hoard"]{--rowimg:radial-gradient(circle at 50% 120%,rgba(240,180,60,.10) 0 .55em,transparent .6em) 0 0/1.1em .75em,radial-gradient(circle at 0 70%,rgba(240,180,60,.10) 0 .55em,transparent .6em) .55em 0/1.1em .75em,linear-gradient(90deg,rgba(209,42,26,.18),transparent 55%)}
+html[data-rows="hoard"] ol.plist li{border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),0 0 .8em rgba(255,110,30,.18),0 .25em .8em rgba(0,0,0,.6)!important}
+html[data-rows="wyrm"]{--rowimg:linear-gradient(135deg,rgba(201,162,74,.10),transparent 40%),linear-gradient(180deg,rgba(255,255,255,.04),transparent 40%)}
+html[data-rows="wyrm"] ol.plist li{border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-left-width:.25em}
+/* names font */
+html[data-font="fell"]{--display:"IM Fell English SC","Palatino Linotype",Georgia,serif}
+html[data-font="pirata"]{--display:"Pirata One","Palatino Linotype",Georgia,serif}
+html[data-font="cormorant"]{--display:"Cormorant SC","Palatino Linotype",Georgia,serif}
+html[data-font="meta"]{--display:"Metamorphous","Palatino Linotype",Georgia,serif}
+html[data-font="cinzel"]{--display:"Cinzel","Palatino Linotype",Georgia,serif}
+html[data-font="marcellus"]{--display:"Marcellus SC","Palatino Linotype",Georgia,serif}
+html[data-font="philosopher"]{--display:"Philosopher","Palatino Linotype",Georgia,serif}
+html[data-font="atkinson"]{--display:"Atkinson Hyperlegible",system-ui,sans-serif}
+html[data-font="didot"]{--display:"GFS Didot","Cinzel",Georgia,serif}
+html[data-font="cinzeldec"]{--display:"Cinzel Decorative","Cinzel",Georgia,serif}
+html[data-font="uncial"]{--display:"Uncial Antiqua","Metamorphous",Georgia,serif}
+:is(html[data-font="fell"],html[data-font="pirata"],html[data-font="meta"],html[data-font="marcellus"],html[data-font="didot"],html[data-font="uncial"]) :is(.nm,.intro-name){font-weight:400}
+:is(html[data-font="cormorant"],html[data-font="cinzel"],html[data-font="philosopher"],html[data-font="atkinson"],html[data-font="cinzeldec"]) :is(.nm,.intro-name){font-weight:700}
+html[data-font="pirata"] :is(.nm,.intro-name){letter-spacing:.03em}
+html[data-font="cinzel"] .nm{letter-spacing:.03em}
+html[data-font="didot"] .nm{letter-spacing:.04em;text-transform:uppercase}
+/* title and round font */
+.p-title,html:root .p-round,.end-title,.fxround>div{font-family:var(--tdisplay,var(--display))}
+html[data-tfont="alegreya"]{--tdisplay:"Alegreya SC","Palatino Linotype",Georgia,serif}
+html[data-tfont="fell"]{--tdisplay:"IM Fell English SC","Palatino Linotype",Georgia,serif}
+html[data-tfont="pirata"]{--tdisplay:"Pirata One","Palatino Linotype",Georgia,serif}
+html[data-tfont="cormorant"]{--tdisplay:"Cormorant SC","Palatino Linotype",Georgia,serif}
+html[data-tfont="meta"]{--tdisplay:"Metamorphous","Palatino Linotype",Georgia,serif}
+html[data-tfont="cinzel"]{--tdisplay:"Cinzel","Palatino Linotype",Georgia,serif}
+html[data-tfont="marcellus"]{--tdisplay:"Marcellus SC","Palatino Linotype",Georgia,serif}
+html[data-tfont="philosopher"]{--tdisplay:"Philosopher","Palatino Linotype",Georgia,serif}
+html[data-tfont="atkinson"]{--tdisplay:"Atkinson Hyperlegible",system-ui,sans-serif}
+html[data-tfont="didot"]{--tdisplay:"GFS Didot","Cinzel",Georgia,serif}
+html[data-tfont="cinzeldec"]{--tdisplay:"Cinzel Decorative","Cinzel",Georgia,serif}
+html[data-tfont="uncial"]{--tdisplay:"Uncial Antiqua","Metamorphous",Georgia,serif}
+:is(html[data-tfont="fell"],html[data-tfont="pirata"],html[data-tfont="meta"],html[data-tfont="marcellus"],html[data-tfont="didot"],html[data-tfont="uncial"]) :is(.p-title,.end-title){font-weight:400;letter-spacing:.03em}
+html[data-tfont="cinzel"] .p-title,html[data-tfont="cinzeldec"] .p-title{font-weight:700}

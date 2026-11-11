@@ -1,0 +1,42 @@
+/* ---------- status decorations anchored to the name, so they never cover the initiative number ---------- */
+.nmw{flex:1 1 auto;min-width:min(50%,5.5em);display:flex;align-items:center}   /* enough to keep a name readable without squeezing a lone badge */
+.nmb{position:relative;display:inline-flex;flex-direction:column;min-width:0;max-width:100%}
+.deco{position:absolute;pointer-events:none;z-index:2}
+.deco b{position:absolute;display:block}
+/* Stunned: three stars circling above the name */
+.deco.dz{left:50%;top:-.44em;width:1.9em;height:.6em;margin-left:-.95em}
+.deco.dz b{left:50%;top:50%;width:.36em;height:.36em;margin:-.18em 0 0 -.18em;background:var(--stun);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z'/%3E%3C/svg%3E") center/contain no-repeat}
+/* Deafened: muffled sound rings fading out past the end of the name */
+.deco.df{right:-.95em;top:50%;width:.7em;height:.7em;margin-top:-.35em}
+.deco.df b{inset:0;border-radius:50%;border:.05em solid color-mix(in srgb,var(--muted) 80%,transparent);opacity:0}
+.deco.df::after{content:"";position:absolute;left:50%;top:-.15em;bottom:-.15em;width:.05em;background:color-mix(in srgb,var(--muted) 85%,transparent);transform:rotate(45deg)}
+/* Charmed: hearts rising from the end of the name */
+.deco.hr{right:-.7em;bottom:0;width:.6em;height:1em}
+.deco.hr b{left:0;bottom:0;width:.42em;height:.42em;background:var(--charm);opacity:0;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z'/%3E%3C/svg%3E") center/contain no-repeat}
+.deco.hr b:nth-child(2){left:.25em}
+/* Poisoned: bubbles rising from under the name */
+.deco.bb{left:0;right:0;bottom:-.05em;height:.3em}
+.deco.bb b{bottom:0;width:.2em;height:.2em;border-radius:50%;border:.04em solid var(--poison);opacity:0}
+.deco.bb b:nth-child(1){left:12%}.deco.bb b:nth-child(2){left:48%}.deco.bb b:nth-child(3){left:82%}
+@media (prefers-reduced-motion:no-preference){
+  .deco.dz b{animation:dizzy var(--t-fast) linear infinite var(--ph,0s)}
+  .deco.dz b:nth-child(2){animation-delay:calc(var(--ph,0s) - .5s)}
+  .deco.dz b:nth-child(3){animation-delay:calc(var(--ph,0s) - 1s)}
+  @keyframes dizzy{0%{transform:translate(-.9em,0) scale(.75);opacity:.55}25%{transform:translate(0,.2em) scale(1.05);opacity:1}
+    50%{transform:translate(.9em,0) scale(.75);opacity:.55}75%{transform:translate(0,-.16em) scale(.5);opacity:.3}100%{transform:translate(-.9em,0) scale(.75);opacity:.55}}
+  .deco.df b{animation:muffle var(--t-mid) ease-out infinite var(--ph,0s)}
+  .deco.df b:nth-child(2){animation-delay:calc(var(--ph,0s) - 1.5s)}
+  @keyframes muffle{0%{transform:scale(.4);opacity:0}20%{opacity:.8}100%{transform:scale(1.9);opacity:0}}
+  .deco.hr b{animation:heart2 var(--t-mid) ease-out infinite var(--ph,0s)}
+  .deco.hr b:nth-child(2){animation-delay:calc(var(--ph,0s) - 1.5s)}
+  @keyframes heart2{0%{transform:translateY(0) scale(.5);opacity:0}20%{opacity:.95}100%{transform:translateY(-1.3em) scale(1.05);opacity:0}}
+  .deco.bb b{animation:bubble2 var(--t-mid) ease-in infinite var(--ph,0s)}
+  .deco.bb b:nth-child(2){animation-delay:calc(var(--ph,0s) - 1s)}
+  .deco.bb b:nth-child(3){animation-delay:calc(var(--ph,0s) - 2s)}
+  @keyframes bubble2{0%{transform:translateY(0) scale(.5);opacity:0}25%{opacity:.9}100%{transform:translate(.15em,-1.1em) scale(1.2);opacity:0}}
+}
+

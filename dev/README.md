@@ -4,6 +4,17 @@ Everything here is for working on Roundkeeper, not for running it at the table. 
 
 All output goes to `dev/.work/`, which git ignores.
 
+## The app's source
+
+The app ships as one file, `initiative.html`, but it is edited in parts in `src/`:
+
+```bash
+python3 tools/build.py           # join src/* into initiative.html (dev/serve.sh and dev/test.sh do it too)
+python3 tools/build.py --check   # only check that initiative.html matches src/ (also run on every pull request)
+```
+
+The parts are joined in the order of their numbers and are pieces of one file, not modules: the CSS parts sit in one `<style>`, the app's JS parts in one function. Commit `initiative.html` together with the change in `src/`. A change made only in `initiative.html` would be lost at the next build, so the build refuses to overwrite one that was edited after `src/`.
+
 ## Servers
 
 ```bash

@@ -1,0 +1,168 @@
+/* ---------- class / creature-type frames: sigil (A), corner ornaments (B) ---------- */
+.fr{border-color:color-mix(in srgb,var(--fc) 42%,var(--line))!important}
+.frame{position:absolute;inset:0;pointer-events:none;z-index:1;border-radius:inherit}
+.frame i{position:absolute;width:.66em;height:.66em;background:var(--fc);opacity:.9;-webkit-mask:var(--corner) center/contain no-repeat;mask:var(--corner) center/contain no-repeat}
+.frame .tl{left:.04em;top:.05em}.frame .tr{right:.05em;top:.05em;transform:scaleX(-1)}
+.frame .bl{left:.04em;bottom:.05em;transform:scaleY(-1)}.frame .br{right:.05em;bottom:.05em;transform:scale(-1,-1)}
+.sig{width:.7em;height:.7em;flex:none;background:var(--fc);-webkit-mask:var(--sig) center/contain no-repeat;mask:var(--sig) center/contain no-repeat;margin-right:-.2em;filter:drop-shadow(0 0 .12em color-mix(in srgb,var(--fc) 60%,transparent))}
+ol.plist li .sig,.ghost .sig{position:relative;z-index:1}
+li.st-dead .frame i,li.st-dead .sig{opacity:.4}
+.fr-barbarian{--fc:#e0603c;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M3 15 15 3l1.6 2.6L5.6 16.6z%22/%3E%3Cpath d=%22M3 24 24 3l1.6 2.6L5.6 25.6z%22/%3E%3Cpath d=%22M3 33 33 3l1.6 2.6L5.6 34.6z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M11.2 2.5h1.6v19h-1.6z%22/%3E%3Cpath d=%22M11 5C6 4 3 7 3 10s3 5 8 4z%22/%3E%3Cpath d=%22M13 5c5-1 8 2 8 5s-3 5-8 4z%22/%3E%3C/svg%3E")}
+.fr-bard{--fc:#d26fb4;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h18v2H4v16H2z%22/%3E%3Cpath d=%22M15.5 17a2.8 2.8 0 1 1-1.8-2.6V7h8v2.6h-6.2z%22/%3E%3Cpath d=%22M27 11a2.2 2.2 0 1 1-1.4-2V3.5h5v1.8h-3.6z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M9 17.5a3 3 0 1 1-2-2.83V4l11-2v13.5a3 3 0 1 1-2-2.83V6.2L9 7.5z%22/%3E%3C/svg%3E")}
+.fr-cleric{--fc:#e8c65a;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h24c-5 1-9 2.6-11.5 5S10.8 13 9.8 18C9 22 6.5 25 2 27z%22/%3E%3Cpath d=%22M15 15l3.5-3.5L22 15l-3.5 3.5z%22/%3E%3Ccircle cx=%2226%22 cy=%227%22 r=%221.5%22/%3E%3Ccircle cx=%227%22 cy=%2226%22 r=%221.5%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%224.4%22/%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222.2%22 d=%22M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1%22/%3E%3C/svg%3E")}
+.fr-druid{--fc:#7fb35a;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222.6%22 d=%22M3 34C3 16 11 6 33 3%22/%3E%3Cpath d=%22M11.5 13.5c-4.5-1-6.8-4.5-5.6-9 4.5 0 6.8 3.4 5.6 9z%22/%3E%3Cpath d=%22M20 7.2c-1-4.5 1.2-6.8 5.6-5.6 0 4.5-2.3 6.7-5.6 5.6z%22/%3E%3Cpath d=%22M6.6 22.5c-3.3 2.2-5 2.2-5 2.2s0-3.4 2.2-5.6z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M20 3C9 3 4 9 4 16c0 1.5.3 2.8.8 4C6 14 10 10 15 8c-4 3-7 6.5-8.5 11.3 1.3.5 2.8.7 4.5.7 6 0 9-5 9-17z%22/%3E%3C/svg%3E")}
+.fr-fighter{--fc:#c2a882;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h20v3.4H5.4V22H2z%22/%3E%3Ccircle cx=%2210.5%22 cy=%2210.5%22 r=%222.8%22/%3E%3Ccircle cx=%2219%22 cy=%229.5%22 r=%221.4%22/%3E%3Ccircle cx=%229.5%22 cy=%2219%22 r=%221.4%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222.3%22 d=%22M4 3l12 12M20 3 8 15M13.5 17.5l4-4M10.5 17.5l-4-4M17 18.5l2.5 2.5M7 18.5 4.5 21%22/%3E%3C/svg%3E")}
+.fr-monk{--fc:#5bb8c8;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%223.4%22 d=%22M4 30C4 14 13 4 30 4%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%222.4%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%223%22 d=%22M17.5 5A8.5 8.5 0 1 0 20 13.5%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%221.8%22/%3E%3C/svg%3E")}
+.fr-paladin{--fc:#ecc76d;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h24c-5 1-9 2.6-11.5 5S10.8 13 9.8 18C9 22 6.5 25 2 27z%22/%3E%3Cpath d=%22M15 15l3.5-3.5L22 15l-3.5 3.5z%22/%3E%3Ccircle cx=%2226%22 cy=%227%22 r=%221.5%22/%3E%3Ccircle cx=%227%22 cy=%2226%22 r=%221.5%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath fill-rule=%22evenodd%22 d=%22M12 2l8 3v6c0 5.3-3.4 9.6-8 11-4.6-1.4-8-5.7-8-11V5zM11 6.5v3.5H7.5v2H11v6h2v-6h3.5v-2H13V6.5z%22/%3E%3C/svg%3E")}
+.fr-ranger{--fc:#6fae6a;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2l12.5 3.6-3.6 1.3 9.6 9.6-2.4 2.4-9.6-9.6-1.3 3.6z%22/%3E%3Cpath d=%22M2 24h2.2v8H2zM24 2v2.2h8V2z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M4.5 19.5 18 6M4.5 19.5l.8-3.8M4.5 19.5l3.8-.8M7 17l.8-3.8M7 17l3.8-.8%22/%3E%3Cpath d=%22M21 3l-1.4 7-5.6-5.6z%22/%3E%3C/svg%3E")}
+.fr-rogue{--fc:#9aa0b8;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h14v1.6H3.6V16H2z%22/%3E%3Cpath d=%22M21.5 21.5 9.8 9.8l.6-2.4 2.4-.6 11.7 11.7z%22/%3E%3Cpath d=%22M20.4 24.8l4.4-4.4 1.4 1.4-4.4 4.4z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12 1.5l2.3 11.3H9.7z%22/%3E%3Cpath d=%22M7.5 12.8h9v1.9h-9z%22/%3E%3Cpath d=%22M11 14.7h2v5h-2z%22/%3E%3Ccircle cx=%2212%22 cy=%2221%22 r=%221.6%22/%3E%3C/svg%3E")}
+.fr-sorcerer{--fc:#e5644f;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M11 1.5l2.3 7.2 7.2 2.3-7.2 2.3L11 20.5l-2.3-7.2L1.5 11l7.2-2.3z%22/%3E%3Ccircle cx=%2223%22 cy=%225%22 r=%221.8%22/%3E%3Ccircle cx=%225%22 cy=%2223%22 r=%221.8%22/%3E%3Ccircle cx=%2219%22 cy=%2219%22 r=%221.3%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M12 1.5c1 4.2 6.5 6.3 6.5 12.5a6.5 6.5 0 0 1-13 0c0-3.2 1.6-4.8 3.2-6.4 0 2.1 1 3.2 2.2 3.2 0-4.2-1.2-6.4 1.1-9.3z%22/%3E%3C/svg%3E")}
+.fr-warlock{--fc:#a26ce0;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222.8%22 d=%22M3 34c0-9 4.5-13.5 11-13.5s9-5.5 6.5-9.8S12.7 7.5 12 12M34 3c-9 0-13.5 4.5-13.5 11%22/%3E%3Ccircle cx=%2214.5%22 cy=%2213.5%22 r=%222%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M14.5 2.5a9.5 9.5 0 1 0 7 15.5 8 8 0 0 1-7-15.5z%22/%3E%3Cpath d=%22M17.5 5.5l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z%22/%3E%3C/svg%3E")}
+.fr-wizard{--fc:#6f95e8;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h22v2.2H4.2V24H2z%22/%3E%3Cpath d=%22M9 8.5h2.2v7H9zM13 8.5l4.6 4.6-1.6 1.6-4.6-4.6zM9 18h7v2.2H9zM20 8.5h2.2v2.2H20z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M13.5 1.5 6.5 15h11z%22/%3E%3Cpath d=%22M2.5 16c0 1.8 4.3 3.4 9.5 3.4s9.5-1.6 9.5-3.4c0-.5-.4-1-1.1-1.4H3.6c-.7.4-1.1.9-1.1 1.4z%22/%3E%3Cpath d=%22M19 3l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6z%22/%3E%3C/svg%3E")}
+.fr-aberration{--fc:#b76be0;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222.8%22 d=%22M3 34c0-9 4.5-13.5 11-13.5s9-5.5 6.5-9.8S12.7 7.5 12 12M34 3c-9 0-13.5 4.5-13.5 11%22/%3E%3Ccircle cx=%2214.5%22 cy=%2213.5%22 r=%222%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath fill-rule=%22evenodd%22 d=%22M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12zM12 7.6a4.4 4.4 0 1 0 0 8.8 4.4 4.4 0 0 0 0-8.8z%22/%3E%3Crect x=%2211.1%22 y=%228.6%22 width=%221.8%22 height=%226.8%22 rx=%22.9%22/%3E%3C/svg%3E")}
+.fr-beast{--fc:#c2925e;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M3 15 15 3l1.6 2.6L5.6 16.6z%22/%3E%3Cpath d=%22M3 24 24 3l1.6 2.6L5.6 25.6z%22/%3E%3Cpath d=%22M3 33 33 3l1.6 2.6L5.6 34.6z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cellipse cx=%2212%22 cy=%2215.6%22 rx=%224.8%22 ry=%224%22/%3E%3Ccircle cx=%225.8%22 cy=%2210.3%22 r=%222.1%22/%3E%3Ccircle cx=%229.6%22 cy=%226.6%22 r=%222.2%22/%3E%3Ccircle cx=%2214.4%22 cy=%226.6%22 r=%222.2%22/%3E%3Ccircle cx=%2218.2%22 cy=%2210.3%22 r=%222.1%22/%3E%3C/svg%3E")}
+.fr-celestial{--fc:#f3e4a6;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h24c-5 1-9 2.6-11.5 5S10.8 13 9.8 18C9 22 6.5 25 2 27z%22/%3E%3Cpath d=%22M15 15l3.5-3.5L22 15l-3.5 3.5z%22/%3E%3Ccircle cx=%2226%22 cy=%227%22 r=%221.5%22/%3E%3Ccircle cx=%227%22 cy=%2226%22 r=%221.5%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M11 10.5C8.5 5.5 4.5 4 1.5 5c2 1.2 3 2.4 3.4 3.8-1.6.1-2.7 1.1-3.1 2.6 2-.4 3.4 0 4.4 1-1.5.6-2.4 1.6-2.8 3.1 3.2.2 6-1.6 7.6-5z%22/%3E%3Cpath d=%22M13 10.5c2.5-5 6.5-6.5 9.5-5.5-2 1.2-3 2.4-3.4 3.8 1.6.1 2.7 1.1 3.1 2.6-2-.4-3.4 0-4.4 1 1.5.6 2.4 1.6 2.8 3.1-3.2.2-6-1.6-7.6-5z%22/%3E%3Cellipse fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%221.6%22 cx=%2212%22 cy=%224%22 rx=%224%22 ry=%221.6%22/%3E%3Ccircle cx=%2212%22 cy=%2212.5%22 r=%222%22/%3E%3C/svg%3E")}
+.fr-construct{--fc:#a3acb6;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h20v3.4H5.4V22H2z%22/%3E%3Ccircle cx=%2210.5%22 cy=%2210.5%22 r=%222.8%22/%3E%3Ccircle cx=%2219%22 cy=%229.5%22 r=%221.4%22/%3E%3Ccircle cx=%229.5%22 cy=%2219%22 r=%221.4%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath fill-rule=%22evenodd%22 d=%22M21.86 10.31L21.86 13.69L19.41 13.68L18.43 16.05L20.17 17.77L17.77 20.17L16.05 18.43L13.68 19.41L13.69 21.86L10.31 21.86L10.32 19.41L7.95 18.43L6.23 20.17L3.83 17.77L5.57 16.05L4.59 13.68L2.14 13.69L2.14 10.31L4.59 10.32L5.57 7.95L3.83 6.23L6.23 3.83L7.95 5.57L10.32 4.59L10.31 2.14L13.69 2.14L13.68 4.59L16.05 5.57L17.77 3.83L20.17 6.23L18.43 7.95L19.41 10.32Z M12 8.6a3.4 3.4 0 1 0 0 6.8a3.4 3.4 0 1 0 0-6.8z%22/%3E%3C/svg%3E")}
+.fr-dragon{--fc:#de7a3c;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h24v2.6H4.6V26H2z%22/%3E%3Cg fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22%3E%3Cpath d=%22M8 13a4 4 0 0 1 8 0M16 13a4 4 0 0 1 8 0M8 20a4 4 0 0 1 8 0M12 9a4 4 0 0 1 8 0%22/%3E%3C/g%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M2.5 21C5 12.5 10.5 6 21.5 2.5c-2 3.2-2.4 5.2-1.8 7.4-2.1-.6-3.7 0-5.2 1.1.9 1.6.9 3.2 0 4.8-1.6-.9-3.2-1.1-4.8-.5.2 1.7-.3 3.4-1.6 4.8-1.6-1.6-3.7-1.6-5.6.9z%22/%3E%3C/svg%3E")}
+.fr-elemental{--fc:#5fc4dc;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222.6%22 d=%22M4 30C4 14 13 4 30 4M10 18a6 6 0 1 1 8-8 3 3 0 1 1-4 4%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222.2%22 d=%22M12 12m-1.2 0a1.2 1.2 0 1 1 2.4 0 3.4 3.4 0 1 1-6.8 0 5.6 5.6 0 1 1 11.2 0 7.8 7.8 0 1 1-15.6 0%22/%3E%3C/svg%3E")}
+.fr-fey{--fc:#ee97cc;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222.4%22 d=%22M3 32C3 15 11 6 32 3%22/%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%223.4%22/%3E%3Ccircle cx=%2212%22 cy=%226.6%22 r=%222.2%22/%3E%3Ccircle cx=%2217.4%22 cy=%2212%22 r=%222.2%22/%3E%3Ccircle cx=%226.6%22 cy=%2212%22 r=%222.2%22/%3E%3Ccircle cx=%2212%22 cy=%2217.4%22 r=%222.2%22/%3E%3Ccircle cx=%2225%22 cy=%225.5%22 r=%221.4%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M11.3 11C8.5 3.5 2.5 2.5 2.5 7c0 3 2.5 4.5 6 4.2-3.5 1-4.6 3.6-3 5.6 1.9 2.4 4.6 0 5.8-5.8z%22/%3E%3Cpath d=%22M12.7 11c2.8-7.5 8.8-8.5 8.8-4 0 3-2.5 4.5-6 4.2 3.5 1 4.6 3.6 3 5.6-1.9 2.4-4.6 0-5.8-5.8z%22/%3E%3Crect x=%2211.2%22 y=%227%22 width=%221.6%22 height=%2212%22 rx=%22.8%22/%3E%3C/svg%3E")}
+.fr-fiend{--fc:#e8502e;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2c9 0 17 4.5 19.5 15.5-4.5-6.5-9.5-9-15.5-9 0 4.5 1 7.5 3.4 10C4 16.5 2 10 2 2z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M4.5 1.5c0 4.2 1 6.8 3.6 8.4A6.4 6.4 0 0 0 12 21.5a6.4 6.4 0 0 0 3.9-11.6c2.6-1.6 3.6-4.2 3.6-8.4-1.6 3.1-3.7 5.2-6.3 5.6h-2.4C8.2 6.7 6.1 4.6 4.5 1.5z%22/%3E%3C/svg%3E")}
+.fr-giant{--fc:#a8977e;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h12v9H2zM16 2h10v9H16zM2 13h8v10H2zM12 13h6v6h-6z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M1.5 21 9 6.5l4.3 6.4 2.7-4.4L22.5 21z%22/%3E%3C/svg%3E")}
+.fr-humanoid{--fc:#a9a6b6;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h18v2.6H4.6V20H2z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Ccircle cx=%2212%22 cy=%227%22 r=%223.8%22/%3E%3Cpath d=%22M4.5 21.5c0-4.7 3.2-7.8 7.5-7.8s7.5 3.1 7.5 7.8z%22/%3E%3C/svg%3E")}
+.fr-monstrosity{--fc:#d0744e;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h24v3l-3.4 4.6-2.2-4.6-3.4 7-2.2-7-3.4 5.6-1.8-5.6H5.4v4.6L10 14l-4.6 2.2 3.4 4.6-3.4 1.2V26H2z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M2.5 6h19c0 2.2-1 3.4-2.2 3.4L17.6 15l-1.4-5.6h-2.1L12 17l-2.1-7.6H7.8L6.4 15 4.7 9.4C3.5 9.4 2.5 8.2 2.5 6z%22/%3E%3Cpath d=%22M2.5 19.5h19c0-1.2-.6-2-1.6-2.2l-1 1.4-1.2-1.6h-11l-1.2 1.6-1-1.4c-1 .2-1.6 1-1.6 2.2z%22/%3E%3C/svg%3E")}
+.fr-ooze{--fc:#84cc4e;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h28v3.4c-2.2 0-2.2 7-4.4 7s-2.2-7-4.4-7-1.1 3.4-3.3 3.4-2.2-3.4-4.4-3.4H5.4v11c0 2.4-3.4 2.4-3.4 0z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath fill-rule=%22evenodd%22 d=%22M12 2.5c3.2 4.2 7.5 7.4 7.5 11.7a7.5 7.5 0 0 1-15 0c0-4.3 4.3-7.5 7.5-11.7zM9 13.5a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2z%22/%3E%3C/svg%3E")}
+.fr-plant{--fc:#74ac4e;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath fill=%22none%22 stroke=%22%23000%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222.6%22 d=%22M3 33C3 15 11 5 33 3%22/%3E%3Cpath d=%22M8 17l-5.5-1.5 4.5-3zM12.5 9.8 10 4.5l5 1.2zM21 5.4l1-5 3.4 3.8z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath d=%22M11.2 21.5V12h1.6v9.5z%22/%3E%3Cpath d=%22M12 12.5C12 7.3 8 5 2.5 5c0 5.3 4.2 7.7 9.5 7.5z%22/%3E%3Cpath d=%22M12 10.3c0-4.2 3.2-6.4 8.5-6.4 0 4.2-3.2 6.4-8.5 6.4z%22/%3E%3C/svg%3E")}
+.fr-undead{--fc:#a3e0aa;--corner:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Cpath d=%22M2 2h3v14H2z%22/%3E%3Cpath d=%22M8.2 4.3a3.2 3.2 0 0 1 5.4 2.4l12.8 12.8a3.2 3.2 0 1 1 3.2 5.4 3.2 3.2 0 1 1-5.4 3.2L11.4 15.3a3.2 3.2 0 1 1-3.2-5.4 3.2 3.2 0 0 1 0-5.6z%22/%3E%3C/svg%3E");--sig:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22%3E%3Cpath fill-rule=%22evenodd%22 d=%22M12 2C7 2 3.5 5.5 3.5 10c0 2.8 1.3 4.6 3 5.6V19h2v2.5h2V19h3v2.5h2V19h2v-3.4c1.7-1 3-2.8 3-5.6C20.5 5.5 17 2 12 2zM8.6 8.6a2.1 2.1 0 1 0 0 4.2 2.1 2.1 0 0 0 0-4.2zM15.4 8.6a2.1 2.1 0 1 0 0 4.2 2.1 2.1 0 0 0 0-4.2zM12 13.4l-1.3 2.2h2.6z%22/%3E%3C/svg%3E")}
+/* ---------- living frame for bosses (C), coloured by creature type ---------- */
+.fx-bossrim::before{padding:.09em;background:conic-gradient(from var(--ang),transparent 0 40%,color-mix(in srgb,var(--fc) 70%,transparent) 58%,#fff 65%,var(--fc) 71%,transparent 90%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.fx-bossrim::after{box-shadow:inset 0 0 0 .05em color-mix(in srgb,var(--fc) 55%,transparent),inset 0 0 1.4em color-mix(in srgb,var(--fc) 30%,transparent)}
+.rim-fire .fx-bossrim::before{padding:0;-webkit-mask:none;mask:none;background:radial-gradient(120% 95% at 50% 125%,color-mix(in srgb,var(--fc) 60%,transparent),transparent 70%)}
+.rim-fire .fx-bossrim::after{box-shadow:inset 0 0 0 .07em var(--fc),inset 0 -.5em 1.2em color-mix(in srgb,var(--fc) 50%,transparent)}
+.rim-necro .fx-bossrim::before{padding:0;-webkit-mask:none;mask:none;background:radial-gradient(90% 160% at 0% 50%,color-mix(in srgb,var(--fc) 30%,transparent),transparent 65%)}
+.rim-necro .fx-bossrim::after{box-shadow:inset 0 0 0 .06em color-mix(in srgb,var(--fc) 75%,transparent),inset 0 0 1.6em color-mix(in srgb,var(--fc) 40%,transparent)}
+.rim-ooze .fx-bossrim::before{padding:0;-webkit-mask:none;mask:none;background:linear-gradient(180deg,color-mix(in srgb,var(--fc) 26%,transparent),transparent 45%)}
+.rim-ooze .fx-bossrim i{background:
+  linear-gradient(var(--fc),color-mix(in srgb,var(--fc) 30%,transparent)) 22% 0/.22em 0 no-repeat,
+  linear-gradient(var(--fc),color-mix(in srgb,var(--fc) 30%,transparent)) 53% 0/.16em 0 no-repeat,
+  linear-gradient(var(--fc),color-mix(in srgb,var(--fc) 30%,transparent)) 81% 0/.2em 0 no-repeat;opacity:.75}
+.rim-holy .fx-bossrim::before{padding:0;-webkit-mask:none;mask:none;background:radial-gradient(ellipse 55% 150% at 50% -40%,color-mix(in srgb,var(--fc) 32%,transparent),transparent 70%),repeating-linear-gradient(100deg,transparent 0 1.6em,color-mix(in srgb,var(--fc) 6%,transparent) 1.6em 1.9em)}
+.rim-holy .fx-bossrim::after{box-shadow:inset 0 0 0 .05em color-mix(in srgb,var(--fc) 55%,transparent),inset 0 .5em 1.4em color-mix(in srgb,var(--fc) 22%,transparent)}
+.rim-eldritch .fx-bossrim::before{background:conic-gradient(from var(--ang),transparent 0 10%,var(--fc) 18%,transparent 30% 55%,#fff 62%,var(--fc) 68%,transparent 80%)}
+@media (prefers-reduced-motion:no-preference){
+  /* loops share one clock (--ph), so a re-render never makes them jump */
+  .fx::before,.fx::after,.fx i,.fx i::before,.fx i::after,.badge.blood svg,.badge.down,li .nm{animation-delay:var(--ph,0s)}
+  .fx-bloodied::before{animation:beatGlow var(--t-beat) ease-in-out infinite var(--ph,0s)}
+  .fx-bloodied::after{animation:beatRim var(--t-beat) ease-in-out infinite var(--ph,0s)}
+  .fx-bloodied i{animation:drip var(--t-slow) ease-in infinite var(--ph,0s)}
+  @keyframes beatGlow{0%,60%,100%{opacity:.35}15%{opacity:.9}30%{opacity:.45}45%{opacity:.75}}
+  @keyframes beatRim{0%,60%,100%{opacity:.35}15%{opacity:1}45%{opacity:.8}}
+  @keyframes drip{0%{background-size:.16em 0,.12em 0,.14em 0;opacity:.85}
+    50%{background-size:.16em 55%,.12em 25%,.14em 40%;opacity:.85}
+    80%{background-size:.16em 80%,.12em 45%,.14em 65%;opacity:0}
+    100%{background-size:.16em 0,.12em 0,.14em 0;opacity:0}}
+  .badge.blood svg{animation:beat var(--t-beat) ease-in-out infinite var(--ph,0s);transform-origin:50% 60%}
+  @keyframes beat{0%,100%,60%{transform:scale(1)}15%{transform:scale(1.28)}30%{transform:scale(1)}45%{transform:scale(1.18)}}
+
+  .fx-down::before{animation:breathe var(--t-slow) ease-in-out infinite var(--ph,0s)}
+  .fx-down::after{animation:ekg var(--t-mid) linear infinite var(--ph,0s)}
+  @keyframes ekg{from{background-position:0 88%}to{background-position:-9em 88%}}
+  @keyframes breathe{0%,100%{opacity:1}50%{opacity:.7}}
+  .badge.down{animation:fadeblink var(--t-mid) ease-in-out infinite var(--ph,0s)}
+  @keyframes fadeblink{0%,100%{opacity:1}50%{opacity:.35}}
+
+  .fx-concentrating::before{animation:orbit var(--t-mid) linear infinite var(--ph,0s)}
+  .fx-concentrating::after{animation:breathe var(--t-mid) ease-in-out infinite var(--ph,0s)}
+  @keyframes orbit{to{--ang:360deg}}
+
+  .fx-invisible::before,.fx-charmed::before{animation:sweep var(--t-mid) linear infinite var(--ph,0s)}
+  @keyframes sweep{from{background-position:100% 0}to{background-position:-200% 0}}
+  li.st-invisible .nm,li.st-invisible .ic{animation:ghost var(--t-mid) ease-in-out infinite var(--ph,0s)}
+  @keyframes ghost{0%,100%{opacity:.95}50%{opacity:.25}}
+
+  .fx-frightened::before{animation:breathe var(--t-fast) ease-in-out infinite var(--ph,0s)}
+  li.st-frightened .nm{animation:tremble .3s linear infinite var(--ph,0s)}
+  @keyframes tremble{0%,100%{transform:translate(0,0)}25%{transform:translate(-.03em,.02em)}50%{transform:translate(.03em,-.01em)}75%{transform:translate(-.02em,-.02em)}}
+
+  @keyframes heart{0%{transform:translateY(0) scale(.6);opacity:0}20%{opacity:.9}100%{transform:translateY(-3.2em) scale(1.1);opacity:0}}
+
+  .fx-poisoned::before{animation:breathe var(--t-mid) ease-in-out infinite var(--ph,0s)}
+  .fx-burning::before{animation:fireflick var(--t-fast) ease-in-out infinite var(--ph,0s)}
+  .fx-burning::after{animation:fireflick var(--t-fast) steps(5) infinite calc(var(--ph,0s) - .5s)}
+  .fx-burning i{animation:flames var(--t-fast) ease-in-out infinite alternate var(--ph,0s),flameslide var(--t-mid) linear infinite var(--ph,0s)}
+  @keyframes flames{0%{transform:scaleY(.8);opacity:.42}50%{transform:scaleY(1.08);opacity:.58}100%{transform:scaleY(.9);opacity:.48}}
+  @keyframes flameslide{to{-webkit-mask-position:3.2em 100%;mask-position:3.2em 100%}}
+  .deco.em b{animation:emberup var(--t-mid) ease-out infinite var(--ph,0s)}
+  .deco.em b:nth-child(2){animation-delay:calc(var(--ph,0s) - .6s);animation-duration:2.6s}
+  .deco.em b:nth-child(3){animation-delay:calc(var(--ph,0s) - 1.3s)}
+  .deco.em b:nth-child(4){animation-delay:calc(var(--ph,0s) - 1.8s);animation-duration:2.5s}
+  @keyframes emberup{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(.5em,-2.4em) scale(.3);opacity:0}}
+  @keyframes bubble{0%{transform:translateY(0) scale(.5);opacity:0}25%{opacity:.9}100%{transform:translate(.3em,-3em) scale(1.1);opacity:0}}
+
+  @keyframes spin{to{transform:rotate(360deg)}}
+  li.st-stunned .nm,li.st-incapacitated .nm{animation:sway var(--t-fast) ease-in-out infinite var(--ph,0s);transform-origin:20% 80%}
+  @keyframes sway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
+
+  .fx-paralyzed::before{animation:zap var(--t-fast) steps(1) infinite var(--ph,0s)}
+  @keyframes zap{0%,100%{opacity:.3}12%{opacity:.9}18%{opacity:.2}24%{opacity:.75}60%{opacity:.35}}
+
+  .fx-restrained::before{animation:bind var(--t-mid) linear infinite var(--ph,0s)}
+  @keyframes bind{to{background-position:1.2em 0}}
+
+  .fx-blinded::before{animation:blink var(--t-mid) ease-in-out infinite var(--ph,0s)}
+  @keyframes ring{0%{transform:scale(.3);opacity:0}15%{opacity:.7}100%{transform:scale(3.2);opacity:0}}
+  .fx-exhaustion::before{animation:breathe var(--t-slow) ease-in-out infinite var(--ph,0s)}
+  li.st-exhaustion .nm{animation:sag var(--t-mid) ease-in-out infinite var(--ph,0s);transform-origin:0 100%}
+  @keyframes sag{0%,100%{transform:none}50%{transform:translateY(calc(var(--exh,1)*.018em)) rotate(calc(var(--exh,1)*.18deg))}}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.75}}
+
+  /* one-off: something just changed */
+  .fx-bossrim::before{animation:orbit var(--t-mid) linear infinite var(--ph,0s)}
+  .rim-fire .fx-bossrim::before{animation:fireflick var(--t-fast) ease-in-out infinite var(--ph,0s)}
+  .rim-fire .fx-bossrim::after{animation:fireflick var(--t-fast) steps(6) infinite calc(var(--ph,0s) - .4s)}
+  @keyframes fireflick{0%,100%{opacity:.75}20%{opacity:1}35%{opacity:.6}55%{opacity:.95}75%{opacity:.7}}
+  .rim-necro .fx-bossrim::before,.rim-necro .fx-bossrim::after{animation:breathe var(--t-mid) ease-in-out infinite var(--ph,0s)}
+  .rim-ooze .fx-bossrim::before{animation:none}
+  .rim-ooze .fx-bossrim i{animation:drip var(--t-slow) ease-in infinite calc(var(--ph,0s) - 2s)}
+  .rim-holy .fx-bossrim::before{animation:breathe var(--t-slow) ease-in-out infinite var(--ph,0s)}
+  .rim-eldritch .fx-bossrim::before{animation:orbit var(--t-mid) linear infinite reverse var(--ph,0s)}
+  .rim-eldritch .fx-bossrim::after{animation:breathe var(--t-fast) ease-in-out infinite var(--ph,0s)}
+  .fx.fx-new{animation:fxin .7s ease-out}
+  @keyframes fxin{from{opacity:0}to{opacity:1}}
+  li.flash .fx-bloodied::after{animation:hit .9s ease-out,beatRim var(--t-beat) ease-in-out infinite var(--ph,0s)}
+  @keyframes hit{0%{box-shadow:inset 0 0 0 .2em var(--blood),inset 0 0 3em var(--blood);opacity:1}100%{opacity:.7}}
+  li.enter{animation:enter .45s ease-out}
+  @keyframes enter{from{opacity:0;transform:translateX(-.6em)}to{opacity:1;transform:none}}
+  .ic .new{animation:pop .5s ease-out}
+  @keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+
+  .fx-boss::after{animation:sweep var(--t-slow) linear infinite var(--ph,0s)}
+  .fx-lair::before{animation:breathe var(--t-mid) ease-in-out infinite var(--ph,0s)}
+  .star{animation:twinkle var(--t-mid) ease-in-out infinite var(--ph,0s)}
+  @keyframes twinkle{0%,100%{transform:scale(1) rotate(0);opacity:1}50%{transform:scale(1.15) rotate(12deg);opacity:.8}}
+  li.reveal{animation:emerge 1.4s cubic-bezier(.2,.7,.2,1)}
+  @keyframes emerge{0%{opacity:0;transform:scale(1.12);filter:blur(12px) brightness(2)}35%{opacity:1;filter:blur(4px) brightness(1.4)}100%{opacity:1;transform:none;filter:none}}
+  li.reveal .fx-reveal::before{animation:smoke 1.6s ease-out}
+  @keyframes smoke{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(2.4)}}
+
+  .intro{animation:introbg 4.6s ease-in-out forwards}
+  @keyframes introbg{0%{opacity:0}10%{opacity:1}82%{opacity:1}100%{opacity:0}}
+  .intro-kicker{animation:introfade 4.6s ease-out forwards}
+  @keyframes introfade{0%,12%{opacity:0;transform:translateY(.6em)}24%{opacity:1;transform:none}82%{opacity:1}100%{opacity:0}}
+  .intro-name{animation:introname 4.6s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes introname{0%,14%{opacity:0;letter-spacing:.4em;transform:scale(1.25);filter:blur(10px)}38%{opacity:1;letter-spacing:.02em;transform:none;filter:none}82%{opacity:1;transform:scale(1.02)}100%{opacity:0;transform:scale(.92)}}
+  .intro-rule{animation:introrule 4.6s ease-out forwards}
+  @keyframes introrule{0%,30%{transform:scaleX(0)}50%{transform:scaleX(1)}82%{opacity:1}100%{opacity:0;transform:scaleX(1)}}
+  .intro-title{animation:introtitle 4.6s ease-out forwards}
+  @keyframes introtitle{0%,42%{opacity:0;transform:translateY(.4em)}58%{opacity:1;transform:none}82%{opacity:1}100%{opacity:0}}
+
+  .endscr.in{animation:endin 1.2s ease-out}
+  @keyframes endin{from{opacity:0}to{opacity:1}}
+  .endscr.in .end-title{animation:endtitle 1.6s cubic-bezier(.2,.7,.2,1)}
+  @keyframes endtitle{0%{opacity:0;transform:translateY(.3em) scale(.96);letter-spacing:.2em}100%{opacity:1;transform:none;letter-spacing:normal}}
+  .endscr.in .end-rule{animation:introrule2 1.6s ease-out}
+  @keyframes introrule2{0%,30%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+  .endscr.in .end-stats{animation:introfade2 2s ease-out}
+  @keyframes introfade2{0%,50%{opacity:0;transform:translateY(.4em)}100%{opacity:1;transform:none}}
+}
+
