@@ -33,6 +33,7 @@ import (
 	"io"
 	"io/fs"
 	"log"
+	"math"
 	"math/big"
 	"net"
 	"net/http"
@@ -72,6 +73,8 @@ var (
 	state      map[string]any
 	lastPlayer time.Time
 	lastTV     time.Time // when the TV last asked for the state
+	lastTablet time.Time // when the tablet last asked (pages that say screen=tablet)
+	phoneSeen  = map[string]time.Time{} // character id -> when that player's phone last asked; only the DM gets this, from /info
 	pending    []map[string]any
 	hasTLS     bool
 )
@@ -595,6 +598,23 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 		if r.URL.Query().Get("screen") == "tv" { // the TV, even when it's a second screen of this computer
 			lastTV = time.Now()
+		} else if r.URL.Query().Get("screen") == "tablet" {
+			lastTablet = time.Now()
+		}
+		if me := r.URL.Query().Get("me"); me != "" { // a phone says which character it is, so the DM's Devices window can show who is connected
+			if len(me) > 40 {
+				me = me[:40]
+			}
+			phoneSeen[me] = time.Now()
+			if len(phoneSeen) > 64 {
+				old, oldT := "", time.Now()
+				for k, t := range phoneSeen {
+					if t.Before(oldT) {
+						old, oldT = k, t
+					}
+				}
+				delete(phoneSeen, old)
+			}
 		}
 		st := state
 		if !local || r.URL.Query().Get("pub") == "1" { // pages for the players ask for the players' view, even here
@@ -626,6 +646,17 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		if !lastTV.IsZero() {
 			tvAgo = time.Since(lastTV).Seconds()
 		}
+		var tabAgo, phones any
+		if !lastTablet.IsZero() {
+			tabAgo = time.Since(lastTablet).Seconds()
+		}
+		if isLocal(r) {
+			ph := map[string]float64{}
+			for k, t := range phoneSeen {
+				ph[k] = math.Round(time.Since(t).Seconds()*10) / 10
+			}
+			phones = ph
+		}
 		mu.Unlock()
 		ips := lanIPs() // looked up each time, so a new Wi-Fi or address shows up without a restart
 		var urls []string
@@ -640,7 +671,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		if others == nil {
 			others = []string{}
 		}
-		reply(w, 200, encode(map[string]any{"url": urls[0], "others": others, "httpsUrl": https, "port": port, "playerAgo": ago, "tvAgo": tvAgo, "host": isHost(r), "ips": ips}), "")
+		reply(w, 200, encode(map[string]any{"url": urls[0], "others": others, "httpsUrl": https, "port": port, "playerAgo": ago, "tvAgo": tvAgo, "tabletAgo": tabAgo, "phones": phones, "host": isHost(r), "ips": ips}), "")
 	default:
 		reply(w, 404, []byte("{}"), "")
 	}
