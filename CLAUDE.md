@@ -28,6 +28,8 @@ A free, offline combat tracker for in-person 5e (2024 rules). The DM runs it on 
 
 ### Servers
 
+Settings → Updates: `/update/check` (`update_check` / `updateCheck`, the computer running the server only) asks GitHub for the latest release; the release workflow writes the tag into `VERSION` in `server.py` and `main.version` in Go (`dev` otherwise, which never offers an update). The release description is shown to users there, so draft release notes for users. Tests use a fake GitHub (`t34`).
+
 Both servers must behave the same. Any change to routes, `public_view` (what players may see) or player actions (`_player_action` in `server.py`, `playerAction` in `main.go`; `public_view` / `publicView`) goes into both, and the tests run on both.
 
 ## Rules that must not break

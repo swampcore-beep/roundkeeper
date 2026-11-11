@@ -23,17 +23,21 @@ jobs:
           cp -r fonts go/assets/fonts
       - name: Build Roundkeeper.exe
         working-directory: go
-        run: GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o Roundkeeper.exe .
+        run: GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w -X main.version=${GITHUB_REF_NAME}" -o Roundkeeper.exe .
       - name: Build for Mac (one universal program) and Linux
         working-directory: go
         env:
           CGO_ENABLED: "0"
         run: |
-          GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o rk-mac-x86_64 .
-          GOOS=darwin GOARCH=arm64 go build -trimpath -ldflags "-s -w" -o rk-mac-arm64 .
+          GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags "-s -w -X main.version=${GITHUB_REF_NAME}" -o rk-mac-x86_64 .
+          GOOS=darwin GOARCH=arm64 go build -trimpath -ldflags "-s -w -X main.version=${GITHUB_REF_NAME}" -o rk-mac-arm64 .
           python3 ../tools/makefat.py Roundkeeper rk-mac-x86_64 rk-mac-arm64
-          GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o roundkeeper .
-          GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "-s -w" -o roundkeeper-arm64 .
+          GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w -X main.version=${GITHUB_REF_NAME}" -o roundkeeper .
+          GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "-s -w -X main.version=${GITHUB_REF_NAME}" -o roundkeeper-arm64 .
+      - name: Write the version into the Python server
+        # Settings → Updates compares it with the latest release; a build that isn't from a tag gets the branch name,
+        # which isn't a version, so it never offers an update
+        run: sed -i "s|^VERSION = \"dev\"|VERSION = \"${GITHUB_REF_NAME}\"|" server.py && grep -n '^VERSION = ' server.py
       - name: Zip
         run: |
           (cd go && zip -q ../Roundkeeper-mac.zip Roundkeeper)

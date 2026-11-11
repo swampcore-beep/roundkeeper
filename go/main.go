@@ -29,6 +29,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -43,6 +44,7 @@ import (
 	"regexp"
 	"runtime"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -109,6 +111,164 @@ func reply(w http.ResponseWriter, code int, body []byte, ctype string) {
 	if len(body) > 0 {
 		w.Write(body)
 	}
+}
+
+// ---------- Updates: Settings → Updates asks GitHub for the latest release (only when the DM asks) ----------
+
+// the release workflow sets this with -ldflags "-X main.version=vX.Y.Z"; "dev" never offers an update
+var version = "dev"
+
+const updateURL = "https://api.github.com/repos/swampcore-beep/roundkeeper/releases/latest"
+
+var (
+	updMu    sync.Mutex
+	updAt    time.Time
+	updCache map[string]any
+	verRe    = regexp.MustCompile(`^v?(\d+(?:\.\d+)*)$`)
+)
+
+// "v1.0.8" -> [1 0 8]; nil when it is not a version number
+func versionParts(v string) []int {
+	m := verRe.FindStringSubmatch(strings.TrimSpace(v))
+	if m == nil {
+		return nil
+	}
+	var out []int
+	for _, x := range strings.Split(m[1], ".") {
+		n, err := strconv.Atoi(x)
+		if err != nil {
+			return nil
+		}
+		out = append(out, n)
+	}
+	return out
+}
+
+// like Python's tuple comparison: the longer one wins when the shared part is equal
+func versionGreater(a, b []int) bool {
+	for i := 0; i < len(a) && i < len(b); i++ {
+		if a[i] != b[i] {
+			return a[i] > b[i]
+		}
+	}
+	return len(a) > len(b)
+}
+
+func clip(s string, n int) string {
+	if r := []rune(s); len(r) > n {
+		return string(r[:n])
+	}
+	return s
+}
+
+// what the DM's Updates window shows: this version, the latest release, and the download for this kind of program
+func updateCheck(force bool) map[string]any {
+	current := os.Getenv("ROUNDKEEPER_VERSION") // the override is for tests
+	if current == "" {
+		current = version
+	}
+	url := os.Getenv("ROUNDKEEPER_UPDATE_URL")
+	own := url != ""
+	if !own {
+		url = updateURL
+	}
+	updMu.Lock()
+	if !force && updCache != nil && time.Since(updAt) < 600*time.Second {
+		c := updCache
+		updMu.Unlock()
+		return c
+	}
+	updMu.Unlock()
+	platform, assetName := runtime.GOOS, ""
+	switch runtime.GOOS {
+	case "windows":
+		platform, assetName = "windows", "Roundkeeper-windows.zip"
+	case "darwin":
+		platform, assetName = "mac", "Roundkeeper-mac.zip"
+	case "linux":
+		platform, assetName = "linux", "Roundkeeper-linux.zip"
+	}
+	out := map[string]any{"current": current, "platform": platform, "latest": nil, "newer": false, "dev": versionParts(current) == nil,
+		"notes": "", "page": nil, "published": nil, "asset": nil, "error": nil}
+	ask := func() error { // fills out; the error only ends it early
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			return err
+		}
+		req.Header.Set("User-Agent", "Roundkeeper/"+current)
+		req.Header.Set("Accept", "application/vnd.github+json")
+		resp, err := (&http.Client{Timeout: 8 * time.Second}).Do(req)
+		if err != nil {
+			var cv *tls.CertificateVerificationError
+			var ua x509.UnknownAuthorityError
+			var ci x509.CertificateInvalidError
+			var he x509.HostnameError
+			if errors.As(err, &cv) || errors.As(err, &ua) || errors.As(err, &ci) || errors.As(err, &he) {
+				out["error"] = "certs"
+			} else {
+				out["error"] = "offline"
+			}
+			return err
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != 200 {
+			if resp.StatusCode == 403 || resp.StatusCode == 429 {
+				out["error"] = "limit"
+			} else {
+				out["error"] = "bad"
+			}
+			return fmt.Errorf("status %d", resp.StatusCode)
+		}
+		body, err := io.ReadAll(io.LimitReader(resp.Body, 2000000))
+		if err != nil {
+			out["error"] = "offline"
+			return err
+		}
+		var rel map[string]any
+		tag, ok := "", false
+		if json.Unmarshal(body, &rel) == nil && rel != nil {
+			tag, ok = rel["tag_name"].(string)
+		}
+		if !ok {
+			out["error"] = "bad"
+			return fmt.Errorf("not a release")
+		}
+		link := func(v any) any { // only links to GitHub (or to the test server the tests point at)
+			u, _ := v.(string)
+			if strings.HasPrefix(u, "https://github.com/") || (own && strings.HasPrefix(u, "http://127.0.0.1:")) {
+				return u
+			}
+			return nil
+		}
+		latest := clip(strings.TrimSpace(tag), 40)
+		lp, cp := versionParts(latest), versionParts(current)
+		out["latest"] = latest
+		out["newer"] = lp != nil && cp != nil && versionGreater(lp, cp)
+		if s, _ := rel["body"].(string); s != "" {
+			out["notes"] = clip(s, 6000)
+		}
+		out["page"] = link(rel["html_url"])
+		if s, _ := rel["published_at"].(string); s != "" {
+			out["published"] = clip(s, 30)
+		}
+		assets, _ := rel["assets"].([]any)
+		for _, x := range assets {
+			a, _ := x.(map[string]any)
+			if a == nil || assetName == "" || a["name"] != assetName {
+				continue
+			}
+			if u := link(a["browser_download_url"]); u != nil {
+				size, _ := a["size"].(float64)
+				out["asset"] = map[string]any{"name": assetName, "url": u, "size": int64(size)}
+			}
+		}
+		return nil
+	}
+	_ = ask()
+	updMu.Lock()
+	updAt, updCache = time.Now(), out
+	updMu.Unlock()
+	return out
 }
 
 // the computer the server runs on
@@ -637,6 +797,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		reply(w, 200, body, "")
+	case path == "/update/check": // Settings → Updates; only the computer running the server asks GitHub
+		if !isHost(r) {
+			reply(w, 403, []byte(`{"error":"host"}`), "")
+			return
+		}
+		reply(w, 200, encode(updateCheck(r.URL.Query().Get("force") == "1")), "")
 	case path == "/info":
 		mu.Lock()
 		var ago, tvAgo any

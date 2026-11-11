@@ -61,6 +61,8 @@ if(MODE==="player"){
   else{
     (async()=>{try{const r=await fetch("/state",{cache:"no-store"});const d=await r.json();if(d&&Array.isArray(d.list)){state=norm(d);
       render()}}catch(e){setSync("err","Server not responding")}lastListLen=state.list.length;snap=JSON.stringify(state)})();
+    if(ls.get("updAuto",false))setTimeout(()=>updCheck(false).then(u=>{  // Settings → Updates → "check when Roundkeeper starts"
+      if(u&&u.newer)toast(`Roundkeeper ${u.latest} is out: Settings and files → Updates`)}),4000);
     const info=async()=>{
       try{const r=await fetch("/info",{cache:"no-store"});const d=await r.json();
         joinInfo=d;const a=$("#addr");a.hidden=false;
