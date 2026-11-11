@@ -8,12 +8,12 @@ A free, offline combat tracker for in-person 5e (2024 rules). The DM runs it on 
 |---|---|
 | `src/` | The app's source in parts (`NN-name.css`, `.js`, `.html`): **edit these** |
 | `initiative.html` | The whole app in one file, put together from `src/` by `tools/build.py`; never edit it by hand (the exe embeds it, the Python server serves it) |
-| `server.py` | Python server, standard library only (Mac/Linux and the Python zip) |
-| `go/main.go`, `go/fivetools.go` | Go server, the same behaviour, built into `Roundkeeper.exe` |
+| `server.py` | Python server, standard library only (the Python zip, for any computer with Python 3) |
+| `go/main.go`, `go/fivetools.go` | Go server, the same behaviour, built into `Roundkeeper.exe` and the Mac and Linux programs |
 | `srd/srd-5.2.1.json` | The built-in SRD (made by `tools/srd_from_open5e.py`) |
 | `media/` | README pictures and GIFs (regenerate with `dev/media/`) |
 | `dev/` | Test servers, test suites, media scripts: see `dev/README.md` |
-| `.github/workflows/release.yml` | A `v*` tag builds the Windows exe and both zips and attaches them to the release |
+| `.github/workflows/release.yml` | A `v*` tag builds the Windows exe, the Mac program (universal, joined by `tools/makefat.py`), the Linux programs and the Python zip, and attaches them to the release |
 | `.github/workflows/check.yml` | Every pull request: `initiative.html` must match `src/` |
 
 ### Inside the app (`src/`)

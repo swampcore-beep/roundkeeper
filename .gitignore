@@ -12,6 +12,10 @@ key.pem
 # builds
 go/assets/
 go/ti-linux
+go/Roundkeeper
+go/roundkeeper
+go/roundkeeper-arm64
+go/rk-mac-*
 *.exe
 *.zip
 __pycache__/
