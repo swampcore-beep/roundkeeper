@@ -6,7 +6,7 @@ from playwright.async_api import async_playwright
 O=rk.MEDIA+'/stills/';os.makedirs(O,exist_ok=True)
 async def T(pg,js): return await pg.evaluate("(js)=>__t(js)",js)
 TH,SC="tavern","avernus"
-BASE=";state.weather='none';state.tod='none';state.tune={};state.sceneFx={};state.sceneReact=true;state.layout='landscape';byId('i').php={cur:44,max:52,temp:0,at:Date.now()};byId('a').php={cur:21,max:38,temp:5,at:Date.now()};commit()"
+BASE=";state.ended=null;state.clocks=[];state.call=null;state.roll=null;state.cstat={};state.nstat={};state.hdywt=null;state.tv={mode:'auto'};state.weather='none';state.tod='none';state.tune={};state.sceneFx={};state.sceneReact=true;state.layout='landscape';byId('i').php={cur:44,max:52,temp:0,at:Date.now()};byId('a').php={cur:21,max:38,temp:5,at:Date.now()};commit()"
 async def main():
     only=sys.argv[1].split(',') if len(sys.argv)>1 else None
     want=lambda k: not only or k in only
@@ -51,11 +51,24 @@ async def main():
             await S("byId('d').hp=0;byId('d').down=true;state.hdywt={id:uid(),pc:'i',name:'Isandros',cls:'paladin',boss:'Adult Red Dragon',at:Date.now()};commit()",3.5)
             await tb.screenshot(path=O+'g_hdywt.png');await S("delete state.hdywt;byId('d').hp=256;byId('d').down=false;commit()",2)
         if want('tvtitle'):
-            await S("state.tv=Object.assign({},state.tv,{title:{t:'The Burning Pass',sub:'Two days north of Emberfall',eb:'Session 12',at:Date.now()}});commit()",3)
+            await S("state.tv=Object.assign({},state.tv,{title:{t:'The Ashen Peaks',sub:'Where the road climbs into smoke',eb:'Session 12',at:Date.now()}});commit()",3)
             await tv.screenshot(path=O+'g_tvtitle.png');await S("state.tv=Object.assign({},state.tv);delete state.tv.title;commit()",1)
         if want('tvpause'):
             await S("state.tv=Object.assign({},state.tv,{pause:{until:Date.now()+10*60000,msg:'Short break'}});commit()",3)
             await tv.screenshot(path=O+'g_tvpause.png');await S("state.tv=Object.assign({},state.tv);delete state.tv.pause;commit()",1)
+        if want('tvcall'):
+            await S("state.call={id:'c'+Date.now(),text:'Dexterity save DC 21 · Fire Breath',dc:21,at:Date.now(),to:['i','s','a','gr'],answers:{i:23,s:12,a:19}};commit()",3.2)
+            await tv.screenshot(path=O+'g_tvcall.png');await S("delete state.call;commit()",1)
+        if want('tvend'):
+            await S("for(const k of ['d','g1','g2','g3']){const g=byId(k);g.hp=0;g.down=true};"
+                    "state.cstat={Gregori:{d:84,k:2,top:{n:28,w:'fire',t:'Goblin A'}},Styx:{d:41,k:1,top:{n:21,w:'piercing',t:'Adult Red Dragon'}},Isandros:{d:96,k:1,top:{n:31,w:'radiant',t:'Adult Red Dragon'}}};"
+                    "state.nstat={s:{n20:1,n1:0}};state.hdywt={id:uid(),pc:'i',name:'Isandros',cls:'paladin',boss:'Adult Red Dragon',at:Date.now()-60000};"
+                    "state.fightAt=Date.now()-38*60000;endFight();commit()",3.5)
+            await tv.screenshot(path=O+'g_tvend.png')
+            await S("state.ended=null;delete state.hdywt;state.cstat={};state.nstat={};for(const k of ['d','g1','g2','g3']){const g=byId(k);g.hp=g.hpMax;g.down=false};commit()",2)
+        if want('devices'):
+            import vrec;vrec.present();await asyncio.sleep(2.5)
+            await S("devSheet()",2.5);await dm.screenshot(path=O+'g_devices.png');await S("closeSheet()",.3)
         if want('spells'):
             await T(ph,"pSheet='book';spellScope='all';bookQ='';renderPSheet()");await asyncio.sleep(2.5);await ph.screenshot(path=O+'g_spells.png')
             await T(ph,"spView={n:'Fireball',s:'SRD52',from:'book'};pSheet='spell';renderPSheet();refGet('spell','Fireball','SRD52',true).then(d=>{spView.d=d;renderPSheet()})");await asyncio.sleep(1.5);await ph.screenshot(path=O+'g_spell.png')

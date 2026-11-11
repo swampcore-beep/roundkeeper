@@ -9,7 +9,7 @@ O=rk.MEDIA+'/four-video/raw_'+TGT+'/'
 shutil.rmtree(O,ignore_errors=True);os.makedirs(O)
 async def T(pg,js): return await pg.evaluate("(js)=>__t(js)",js)
 TH,SC="tavern","avernus"
-BASE=(";state.weather='none';state.tod='none';state.tune={};state.sceneFx={};state.sceneReact=true;state.layout='landscape';"
+BASE=(";state.ended=null;state.hdywt=null;state.rsum=null;state.clocks=[];state.call=null;state.roll=null;state.tv={mode:'auto'};state.weather='none';state.tod='none';state.tune={};state.sceneFx={};state.sceneReact=true;state.layout='landscape';"
       "byId('i').php={cur:44,max:52,temp:0,at:Date.now()};byId('a').php={cur:21,max:38,temp:5,at:Date.now()};commit()")
 marks=[];frames={}
 async def cast(ctx,pg,name,q=88):

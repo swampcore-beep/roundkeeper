@@ -6,7 +6,7 @@ S=rk.MEDIA+'/stills/';D=os.path.join(rk.ROOT,'media')
 JPG={  # README name: (still, width)
  'dm':('s_dm',1600),'atmosphere':('g_atmo',1200),'hit-several':('g_hit',1200),'rules':('g_ctrlk',1200),
  'roll-call':('g_rollcall',1000),'conditions':('g_cond',1000),'how-do-you-want':('g_hdywt',1000),
- 'tv-title':('g_tvtitle',1000),'tv-break':('g_tvpause',1000),
+ 'tv-title':('g_tvtitle',1000),'tv-roll-call':('g_tvcall',1000),'tv-end':('g_tvend',1000),'tv-break':('g_tvpause',1000),
  'phone-spells':('g_spells',500),'phone-spell':('g_spell',500),'phone-conc':('g_conc',500),'phone-dice':('g_dice',500),'phone-sheet':('g_sheet',500)}
 def save(im,name,w=None,crop=None):
     im=im.convert('RGB')
@@ -16,8 +16,9 @@ def save(im,name,w=None,crop=None):
 for dst,(src,w) in JPG.items():
     if os.path.exists(S+src+'.png'): save(Image.open(S+src+'.png'),dst+'.jpg',w)
 if os.path.exists(S+'g_party.png'): save(Image.open(S+'g_party.png'),'party.jpg',900,(850,450,2030,1340))  # the party sheet only
+if os.path.exists(S+'g_devices.png'): save(Image.open(S+'g_devices.png'),'devices.jpg',1000,(700,90,2180,1700))  # the Devices window only
 if os.path.exists(rk.MEDIA+'/four.png'): save(Image.open(rk.MEDIA+'/four.png'),'four-screens.jpg',1600)
 if os.path.exists(rk.MEDIA+'/social-preview.png'): shutil.copy(rk.MEDIA+'/social-preview.png',os.path.join(D,'social-preview.png'));print('media/social-preview.png')
-for g in ['tablet','boss','tv','phone']:
+for g in ['boss']:   # the tablet, TV and phone GIFs gave way to the three videos
     f=rk.MEDIA+'/gifs/'+g+'.gif'
     if os.path.exists(f): shutil.copy(f,os.path.join(D,g+'.gif'));print('media/'+g+'.gif')
