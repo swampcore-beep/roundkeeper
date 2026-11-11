@@ -1551,6 +1551,18 @@ html:root .joinpill b{font-weight:800;color:var(--fg)}html:root .joinpill span{c
 html:root .joinpill svg{width:16px;height:16px;fill:currentColor}
 html:root .joinpill .jd{width:9px;height:9px;border-radius:50%;background:var(--fail);box-shadow:0 0 0 3px color-mix(in srgb,var(--fail) 25%,transparent)}
 html:root .joinpill .jd.on{background:var(--save);box-shadow:0 0 0 3px color-mix(in srgb,var(--save) 25%,transparent)}
+html:root .joinpill .jd.some{background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+html:root .joinpill .jd.off{background:var(--faint);box-shadow:none}
+html:root .joinpill b{margin-right:2px}
+.devsheet{width:min(720px,100%)}
+.devjoin{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;align-items:start}.devjoin .qr{width:150px;height:150px;border-radius:8px}
+@media (max-width:560px){.devjoin{grid-template-columns:1fr}}
+.devrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}.psec .devrow:first-of-type{border-top:0}
+.devrow .jd{width:10px;height:10px;border-radius:50%;background:var(--faint);flex:none}.devrow .jd.on{background:var(--save);box-shadow:0 0 6px var(--save)}
+.devn{flex:1 1 12em;min-width:0;display:grid}.devn small{color:var(--muted);font-size:.82rem}
+.devlink{display:flex;align-items:center;gap:6px;flex:1 1 22em;min-width:0}.devlink code{flex:1;min-width:0;overflow-wrap:anywhere;font-size:.85rem;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:5px 8px;user-select:all}
+.devgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));column-gap:18px}.devgrid .devrow{border-top:0;border-bottom:1px solid var(--line)}
+.devhelp summary{cursor:pointer;font-weight:800}.devhelp .qrhelp{margin-top:8px}
 html:root .previewic{display:inline-grid}html:root .previewic svg{fill:currentColor}
 html:root .brand{margin-right:auto}html:root .turnbox{margin-left:0}
 /* D2 the fight's buttons in a bar along the bottom; Clear all set apart */
@@ -1885,7 +1897,7 @@ html[data-mfont=A] .mo-q,html[data-mfont=F] .mo-q{font-size:clamp(22px,3.6vw,56p
     <div class="bar-row">
       <div class="brand">Roundkeeper</div>
       <div class="sync" id="sync" data-s="off"><i></i><span>Connecting…</span></div>
-      <button class="btn joinpill" id="joinPill" type="button" data-act="qr" title="Players join here: show the QR code"></button>
+      <button class="btn joinpill" id="joinPill" type="button" data-act="devices" title="Devices: who is connected, the addresses and the QR code"></button>
       <div class="turnbox" id="turnBox"></div>
       <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Rules <kbd>Ctrl K</kbd></button>
       <button class="btn tcardpill" id="tcardPill" type="button" data-act="tcardoff" hidden></button>
@@ -7990,7 +8002,7 @@ function tvBarRender(){
   if(!tvPopOn||MODE!=="dm"){if(el)el.remove();return}
   if(!el){el=document.createElement("div");el.id="tvPop";el.className="tvpop";el.setAttribute("role","dialog");el.setAttribute("aria-label","TV");document.body.appendChild(el)}
   const T=state.tv||{},ev=T.ev||{},paused=T.pause&&T.pause.until>Date.now(),t=T.title||{};
-  el.innerHTML=`<div class="tvp-h"><b>TV</b><span class="psub">${state.tvSeen?"connected":"not connected: open <code>/players?shared=1&amp;screen=tv</code> on the TV (or pick “This is the TV” on the join page)"}</span><button type="button" class="icon-btn sm" data-act="tvbar" aria-label="Close">${I.x}</button></div>
+  el.innerHTML=`<div class="tvp-h"><b>TV</b><span class="psub">${state.tvSeen?"connected":`not connected: open <code>${esc((devBase()||"")+"/players?shared=1&screen=tv")}</code> on the TV (or pick “This is the TV” on the join page)`}</span><button type="button" class="icon-btn sm" data-act="tvbar" aria-label="Close">${I.x}</button></div>
     <div class="seg2 tvmodes">${TV_MODES.map(([k,l])=>`<button type="button" data-act="tvmode" data-v="${k}" aria-pressed="${(T.mode||"auto")===k}">${l}</button>`).join("")}</div>
     <p class="psub">Auto: the scene when there's no fight, the order while initiative comes in, Spotlight during turns, the end screen after.</p>
     <div class="tvp-g"><div><div class="eyebrow2">Title card</div><form id="tvTitleForm" class="tvtf" autocomplete="off"><input class="field" id="tvT" maxlength="50" placeholder="The Misty Woods" value="${esc(t.t||"")}"><input class="field" id="tvSub" maxlength="70" placeholder="Two days north of Daggerford" value="${esc(t.sub||"")}"><input class="field" id="tvEb" maxlength="40" placeholder="Session 12 · Exploring" value="${esc(t.eb||"")}">
@@ -8123,6 +8135,52 @@ function qrSheet(){
       <li><b>iPhone</b>: tap Allow when Safari asks about the Local Network.</li>
       <li>Still nothing on any phone: run <b>allow-network.bat</b> once on this computer.</li></ul>
     <div style="display:flex;justify-content:flex-end"><button class="btn primary" type="button" data-act="close">Done</button></div></div></div>`;
+}
+/* ---- Devices: who is connected, with the full link for each kind of screen ---- */
+function pollWho(){   // the tablet and each phone tell the server what they are, so the DM can see who is connected
+  if(MODE!=="player"||PREVIEW)return "";
+  if(meName==="*")return TV?"":"&screen=tablet";
+  const me=meChar();return me?"&me="+encodeURIComponent(me.id):"";
+}
+const tabletOn=()=>{const d=joinInfo;if(!d)return false;const a=d.tabletAgo!=null?d.tabletAgo:d.playerAgo;return a!=null&&a<5};
+const tvOn=()=>!!(joinInfo&&joinInfo.tvAgo!=null&&joinInfo.tvAgo<5);
+const phoneAgo=c=>{const p=joinInfo&&joinInfo.phones;return p&&p[c.id]!=null?p[c.id]:null};
+const devPcs=()=>sorted().filter(c=>c.kind==="pc");
+function devPill(){const jp=$("#joinPill");if(!jp)return;
+  const pcs=devPcs(),on=pcs.filter(c=>{const a=phoneAgo(c);return a!=null&&a<8}).length;
+  jp.innerHTML=`<b>Devices</b><i class="jd${tabletOn()?" on":""}"></i><span>Tablet</span><i class="jd${tvOn()?" on":" off"}"></i><span>TV</span>${pcs.length?`<i class="jd${on===pcs.length?" on":on?" some":""}"></i><span>${on}/${pcs.length} phones</span>`:""}`}
+const devBase=()=>String(chosenUrl()||"").replace(/\/players$/,"");
+const devAgo=a=>a==null?"not connected yet":a<8?"connected":a<90?`last seen ${Math.round(a)} s ago`:a<5400?`last seen ${Math.round(a/60)} min ago`:`last seen ${Math.round(a/3600)} h ago`;
+function devRow(on,name,status,link,extra){
+  return `<div class="devrow"><i class="jd${on?" on":""}"></i><div class="devn"><b>${name}</b><small>${status}</small></div>
+    ${link?`<div class="devlink"><code>${esc(link)}</code><button class="btn sm" type="button" data-act="devcopy" data-u="${esc(link)}">Copy</button></div>`:""}${extra||""}</div>`}
+function devSheet(){
+  const u=chosenUrl(),all=laptopUrls(),base=devBase(),d=joinInfo||{};
+  if(!u){toast("Start the tracker with start.bat to get the address");return}
+  const old=$("#devSheet"),top=old?old.scrollTop:0,keepOpen=old&&old.querySelector("details[open]");
+  const pcs=devPcs(),tabA=d.tabletAgo!=null?d.tabletAgo:d.playerAgo;
+  const phoneRows=pcs.map(c=>{const a=phoneAgo(c),tags=[c.psimple?"simple phone":"",c.php?"shares HP":"",state.sheets&&state.sheets[String(c.name).toLowerCase()]?"sheet":""].filter(Boolean).join(" · ");
+    return devRow(a!=null&&a<8,esc(c.name),esc(devAgo(a)+(tags?" · "+tags:"")),null)}).join("");
+  const dmN=dmDev&&dmDev.list?dmDev.list.length:0;
+  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet devsheet" id="devSheet" role="dialog" aria-modal="true" aria-label="Devices"><h2>Devices</h2>
+    <div class="devjoin">${qrSvg(u)}<div><div class="eyebrow2">Players join here</div><div class="jc-url">${esc(u)}</div>
+      <p class="psub">Phones scan the code or type the address, then tap their name. Before combat the tablet shows this code by itself.</p>
+      <div class="spacts" style="justify-content:flex-start"><button class="btn sm" type="button" data-act="devcopy" data-u="${esc(u)}">Copy</button><button class="btn sm${state.showQr?" primary":""}" type="button" data-act="qrsurface" aria-pressed="${!!state.showQr}">${state.showQr?"Hide the code on the tablet":"Show the code on the tablet"}</button></div>
+      ${all.length>1?`<div class="psub">This computer has several network addresses. If phones can't open the one above, pick another:</div><div class="qrpicks">${all.map(x=>`<button class="btn sm" type="button" data-act="qrpick" data-u="${esc(x)}" aria-pressed="${x===u}">${esc(x.replace(/^http:\/\//,"").replace(/\/players$/,""))}</button>`).join("")}</div>`:""}
+      ${d.httpsUrl?`<div class="psub">Also over https: <code>${esc(d.httpsUrl)}</code></div>`:""}</div></div>
+    <div class="psec"><div class="eyebrow2">Screens</div>
+      ${devRow(tabletOn(),"Tablet",esc(devAgo(tabA)),base+"/players?shared=1")}
+      ${devRow(tvOn(),"TV",esc(devAgo(d.tvAgo))+" · its modes and look are on the TV button",base+"/players?shared=1&screen=tv")}</div>
+    <div class="psec"><div class="eyebrow2">Phones</div>${pcs.length?`<div class="devgrid">${phoneRows}</div>`:`<p class="psub">Add the party to the fight and each player's phone shows up here.</p>`}
+      ${pcs.length?`<p class="psub" style="margin:0">Players who play on paper never connect; that's fine. Phones open <code>${esc(base+"/players")}</code>.</p>`:""}</div>
+    <div class="psec"><div class="eyebrow2">DM devices</div><div class="devrow"><div class="devn"><b>${dmN?`${dmN} paired`:"None paired"}</b><small>Run the server on one computer and be the DM from another, e.g. the laptop.</small></div><button class="btn sm" type="button" data-act="dmdev">Manage…</button></div></div>
+    <details class="devhelp"${keepOpen?" open":""}><summary>Can't connect?</summary><ul class="qrhelp"><li>Phones must be on the <b>same Wi-Fi</b> as this computer, not a guest network.</li>
+      <li><b>Android + Chrome</b> (ERR_TOO_MANY_RETRIES or nothing loads): Settings → Apps → Chrome → Permissions → <b>Nearby devices</b> → Allow, then force-stop Chrome. Samsung Internet and Firefox also work.</li>
+      <li><b>iPhone</b>: tap Allow when Safari asks about the Local Network.</li>
+      <li>Still nothing on any phone: run <b>allow-network.bat</b> once on this computer (as administrator).</li>
+      <li>A VPN or a second network card can give the wrong address: pick another one above.</li></ul></details>
+    <div style="display:flex;justify-content:flex-end"><button class="btn primary" type="button" data-act="close">Done</button></div></div></div>`;
+  const sh=$("#devSheet");if(sh)sh.scrollTop=top;
 }
 let rollSeen=null,timerSeen=null,dsAskSeen=null,wasDown=null,fightSeen=null,turnSeen=null;
 function yourTurn(me){
@@ -8400,8 +8458,11 @@ document.addEventListener("click",e=>{
     case "hpclear": c.hp=null;c.hpMax=null;commit();break;
     case "logundo": undoLog(t.dataset.l);break;
     case "qr": qrSheet();break;
-    case "qrpick": state.joinUrl=t.dataset.u;commit();qrSheet();break;
-    case "qrsurface": state.showQr=!state.showQr;commit();qrSheet();break;
+    case "devices": dmDevLoad().then(devSheet);break;
+    case "devcopy":{const u=t.dataset.u,ok=()=>toast("Link copied"),fb=()=>{const i=document.createElement("textarea");i.value=u;document.body.appendChild(i);i.select();try{document.execCommand("copy");ok()}catch(e){toast(u)}i.remove()};
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(u).then(ok,fb);else fb();break}
+    case "qrpick": state.joinUrl=t.dataset.u;commit();if($("#devSheet"))devSheet();else qrSheet();devPill();break;
+    case "qrsurface": state.showQr=!state.showQr;commit();if($("#devSheet"))devSheet();else qrSheet();break;
     case "export": exportState();break;
     case "down": c.down=!c.down;if(!c.down)c.ds={s:0,f:0};commit();break;
     case "insp": c.insp=!c.insp;commit();break;
@@ -8942,7 +9003,7 @@ document.addEventListener("submit",e=>{if(e.target.id!=="pDsForm")return;e.preve
 async function poll(ms,onData){
   let fails=0;
   const go=async()=>{
-    try{const t0=Date.now(),r=await fetch("/state?rev="+encodeURIComponent(state.rev||0)+(MODE==="player"&&!PREVIEW?"&pub=1":"")+(TV?"&screen=tv":""),{cache:"no-store"});learnClock(r,t0);
+    try{const t0=Date.now(),r=await fetch("/state?rev="+encodeURIComponent(state.rev||0)+(MODE==="player"&&!PREVIEW?"&pub=1":"")+(TV?"&screen=tv":"")+pollWho(),{cache:"no-store"});learnClock(r,t0);
       if(r.status===200){const d=await r.json();if(d&&Array.isArray(d.list)&&d.rev!==state.rev){state=norm(d);gotServer=true;onData()}else if(!gotServer){gotServer=true;onData()}}
       else if(r.status===204&&!gotServer){gotServer=true;onData()}
       fails=0;const o=$("#offline");if(o)o.hidden=true;
@@ -8994,9 +9055,9 @@ if(MODE==="player"){
       try{const r=await fetch("/info",{cache:"no-store"});const d=await r.json();
         joinInfo=d;const a=$("#addr");a.hidden=false;
         {const tvOn=d.tvAgo!=null&&d.tvAgo<5,tb=$("#tvBtn");if(tb)tb.classList.toggle("on",tvOn);if(!!state.tvSeen!==tvOn){state.tvSeen=tvOn;finish()}}
-        {const on2=d.playerAgo!=null&&d.playerAgo<3,jp=$("#joinPill");if(jp)jp.innerHTML=`<i class="jd${on2?" on":""}"></i><span>${on2?"Tablet":"No tablet"}</span><b>${esc(String(chosenUrl()||d.url).replace(/^https?:\/\//,"").replace(/\/players$/,""))}</b>${SVGI.qr}`}
+        devPill();if($("#devSheet"))devSheet();
         a.innerHTML=`<span>Players (tablet and phones): <b>${esc(chosenUrl()||d.url)}</b></span><button class="btn sm" type="button" data-act="qr">QR code</button>`+(d.httpsUrl?`<span>https: <b>${esc(d.httpsUrl)}</b></span>`:"")+((d.others||[]).length?`<span>or: ${d.others.map(esc).join(", ")}</span>`:"");
-        const on=d.playerAgo!=null&&d.playerAgo<3;
+        const on=tabletOn();
         if(!pushing)setSync(on?"ok":"off",on?"Tablet connected":"Tablet not connected");
       }catch(e){setSync("err","Server not responding")}
     };

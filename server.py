@@ -56,6 +56,8 @@ lock = threading.Lock()
 state = None
 last_player = 0.0
 last_tv = 0.0   # when the TV last asked for the state
+last_tablet = 0.0   # when the tablet last asked (pages that say screen=tablet)
+phone_seen = {}   # character id -> when that player's phone last asked; only the DM gets this, from /info
 pending_actions = []   # changes players send from their phones; the laptop picks them up and applies them
 PLAYER_CONDS = {"Blinded", "Burning", "Charmed", "Deafened", "Frightened", "Grappled", "Incapacitated", "Invisible",
                 "Paralyzed", "Petrified", "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious", "Concentrating", "Exhaustion"}
@@ -417,6 +419,14 @@ class Handler(BaseHTTPRequestHandler):
                 last_player = time.time()
             if qs.get("screen") == "tv":   # the TV, even when it's a second screen of this computer
                 globals()["last_tv"] = time.time()
+            elif qs.get("screen") == "tablet":
+                globals()["last_tablet"] = time.time()
+            me = urllib.parse.unquote_plus(qs.get("me", ""))[:40]
+            if me:   # a phone says which character it is, so the DM's Devices window can show who is connected
+                with lock:
+                    phone_seen[me] = time.time()
+                    if len(phone_seen) > 64:
+                        del phone_seen[min(phone_seen, key=phone_seen.get)]
             with lock:
                 st = state if local and qs.get("pub") != "1" else public_view(state)   # pages for the players ask for the players' view, even here
             rev = qs.get("rev")
@@ -426,11 +436,15 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/info":
             ago = time.time() - last_player if last_player else None
             tv_ago = time.time() - last_tv if last_tv else None
+            tab_ago = time.time() - last_tablet if last_tablet else None
+            dm = self.is_local()
+            with lock:
+                phones = {k: round(time.time() - v, 1) for k, v in phone_seen.items()} if dm else None
             ips = lan_ips()  # looked up each time, so a new Wi-Fi or address shows up without a restart
             urls = [f"http://{ip}:{PORT}/players" for ip in ips]
             https = f"https://{ips[0]}:{HTTPS_PORT}/players" if HAS_TLS else None
             return self.reply(200, json.dumps({"url": urls[0], "others": urls[1:], "httpsUrl": https, "port": PORT, "playerAgo": ago, "tvAgo": tv_ago,
-                                               "host": self.is_host(), "ips": ips}).encode())
+                                               "tabletAgo": tab_ago, "phones": phones, "host": self.is_host(), "ips": ips}).encode())
         self.reply(404, b"{}")
 
     def do_POST(self):

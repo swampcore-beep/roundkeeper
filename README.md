@@ -186,7 +186,7 @@ python3 server.py
 Then open the address it prints.
 
 ### Server on a desktop, DM on a laptop
-Run the app on a desktop (on a cable, or connected to the TV), then pair your laptop as the DM under **Settings → DM devices**. Phones stay players.
+Run the app on a desktop (on a cable, or connected to the TV), then pair your laptop as the DM under **Devices → DM devices**. Phones stay players.
 
 ### If someone can't connect
 - Everyone must be on the same Wi-Fi.
