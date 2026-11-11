@@ -26,6 +26,7 @@ import threading
 import time
 import webbrowser
 import urllib.parse
+import urllib.request
 import zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -69,6 +70,59 @@ for candidate in (SAVE, OLD_SAVE):
         break
     except Exception:
         state = None
+
+
+# ---------- Updates: Settings → Updates asks GitHub for the latest release (only when the DM asks) ----------
+VERSION = "dev"   # the release workflow writes the tag here (e.g. v1.0.8); "dev" never offers an update
+UPDATE_URL = "https://api.github.com/repos/swampcore-beep/roundkeeper/releases/latest"
+upd_cache = {"at": 0.0, "data": None}
+
+
+def version_parts(v):
+    m = re.match(r"^v?(\d+(?:\.\d+)*)$", str(v or "").strip())
+    return tuple(int(x) for x in m.group(1).split(".")) if m else None
+
+
+def update_check(force):
+    """What the DM's Updates window shows: this version, the latest release, and the download for this kind of program."""
+    current = os.environ.get("ROUNDKEEPER_VERSION") or VERSION   # the override is for tests
+    url = os.environ.get("ROUNDKEEPER_UPDATE_URL") or UPDATE_URL
+    with lock:
+        if not force and upd_cache["data"] and time.time() - upd_cache["at"] < 600:
+            return upd_cache["data"]
+    out = {"current": current, "platform": "python", "latest": None, "newer": False, "dev": version_parts(current) is None,
+           "notes": "", "page": None, "published": None, "asset": None, "error": None}
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": f"Roundkeeper/{current}", "Accept": "application/vnd.github+json"})
+        with urllib.request.urlopen(req, timeout=8) as r:
+            rel = json.loads(r.read(2_000_000).decode("utf-8"))
+        if not isinstance(rel, dict) or not isinstance(rel.get("tag_name"), str):
+            raise ValueError("not a release")
+    except urllib.error.HTTPError as e:
+        out["error"] = "limit" if e.code in (403, 429) else "bad"
+    except (ssl.SSLError, urllib.error.URLError) as e:
+        reason = getattr(e, "reason", e)
+        out["error"] = "certs" if isinstance(reason, ssl.SSLCertVerificationError) or "CERTIFICATE_VERIFY_FAILED" in str(reason) else "offline"
+    except ValueError:   # not JSON, or not a release
+        out["error"] = "bad"
+    except OSError:   # timeouts and the like
+        out["error"] = "offline"
+    else:
+        own = bool(os.environ.get("ROUNDKEEPER_UPDATE_URL"))
+
+        def link(u):   # only links to GitHub (or to the test server the tests point at)
+            return u if isinstance(u, str) and (u.startswith("https://github.com/") or (own and u.startswith("http://127.0.0.1:"))) else None
+
+        latest = rel["tag_name"].strip()[:40]
+        lp, cp = version_parts(latest), version_parts(current)
+        out.update(latest=latest, newer=bool(lp and cp and lp > cp), notes=str(rel.get("body") or "")[:6000],
+                   page=link(rel.get("html_url")), published=str(rel.get("published_at") or "")[:30] or None)
+        for a in rel.get("assets") or []:
+            if isinstance(a, dict) and a.get("name") == "Roundkeeper-python.zip" and link(a.get("browser_download_url")):
+                out["asset"] = {"name": a["name"], "url": a["browser_download_url"], "size": int(a.get("size") or 0)}
+    with lock:
+        upd_cache.update(at=time.time(), data=out)
+    return out
 
 
 def lan_ips():
@@ -433,6 +487,10 @@ class Handler(BaseHTTPRequestHandler):
             if st and rev is not None and str(st.get("rev")) == rev:
                 return self.reply(204)
             return self.reply(200, json.dumps(st, ensure_ascii=False).encode("utf-8"))
+        if path == "/update/check":   # Settings → Updates; only the computer running the server asks GitHub
+            if not self.is_host():
+                return self.reply(403, b'{"error":"host"}')
+            return self.reply(200, json.dumps(update_check("force=1" in query)).encode())
         if path == "/info":
             ago = time.time() - last_player if last_player else None
             tv_ago = time.time() - last_tv if last_tv else None

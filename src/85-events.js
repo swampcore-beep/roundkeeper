@@ -229,6 +229,8 @@ document.addEventListener("click",e=>{
         toast(`${c2.name}'s intro shows this picture${c2.boss?"":" (make it a boss for the intro)"}`)});break}
     case "loreimgoff":{const c2=byId(sbViewId);if(c2){delete c2.introImg;delete c2.introImgP;picRemember(c2,null);commit();renderSbDrawer()}break}
     case "pics": picsSheet();break;
+    case "updates": updSheet();break;
+    case "updcheck": updCheck(true);break;
     case "gdata": gdArm=null;gdMsg="";gdSheet();break;
     case "gdrm": if(gdArm===t.dataset.n)gdRemove(t.dataset.n);else{gdArm=t.dataset.n;gdSheet()}break;
     case "picscheck":{const b2=t;b2.disabled=true;b2.textContent="Looking…";picsCheck();break}
@@ -547,6 +549,7 @@ document.addEventListener("change",e=>{
   if(t.dataset&&t.dataset.pk){const i=Number(t.closest(".pr").dataset.pi),p=state.party[i];if(p){const v=t.value.trim();p[t.dataset.pk]=v===""?null:Number(v);
     commit()}return}
   if(t.id==="autoTimer"){state.autoTimer=t.checked;commit();return}
+  if(t.id==="updAuto"){ls.set("updAuto",t.checked);toast(t.checked?"Roundkeeper will check for updates when it starts":"No checks unless you ask");return}
   if(t.id==="concAuto"){ls.set("concAuto",t.checked);toast(t.checked?"Concentration saves: rolled for you":"Concentration saves: the app asks you");return}
   if(t.id==="timerSecs"){state.timerSecs=Math.max(5,Math.min(300,parseInt(t.value,10)||30));commit();return}
   if(t.id==="importFile"){if(t.files&&t.files[0])importState(t.files[0]);t.value="";return}

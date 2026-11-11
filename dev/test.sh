@@ -8,7 +8,7 @@
 cd "$(dirname "$0")/.." || exit 1
 ROOT=$PWD; OUT=$ROOT/dev/.work/out; mkdir -p "$OUT"
 python3 tools/build.py --quiet || exit 1   # initiative.html from src/ (dev/serve.sh does it too)
-SRD="verify t2 t4 t9 t10 t11 t12 t13 t14 t15 rulestest_v2 mob2_v2 t29 t30 t31 t32 t33"
+SRD="verify t2 t4 t9 t10 t11 t12 t13 t14 t15 rulestest_v2 mob2_v2 t29 t30 t31 t32 t33 t34"
 PRIVS="t5 t7 t8"; DATA="t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t28 ui hov"
 which=${1:-go}; shift 2>/dev/null
 case $which in go|py) servers=$which;; both) servers="go py";; *) set -- "$which" "$@"; servers=go;; esac
@@ -22,6 +22,8 @@ for s in $servers; do for t in $suites; do
   mode=srd; case " $DATA " in *" $t "*) mode=data;; esac
   if [ $mode = data ] && [ ! -d "$RK_5ETOOLS" ]; then echo "$s $t: skipped (needs RK_5ETOOLS)"; continue; fi
   case " $PRIVS " in *" $t "*) [ -f "${RK_PRIVATE:-$ROOT/dev/.work/private}/sb/gyreguard.md" ] || { echo "$s $t: skipped (needs RK_PRIVATE)"; continue; };; esac
+  if [ $t = t34 ]; then export ROUNDKEEPER_UPDATE_URL=http://127.0.0.1:8799/latest ROUNDKEEPER_VERSION=v1.0.7   # a fake GitHub, see t34
+  else unset ROUNDKEEPER_UPDATE_URL ROUNDKEEPER_VERSION; fi
   bash dev/serve.sh "$s" "$mode" > /dev/null 2>&1 || { echo "$s $t: server did not start"; bad=1; continue; }
   log=$OUT/$s-$t.log
   (cd "$OUT" && timeout 400 python3 "$ROOT/dev/tests/$t.py" > "$log" 2>&1); rc=$?

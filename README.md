@@ -208,6 +208,9 @@ Download `Roundkeeper-linux.zip`, unzip it, and run `./roundkeeper` (on a Raspbe
 ### Python version (any computer with Python 3)
 `Roundkeeper-python.zip` does the same with Python 3 and no extra packages: run `python3 server.py` and open the address it prints. It's kept for now, alongside the programs above.
 
+### Updating
+**Settings and files → Updates → Check for updates** says whether there's a newer version, shows what's new, and links the download for your computer. Close Roundkeeper, put the new program in place of the old one (or unzip the Python version over its files), and start it again: your fights, library and pictures stay. You can also let it check each time it starts; that's off unless you turn it on.
+
 ### Server on a desktop, DM on a laptop
 Run the app on a desktop (on a cable, or connected to the TV), then pair your laptop as the DM under **Devices → DM devices**. Phones stay players.
 
@@ -235,7 +238,7 @@ Run the app on a desktop (on a cable, or connected to the TV), then pair your la
 
 **Can I change it or share it?** Yes. You can use, change and share it, as long as what you share stays open under the same license, with its source. See [License and credits](#license-and-credits).
 
-**Does it need the internet?** No. The laptop (or desktop) runs it, and the tablet, TV and phones connect to it over your own Wi-Fi.
+**Does it need the internet?** No. The laptop (or desktop) runs it, and the tablet, TV and phones connect to it over your own Wi-Fi. It only goes online when you ask it to look for a new version (**Settings and files → Updates**), and then it only asks GitHub for the latest release.
 
 **What do the players need?** A phone with a browser. They scan a QR code and pick their character; nothing to install. Players who prefer paper don't need anything, and nothing waits for them.
 

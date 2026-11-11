@@ -126,3 +126,53 @@ function endFight(){
   clogPush("Combat ends");
 }
 
+
+/* Settings → Updates: is there a newer Roundkeeper? The server asks GitHub, only on the computer running it and only when the DM
+   asks (or turned on "check when Roundkeeper starts"). Step 1: it says so, links the right download and explains the swap. */
+let updInfo=null,updBusy=false;
+const UPD_OS={windows:"Windows",mac:"Mac",linux:"Linux",python:"the Python version"};
+const UPD_HOW={
+  windows:"Close the Roundkeeper window, unzip the download and put the new <b>Roundkeeper.exe</b> in place of the old one, in the same folder. "+
+    "Start it again: your fights, library and pictures stay.",
+  mac:"Quit Roundkeeper (close its Terminal window), unzip the download and put the new <b>Roundkeeper</b> in place of the old one. Start it again; "+
+    "the Mac may ask once more (System Settings → Privacy &amp; Security → Open Anyway). Your fights, library and pictures stay.",
+  linux:"Stop Roundkeeper, unzip the download into the same folder over the old files, and start it again. Your fights, library and pictures stay.",
+  python:"Stop the server, unzip the download into the same folder over the old files, and start it again. "+
+    "<code>state.json</code>, backups and pictures stay."};
+const UPD_ERR={offline:["Couldn't reach GitHub.","Check the internet connection, or try again later."],
+  limit:["GitHub is busy right now (too many checks).","Try again in a while."],
+  certs:["This Python can't check secure websites yet.",
+    "On a Mac, run “Install Certificates.command” in the Python folder under Applications. Or look at the latest release on GitHub."],
+  bad:["GitHub gave an answer the app didn't understand.","Try again later."],server:["Roundkeeper didn't answer.","Is it still running?"]};
+async function updCheck(force){
+  updBusy=true;if($("#updSheet"))updSheet();
+  try{const r=await fetch("/update/check"+(force?"?force=1":""),{cache:"no-store"});updInfo=r.status===403?{error:"host"}:await r.json()}
+  catch(e){updInfo={error:"server"}}
+  updBusy=false;updMark();if($("#updSheet"))updSheet();return updInfo}
+function updMark(){const on=!!(updInfo&&updInfo.newer);
+  document.querySelectorAll('[data-k="more"]>summary,[data-act="updates"]').forEach(el=>el.classList.toggle("upddot",on))}
+function updSheet(){
+  const U=updInfo||{},cur=esc(U.current||"");let body;
+  if(updBusy)body=`<p>Asking GitHub…</p>`;
+  else if(!updInfo)body=`<p>See whether there is a newer Roundkeeper. This asks GitHub for the latest release; nothing else leaves this computer.</p>`;
+  else if(U.error==="host")body=`<p>Only the computer running Roundkeeper checks for updates: open Settings and files → Updates there.</p>`;
+  else if(U.error){const[e1,e2]=UPD_ERR[U.error]||["Couldn't check.","Try again later."];
+    body=`<p><b>${e1}</b></p><p class="psub">${e2}</p>`}
+  else if(U.newer)body=`<p class="updnew"><b>${esc(U.latest)} is out.</b> You have ${cur}.`+
+      (U.published?` <span class="psub">Released ${esc(new Date(U.published).toLocaleDateString())}.</span>`:"")+`</p>`+
+      (U.notes?`<div class="eyebrow2">What's new</div><div class="updnotes">${esc(U.notes)}</div>`:"")+
+      `<div class="eyebrow2">How to update</div><p>${UPD_HOW[U.platform]||UPD_HOW.python}</p><div class="spacts updlinks">`+
+      (U.asset?`<a class="btn primary" href="${esc(U.asset.url)}" download>Download for ${UPD_OS[U.platform]||"your computer"}`+
+        (U.asset.size?` (${(U.asset.size/1048576).toFixed(1)} MB)`:"")+`</a>`:"")+
+      (U.page?`<a class="btn" href="${esc(U.page)}" target="_blank" rel="noopener noreferrer">See the release on GitHub</a>`:"")+`</div>`;
+  else if(U.dev)body=`<p>This is a development build (${cur}), so it doesn't offer updates.`+
+      (U.latest?` The latest release is ${esc(U.latest)}.`:"")+`</p>`;
+  else body=`<p><b>You have the latest version</b> (${cur}).</p>`;
+  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet updsheet" id="updSheet" role="dialog" aria-modal="true" aria-label="Updates">
+    <h2>Updates</h2><div class="psec">${body}</div>
+    <div class="psec"><label class="scene-pick"><input type="checkbox" id="updAuto"${ls.get("updAuto",false)?" checked":
+      ""}> Check when Roundkeeper starts</label>
+      <p class="psub">Off unless you turn it on: Roundkeeper only goes online when you ask it to.</p></div>
+    <div class="spacts"><button class="btn" type="button" data-act="close">Close</button><button class="btn primary" type="button" data-act="updcheck"`+
+      `${updBusy?" disabled":""}>${updInfo&&!updBusy?"Check again":"Check for updates"}</button></div></div></div>`;
+}
