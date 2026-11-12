@@ -111,6 +111,9 @@ function tvRender(list,first){
   let el=$("#tvLayer");if(!el){el=document.createElement("div");el.id="tvLayer";document.body.appendChild(el)}
   const T=state.tv||{},mode=tvModeNow(list),hx=I.hex,fk=c=>c.kind==="lair"?"":frameKey(c);
   document.body.classList.toggle("tvcover",mode!=="mirror");el.className="tvl m-"+mode;
+  if(list.length&&!pv.tvHadList){const tm=$("#moment.tvtitle:not(.out)");   // the fight starts: a title card still up gives way
+    if(tm){clearTimeout(momentShow.t);tm.classList.add("out");setTimeout(()=>tm.remove(),700)}}
+  pv.tvHadList=list.length;
   const top=`<div class="tvtop"><span>${state.turn&&mode!=="spot"?`Round ${state.turn.round}`:""}</span>${clocksHtml()}</div>`;
   const conds=c=>(c.conds||[]).map(x=>x.n||x).filter(n=>n!=="Concentrating").slice(0,3).map(n=>
     `<span class="chip" style="--cc:var(--stone)">${esc(n)}</span>`).join("")

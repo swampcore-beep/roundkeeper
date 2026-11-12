@@ -2002,6 +2002,12 @@ ol.plist li .fxscar{position:absolute}
   color:var(--fg);text-shadow:0 .06em .2em #000}
 .fxdie.n20 .die{color:#ffd76a}.fxdie.n1 .die{color:#ff5a5a}
 
+/* under a full-screen moment the turn order steps back, so big words never sit on top of names */
+body.shared #player ol.plist{transition:opacity .25s,filter .25s}
+body.shared:has(.intro,#moment,.celebrate,.rfi,.endscr) #player ol.plist{opacity:.1;filter:blur(5px)}
+body.shared:has(.fxround) #player ol.plist{opacity:.12;filter:blur(4px)}
+/* a roll notice gives way to a boss intro or another big moment */
+body.shared:has(.intro,#moment,.celebrate,.endscr) .rollbanner{visibility:hidden}
 /* ---------- Atmosphere sheet: parts on the left, a live preview of the tablet on the right ---------- */
 .sheet.atmo2{width:min(1320px,96vw);max-height:calc(94vh - var(--covered,0px));overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 360px;
   grid-template-rows:auto minmax(0,1fr);gap:14px 22px;padding:20px 22px}
@@ -2224,7 +2230,7 @@ body.tvcover #player{visibility:hidden}
 #tvDice .t2rays{position:absolute;left:50%;top:44%;width:90vw;height:90vw;margin:-45vw 0 0 -45vw;border-radius:50%;
   background:repeating-conic-gradient(rgba(227,165,74,.15) 0 6deg,transparent 6deg 18deg);animation:tvspin 60s linear infinite}
 #tvDice.n1 .t2rays{background:repeating-conic-gradient(rgba(214,106,91,.12) 0 6deg,transparent 6deg 18deg)}
-#tvDice .t2who{position:absolute;left:5vw;top:6vh;display:grid;gap:.3vw}#tvDice .t2who .tvbig{font-size:clamp(28px,3.2vw,64px)}
+#tvDice .t2who{position:absolute;left:5vw;top:6vh;display:grid;gap:.7vw}#tvDice .t2who .tvbig{font-size:clamp(28px,3.2vw,64px);line-height:1.1}
 #tvDice .t2die{width:24vw;max-width:44vh;filter:drop-shadow(0 0 2.2vw rgba(227,165,74,.65));animation:tvroll .9s cubic-bezier(.2,.8,.3,1.2)}
 #tvDice.n1 .t2die{filter:drop-shadow(0 0 2vw rgba(214,106,91,.6))}
 #tvDice .t2mid{display:grid;justify-items:center;gap:1vh;margin-top:4vh}
@@ -2384,7 +2390,10 @@ body.tvcover #player{visibility:hidden}
   font-weight:700;margin-bottom:6px}.dmshpaste{display:grid;gap:8px}
 #tvLayer .spot{font-size:2.6vw}#tvLayer .card,#tvLayer .cd{font-size:1.25vw}#tvLayer .tvghost{z-index:3;pointer-events:none}#tvLayer .tvshell{
   pointer-events:none;background:none!important;border:0!important;box-shadow:none!important}
-#tvLayer>*{transition:opacity .35s,filter .35s}body.tvcover:has(#moment,.intro,.celebrate,.fxdie) #tvLayer>*:not(.tvfs){opacity:.08;filter:blur(8px)}
+#tvLayer>*{transition:opacity .3s,filter .3s}body.tvcover:has(#moment,.intro,.celebrate,.fxdie,#tvDice) #tvLayer>*:not(.tvfs){opacity:0;filter:blur(8px);
+  transition-duration:.18s}
+body.tvcover .moment:not(.out),body.tvcover .intro{animation-delay:.16s}   /* in only once the cards have gone */
+#tvDice{transition:opacity .2s}body:has(#moment:not(.out),.intro,.celebrate) #tvDice{opacity:0}   /* the die gives way to a bigger moment */
   #tvLayer .ash{position:fixed;z-index:4}
 #tvStrips{position:fixed;left:50%;bottom:4.5vh;transform:translateX(-50%);z-index:7;display:grid;gap:.6vw;justify-items:center;pointer-events:none}
 .tvstrip{display:flex;gap:.8vw;align-items:baseline;padding:.55vw 1.4vw;border-radius:999px;background:color-mix(in srgb,var(--bg) 82%,transparent);
@@ -7362,7 +7371,8 @@ function renderPlayer(){
   fitList(list.length);
   surfaceEvents(first);
   sceneMood(first);sceneReact(A,P,first,prev);
-  if(!first){queueMoments(list,prev);flushMoments(P);if(dealing)rollForInitiative();if(nowIds.has("__lair")&&!prev.has("__lair"))lairTremor(P)}
+  if(!first){queueMoments(list,prev);flushMoments(P);if(dealing&&!(TV&&tvModeNow(list)==="init"))rollForInitiative();
+    if(nowIds.has("__lair")&&!prev.has("__lair"))lairTremor(P)}
   callStamps(P,first);
   fxAfter(P,list,prev,first);
   tcardRender();surfaceMoments(first);if(TV)tvRender(list,first);if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull()}
@@ -9671,6 +9681,9 @@ function tvRender(list,first){
   let el=$("#tvLayer");if(!el){el=document.createElement("div");el.id="tvLayer";document.body.appendChild(el)}
   const T=state.tv||{},mode=tvModeNow(list),hx=I.hex,fk=c=>c.kind==="lair"?"":frameKey(c);
   document.body.classList.toggle("tvcover",mode!=="mirror");el.className="tvl m-"+mode;
+  if(list.length&&!pv.tvHadList){const tm=$("#moment.tvtitle:not(.out)");   // the fight starts: a title card still up gives way
+    if(tm){clearTimeout(momentShow.t);tm.classList.add("out");setTimeout(()=>tm.remove(),700)}}
+  pv.tvHadList=list.length;
   const top=`<div class="tvtop"><span>${state.turn&&mode!=="spot"?`Round ${state.turn.round}`:""}</span>${clocksHtml()}</div>`;
   const conds=c=>(c.conds||[]).map(x=>x.n||x).filter(n=>n!=="Concentrating").slice(0,3).map(n=>
     `<span class="chip" style="--cc:var(--stone)">${esc(n)}</span>`).join("")
