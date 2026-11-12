@@ -75,7 +75,7 @@ body.tvcover #player{visibility:hidden}
 #tvDice .t2rays{position:absolute;left:50%;top:44%;width:90vw;height:90vw;margin:-45vw 0 0 -45vw;border-radius:50%;
   background:repeating-conic-gradient(rgba(227,165,74,.15) 0 6deg,transparent 6deg 18deg);animation:tvspin 60s linear infinite}
 #tvDice.n1 .t2rays{background:repeating-conic-gradient(rgba(214,106,91,.12) 0 6deg,transparent 6deg 18deg)}
-#tvDice .t2who{position:absolute;left:5vw;top:6vh;display:grid;gap:.3vw}#tvDice .t2who .tvbig{font-size:clamp(28px,3.2vw,64px)}
+#tvDice .t2who{position:absolute;left:5vw;top:6vh;display:grid;gap:.7vw}#tvDice .t2who .tvbig{font-size:clamp(28px,3.2vw,64px);line-height:1.1}
 #tvDice .t2die{width:24vw;max-width:44vh;filter:drop-shadow(0 0 2.2vw rgba(227,165,74,.65));animation:tvroll .9s cubic-bezier(.2,.8,.3,1.2)}
 #tvDice.n1 .t2die{filter:drop-shadow(0 0 2vw rgba(214,106,91,.6))}
 #tvDice .t2mid{display:grid;justify-items:center;gap:1vh;margin-top:4vh}
@@ -235,7 +235,10 @@ body.tvcover #player{visibility:hidden}
   font-weight:700;margin-bottom:6px}.dmshpaste{display:grid;gap:8px}
 #tvLayer .spot{font-size:2.6vw}#tvLayer .card,#tvLayer .cd{font-size:1.25vw}#tvLayer .tvghost{z-index:3;pointer-events:none}#tvLayer .tvshell{
   pointer-events:none;background:none!important;border:0!important;box-shadow:none!important}
-#tvLayer>*{transition:opacity .35s,filter .35s}body.tvcover:has(#moment,.intro,.celebrate,.fxdie) #tvLayer>*:not(.tvfs){opacity:.08;filter:blur(8px)}
+#tvLayer>*{transition:opacity .3s,filter .3s}body.tvcover:has(#moment,.intro,.celebrate,.fxdie,#tvDice) #tvLayer>*:not(.tvfs){opacity:0;filter:blur(8px);
+  transition-duration:.18s}
+body.tvcover .moment:not(.out),body.tvcover .intro{animation-delay:.16s}   /* in only once the cards have gone */
+#tvDice{transition:opacity .2s}body:has(#moment:not(.out),.intro,.celebrate) #tvDice{opacity:0}   /* the die gives way to a bigger moment */
   #tvLayer .ash{position:fixed;z-index:4}
 #tvStrips{position:fixed;left:50%;bottom:4.5vh;transform:translateX(-50%);z-index:7;display:grid;gap:.6vw;justify-items:center;pointer-events:none}
 .tvstrip{display:flex;gap:.8vw;align-items:baseline;padding:.55vw 1.4vw;border-radius:999px;background:color-mix(in srgb,var(--bg) 82%,transparent);

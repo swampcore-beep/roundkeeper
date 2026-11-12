@@ -89,7 +89,8 @@ function renderPlayer(){
   fitList(list.length);
   surfaceEvents(first);
   sceneMood(first);sceneReact(A,P,first,prev);
-  if(!first){queueMoments(list,prev);flushMoments(P);if(dealing)rollForInitiative();if(nowIds.has("__lair")&&!prev.has("__lair"))lairTremor(P)}
+  if(!first){queueMoments(list,prev);flushMoments(P);if(dealing&&!(TV&&tvModeNow(list)==="init"))rollForInitiative();
+    if(nowIds.has("__lair")&&!prev.has("__lair"))lairTremor(P)}
   callStamps(P,first);
   fxAfter(P,list,prev,first);
   tcardRender();surfaceMoments(first);if(TV)tvRender(list,first);if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull()}

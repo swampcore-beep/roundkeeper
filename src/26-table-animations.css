@@ -49,3 +49,9 @@ ol.plist li .fxscar{position:absolute}
   color:var(--fg);text-shadow:0 .06em .2em #000}
 .fxdie.n20 .die{color:#ffd76a}.fxdie.n1 .die{color:#ff5a5a}
 
+/* under a full-screen moment the turn order steps back, so big words never sit on top of names */
+body.shared #player ol.plist{transition:opacity .25s,filter .25s}
+body.shared:has(.intro,#moment,.celebrate,.rfi,.endscr) #player ol.plist{opacity:.1;filter:blur(5px)}
+body.shared:has(.fxround) #player ol.plist{opacity:.12;filter:blur(4px)}
+/* a roll notice gives way to a boss intro or another big moment */
+body.shared:has(.intro,#moment,.celebrate,.endscr) .rollbanner{visibility:hidden}
