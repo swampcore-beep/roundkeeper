@@ -56,7 +56,7 @@ async def main():
             await asyncio.sleep(1.0);await S("state.call.answers=Object.assign({},state.call.answers,{i:23});commit()")
         for k,v in (('s',12),('a',19),('gr',8)): await asyncio.sleep(.35);await S(f"state.call.answers=Object.assign({{}},state.call.answers,{{{k}:{v}}});commit()")
         await asyncio.sleep(1.3)
-        await go('#sbDrawer [data-act=sbclose]',dur=.35);await asyncio.sleep(.2)
+        await go('#sbDrawer .sbheadb [data-act=sbclose]',dur=.35);await asyncio.sleep(.2)
         await S("delete state.call;state.turn=Object.assign({},state.turn,{id:'gr',init:8});commit()");await asyncio.sleep(.6)
         mark("Hit several: one Fireball, every save and HP worked out")
         await go('[data-act=mtstart]',dur=.4);await asyncio.sleep(.35)
