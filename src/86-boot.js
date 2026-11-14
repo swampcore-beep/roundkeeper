@@ -46,16 +46,18 @@ if(MODE==="player"){
     "popup=yes,width=1000,height=680")});
   $("#undoBtn").addEventListener("click",doUndo);$("#redoBtn").addEventListener("click",doRedo);
   $("#lairBtn").addEventListener("click",()=>{state.lair=!state.lair;commit()});
-  $("#endBtn").addEventListener("click",()=>{if(state.ended)state.ended=null;else{endFight();state.turn=null;
-    setTimeout(()=>toast("Combat over · Recap has the summary for your notes",4500),0)}commit()});
-  $("#newFight").addEventListener("click",()=>{
+  /* one button for the fight's end and the next one: End combat, then New combat */
+  const newFight=()=>{footMenu(false);
     if(state.party.length){state.list=[];loadParty()}
     else state.list=state.list.filter(c=>c.kind==="pc").map(c=>Object.assign({},c,{init:null,bloodied:false,down:false,conds:[],insp:c.insp,ds:{s:0,f:0}}));
-    state.ended=null;state.lair=false;state.effects=[];state.call=null;state.timer=null;state.dsAsk=null;state.turn=null;state.fightAt=Date.now();commit()});
+    state.ended=null;state.lair=false;state.effects=[];state.call=null;state.timer=null;state.dsAsk=null;state.turn=null;state.fightAt=Date.now();commit()};
+  $("#endBtn").addEventListener("click",()=>{if(state.ended){newFight();return}endFight();state.turn=null;
+    setTimeout(()=>toast("Combat over · Recap has the summary for your notes",4500),0);commit()});
+  $("#newFight").addEventListener("click",newFight);
   let armed=null;
   $("#wipe").addEventListener("click",e=>{const b=e.currentTarget;
     if(armed){clearTimeout(armed);armed=null;b.classList.remove("armed");b.textContent="Clear all";state.list=[];state.ended=null;state.lair=false;
-      state.effects=[];state.call=null;state.timer=null;state.turn=null;commit();return}
+      state.effects=[];state.call=null;state.timer=null;state.turn=null;footMenu(false);commit();return}
     b.classList.add("armed");b.textContent="Sure? Click again";armed=setTimeout(()=>{armed=null;b.classList.remove("armed");b.textContent="Clear all"},3500)});
   if(!served){$("#fileNote").hidden=false;setSync("off","Not started through the server");$("#preview").hidden=true;snap=JSON.stringify(state)}
   else{

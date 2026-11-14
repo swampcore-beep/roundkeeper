@@ -67,7 +67,7 @@ async def main():
         # keyboard N
         await dm.click('h1, .brand'); await dm.keyboard.press('n'); await asyncio.sleep(.2)
         chk("N key advances",await T(dm,"state.turn.id")=='h')
-        await dm.click('#newFight'); await asyncio.sleep(.3)
+        await dm.click('#footMore'); await dm.click('#newFight'); await asyncio.sleep(.3)
         chk("New combat stops turns",await T(dm,"state.turn")==None)
         chk("no errors",not errs,errs)
         await b.close()
