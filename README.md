@@ -27,7 +27,7 @@ It comes with the **SRD 5.2.1** built in: 331 monsters with clickable statblocks
 >
 > *Not a virtual tabletop:* there are no maps or tokens, and it isn't for online play. It's made for a group sitting around a real table.
 
-https://github.com/user-attachments/assets/b3119115-4ceb-4f43-852a-88eef60b8636
+https://github.com/user-attachments/assets/75f9911a-5173-49b4-b7d1-d81dae34e699
 
 <p align="center"><sub>One fight on all four screens at once: the DM's laptop, the tablet, the TV and a phone (50 seconds, no sound).</sub></p>
 
@@ -47,7 +47,7 @@ Each screen shows what its people need, and only that. Monster HP, statblocks, h
 
 ## The DM's laptop
 
-https://github.com/user-attachments/assets/b81615ca-5366-434b-b284-847e599f6170
+https://github.com/user-attachments/assets/a4fb0408-8f47-4a24-8e49-7f584f39a5a8
 
 <p align="center"><sub>From the DM's seat: monsters from the built-in SRD, the statblock, a roll call, Hit several, conditions, Ctrl+K, Devices and Atmosphere (under a minute, no sound).</sub></p>
 
@@ -94,7 +94,7 @@ One row per creature, in turn order: initiative, name, conditions, HP and AC. Th
 
 ## The tablet and the TV
 
-https://github.com/user-attachments/assets/75d0fc5f-4cfb-4e74-bff1-89478839a642
+https://github.com/user-attachments/assets/8679f0ea-d8c8-46c8-9abf-72066ab79cb9
 
 <p align="center"><sub>What the players see: the tablet on the table and the TV across the room, side by side through one fight (under a minute, no sound).</sub></p>
 
