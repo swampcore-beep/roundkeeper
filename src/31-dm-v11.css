@@ -14,9 +14,8 @@ html:root .atmobtn{display:inline-flex;align-items:center;gap:7px;max-width:260p
 
 /* rows: HP, AC and the state buttons sit in fixed columns, so they line up from row to row */
 #roster .tools>.hpw{width:128px;min-height:38px;box-sizing:border-box}
-html:root #roster .hpw.hpnone{flex-direction:row;align-items:center;gap:6px;border:1px dashed var(--line);background:transparent;cursor:default}
-#roster .hpw.hpnone .hpl{color:var(--muted)}
-#roster .hpw.hpnone i{font-style:normal;font-size:.78rem;color:var(--muted);white-space:nowrap}
+html:root #roster .hpw.hpnone{flex-direction:row;align-items:center;padding-left:12px;border-color:transparent;background:transparent;cursor:default;
+  color:var(--faint)}
 #roster .tools .tog[data-act=down]{min-width:64px;justify-content:center}
 #roster .tools .tog.blood{min-width:96px;justify-content:center}
 /* Bloodied and Down stay quiet until they are on */

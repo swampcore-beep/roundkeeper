@@ -336,8 +336,8 @@ function renderDM(){
         `<div class="typeline">${typeline}</div>`:""}</div>
       <div class="chips">${chips}</div>
       <div class="tools">
-        ${c.kind!=="pc"?hpBox(c):c.php?pcHpBox(c):`<span class="hpw hpnone" title="${esc(c.name)} keeps HP on paper, or doesn't share it from the phone">
-          <span class="hpl">HP</span><i>not shared</i></span>`}
+        ${c.kind!=="pc"?hpBox(c):c.php?pcHpBox(c):`<span class="hpw hpnone" title="${esc(c.name)} keeps HP on paper, or doesn't share it from the phone"
+          aria-label="HP not shared">—</span>`}
         <span class="ac-wrap"><button type="button" class="tog" data-act="showac" aria-pressed="${!!c.showAc}" title="Show AC to players">${c.showAc?I.eye:
           I.eyeoff}AC</button><input id="ac-${c.id}" type="number" value="${c.ac??""}" placeholder="—" data-act="ac" aria-label="AC"></span>
         <button type="button" class="tog blood" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${I.drop}Bloodied</button>
