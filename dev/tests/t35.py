@@ -31,6 +31,13 @@ async def main():
         # ---- turns: stop is in the ⋯ menu by Next turn
         await dm.click('[data-act=tnext]'); await asyncio.sleep(.3)
         chk("no stop link in the bar",await dm.locator('#turnBox .linkbtn').count()==0)
+        # ---- the look: hex initiative, sigils, now/next, the turn's corners
+        n=await T(dm,"state.list.length")
+        chk("a hexagon on every row",await dm.locator('#roster .row .hexw').count()==n)
+        chk("the fighter's sigil",await dm.locator('#roster .dmsig.fr-fighter').count()>=1)
+        chk("now on the row on its turn",await dm.locator('#roster .row.turn .nowtag').count()==1)
+        chk("next on one other row",await dm.locator('#roster .row:not(.turn) .nexttag').count()==1)
+        chk("corners only on the turn's row",await dm.locator('#roster .tframe').count()==1 and await dm.locator('#roster .row.turn .tframe').count()==1)
         await dm.click('[data-act=turnmenu]'); await asyncio.sleep(.2)
         chk("turn menu opens",await dm.locator('.turnmenu').count()==1)
         await dm.mouse.click(700,820); await asyncio.sleep(.3)

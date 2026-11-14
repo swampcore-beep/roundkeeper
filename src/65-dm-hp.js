@@ -214,6 +214,7 @@ function applyHp(c,raw,was){
   return true;
 }
 let menuId=null,turnMenuOn=false;
+const TFRAME='<span class="tframe" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></span>';
 function renderDM(){
   const ae=document.activeElement;
   if(ae&&$("#roster").contains(ae)&&ae.tagName==="INPUT"){pendingRender=true;return}
@@ -237,6 +238,7 @@ function renderDM(){
     `<div class="empty"><strong>Nobody in the order yet</strong><span>Add the party and some enemies, or drop in a saved encounter.</span><div class="acts">${
     state.party.length?'<button class="btn primary" type="button" data-act="pload">Add party to combat</button>':
     '<button class="btn" type="button" data-act="example">Load an example</button>'}</div></div>`;return}
+  const ordT=state.turn?turnOrder():[],iT=ordT.findIndex(x=>x.id===state.turn.id),nextId=iT>=0&&ordT.length>1?ordT[(iT+1)%ordT.length].id:null;
   R.innerHTML=list.map(c=>{
     if(c.kind==="lair")return lairRowHtml();
     const i=base.indexOf(c),p=base[i-1],n=base[i+1];
@@ -248,7 +250,8 @@ function renderDM(){
       const cd=cdurOf(c,n);return `<button type="button" class="cond" data-act="rmcond" data-j="${j}" title="Remove${cd?" · "+esc(cdurTag(cd)):
         ""}">${esc(n)}${cd?`<i class="cdurb">${esc(cdurTag(cd))}</i>`:""}</button>`}).join("")
       +state.effects.filter(e=>e.targets.includes(c.id)).map(e=>{const by=byId(e.by);
-        return `<button type="button" class="cond eff" data-act="effrm" data-e="${esc(e.id)}" title="Remove effect from all targets">✦ ${esc(e.name)}${by?
+        return `<button type="button" class="cond eff" data-act="effrm" data-e="${esc(e.id)}" title="Remove effect from all targets">
+          <i class="eg" aria-hidden="true">✦</i>${esc(e.name)}${by?
         ` · ${esc(by.name)}`:""}${effN(e)}</button>`}).join("");
     const ds=dsOf(c);
     const dsHtml=c.kind==="pc"&&c.down?`<span class="ds">
@@ -260,7 +263,9 @@ function renderDM(){
         `<button type="button" class="cond add dsask" data-act="dsask" title="Open the death save window on ${esc(c.name)}'s phone (S)">${
         D20}Ask to roll</button>`}</span>`:"";
     const typ=c.kind==="pc"?LABEL[c.cls]:LABEL[c.ctype];
-    const typeline=[c.sb&&c.sb.raw?`<button type="button" class="sblink${sbViewId===c.id?" on":""}" data-act="sbview" title="${c.sb.pc?
+    const isTurn=!!(state.turn&&state.turn.id===c.id);
+    const typeline=[isTurn?`<b class="nowtag">now</b>`:c.id===nextId?`<span class="nexttag">next</span>`:"",
+      c.sb&&c.sb.raw?`<button type="button" class="sblink${sbViewId===c.id?" on":""}" data-act="sbview" title="${c.sb.pc?
       "Open the character sheet":"Open the statblock"}">${I.book||"📜"} ${c.sb.pc?"Sheet":"Statblock"}</button>`:"",c.boss?
       `<span class="crown">${I.crown}Boss${c.rim?` · ${esc((RIMS.find(r=>r[0]===c.rim)||["",""])[1])}`:""}</span>`:"",typ?esc(typ):"",c.boss&&c.title?
       `<i>${esc(c.title)}</i>`:"",c.kind==="pc"?passivesLine(c):"",c.kind==="pc"&&c.psimple?
@@ -327,25 +332,28 @@ function renderDM(){
       ""}${mtSel.has(c.id)?" mtsel":""}${mtOn&&mtOk(c)?" mtrow":""}" data-id="${c.id}">
       ${mtOn&&mtOk(c)?`<button type="button" class="mtcb" data-act="mttoggle" aria-pressed="${mtSel.has(c.id)}" aria-label="Hit ${esc(c.name)}">${mtSel.has(
         c.id)?"✓":""}</button>`:""}
-      ${c.owner?`<span class="init-in own" title="Acts right after ${esc((ownerOf(c)||{}).name||"its owner")}">↳${initOf(c)>-999?initOf(c):""}</span>`:
-        ""}<input${c.owner?" hidden":""} class="init-in${typeof c.init!=="number"&&!c.owner?" missing":""}${freshIds.has(c.id)?" fresh":
+      <span class="hexw">${c.owner?`<span class="init-in own" title="Acts right after ${esc((ownerOf(c)||{}).name||"its owner")}">↳${initOf(c)>-999?
+        initOf(c):""}</span>`:""}<input${c.owner?" hidden":""} class="init-in${typeof c.init!=="number"&&!c.owner?" missing":""}${freshIds.has(c.id)?" fresh":
         ""}" id="init-${c.id}" type="number" inputmode="numeric" value="${typeof c.init==="number"?c.init:""}" placeholder="${typeof c.ib==="number"?(c.ib>=0?
         "+":"")+c.ib:"?"}" data-act="init" aria-label="Initiative"${typeof c.ib==="number"?` title="Initiative bonus ${c.ib>=0?"+":
-        ""}${c.ib}: type the d20 total"`:""}>
-      <div class="who"><input class="name-in" id="name-${c.id}" value="${esc(c.name)}" data-act="name" aria-label="Name">${typeline?
+        ""}${c.ib}: type the d20 total"`:""}></span>
+      <div class="who"><span class="nmrow">${(k=>k?`<span class="sig dmsig fr-${k}" role="img" aria-label="${esc(LABEL[k])}" title="${esc(
+        LABEL[k])}"></span>`:`<span class="sig dmsig nosig" aria-hidden="true"></span>`)(frameKey(c))}<input class="name-in" id="name-${c.id}" value="${esc(
+        c.name)}" data-act="name" aria-label="Name"></span>${typeline?
         `<div class="typeline">${typeline}</div>`:""}</div>
       <div class="chips">${chips}</div>
       <div class="tools">
         ${c.kind!=="pc"?hpBox(c):c.php?pcHpBox(c):`<span class="hpw hpnone" title="${esc(c.name)} keeps HP on paper, or doesn't share it from the phone"
           aria-label="HP not shared">—</span>`}
-        <span class="ac-wrap"><button type="button" class="tog" data-act="showac" aria-pressed="${!!c.showAc}" title="Show AC to players">${c.showAc?I.eye:
-          I.eyeoff}AC</button><input id="ac-${c.id}" type="number" value="${c.ac??""}" placeholder="—" data-act="ac" aria-label="AC"></span>
+        <span class="ac-wrap"><button type="button" class="tog" data-act="showac" aria-pressed="${!!c.showAc}" title="${c.showAc?
+          "Players see the AC: click to hide it":"Only you see the AC: click to show it"}" aria-label="Show AC to players">${c.showAc?I.eye:
+          I.eyeoff}</button><input id="ac-${c.id}" type="number" value="${c.ac??""}" placeholder="—" data-act="ac" aria-label="AC"></span>
         <button type="button" class="tog blood" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${I.drop}Bloodied</button>
         <button type="button" class="tog" data-act="down" aria-pressed="${!!c.down}" title="${c.kind==="pc"?"0 HP":"Down"} (D)">${c.kind==="pc"?"0 HP":
           "Down"}</button>
         <button type="button" class="morebtn2" data-act="rowmenu" aria-haspopup="menu" aria-expanded="${menuId===
           c.id}" aria-label="More for ${esc(c.name)}">${DOTS}</button>
-      </div>${sbHtml}${menu}</div>`}).join("");
+      </div>${sbHtml}${menu}${isTurn?TFRAME:""}</div>`}).join("");
   freshIds.clear();markSel();renderSbDrawer();
   const tb=$("#turnBox");if(tb){const t=state.turn;
     tb.innerHTML=t?`<span class="rnd">Round <b>${
