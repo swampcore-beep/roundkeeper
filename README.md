@@ -33,6 +33,8 @@ https://github.com/user-attachments/assets/b3119115-4ceb-4f43-852a-88eef60b8636
 
 **Three short tours, under a minute each:** [the DM's laptop](#the-dms-laptop) · [the tablet and the TV](#the-tablet-and-the-tv) · [the players' phones](#on-players-phones)
 
+> **New in 1.1: a calmer DM screen.** The row whose turn it is stands out at a glance, and the statblock can follow the turn by itself. Tools you use every round stay in view; the rest moved into small ⋯ menus and Settings. [What changed](../../releases/tag/v1.1.0)
+
 ---
 
 ## One fight, four screens
@@ -49,12 +51,17 @@ https://github.com/user-attachments/assets/b81615ca-5366-434b-b284-847e599f6170
 
 <p align="center"><sub>From the DM's seat: monsters from the built-in SRD, the statblock, a roll call, Hit several, conditions, Ctrl+K, Devices and Atmosphere (under a minute, no sound).</sub></p>
 
+<img src="media/dm.jpg" width="100%" alt="The DM screen: the turn order with the Adult Red Dragon's turn, HP, AC and conditions in each row, and its statblock open on the right">
+
+One row per creature, in turn order: initiative, name, conditions, HP and AC. The creature whose turn it is gets a gold frame, and the one after it is marked *next*. The statblock opens beside the list, so the order stays in view.
+
 - **Initiative and turns:** add players and monsters, roll or type initiative, step through turns and rounds. Undo is always there.
-- **Statblocks you click:** an attack bonus rolls the attack, a damage number rolls damage, a save sends a roll call to the players it targets. Recharge, X/Day and Legendary actions are tracked as you use them.
+- **Statblocks you click:** an attack bonus rolls the attack, a damage number rolls damage, a save sends a roll call to the players it targets. Recharge, X/Day and Legendary actions are tracked as you use them. With **Follow the turn** on, the statblock switches to each monster as its turn comes up.
 - **Monster HP that only you see:** damage, healing, temp HP and a history you can undo one entry at a time. Bloodied and Down stay your call.
 - **Hit several:** one Fireball or breath weapon on several targets, with saves rolled from each statblock, resistances applied, and players asked on their phones.
 - **Conditions and spells with their 2024 durations**, ending by themselves at the right turn; Concentration saves worked out for you.
 - **Devices:** one window with the QR code, every screen and phone, whether it's connected, and its full address.
+- **A quiet screen:** the buttons you need every round are always there; **New combat**, **Clear all** and stopping turn tracking wait in small ⋯ menus, and settings sit behind the gear, with a **Light screen** for a bright room.
 
 <details>
 <summary><b>More for the DM</b></summary>
@@ -62,7 +69,7 @@ https://github.com/user-attachments/assets/b81615ca-5366-434b-b284-847e599f6170
 - **Rules lookup (Ctrl+K):** spells, conditions, rules and items, with cards you can pin or show on the table.
 - **Lair actions, countdowns** ("the ritual completes in 3 rounds"), **ongoing damage** (Heat Metal, poison) and **monster groups** that players see as one row.
 - **Players' character sheets:** open a player's sheet like a statblock, with clickable bonuses and their prepared spells. Fill in or paste a sheet yourself and send it to their phone, or keep it only for you for a player on paper.
-- **Players' HP from their phones** shows in their rows (only you see it).
+- **Players' HP from their phones** shows in their rows (only you see it). A player who keeps HP on paper gets a quiet dash.
 - **Party numbers:** AC, passive Perception, Insight and Investigation and spell DCs in one table.
 - **Boss tools:** preview the reveal before you show it, give a boss a title and its own background.
 - **Summons and familiars** that follow their owner's turn, with HP the player can see.
