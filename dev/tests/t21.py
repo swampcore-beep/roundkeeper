@@ -18,12 +18,12 @@ async def main():
         chk("Surface starts plain (tavern)",await ds(sf)=={},await ds(sf))
         # ---- light DM screen: only on the laptop
         chk("DM dark by default",'dm' not in await ds(dm))
-        await dm.click('#dmLightBtn'); await asyncio.sleep(.3)
+        await dm.click('#setBtn'); await asyncio.sleep(.4); await dm.click('#dmLightBtn'); await asyncio.sleep(.3)
         chk("DM light after the click",(await ds(dm)).get('dm')=='light')
         bg=await dm.evaluate("getComputedStyle(document.body).backgroundColor"); chk("light background",bg=='rgb(242, 238, 229)',bg)
         await asyncio.sleep(2.2); chk("Surface stays as it was",'dm' not in await ds(sf))
         await dm.reload(); await asyncio.sleep(1.5); chk("light remembered after reload",(await ds(dm)).get('dm')=='light')
-        await dm.click('#dmLightBtn'); await asyncio.sleep(.2); chk("back to dark",'dm' not in await ds(dm))
+        await dm.click('#setBtn'); await asyncio.sleep(.4); await dm.click('#dmLightBtn'); await asyncio.sleep(.2); chk("back to dark",'dm' not in await ds(dm))
         st=await dm.evaluate("fetch('/state').then(r=>r.json())"); chk("light mode is not in the shared state",'dmLight' not in json.dumps(st))
         # ---- the Atmosphere sheet with a draft and preview
         await dm.click('#atmoBtn'); await asyncio.sleep(2.5)

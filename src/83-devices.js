@@ -77,7 +77,7 @@ const phoneAgo=c=>{const p=joinInfo&&joinInfo.phones;return p&&p[c.id]!=null?p[c
 const devPcs=()=>sorted().filter(c=>c.kind==="pc");
 function devPill(){const jp=$("#joinPill");if(!jp)return;
   const pcs=devPcs(),on=pcs.filter(c=>{const a=phoneAgo(c);return a!=null&&a<8}).length;
-  jp.innerHTML=`<b>Devices</b><i class="jd${tabletOn()?" on":""}"></i><span>Tablet</span><i class="jd${tvOn()?" on":" off"}"></i><span>TV</span>${pcs.length?
+  jp.innerHTML=`<b>Devices</b><i class="jd${tabletOn()?" on":""}"></i><span>Tablet</span>${pcs.length?
     `<i class="jd${on===pcs.length?" on":on?" some":""}"></i><span>${on}/${pcs.length} phones</span>`:""}`}
 const devBase=()=>String(chosenUrl()||"").replace(/\/players$/,"");
 const devAgo=a=>a==null?"not connected yet":a<8?"connected":a<90?`last seen ${Math.round(a)} s ago`:a<5400?`last seen ${Math.round(a/60)} min ago`:

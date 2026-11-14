@@ -1,0 +1,80 @@
+/* ---------- DM screen, v1.1 look: the tablet's language on the laptop ---------- */
+/* rows are lines of a ledger, not cards; the row on its turn gets a warm band and the tablet's corners */
+#roster.roster{gap:0}
+html:root #roster .row{background:transparent;border:0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);border-radius:0;box-shadow:none;
+  padding:7px 10px 7px 4px}
+html:root #roster .row.turn,html[data-dm=light] #roster .row.turn{border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);border-radius:8px;
+  margin:3px 0;box-shadow:none;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 17%,transparent),
+  color-mix(in srgb,var(--accent) 5%,transparent) 70%,transparent)}
+html:root #roster .row.mtsel{border:1px solid var(--fail);border-radius:8px;background:color-mix(in srgb,var(--fail) 9%,transparent)}
+.tframe{position:absolute;inset:0;pointer-events:none;border-radius:inherit}
+.tframe i{position:absolute;width:15px;height:15px;background:var(--accent);opacity:.85;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M2 2h24c-5 1-9 2.6-11.5 5S10.8 13 9.8 18C9 22 6.5 25 2 27z'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M2 2h24c-5 1-9 2.6-11.5 5S10.8 13 9.8 18C9 22 6.5 25 2 27z'/%3E%3C/svg%3E") center/contain no-repeat}
+.tframe .tl{left:2px;top:2px}.tframe .tr{right:2px;top:2px;transform:scaleX(-1)}
+.tframe .bl{left:2px;bottom:2px;transform:scaleY(-1)}.tframe .br{right:2px;bottom:2px;transform:scale(-1,-1)}
+
+/* initiative in a hexagon, edged in the side's colour (gold on its turn), as on the tablet */
+.hexw,#roster .lair-init{position:relative;isolation:isolate;display:grid;place-items:center;width:50px;height:56px}
+.hexw::before,.hexw::after,#roster .lair-init::before,#roster .lair-init::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.hexw::before,#roster .lair-init::before{background:color-mix(in srgb,var(--k) 85%,transparent)}
+.hexw::after,#roster .lair-init::after{inset:2px;background:color-mix(in srgb,var(--k) 15%,var(--bg))}
+#roster .row.turn .hexw::before,#roster .row.turn .lair-init::before{background:var(--accent)}
+.hexw:has(.init-in.missing)::before{background:var(--accent)}
+.hexw:has(.init-in.fresh)::after{animation:hexfresh 2.5s ease-out}
+@keyframes hexfresh{0%{background:color-mix(in srgb,var(--ally) 55%,var(--bg))}}
+html:root #roster .hexw .init-in{width:44px;height:30px;background:transparent;border:0;box-shadow:none;padding:0;font-size:1.15rem;animation:none;
+  -moz-appearance:textfield}
+#roster .hexw .init-in::-webkit-inner-spin-button,#roster .hexw .init-in::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+#roster .hexw .init-in:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
+#roster .lair-init{font-size:1.15rem;padding:0}
+
+/* the class or creature-type sigil before the name, and the name in the display face */
+.nmrow{display:flex;align-items:center;gap:7px;min-width:0}
+#roster .dmsig{width:19px;height:19px;margin:0 0 0 4px;filter:none}
+#roster .dmsig.nosig{background:transparent}
+html:root #roster .name-in{font-family:var(--display);font-weight:800;font-size:1.16rem;letter-spacing:.01em;padding:1px 5px}
+html:root #roster .typeline{padding-left:36px;font-style:italic}
+#roster .typeline button,#roster .typeline .crown,#roster .typeline .passives,#roster .typeline .simpletag{font-style:normal}
+.nowtag{font-style:normal;font-family:var(--display);font-weight:800;color:var(--accent);letter-spacing:.04em}
+.nexttag{font-style:normal;font-family:var(--display);font-weight:700;color:var(--muted);letter-spacing:.04em}
+
+/* conditions and effects: quiet tags, no pills; an effect keeps its ✦ in gold */
+html:root #roster .chips .cond:not(.hidchip):not(.add):not(.inspchip){border-color:transparent;background:color-mix(in srgb,var(--fg) 7%,transparent);
+  border-radius:6px;padding:2px 8px}
+#roster .chips .cond.eff{color:var(--fg)}
+html[data-dm=light] #roster .chips .cond.eff{color:var(--fg)!important;background:color-mix(in srgb,var(--fg) 6%,transparent)!important;
+  border-color:transparent!important}
+.eg{font-style:normal;color:#e8c65a;margin-right:5px}
+html[data-dm=light] .eg{color:#a86a0e}
+html:root #roster .chips .cond.hidchip{border-radius:6px}
+
+/* AC on a shield; the eye beside it says whether the players see it */
+html:root #roster .ac-wrap{border:0;background:transparent;overflow:visible;gap:0}
+html:root #roster .ac-wrap .tog{padding:4px 5px;background:transparent;border:0}
+html:root #roster .ac-wrap input{width:42px;height:46px;padding:0 0 3px;font-family:var(--display);font-weight:800;font-size:1.05rem;-moz-appearance:textfield;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.2l8.2 3v5.8c0 5.2-3.4 9.3-8.2 10.8-4.8-1.5-8.2-5.6-8.2-10.8V5.2z' fill='%231e2130' stroke='%23596080' stroke-width='1.1'/%3E%3C/svg%3E") center/contain no-repeat}
+html[data-dm=light] #roster .ac-wrap input{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.2l8.2 3v5.8c0 5.2-3.4 9.3-8.2 10.8-4.8-1.5-8.2-5.6-8.2-10.8V5.2z' fill='%23fffcf6' stroke='%23b3a891' stroke-width='1.1'/%3E%3C/svg%3E")}
+#roster .ac-wrap input::-webkit-inner-spin-button,#roster .ac-wrap input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+#roster .ac-wrap input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:6px}
+
+/* side panel headings read like the statblock's: the display face with a thin rule */
+html:root .side .panel>summary{font-family:var(--display);text-transform:none;letter-spacing:.02em;font-size:1.12rem;font-weight:800;color:var(--fg);
+  padding:2px 0 6px}
+html:root .side .panel[open]>summary{border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));margin-bottom:12px}
+html:root .side .panel>summary:hover{color:var(--accent)}
+
+/* header and bottom bar: words, not boxes (Next turn and End/New combat keep theirs) */
+html:root .bar .btn:not(.primary),html:root .bar .icon-btn{background:transparent;border-color:transparent}
+html:root .bar .btn:not(.primary):hover,html:root .bar .icon-btn:hover:not(:disabled){background:var(--panel2)}
+html:root .bar .btn[aria-expanded="true"]{background:var(--panel2)}
+.turnbox .rnd{font-family:var(--display);font-weight:800;font-size:1.02rem;color:var(--fg);letter-spacing:.05em;padding:5px 12px;
+  border:1.5px solid color-mix(in srgb,var(--accent) 60%,transparent);border-radius:8px}
+.turnbox .rnd b{color:var(--accent);font-size:1.2rem;margin-left:4px}
+.turnbox .btn.primary{font-family:var(--display);font-size:1.08rem;letter-spacing:.02em}
+html:root .dmmain>.foot .fgrp .btn:not(.primary):not(#endBtn){background:transparent;border-color:transparent}
+html:root .dmmain>.foot .fgrp .btn:not(.primary):not(#endBtn):hover{background:var(--panel2)}
+html:root .dmmain>.foot .fgrp .icon-btn{border-color:transparent}
+.side .tools2.side-tools{border-top:0;padding-top:0}

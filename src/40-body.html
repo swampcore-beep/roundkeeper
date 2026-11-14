@@ -7,19 +7,22 @@
     <div class="bar-row">
       <div class="brand">Roundkeeper</div>
       <div class="sync" id="sync" data-s="off"><i></i><span>Connecting…</span></div>
-      <button class="btn joinpill" id="joinPill" type="button" data-act="devices" title="Devices: who is connected, the addresses and the QR code"></button>
       <div class="turnbox" id="turnBox"></div>
-      <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Rules <kbd>Ctrl K</kbd></button>
+      <span class="barsp" aria-hidden="true"></span>
+      <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Rules</button>
       <button class="btn tcardpill" id="tcardPill" type="button" data-act="tcardoff" hidden></button>
-      <button class="icon-btn lg dmlight" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button>
-      <button class="btn tvbtn" id="tvBtn" type="button" data-act="tvbar" title="What the TV shows" aria-expanded="false"><i class="jd"></i>TV</button>
-      <button class="btn atmobtn" id="atmoBtn" type="button" data-act="atmo" title="Theme, scene and background picture on the tablet">Atmosphere</button>
+      <div class="hgroup tablegrp">
+        <button class="btn joinpill" id="joinPill" type="button" data-act="devices" title="Devices: who is connected, the addresses and the QR code"></button>
+        <button class="btn tvbtn" id="tvBtn" type="button" data-act="tvbar" title="What the TV shows" aria-expanded="false"><i class="jd"></i>TV</button>
+        <button class="btn atmobtn" id="atmoBtn" type="button" data-act="atmo" title="Atmosphere: theme, scene and background picture on the tablet">Atmosphere</button>
+        <button class="btn" id="preview" type="button">Preview player screen</button>
+        <button class="icon-btn lg previewic" type="button" data-act="previewic" title="Preview the player screen" aria-label="Preview the player screen"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
       <div class="hgroup">
         <button class="icon-btn lg" id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62A7.95 7.95 0 0112.5 10c3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 10.53 17.15 8 12.5 8z"/></svg></button>
         <button class="icon-btn lg" id="redoBtn" type="button" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg viewBox="0 0 24 24"><path d="M11.5 8c2.65 0 5.05 1 6.9 2.6L22 7v9h-9l3.62-3.62A7.95 7.95 0 0011.5 10c-3.54 0-6.55 2.31-7.6 5.5l-2.37-.78C2.92 10.53 6.85 8 11.5 8z"/></svg></button>
+        <button class="icon-btn lg" id="setBtn" type="button" data-act="settingsopen" title="Settings and files" aria-label="Settings and files"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
       </div>
-      <button class="btn" id="preview" type="button">Preview player screen</button>
-      <button class="icon-btn lg previewic" type="button" data-act="previewic" title="Preview the player screen" aria-label="Preview the player screen"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <div class="addr-row" id="addr" hidden></div>
   </header>
@@ -31,15 +34,15 @@
     <div class="foot">
       <p class="hint">Players open the same address as the tablet on their phones and manage their own initiative, conditions and death saves. Ctrl+Z undoes the last change.</p>
       <div class="acts">
-        <button class="btn" id="peBtn" type="button" data-act="peToggle" aria-pressed="true" title="Whether players may change their own initiative, conditions and death saves from their phones">Player edits</button>
-        <button class="btn" type="button" data-act="clearreact" title="Clear every Reaction used (R)">Clear reactions</button>
-        <button class="btn" type="button" data-act="mtstart" title="Damage several at once, like a Fireball (or Shift+click the rows)">Hit several</button>
+        <span class="fgrp"><button class="btn" type="button" data-act="mtstart" title="Damage several at once, like a Fireball (or Shift+click the rows)">Hit several</button>
         <button class="btn" id="lairBtn" type="button" aria-pressed="false">Lair action</button>
+        <button class="btn" type="button" data-act="clearreact" title="Clear every Reaction used (R)">Clear reactions</button></span>
+        <span class="fgrp"><button class="btn" type="button" data-act="party" title="AC and passive scores from the players' phones">Party</button>
+        <button class="btn" id="recapBtn" type="button" data-act="recap" title="What happened in this fight, for your campaign notes">Recap</button></span>
+        <span class="fgrp fend"><button class="btn pebox" id="peBtn" type="button" data-act="peToggle" aria-pressed="true" title="Whether players may change their own initiative, conditions and death saves from their phones">Players can edit</button>
         <button class="btn" id="endBtn" type="button">End combat</button>
-        <button class="btn" id="recapBtn" type="button" data-act="recap" title="What happened in this fight, for your campaign notes">Recap</button>
-        <button class="btn" type="button" data-act="party" title="AC and passive scores from the players' phones">Party</button>
-        <button class="btn" id="newFight" type="button">New combat</button>
-        <button class="btn danger" id="wipe" type="button">Clear all</button>
+        <span class="footmore"><button class="icon-btn lg" id="footMore" type="button" data-act="footmore" aria-haspopup="menu" aria-expanded="false" aria-label="More: new combat, clear all" title="More: New combat, Clear all"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+          <span class="rmenu footmenu" id="footMenu" role="menu" hidden><button type="button" id="newFight" role="menuitem">New combat <small>keeps the party</small></button><hr><button type="button" class="danger" id="wipe" role="menuitem">Clear all</button></span></span></span>
       </div>
     </div>
    </div>
@@ -75,6 +78,7 @@
       <label class="scene-pick" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="30" style="width:5em"> s</label>
       <label class="scene-pick"><input type="checkbox" id="autoTimer"> start it on every player's turn</label>
       <label class="scene-pick" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> roll monsters' Concentration saves for me (otherwise the app asks)</label>
+      <div class="setrow"><button class="btn pebox" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button></div>
       <div class="acts">
         <button class="btn" type="button" data-act="keys">Shortcuts (?)</button>
         <button class="btn" type="button" data-act="dmdev">DM devices</button>

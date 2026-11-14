@@ -26,7 +26,7 @@ function moveTurn(dir){
     !hid.some(n=>x.t.toLowerCase().includes(n))).map(x=>x.t);
     const pri=x=>/defeated|falls|drops to 0|dies|natural 20|loses Concentration|back up/i.test(x)?0:1;
       state.rsum={r:r0,lines:L.map((x,i)=>[pri(x),i,x]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]).slice(0,3).map(x=>x[2])}}
-  const msgs=dir>0?endMsgs.concat(turnStart(c)):[];
+  const msgs=dir>0?endMsgs.concat(turnStart(c)):[];sbFollowTurn();
   commit();if(msgs.length)toast(msgs.join(" · "),5000);
   const r=document.querySelector(`#roster .row[data-id="${c.id}"]`);r&&r.scrollIntoView({block:"nearest",behavior:"smooth"});
 }
