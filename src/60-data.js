@@ -118,8 +118,8 @@ const SUN='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r
   MOON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill="currentColor"/></svg>';
 function dmLightApply(){if(MODE!=="dm"||PREVIEW)return;const on=!!ls.get("dmLight",false),d=document.documentElement.dataset;if(on)d.dm="light";
   else delete d.dm;
-  const b=document.getElementById("dmLightBtn");if(b){b.innerHTML=on?MOON:SUN;b.title=on?"Switch to the dark screen":"Switch to the light screen";
-    b.setAttribute("aria-pressed",String(on))}}
+  const b=document.getElementById("dmLightBtn");if(b){b.textContent="Light screen";
+    b.title=on?"Switch to the dark screen":"Switch to the light screen";b.setAttribute("aria-pressed",String(on))}}
 const themeOf=k=>THEMES.find(t=>t[0]===k)||THEMES[0];
 /* what the tablet shows: the theme's parts, with the DM's own picks over them */
 function lookOf(st){const th=themeOf(st.theme||"tavern"),L=st.look||{};return {pal:L.pal||th[0],rows:L.rows||th[0],font:L.font||th[3],tfont:L.tfont||th[4],
@@ -153,6 +153,7 @@ let uidN=0;const uid=()=>Math.random().toString(36).slice(2,8)+(uidN++%1296).toS
 const ls={get(k,d){try{const v=localStorage.getItem("it."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("it."+k,
   JSON.stringify(v))}catch(e){}}};
 const SVGI={
+  palette:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3A4.7 4.7 0 0021 9.7C21 6 17 3 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="7.5" cy="11" r="1.3"/><circle cx="10.5" cy="7.3" r="1.3"/><circle cx="15" cy="7.3" r="1.3"/></svg>',
   next:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   prev:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   castle:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V9h2V5h2v2h2V5h4v2h2V5h2v4h2v12h-6v-5a2 2 0 00-4 0v5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',

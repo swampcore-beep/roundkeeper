@@ -58,7 +58,7 @@ async def main():
         chk("d3 roll banner",ok_banner)
         # (c) New fight button
         await T(dm,"state.timer=null;commit()")
-        await dm.click('#newFight'); await asyncio.sleep(1.8)
+        await dm.click('#footMore'); await dm.click('#newFight'); await asyncio.sleep(1.8)
         chk("c phone opens initiative on New fight",await T(ph,"pSheet")=="init")
         await ph.screenshot(path='phone_init.png')
         await ph.click('.numpad [data-k="1"]'); await ph.click('.numpad [data-k="5"]'); await ph.click('[data-act=pinitsend]'); await asyncio.sleep(2.5)

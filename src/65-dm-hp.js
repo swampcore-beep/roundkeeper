@@ -213,20 +213,24 @@ function applyHp(c,raw,was){
   else return false;
   return true;
 }
-let menuId=null;
+let menuId=null,turnMenuOn=false;
 function renderDM(){
   const ae=document.activeElement;
   if(ae&&$("#roster").contains(ae)&&ae.tagName==="INPUT"){pendingRender=true;return}
   pendingRender=false;renderParty();renderEnc();renderCall();renderField();
   const tsec=$("#timerSecs");if(tsec&&document.activeElement!==tsec)tsec.value=state.timerSecs||30;
   {const ab=$("#atmoBtn"),sl=(SCENES.find(x=>x[0]===(state.scene||"none"))||["",""])[1];
-   if(ab)ab.innerHTML=`<span class="eyebrow2">Atmosphere</span>${esc(atmoLabel(state))} · ${esc(sl)}${state.bg?" · picture":""}`}
+   if(ab){ab.innerHTML=`${ic("palette")}<span>${esc(atmoLabel(state))}</span>`;
+     ab.title=`Atmosphere: ${atmoLabel(state)} · ${sl}${state.bg?" · picture":""}. Theme, scene and picture on the tablet`}}
+  {const tb=$("#tvBtn");if(tb){const m=(TV_MODES.find(x=>x[0]===((state.tv||{}).mode||"auto"))||["",""])[1];
+    tb.innerHTML=`<i class="jd"></i>TV${state.tvSeen&&m?` <small>· ${esc(m)}</small>`:""}`}}
   $("#lairBtn").setAttribute("aria-pressed",String(!!state.lair));
   {const tp=$("#tcardPill");if(tp){tp.hidden=!state.tcard;if(state.tcard)tp.innerHTML=`On the table: <b>${esc(state.tcard.name||"card")}</b> ${I.x}`;
     tp.title="Take the card off the tablet"}}
   $("#peBtn").setAttribute("aria-pressed",String(canEdit()));
   requestAnimationFrame(()=>{if(hpPopId)hpPopSync();mtRender();concAskRender()});
-  $("#endBtn").textContent=state.ended?"Show order again":"End combat";
+  {const eb=$("#endBtn");eb.textContent=state.ended?"New combat":"End combat";eb.classList.toggle("primary",!!state.ended);
+    eb.title=state.ended?"Start the next fight: keeps the party, everyone rolls initiative":"End this fight: the end screen and the Recap"}
   $("#endedNote").hidden=!state.ended;
   const base=sorted(),list=withLair(base);const R=$("#roster");
   if(!list.length){R.innerHTML=
@@ -332,7 +336,8 @@ function renderDM(){
         `<div class="typeline">${typeline}</div>`:""}</div>
       <div class="chips">${chips}</div>
       <div class="tools">
-        ${c.kind!=="pc"?hpBox(c):c.php?pcHpBox(c):""}
+        ${c.kind!=="pc"?hpBox(c):c.php?pcHpBox(c):`<span class="hpw hpnone" title="${esc(c.name)} keeps HP on paper, or doesn't share it from the phone">
+          <span class="hpl">HP</span><i>not shared</i></span>`}
         <span class="ac-wrap"><button type="button" class="tog" data-act="showac" aria-pressed="${!!c.showAc}" title="Show AC to players">${c.showAc?I.eye:
           I.eyeoff}AC</button><input id="ac-${c.id}" type="number" value="${c.ac??""}" placeholder="—" data-act="ac" aria-label="AC"></span>
         <button type="button" class="tog blood" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${I.drop}Bloodied</button>
@@ -346,7 +351,9 @@ function renderDM(){
     tb.innerHTML=t?`<span class="rnd">Round <b>${
       t.round}</b></span><button class="icon-btn" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
       "prev")}</button><button class="btn primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${ic(
-      "next")}</button><button class="linkbtn" type="button" data-act="tend" title="Stop tracking turns">stop</button>`
+      "next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
+      turnMenuOn}" aria-label="Turn options" title="Turn options: stop tracking turns">${DOTS}</button>${turnMenuOn?
+      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`
       :`<button class="btn" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${ic("next")}</button>`}
   const at=$("#autoTimer");if(at&&document.activeElement!==at)at.checked=!!state.autoTimer;
   {const ca=$("#concAuto");if(ca)ca.checked=!!ls.get("concAuto",false)}

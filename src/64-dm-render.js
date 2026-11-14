@@ -9,7 +9,7 @@ function renderLog(){
   el.innerHTML=actLog.length?actLog.map(e=>`<div class="le${e.done?" undone":""}${e.fresh?" fresh":""}"><span class="lt">${new Date(e.at).toLocaleTimeString([],
     {hour:"2-digit",minute:"2-digit",hourCycle:"h23"})}</span><span class="lx">${esc(e.text)}</span>${e.inv&&!e.done?
     `<button class="btn sm" type="button" data-act="logundo" data-l="${e.id}">Undo</button>`:"<span></span>"}</div>`).join("")
-    :`<p class="strip-empty" style="margin:0">Changes players make on their phones appear here, each with its own Undo.</p>`;
+    :`<p class="strip-empty" style="margin:0">Nothing from the phones yet.</p>`;
   actLog.forEach(e=>e.fresh=false);
   const pn=document.querySelector('.panel[data-k="log"]'),cnt=$("#logCount");if(!pn||!cnt)return;
   if(pn.open){logSeen=Date.now();cnt.hidden=true}else{const n=actLog.filter(e=>e.at>logSeen).length;cnt.hidden=!n;cnt.textContent=n}

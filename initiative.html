@@ -2428,6 +2428,78 @@ html[data-mfont=A] .mo-q,html[data-mfont=F] .mo-q{font-size:clamp(22px,3.6vw,56p
 .tvev .seg3 button{font-size:.75rem;padding:4px 9px}
 .apfrm.tv{border-width:6px}
 .atabs{margin-left:10px;vertical-align:middle;font-size:.9rem}
+/* ---------- DM screen, v1.1 layout: grouped header, quieter rows, grouped bottom bar ---------- */
+/* header: the fight on the left (Round · ← · Next turn · ⋯), then Rules, the table's screens, undo/redo and settings */
+html:root .brand{margin-right:10px}
+.barsp{flex:1 1 0}
+.qkbtn kbd{display:none}
+.hgroup.tablegrp{gap:4px}
+html:root .atmobtn{display:inline-flex;align-items:center;gap:7px;max-width:260px}
+.atmobtn>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tvbtn small{font-size:.8rem;font-weight:600;color:var(--muted)}
+.turnmore,.footmore{position:relative;display:inline-flex}
+.turnmore .rmenu{top:calc(100% + 6px);right:0;min-width:210px}
+.footmore .rmenu{top:auto;bottom:calc(100% + 8px);right:0;min-width:240px}
+.rmenu small{font-weight:500;color:var(--muted);font-size:.78rem}
+
+/* rows: HP, AC and the state buttons sit in fixed columns, so they line up from row to row */
+#roster .tools>.hpw{width:128px;min-height:38px;box-sizing:border-box}
+html:root #roster .hpw.hpnone{flex-direction:row;align-items:center;gap:6px;border:1px dashed var(--line);background:transparent;cursor:default}
+#roster .hpw.hpnone .hpl{color:var(--muted)}
+#roster .hpw.hpnone i{font-style:normal;font-size:.78rem;color:var(--muted);white-space:nowrap}
+#roster .tools .tog[data-act=down]{min-width:64px;justify-content:center}
+#roster .tools .tog.blood{min-width:96px;justify-content:center}
+/* Bloodied and Down stay quiet until they are on */
+#roster .tools .tog.blood[aria-pressed=false],#roster .tools .tog[data-act=down][aria-pressed=false]{border-color:transparent;background:transparent;
+  color:var(--muted)}
+#roster .row:hover .tools .tog[aria-pressed=false],#roster .row.sel .tools .tog[aria-pressed=false],#roster .tools .tog[aria-pressed=false]:focus-visible{
+  border-color:var(--line)}
+#roster .tools .tog[data-act=down][aria-pressed=true]{color:#fff;background:var(--fail);border-color:var(--fail)}
+/* legendary counters readable at a glance (purple: only you see them) */
+html:root #roster .row .sbline{font-size:.8rem}
+html:root #roster .sbc{color:var(--fg);border-color:color-mix(in srgb,var(--arcane) 45%,var(--line))}
+html:root #roster .sbc i{color:var(--fg)}
+html:root .sbpip{width:12px;height:12px}
+/* a bit more contrast for the small text beside the laptop */
+#roster .typeline{font-size:.78rem}
+.le .lt{color:var(--muted)}
+
+/* colours: gold only for "now" and the main action; effects get a quiet tone of their own */
+#roster .cond.eff{--eff:#9fb0d0;--eff-ink:var(--fg)}
+html[data-dm=light] #roster .cond.eff{color:var(--fg)!important;background:#eef1f7!important;border-color:#a9b4cc!important}
+html:root #dm .quick .sbbtn{background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--fg);
+  border-color:color-mix(in srgb,var(--accent) 65%,var(--line))}
+html:root #dm .quick .sbbtn small{color:var(--muted)!important}
+
+/* bottom bar: this turn | the party and the recap | players can edit · end combat · ⋯ */
+html:root .dmmain>.foot .acts{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fgrp{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fgrp+.fgrp{padding-left:10px;border-left:1px solid var(--line)}
+.fgrp.fend{margin-left:auto;border-left:0;padding-left:0}
+html:root .dmmain>.foot #wipe{margin-left:0}html:root .dmmain>.foot #wipe::before{display:none}
+#endBtn:not(.primary){color:var(--enemy);border-color:color-mix(in srgb,var(--enemy) 45%,var(--line))}
+/* a toggle that looks like a tick box: Players can edit, Light screen */
+.btn.pebox{display:inline-flex;align-items:center;gap:8px}
+.btn.pebox::before{content:"";width:16px;height:16px;border:2px solid var(--muted);border-radius:4px;box-sizing:border-box;display:inline-grid;
+  place-items:center;font-size:11px;line-height:1;font-weight:900}
+.btn.pebox[aria-pressed=true]{background:var(--panel);border-color:var(--line);color:var(--fg)}
+.btn.pebox[aria-pressed=true]::before{content:"✓";background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.setrow{display:flex;align-items:center;gap:8px}
+
+/* the statblock drawer: follow the turn, and a line for what waits underneath */
+.sbfollow{display:flex;align-items:center;gap:8px;padding:8px 16px 0;font-size:.86rem;color:var(--muted);cursor:pointer}
+.sbfollow input{width:16px;height:16px;margin:0}
+.sbunder{margin-top:auto;display:flex;align-items:center;gap:8px;padding:10px 16px;border:0;border-top:1px solid var(--line);background:var(--panel2);
+  color:var(--fg);font:inherit;font-size:.86rem;text-align:left;cursor:pointer;flex:none}
+.sbunder:hover{background:color-mix(in srgb,var(--accent) 10%,var(--panel2))}
+.callin{color:var(--muted);font-size:.8rem;font-weight:700}
+#sbDrawer .sbbody{flex:1 1 auto;min-height:0}
+/* in the drawer the picked tab and the picked roll mode are marked, not gold */
+#sbDrawer .seg2 button[aria-pressed=true]{background:var(--panel2);color:var(--fg);border-color:var(--fg);box-shadow:none}
+/* who rolls in a roll call: player blue, not gold */
+#callForm .callpick button[aria-pressed=true]{background:color-mix(in srgb,var(--pc) 16%,var(--panel2));border-color:var(--pc);color:var(--fg)}
+/* the light screen's soft row shadow hid the frame of the row on its turn */
+html[data-dm=light] #roster .row.turn{box-shadow:0 0 0 2px var(--accent),0 0 18px color-mix(in srgb,var(--accent) 25%,transparent)}
 </style>
 </head>
 <body>
@@ -2437,19 +2509,22 @@ html[data-mfont=A] .mo-q,html[data-mfont=F] .mo-q{font-size:clamp(22px,3.6vw,56p
     <div class="bar-row">
       <div class="brand">Roundkeeper</div>
       <div class="sync" id="sync" data-s="off"><i></i><span>Connecting…</span></div>
-      <button class="btn joinpill" id="joinPill" type="button" data-act="devices" title="Devices: who is connected, the addresses and the QR code"></button>
       <div class="turnbox" id="turnBox"></div>
-      <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Rules <kbd>Ctrl K</kbd></button>
+      <span class="barsp" aria-hidden="true"></span>
+      <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Rules</button>
       <button class="btn tcardpill" id="tcardPill" type="button" data-act="tcardoff" hidden></button>
-      <button class="icon-btn lg dmlight" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button>
-      <button class="btn tvbtn" id="tvBtn" type="button" data-act="tvbar" title="What the TV shows" aria-expanded="false"><i class="jd"></i>TV</button>
-      <button class="btn atmobtn" id="atmoBtn" type="button" data-act="atmo" title="Theme, scene and background picture on the tablet">Atmosphere</button>
+      <div class="hgroup tablegrp">
+        <button class="btn joinpill" id="joinPill" type="button" data-act="devices" title="Devices: who is connected, the addresses and the QR code"></button>
+        <button class="btn tvbtn" id="tvBtn" type="button" data-act="tvbar" title="What the TV shows" aria-expanded="false"><i class="jd"></i>TV</button>
+        <button class="btn atmobtn" id="atmoBtn" type="button" data-act="atmo" title="Atmosphere: theme, scene and background picture on the tablet">Atmosphere</button>
+        <button class="btn" id="preview" type="button">Preview player screen</button>
+        <button class="icon-btn lg previewic" type="button" data-act="previewic" title="Preview the player screen" aria-label="Preview the player screen"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
       <div class="hgroup">
         <button class="icon-btn lg" id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62A7.95 7.95 0 0112.5 10c3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 10.53 17.15 8 12.5 8z"/></svg></button>
         <button class="icon-btn lg" id="redoBtn" type="button" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg viewBox="0 0 24 24"><path d="M11.5 8c2.65 0 5.05 1 6.9 2.6L22 7v9h-9l3.62-3.62A7.95 7.95 0 0011.5 10c-3.54 0-6.55 2.31-7.6 5.5l-2.37-.78C2.92 10.53 6.85 8 11.5 8z"/></svg></button>
+        <button class="icon-btn lg" id="setBtn" type="button" data-act="settingsopen" title="Settings and files" aria-label="Settings and files"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
       </div>
-      <button class="btn" id="preview" type="button">Preview player screen</button>
-      <button class="icon-btn lg previewic" type="button" data-act="previewic" title="Preview the player screen" aria-label="Preview the player screen"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <div class="addr-row" id="addr" hidden></div>
   </header>
@@ -2461,15 +2536,15 @@ html[data-mfont=A] .mo-q,html[data-mfont=F] .mo-q{font-size:clamp(22px,3.6vw,56p
     <div class="foot">
       <p class="hint">Players open the same address as the tablet on their phones and manage their own initiative, conditions and death saves. Ctrl+Z undoes the last change.</p>
       <div class="acts">
-        <button class="btn" id="peBtn" type="button" data-act="peToggle" aria-pressed="true" title="Whether players may change their own initiative, conditions and death saves from their phones">Player edits</button>
-        <button class="btn" type="button" data-act="clearreact" title="Clear every Reaction used (R)">Clear reactions</button>
-        <button class="btn" type="button" data-act="mtstart" title="Damage several at once, like a Fireball (or Shift+click the rows)">Hit several</button>
+        <span class="fgrp"><button class="btn" type="button" data-act="mtstart" title="Damage several at once, like a Fireball (or Shift+click the rows)">Hit several</button>
         <button class="btn" id="lairBtn" type="button" aria-pressed="false">Lair action</button>
+        <button class="btn" type="button" data-act="clearreact" title="Clear every Reaction used (R)">Clear reactions</button></span>
+        <span class="fgrp"><button class="btn" type="button" data-act="party" title="AC and passive scores from the players' phones">Party</button>
+        <button class="btn" id="recapBtn" type="button" data-act="recap" title="What happened in this fight, for your campaign notes">Recap</button></span>
+        <span class="fgrp fend"><button class="btn pebox" id="peBtn" type="button" data-act="peToggle" aria-pressed="true" title="Whether players may change their own initiative, conditions and death saves from their phones">Players can edit</button>
         <button class="btn" id="endBtn" type="button">End combat</button>
-        <button class="btn" id="recapBtn" type="button" data-act="recap" title="What happened in this fight, for your campaign notes">Recap</button>
-        <button class="btn" type="button" data-act="party" title="AC and passive scores from the players' phones">Party</button>
-        <button class="btn" id="newFight" type="button">New combat</button>
-        <button class="btn danger" id="wipe" type="button">Clear all</button>
+        <span class="footmore"><button class="icon-btn lg" id="footMore" type="button" data-act="footmore" aria-haspopup="menu" aria-expanded="false" aria-label="More: new combat, clear all" title="More: New combat, Clear all"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+          <span class="rmenu footmenu" id="footMenu" role="menu" hidden><button type="button" id="newFight" role="menuitem">New combat <small>keeps the party</small></button><hr><button type="button" class="danger" id="wipe" role="menuitem">Clear all</button></span></span></span>
       </div>
     </div>
    </div>
@@ -2505,6 +2580,7 @@ html[data-mfont=A] .mo-q,html[data-mfont=F] .mo-q{font-size:clamp(22px,3.6vw,56p
       <label class="scene-pick" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="30" style="width:5em"> s</label>
       <label class="scene-pick"><input type="checkbox" id="autoTimer"> start it on every player's turn</label>
       <label class="scene-pick" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> roll monsters' Concentration saves for me (otherwise the app asks)</label>
+      <div class="setrow"><button class="btn pebox" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button></div>
       <div class="acts">
         <button class="btn" type="button" data-act="keys">Shortcuts (?)</button>
         <button class="btn" type="button" data-act="dmdev">DM devices</button>
@@ -4943,8 +5019,8 @@ const SUN='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r
   MOON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill="currentColor"/></svg>';
 function dmLightApply(){if(MODE!=="dm"||PREVIEW)return;const on=!!ls.get("dmLight",false),d=document.documentElement.dataset;if(on)d.dm="light";
   else delete d.dm;
-  const b=document.getElementById("dmLightBtn");if(b){b.innerHTML=on?MOON:SUN;b.title=on?"Switch to the dark screen":"Switch to the light screen";
-    b.setAttribute("aria-pressed",String(on))}}
+  const b=document.getElementById("dmLightBtn");if(b){b.textContent="Light screen";
+    b.title=on?"Switch to the dark screen":"Switch to the light screen";b.setAttribute("aria-pressed",String(on))}}
 const themeOf=k=>THEMES.find(t=>t[0]===k)||THEMES[0];
 /* what the tablet shows: the theme's parts, with the DM's own picks over them */
 function lookOf(st){const th=themeOf(st.theme||"tavern"),L=st.look||{};return {pal:L.pal||th[0],rows:L.rows||th[0],font:L.font||th[3],tfont:L.tfont||th[4],
@@ -4978,6 +5054,7 @@ let uidN=0;const uid=()=>Math.random().toString(36).slice(2,8)+(uidN++%1296).toS
 const ls={get(k,d){try{const v=localStorage.getItem("it."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("it."+k,
   JSON.stringify(v))}catch(e){}}};
 const SVGI={
+  palette:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 100 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3A4.7 4.7 0 0021 9.7C21 6 17 3 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="7.5" cy="11" r="1.3"/><circle cx="10.5" cy="7.3" r="1.3"/><circle cx="15" cy="7.3" r="1.3"/></svg>',
   next:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   prev:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   castle:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V9h2V5h2v2h2V5h4v2h2V5h2v4h2v12h-6v-5a2 2 0 00-4 0v5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
@@ -5376,7 +5453,7 @@ function renderLog(){
   el.innerHTML=actLog.length?actLog.map(e=>`<div class="le${e.done?" undone":""}${e.fresh?" fresh":""}"><span class="lt">${new Date(e.at).toLocaleTimeString([],
     {hour:"2-digit",minute:"2-digit",hourCycle:"h23"})}</span><span class="lx">${esc(e.text)}</span>${e.inv&&!e.done?
     `<button class="btn sm" type="button" data-act="logundo" data-l="${e.id}">Undo</button>`:"<span></span>"}</div>`).join("")
-    :`<p class="strip-empty" style="margin:0">Changes players make on their phones appear here, each with its own Undo.</p>`;
+    :`<p class="strip-empty" style="margin:0">Nothing from the phones yet.</p>`;
   actLog.forEach(e=>e.fresh=false);
   const pn=document.querySelector('.panel[data-k="log"]'),cnt=$("#logCount");if(!pn||!cnt)return;
   if(pn.open){logSeen=Date.now();cnt.hidden=true}else{const n=actLog.filter(e=>e.at>logSeen).length;cnt.hidden=!n;cnt.textContent=n}
@@ -5808,20 +5885,24 @@ function applyHp(c,raw,was){
   else return false;
   return true;
 }
-let menuId=null;
+let menuId=null,turnMenuOn=false;
 function renderDM(){
   const ae=document.activeElement;
   if(ae&&$("#roster").contains(ae)&&ae.tagName==="INPUT"){pendingRender=true;return}
   pendingRender=false;renderParty();renderEnc();renderCall();renderField();
   const tsec=$("#timerSecs");if(tsec&&document.activeElement!==tsec)tsec.value=state.timerSecs||30;
   {const ab=$("#atmoBtn"),sl=(SCENES.find(x=>x[0]===(state.scene||"none"))||["",""])[1];
-   if(ab)ab.innerHTML=`<span class="eyebrow2">Atmosphere</span>${esc(atmoLabel(state))} · ${esc(sl)}${state.bg?" · picture":""}`}
+   if(ab){ab.innerHTML=`${ic("palette")}<span>${esc(atmoLabel(state))}</span>`;
+     ab.title=`Atmosphere: ${atmoLabel(state)} · ${sl}${state.bg?" · picture":""}. Theme, scene and picture on the tablet`}}
+  {const tb=$("#tvBtn");if(tb){const m=(TV_MODES.find(x=>x[0]===((state.tv||{}).mode||"auto"))||["",""])[1];
+    tb.innerHTML=`<i class="jd"></i>TV${state.tvSeen&&m?` <small>· ${esc(m)}</small>`:""}`}}
   $("#lairBtn").setAttribute("aria-pressed",String(!!state.lair));
   {const tp=$("#tcardPill");if(tp){tp.hidden=!state.tcard;if(state.tcard)tp.innerHTML=`On the table: <b>${esc(state.tcard.name||"card")}</b> ${I.x}`;
     tp.title="Take the card off the tablet"}}
   $("#peBtn").setAttribute("aria-pressed",String(canEdit()));
   requestAnimationFrame(()=>{if(hpPopId)hpPopSync();mtRender();concAskRender()});
-  $("#endBtn").textContent=state.ended?"Show order again":"End combat";
+  {const eb=$("#endBtn");eb.textContent=state.ended?"New combat":"End combat";eb.classList.toggle("primary",!!state.ended);
+    eb.title=state.ended?"Start the next fight: keeps the party, everyone rolls initiative":"End this fight: the end screen and the Recap"}
   $("#endedNote").hidden=!state.ended;
   const base=sorted(),list=withLair(base);const R=$("#roster");
   if(!list.length){R.innerHTML=
@@ -5927,7 +6008,8 @@ function renderDM(){
         `<div class="typeline">${typeline}</div>`:""}</div>
       <div class="chips">${chips}</div>
       <div class="tools">
-        ${c.kind!=="pc"?hpBox(c):c.php?pcHpBox(c):""}
+        ${c.kind!=="pc"?hpBox(c):c.php?pcHpBox(c):`<span class="hpw hpnone" title="${esc(c.name)} keeps HP on paper, or doesn't share it from the phone">
+          <span class="hpl">HP</span><i>not shared</i></span>`}
         <span class="ac-wrap"><button type="button" class="tog" data-act="showac" aria-pressed="${!!c.showAc}" title="Show AC to players">${c.showAc?I.eye:
           I.eyeoff}AC</button><input id="ac-${c.id}" type="number" value="${c.ac??""}" placeholder="—" data-act="ac" aria-label="AC"></span>
         <button type="button" class="tog blood" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${I.drop}Bloodied</button>
@@ -5941,7 +6023,9 @@ function renderDM(){
     tb.innerHTML=t?`<span class="rnd">Round <b>${
       t.round}</b></span><button class="icon-btn" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
       "prev")}</button><button class="btn primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${ic(
-      "next")}</button><button class="linkbtn" type="button" data-act="tend" title="Stop tracking turns">stop</button>`
+      "next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
+      turnMenuOn}" aria-label="Turn options" title="Turn options: stop tracking turns">${DOTS}</button>${turnMenuOn?
+      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`
       :`<button class="btn" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${ic("next")}</button>`}
   const at=$("#autoTimer");if(at&&document.activeElement!==at)at.checked=!!state.autoTimer;
   {const ca=$("#concAuto");if(ca)ca.checked=!!ls.get("concAuto",false)}
@@ -5967,7 +6051,9 @@ function renderCall(){
     return;
   }
   const to=(call.to&&call.to.length?call.to:pcs.map(c=>c.id)).map(byId).filter(Boolean),ans=call.answers||{};
-  el.innerHTML=`<span class="strip-label">Roll call</span><b class="calltxt">${esc(call.text)}</b>
+  const nin=to.filter(c=>ans[c.id]!=null).length;
+  el.innerHTML=`<span class="strip-label">Roll call</span><b class="calltxt">${esc(call.text)}</b><small class="callin">${nin===to.length?"all in":
+    `${nin} of ${to.length} in`}</small>
     <span class="callres">${to.map(c=>{const v=ans[c.id];const st=v==null?"wait":call.dc!=null?(v>=call.dc?"pass":"fail"):"done";
       return `<span class="cw ${st}">${esc(c.name)} <b>${v==null?"…":v}</b></span>`}).join("")}</span>
     <span class="spacer"></span><button class="btn" type="button" data-act="callclose">Close roll call</button>`;
@@ -6897,6 +6983,20 @@ function sbEdRead(){   // the text, with the name, AC and HP boxes written into 
   if(/^\d+$/.test(hp))raw=raw.replace(/(\*\*(?:Hit Points|HP)\*\*\s*)\d+/i,`$1${hp}`);
   return {raw,nm,x:parseStatblock(raw)};
 }
+/* the statblock covers the side panel: a line at its foot says what waits underneath, and closes it */
+const sbFollow=()=>ls.get("sbFollow",true);
+function sbUnderHtml(){
+  const call=state.call,pcs=state.list.filter(c=>c.kind==="pc"&&!c.hidden),bits=[];
+  if(call){const to=(call.to&&call.to.length?call.to:pcs.map(c=>c.id)),n=to.filter(id=>(call.answers||{})[id]!=null).length;
+    bits.push(`Roll call ${n} of ${to.length} in`)}
+  const nw=actLog.filter(e=>e.at>logSeen).length;if(nw)bits.push(`${nw} new in Player activity`);
+  return bits.length?`<button type="button" class="sbunder" data-act="sbclose" title="Close the statblock to see them">${ic("next")}<span>Under this: ${
+    bits.map(esc).join(" · ")}</span></button>`:"";
+}
+/* Follow the turn: when a monster with a statblock comes up while the drawer is open, the drawer shows it */
+function sbFollowTurn(){const t=state.turn&&byId(state.turn.id);
+  if(!sbViewId||!sbFollow()||!t||t.id===sbViewId||t.kind==="pc"||!t.sb||!t.sb.raw||t.sb.pc)return;
+  sbViewId=t.id;sbCrit=false;sbSaveAsk=null;sbLoreOn=false}
 function renderSbDrawer(){
   let el=$("#sbDrawer");const c=sbViewId&&byId(sbViewId);
   if(!c||!c.sb||!c.sb.raw){if(el)el.remove();sbViewId=null;document.body.classList.remove("sbopen");return}
@@ -6912,6 +7012,9 @@ function renderSbDrawer(){
         c.id)}" title="Change the sheet, send it to the phone">Edit sheet…</button>`:
         `<button type="button" class="btn sm" data-act="sbedit" title="Change this statblock, or save it as a new monster">Edit…</button>`}<button type="button" class="btn sm" data-act="sbopen" title="Add monsters">+ Add</button><button type="button" class="icon-btn" data-act="sbclose" aria-label="Close the statblock">${
         I.x}</button></span></div>
+    ${c.sb.pc?"":`<label class="sbfollow" title="On a monster's turn, show its statblock here (only while this is open)">
+      <input type="checkbox" data-act="sbfollow"${
+      sbFollow()?" checked":""}> Follow the turn</label>`}
     ${c.sb.pc?"":`<div class="seg2 sbtabs" role="tablist"><button type="button" role="tab" data-act="sbtab0" aria-pressed="${
       !sbLoreOn}">Statblock</button><button type="button" role="tab" data-act="sblore" aria-pressed="${!!sbLoreOn}" title="${loreOf(c)?"Its lore and pictures":
       "A picture for its intro"}">${loreOf(c)?"Lore & picture":"Picture"}</button></div>`}
@@ -6922,13 +7025,14 @@ function renderSbDrawer(){
         ""}"><span>${esc(r.who)} · ${esc(r.what)}</span><b>${r.tot}</b><small>${esc(r.how)}</small>${r.cid?
         `<button type="button" class="btn sm sbapply" data-act="sbapply" data-i="${
         i}" title="Pick who it hits; saves are rolled or asked">Apply to targets…</button>`:""}</div>`).join(""):
-        `<p class="psub">Click a bonus to roll the attack, a damage number to roll damage, a saving throw to ask the players. Only you see these rolls.</p>`}</div></div>
+        (ls.get("sbHintSeen",false)?"":`<p class="psub">Click a bonus to roll the attack, a damage number to roll damage, a saving throw to ask the players. Only you see these rolls.</p>`)}</div></div>
     ${sbSaveAsk?`<div class="sbask"><b>${esc(sbSaveAsk.ab)} save DC ${sbSaveAsk.dc}</b>${sbSaveAsk.n?` <span class="psub">· ${esc(sbSaveAsk.n)}</span>`:""}
       <div class="chipgrid">${pcs.map(p=>`<button type="button" data-act="sbasktgt" data-id="${esc(p.id)}" aria-pressed="${sbSaveAsk.to.includes(p.id)}">${esc(
         p.name)}</button>`).join("")}</div>
       <div class="sbaskb"><button class="btn" type="button" data-act="sbaskno">Cancel</button><button class="btn primary" type="button" data-act="sbasksend" ${
         sbSaveAsk.to.length?"":"disabled"}>Send roll call</button></div></div>`:""}`}
-    <div class="sbbody">${sbLoreOn&&!c.sb.pc?picHtml(c)+(loreOf(c)?loreHtml(c):""):sbRender(c.sb.raw)}</div>`;
+    <div class="sbbody">${sbLoreOn&&!c.sb.pc?picHtml(c)+(loreOf(c)?loreHtml(c):""):sbRender(c.sb.raw)}</div>${sbUnderHtml()}`;
+  if(sbLog.length&&!ls.get("sbHintSeen",false))ls.set("sbHintSeen",true);
   if(sbLoreOn&&loreOf(c)&&!loreCache.has(c.sb.fet.n+"|"+c.sb.fet.s))loreGet(c.sb.fet).then(()=>{if(sbViewId===c.id)renderSbDrawer()});
   if(same&&keep){const b=el.querySelector(".sbbody");if(b)b.scrollTop=keep}
 }
@@ -7158,7 +7262,7 @@ function moveTurn(dir){
     !hid.some(n=>x.t.toLowerCase().includes(n))).map(x=>x.t);
     const pri=x=>/defeated|falls|drops to 0|dies|natural 20|loses Concentration|back up/i.test(x)?0:1;
       state.rsum={r:r0,lines:L.map((x,i)=>[pri(x),i,x]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]).slice(0,3).map(x=>x[2])}}
-  const msgs=dir>0?endMsgs.concat(turnStart(c)):[];
+  const msgs=dir>0?endMsgs.concat(turnStart(c)):[];sbFollowTurn();
   commit();if(msgs.length)toast(msgs.join(" · "),5000);
   const r=document.querySelector(`#roster .row[data-id="${c.id}"]`);r&&r.scrollIntoView({block:"nearest",behavior:"smooth"});
 }
@@ -9954,7 +10058,7 @@ const phoneAgo=c=>{const p=joinInfo&&joinInfo.phones;return p&&p[c.id]!=null?p[c
 const devPcs=()=>sorted().filter(c=>c.kind==="pc");
 function devPill(){const jp=$("#joinPill");if(!jp)return;
   const pcs=devPcs(),on=pcs.filter(c=>{const a=phoneAgo(c);return a!=null&&a<8}).length;
-  jp.innerHTML=`<b>Devices</b><i class="jd${tabletOn()?" on":""}"></i><span>Tablet</span><i class="jd${tvOn()?" on":" off"}"></i><span>TV</span>${pcs.length?
+  jp.innerHTML=`<b>Devices</b><i class="jd${tabletOn()?" on":""}"></i><span>Tablet</span>${pcs.length?
     `<i class="jd${on===pcs.length?" on":on?" some":""}"></i><span>${on}/${pcs.length} phones</span>`:""}`}
 const devBase=()=>String(chosenUrl()||"").replace(/\/players$/,"");
 const devAgo=a=>a==null?"not connected yet":a<8?"connected":a<90?`last seen ${Math.round(a)} s ago`:a<5400?`last seen ${Math.round(a/60)} min ago`:
@@ -10505,7 +10609,11 @@ document.addEventListener("click",e=>{
     case "byhand":{const f=$("#addForm");const on=!f.classList.contains("byhand");f.classList.toggle("byhand",on);
       t.setAttribute("aria-expanded",String(on));break}
     case "tprev": moveTurn(-1);break;
-    case "tend": state.turn=null;commit();toast("Turn tracking stopped");break;
+    case "tend": turnMenuOn=false;state.turn=null;commit();toast("Turn tracking stopped");break;
+    case "turnmenu": turnMenuOn=!turnMenuOn;renderDM();break;
+    case "footmore": footMenu(!$("#footMenu").hidden?false:true);break;
+    case "settingsopen":{if(sbViewId){sbViewId=null;renderDM()}const pn=document.querySelector('.panel[data-k="more"]');if(pn){pn.open=true;
+      pn.scrollIntoView({block:"nearest",behavior:"smooth"});pn.classList.remove("ping");void pn.offsetWidth;pn.classList.add("ping")}break}
     case "sbopen": sbItems=[];libQ="";libArmed=null;sbSheet();setTimeout(()=>{const q=$("#fetQ")||$("#libQ");q&&q.focus()},0);
       fetRefresh().then(fetRedraw);break;
     case "fetpick": fetPick(t.dataset.id);break;
@@ -10518,6 +10626,7 @@ document.addEventListener("click",e=>{
     case "sbview": if(c){sbViewId=sbViewId===c.id?null:c.id;sbCrit=false;sbSaveAsk=null;sbLoreOn=false;
       renderDM()}break;   // 82: a statblock opens on the statblock
     case "sbclose": sbViewId=null;renderDM();break;
+    case "sbfollow": ls.set("sbFollow",!!t.checked);toast(t.checked?"The statblock follows the turn":"The statblock stays on this monster");break;
     case "sbadv": sbAdv=t.dataset.v;renderSbDrawer();break;
     case "sbnocrit": sbCrit=false;renderSbDrawer();break;
     case "sbroll": sbRoll(t);break;
@@ -11050,6 +11159,12 @@ document.addEventListener("submit",e=>{if(e.target.id!=="pAlwForm")return;e.prev
   alwDraft=null;shTouch();renderPSheet();toast(`${d.n}: always prepared (${from})`)});
 document.addEventListener("submit",e=>{if(e.target.id!=="pDsForm")return;e.preventDefault();
   const v=parseInt($("#pDsNum").value,10);if(!(v>=1&&v<=20)){toast("Enter the number on the d20 (1–20)");return}rollDeathSave(v)});
+
+/* the small menus by Next turn and at the end of the bottom bar close when you click elsewhere */
+function footMenu(on){const m=$("#footMenu"),b=$("#footMore");if(!m||!b)return;m.hidden=!on;b.setAttribute("aria-expanded",String(on))}
+document.addEventListener("pointerdown",e=>{if(MODE!=="dm")return;
+  if(turnMenuOn&&!e.target.closest(".turnmore")){turnMenuOn=false;renderDM()}
+  if(!e.target.closest(".footmore"))footMenu(false)},true);
 /* ---------- boot ---------- */
 async function poll(ms,onData){
   let fails=0;
@@ -11098,16 +11213,18 @@ if(MODE==="player"){
     "popup=yes,width=1000,height=680")});
   $("#undoBtn").addEventListener("click",doUndo);$("#redoBtn").addEventListener("click",doRedo);
   $("#lairBtn").addEventListener("click",()=>{state.lair=!state.lair;commit()});
-  $("#endBtn").addEventListener("click",()=>{if(state.ended)state.ended=null;else{endFight();state.turn=null;
-    setTimeout(()=>toast("Combat over · Recap has the summary for your notes",4500),0)}commit()});
-  $("#newFight").addEventListener("click",()=>{
+  /* one button for the fight's end and the next one: End combat, then New combat */
+  const newFight=()=>{footMenu(false);
     if(state.party.length){state.list=[];loadParty()}
     else state.list=state.list.filter(c=>c.kind==="pc").map(c=>Object.assign({},c,{init:null,bloodied:false,down:false,conds:[],insp:c.insp,ds:{s:0,f:0}}));
-    state.ended=null;state.lair=false;state.effects=[];state.call=null;state.timer=null;state.dsAsk=null;state.turn=null;state.fightAt=Date.now();commit()});
+    state.ended=null;state.lair=false;state.effects=[];state.call=null;state.timer=null;state.dsAsk=null;state.turn=null;state.fightAt=Date.now();commit()};
+  $("#endBtn").addEventListener("click",()=>{if(state.ended){newFight();return}endFight();state.turn=null;
+    setTimeout(()=>toast("Combat over · Recap has the summary for your notes",4500),0);commit()});
+  $("#newFight").addEventListener("click",newFight);
   let armed=null;
   $("#wipe").addEventListener("click",e=>{const b=e.currentTarget;
     if(armed){clearTimeout(armed);armed=null;b.classList.remove("armed");b.textContent="Clear all";state.list=[];state.ended=null;state.lair=false;
-      state.effects=[];state.call=null;state.timer=null;state.turn=null;commit();return}
+      state.effects=[];state.call=null;state.timer=null;state.turn=null;footMenu(false);commit();return}
     b.classList.add("armed");b.textContent="Sure? Click again";armed=setTimeout(()=>{armed=null;b.classList.remove("armed");b.textContent="Clear all"},3500)});
   if(!served){$("#fileNote").hidden=false;setSync("off","Not started through the server");$("#preview").hidden=true;snap=JSON.stringify(state)}
   else{

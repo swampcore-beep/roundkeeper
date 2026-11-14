@@ -168,6 +168,20 @@ function sbEdRead(){   // the text, with the name, AC and HP boxes written into 
   if(/^\d+$/.test(hp))raw=raw.replace(/(\*\*(?:Hit Points|HP)\*\*\s*)\d+/i,`$1${hp}`);
   return {raw,nm,x:parseStatblock(raw)};
 }
+/* the statblock covers the side panel: a line at its foot says what waits underneath, and closes it */
+const sbFollow=()=>ls.get("sbFollow",true);
+function sbUnderHtml(){
+  const call=state.call,pcs=state.list.filter(c=>c.kind==="pc"&&!c.hidden),bits=[];
+  if(call){const to=(call.to&&call.to.length?call.to:pcs.map(c=>c.id)),n=to.filter(id=>(call.answers||{})[id]!=null).length;
+    bits.push(`Roll call ${n} of ${to.length} in`)}
+  const nw=actLog.filter(e=>e.at>logSeen).length;if(nw)bits.push(`${nw} new in Player activity`);
+  return bits.length?`<button type="button" class="sbunder" data-act="sbclose" title="Close the statblock to see them">${ic("next")}<span>Under this: ${
+    bits.map(esc).join(" · ")}</span></button>`:"";
+}
+/* Follow the turn: when a monster with a statblock comes up while the drawer is open, the drawer shows it */
+function sbFollowTurn(){const t=state.turn&&byId(state.turn.id);
+  if(!sbViewId||!sbFollow()||!t||t.id===sbViewId||t.kind==="pc"||!t.sb||!t.sb.raw||t.sb.pc)return;
+  sbViewId=t.id;sbCrit=false;sbSaveAsk=null;sbLoreOn=false}
 function renderSbDrawer(){
   let el=$("#sbDrawer");const c=sbViewId&&byId(sbViewId);
   if(!c||!c.sb||!c.sb.raw){if(el)el.remove();sbViewId=null;document.body.classList.remove("sbopen");return}
@@ -183,6 +197,9 @@ function renderSbDrawer(){
         c.id)}" title="Change the sheet, send it to the phone">Edit sheet…</button>`:
         `<button type="button" class="btn sm" data-act="sbedit" title="Change this statblock, or save it as a new monster">Edit…</button>`}<button type="button" class="btn sm" data-act="sbopen" title="Add monsters">+ Add</button><button type="button" class="icon-btn" data-act="sbclose" aria-label="Close the statblock">${
         I.x}</button></span></div>
+    ${c.sb.pc?"":`<label class="sbfollow" title="On a monster's turn, show its statblock here (only while this is open)">
+      <input type="checkbox" data-act="sbfollow"${
+      sbFollow()?" checked":""}> Follow the turn</label>`}
     ${c.sb.pc?"":`<div class="seg2 sbtabs" role="tablist"><button type="button" role="tab" data-act="sbtab0" aria-pressed="${
       !sbLoreOn}">Statblock</button><button type="button" role="tab" data-act="sblore" aria-pressed="${!!sbLoreOn}" title="${loreOf(c)?"Its lore and pictures":
       "A picture for its intro"}">${loreOf(c)?"Lore & picture":"Picture"}</button></div>`}
@@ -193,13 +210,14 @@ function renderSbDrawer(){
         ""}"><span>${esc(r.who)} · ${esc(r.what)}</span><b>${r.tot}</b><small>${esc(r.how)}</small>${r.cid?
         `<button type="button" class="btn sm sbapply" data-act="sbapply" data-i="${
         i}" title="Pick who it hits; saves are rolled or asked">Apply to targets…</button>`:""}</div>`).join(""):
-        `<p class="psub">Click a bonus to roll the attack, a damage number to roll damage, a saving throw to ask the players. Only you see these rolls.</p>`}</div></div>
+        (ls.get("sbHintSeen",false)?"":`<p class="psub">Click a bonus to roll the attack, a damage number to roll damage, a saving throw to ask the players. Only you see these rolls.</p>`)}</div></div>
     ${sbSaveAsk?`<div class="sbask"><b>${esc(sbSaveAsk.ab)} save DC ${sbSaveAsk.dc}</b>${sbSaveAsk.n?` <span class="psub">· ${esc(sbSaveAsk.n)}</span>`:""}
       <div class="chipgrid">${pcs.map(p=>`<button type="button" data-act="sbasktgt" data-id="${esc(p.id)}" aria-pressed="${sbSaveAsk.to.includes(p.id)}">${esc(
         p.name)}</button>`).join("")}</div>
       <div class="sbaskb"><button class="btn" type="button" data-act="sbaskno">Cancel</button><button class="btn primary" type="button" data-act="sbasksend" ${
         sbSaveAsk.to.length?"":"disabled"}>Send roll call</button></div></div>`:""}`}
-    <div class="sbbody">${sbLoreOn&&!c.sb.pc?picHtml(c)+(loreOf(c)?loreHtml(c):""):sbRender(c.sb.raw)}</div>`;
+    <div class="sbbody">${sbLoreOn&&!c.sb.pc?picHtml(c)+(loreOf(c)?loreHtml(c):""):sbRender(c.sb.raw)}</div>${sbUnderHtml()}`;
+  if(sbLog.length&&!ls.get("sbHintSeen",false))ls.set("sbHintSeen",true);
   if(sbLoreOn&&loreOf(c)&&!loreCache.has(c.sb.fet.n+"|"+c.sb.fet.s))loreGet(c.sb.fet).then(()=>{if(sbViewId===c.id)renderSbDrawer()});
   if(same&&keep){const b=el.querySelector(".sbbody");if(b)b.scrollTop=keep}
 }

@@ -204,7 +204,11 @@ document.addEventListener("click",e=>{
     case "byhand":{const f=$("#addForm");const on=!f.classList.contains("byhand");f.classList.toggle("byhand",on);
       t.setAttribute("aria-expanded",String(on));break}
     case "tprev": moveTurn(-1);break;
-    case "tend": state.turn=null;commit();toast("Turn tracking stopped");break;
+    case "tend": turnMenuOn=false;state.turn=null;commit();toast("Turn tracking stopped");break;
+    case "turnmenu": turnMenuOn=!turnMenuOn;renderDM();break;
+    case "footmore": footMenu(!$("#footMenu").hidden?false:true);break;
+    case "settingsopen":{if(sbViewId){sbViewId=null;renderDM()}const pn=document.querySelector('.panel[data-k="more"]');if(pn){pn.open=true;
+      pn.scrollIntoView({block:"nearest",behavior:"smooth"});pn.classList.remove("ping");void pn.offsetWidth;pn.classList.add("ping")}break}
     case "sbopen": sbItems=[];libQ="";libArmed=null;sbSheet();setTimeout(()=>{const q=$("#fetQ")||$("#libQ");q&&q.focus()},0);
       fetRefresh().then(fetRedraw);break;
     case "fetpick": fetPick(t.dataset.id);break;
@@ -217,6 +221,7 @@ document.addEventListener("click",e=>{
     case "sbview": if(c){sbViewId=sbViewId===c.id?null:c.id;sbCrit=false;sbSaveAsk=null;sbLoreOn=false;
       renderDM()}break;   // 82: a statblock opens on the statblock
     case "sbclose": sbViewId=null;renderDM();break;
+    case "sbfollow": ls.set("sbFollow",!!t.checked);toast(t.checked?"The statblock follows the turn":"The statblock stays on this monster");break;
     case "sbadv": sbAdv=t.dataset.v;renderSbDrawer();break;
     case "sbnocrit": sbCrit=false;renderSbDrawer();break;
     case "sbroll": sbRoll(t);break;
@@ -749,3 +754,9 @@ document.addEventListener("submit",e=>{if(e.target.id!=="pAlwForm")return;e.prev
   alwDraft=null;shTouch();renderPSheet();toast(`${d.n}: always prepared (${from})`)});
 document.addEventListener("submit",e=>{if(e.target.id!=="pDsForm")return;e.preventDefault();
   const v=parseInt($("#pDsNum").value,10);if(!(v>=1&&v<=20)){toast("Enter the number on the d20 (1–20)");return}rollDeathSave(v)});
+
+/* the small menus by Next turn and at the end of the bottom bar close when you click elsewhere */
+function footMenu(on){const m=$("#footMenu"),b=$("#footMore");if(!m||!b)return;m.hidden=!on;b.setAttribute("aria-expanded",String(on))}
+document.addEventListener("pointerdown",e=>{if(MODE!=="dm")return;
+  if(turnMenuOn&&!e.target.closest(".turnmore")){turnMenuOn=false;renderDM()}
+  if(!e.target.closest(".footmore"))footMenu(false)},true);

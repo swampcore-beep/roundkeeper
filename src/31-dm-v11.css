@@ -1,0 +1,72 @@
+/* ---------- DM screen, v1.1 layout: grouped header, quieter rows, grouped bottom bar ---------- */
+/* header: the fight on the left (Round · ← · Next turn · ⋯), then Rules, the table's screens, undo/redo and settings */
+html:root .brand{margin-right:10px}
+.barsp{flex:1 1 0}
+.qkbtn kbd{display:none}
+.hgroup.tablegrp{gap:4px}
+html:root .atmobtn{display:inline-flex;align-items:center;gap:7px;max-width:260px}
+.atmobtn>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tvbtn small{font-size:.8rem;font-weight:600;color:var(--muted)}
+.turnmore,.footmore{position:relative;display:inline-flex}
+.turnmore .rmenu{top:calc(100% + 6px);right:0;min-width:210px}
+.footmore .rmenu{top:auto;bottom:calc(100% + 8px);right:0;min-width:240px}
+.rmenu small{font-weight:500;color:var(--muted);font-size:.78rem}
+
+/* rows: HP, AC and the state buttons sit in fixed columns, so they line up from row to row */
+#roster .tools>.hpw{width:128px;min-height:38px;box-sizing:border-box}
+html:root #roster .hpw.hpnone{flex-direction:row;align-items:center;gap:6px;border:1px dashed var(--line);background:transparent;cursor:default}
+#roster .hpw.hpnone .hpl{color:var(--muted)}
+#roster .hpw.hpnone i{font-style:normal;font-size:.78rem;color:var(--muted);white-space:nowrap}
+#roster .tools .tog[data-act=down]{min-width:64px;justify-content:center}
+#roster .tools .tog.blood{min-width:96px;justify-content:center}
+/* Bloodied and Down stay quiet until they are on */
+#roster .tools .tog.blood[aria-pressed=false],#roster .tools .tog[data-act=down][aria-pressed=false]{border-color:transparent;background:transparent;
+  color:var(--muted)}
+#roster .row:hover .tools .tog[aria-pressed=false],#roster .row.sel .tools .tog[aria-pressed=false],#roster .tools .tog[aria-pressed=false]:focus-visible{
+  border-color:var(--line)}
+#roster .tools .tog[data-act=down][aria-pressed=true]{color:#fff;background:var(--fail);border-color:var(--fail)}
+/* legendary counters readable at a glance (purple: only you see them) */
+html:root #roster .row .sbline{font-size:.8rem}
+html:root #roster .sbc{color:var(--fg);border-color:color-mix(in srgb,var(--arcane) 45%,var(--line))}
+html:root #roster .sbc i{color:var(--fg)}
+html:root .sbpip{width:12px;height:12px}
+/* a bit more contrast for the small text beside the laptop */
+#roster .typeline{font-size:.78rem}
+.le .lt{color:var(--muted)}
+
+/* colours: gold only for "now" and the main action; effects get a quiet tone of their own */
+#roster .cond.eff{--eff:#9fb0d0;--eff-ink:var(--fg)}
+html[data-dm=light] #roster .cond.eff{color:var(--fg)!important;background:#eef1f7!important;border-color:#a9b4cc!important}
+html:root #dm .quick .sbbtn{background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--fg);
+  border-color:color-mix(in srgb,var(--accent) 65%,var(--line))}
+html:root #dm .quick .sbbtn small{color:var(--muted)!important}
+
+/* bottom bar: this turn | the party and the recap | players can edit · end combat · ⋯ */
+html:root .dmmain>.foot .acts{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fgrp{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fgrp+.fgrp{padding-left:10px;border-left:1px solid var(--line)}
+.fgrp.fend{margin-left:auto;border-left:0;padding-left:0}
+html:root .dmmain>.foot #wipe{margin-left:0}html:root .dmmain>.foot #wipe::before{display:none}
+#endBtn:not(.primary){color:var(--enemy);border-color:color-mix(in srgb,var(--enemy) 45%,var(--line))}
+/* a toggle that looks like a tick box: Players can edit, Light screen */
+.btn.pebox{display:inline-flex;align-items:center;gap:8px}
+.btn.pebox::before{content:"";width:16px;height:16px;border:2px solid var(--muted);border-radius:4px;box-sizing:border-box;display:inline-grid;
+  place-items:center;font-size:11px;line-height:1;font-weight:900}
+.btn.pebox[aria-pressed=true]{background:var(--panel);border-color:var(--line);color:var(--fg)}
+.btn.pebox[aria-pressed=true]::before{content:"✓";background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.setrow{display:flex;align-items:center;gap:8px}
+
+/* the statblock drawer: follow the turn, and a line for what waits underneath */
+.sbfollow{display:flex;align-items:center;gap:8px;padding:8px 16px 0;font-size:.86rem;color:var(--muted);cursor:pointer}
+.sbfollow input{width:16px;height:16px;margin:0}
+.sbunder{margin-top:auto;display:flex;align-items:center;gap:8px;padding:10px 16px;border:0;border-top:1px solid var(--line);background:var(--panel2);
+  color:var(--fg);font:inherit;font-size:.86rem;text-align:left;cursor:pointer;flex:none}
+.sbunder:hover{background:color-mix(in srgb,var(--accent) 10%,var(--panel2))}
+.callin{color:var(--muted);font-size:.8rem;font-weight:700}
+#sbDrawer .sbbody{flex:1 1 auto;min-height:0}
+/* in the drawer the picked tab and the picked roll mode are marked, not gold */
+#sbDrawer .seg2 button[aria-pressed=true]{background:var(--panel2);color:var(--fg);border-color:var(--fg);box-shadow:none}
+/* who rolls in a roll call: player blue, not gold */
+#callForm .callpick button[aria-pressed=true]{background:color-mix(in srgb,var(--pc) 16%,var(--panel2));border-color:var(--pc);color:var(--fg)}
+/* the light screen's soft row shadow hid the frame of the row on its turn */
+html[data-dm=light] #roster .row.turn{box-shadow:0 0 0 2px var(--accent),0 0 18px color-mix(in srgb,var(--accent) 25%,transparent)}
