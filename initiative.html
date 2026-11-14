@@ -2579,6 +2579,33 @@ html:root .dmmain>.foot .fgrp .btn:not(.primary):not(#endBtn){background:transpa
 html:root .dmmain>.foot .fgrp .btn:not(.primary):not(#endBtn):hover{background:var(--panel2)}
 html:root .dmmain>.foot .fgrp .icon-btn{border-color:transparent}
 .side .tools2.side-tools{border-top:0;padding-top:0}
+/* ---------- DM screen, 1.1.1: surfaces, so the header, the order, the side and the bottom bar don't melt into one plane ---------- */
+/* three steps: the page (--bg), bars a shade up, the order and the side panels on --panel */
+#dm{--dmbar:color-mix(in srgb,var(--panel) 62%,var(--bg))}
+html:root #dm>.bar{background:var(--dmbar);box-shadow:0 1px 0 color-mix(in srgb,#000 22%,transparent)}
+html[data-dm=light] #dm>.bar{box-shadow:0 1px 0 color-mix(in srgb,var(--line) 60%,transparent)}
+
+/* the order sits on a panel like the tools beside it */
+html:root #roster.roster{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:4px 10px}
+html:root #roster.roster:empty{display:none}
+html:root #roster .row:last-child{border-bottom:0}
+html:root #roster .row.turn{margin:4px -4px}
+
+/* the bottom bar is a toolbar of its own, and its buttons look like buttons */
+html:root .dmmain>.foot{background:color-mix(in srgb,var(--dmbar) 94%,transparent);border:1px solid var(--line);border-radius:14px;
+  padding:8px 10px;margin-bottom:2px}
+html:root .dmmain>.foot .fgrp .btn:not(.primary):not(#endBtn):not(.pebox){background:color-mix(in srgb,var(--fg) 6%,transparent);
+  border-color:transparent}
+html:root .dmmain>.foot .fgrp .btn:not(.primary):not(#endBtn):not(.pebox):hover{background:var(--panel2);border-color:var(--line)}
+html:root .dmmain>.foot .fgrp .btn.pebox{background:transparent;border-color:transparent}
+
+/* header: the table's screens and Rules read as buttons too, without full boxes */
+html:root #dm>.bar .btn:not(.primary):not(.rnd){background:color-mix(in srgb,var(--fg) 5%,transparent)}
+html:root #dm>.bar .btn:not(.primary):not(.rnd):hover,html:root #dm>.bar .btn[aria-expanded="true"]{background:var(--panel2)}
+
+/* Bloodied, Down and 0 HP: quiet, but plainly something to press */
+html:root #roster .tools .tog.blood[aria-pressed=false],html:root #roster .tools .tog[data-act=down][aria-pressed=false]{
+  background:color-mix(in srgb,var(--fg) 5%,transparent)}
 </style>
 </head>
 <body>
