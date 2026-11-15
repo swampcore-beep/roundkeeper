@@ -2606,6 +2606,47 @@ html:root #dm>.bar .btn:not(.primary):not(.rnd):hover,html:root #dm>.bar .btn[ar
 /* Bloodied, Down and 0 HP: quiet, but plainly something to press */
 html:root #roster .tools .tog.blood[aria-pressed=false],html:root #roster .tools .tog[data-act=down][aria-pressed=false]{
   background:color-mix(in srgb,var(--fg) 5%,transparent)}
+/* ---------- DM screen, 1.1.2: fitting a laptop (statblock open, narrower windows) and a tidier Settings ---------- */
+/* effects never break over two lines; with the statblock open (or a narrow window) the caster's name goes, the title keeps it */
+html:root #roster .cond.eff{white-space:nowrap}
+body.sbopen #roster .effby{display:none}
+@media (max-width:1200px){html:root #roster .effby{display:none}}
+
+/* the statblock link is just the book: the creature type after it stays readable */
+html:root #roster .sblink svg{width:14px;height:14px}
+html:root #roster .sblink{padding:1px 2px;border-radius:4px}
+
+/* header: the right side moves as one block, and shortens before it has to wrap */
+.barright{display:flex;align-items:center;gap:12px;flex:0 0 auto;margin-left:auto;flex-wrap:nowrap}
+@media (max-width:1320px){
+  .qkbtn .qkl,.atmobtn>span,.tvbtn small{display:none}
+  html:root .barright{gap:8px}
+  html:root .brand{margin-right:2px}
+}
+
+/* the bottom bar covers what scrolls under it, and keeps a little air above */
+html:root .dmmain>.foot{background:var(--dmbar);margin-top:10px}
+
+/* Settings and files: plain sentences in three groups, not small capitals */
+html:root .setpanel{gap:8px}
+.setpanel .sethead{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:8px;
+  padding-bottom:4px;border-bottom:1px solid var(--line)}
+.setpanel .sethead:first-child{margin-top:0}
+.setpanel .setopt{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--fg);line-height:1.3;cursor:pointer;flex-wrap:wrap}
+.setpanel .setopt small{color:var(--muted);font-size:.8rem;flex-basis:100%;padding-left:24px;margin-top:-2px}
+.setpanel .setopt input[type=checkbox]{width:16px;height:16px;margin:0;accent-color:var(--accent);flex:0 0 auto}
+.setpanel .setopt .field{padding:5px 8px}
+html:root .setpanel .btn.pebox,html:root .setpanel .btn.pebox[aria-pressed=true]{background:none;border:0;padding:0;min-height:0;font-size:.9rem;
+  font-weight:400;color:var(--fg);box-shadow:none}
+.setpanel .acts{display:flex;flex-wrap:wrap;gap:6px}
+html:root .setpanel .acts .btn{padding:6px 11px;font-size:.85rem;min-height:0}
+
+/* in a narrow chips column the hidden "+" no longer pushes a chip onto a second line: it floats over the end on hover */
+body.sbopen #roster .chips,#roster .chips{position:relative}
+body.sbopen #roster .chips:has(.cond:not(.addc)) .addc{position:absolute;right:0;top:50%;transform:translateY(-50%);background:var(--panel2);
+  box-shadow:-6px 0 8px var(--panel)}
+@media (max-width:1200px){#roster .chips:has(.cond:not(.addc)) .addc{position:absolute;right:0;top:50%;transform:translateY(-50%);
+  background:var(--panel2);box-shadow:-6px 0 8px var(--panel)}}
 </style>
 </head>
 <body>
@@ -2617,7 +2658,8 @@ html:root #roster .tools .tog.blood[aria-pressed=false],html:root #roster .tools
       <div class="sync" id="sync" data-s="off"><i></i><span>Connecting…</span></div>
       <div class="turnbox" id="turnBox"></div>
       <span class="barsp" aria-hidden="true"></span>
-      <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Rules</button>
+      <div class="barright">
+      <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)" aria-label="Rules"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span class="qkl">Rules</span></button>
       <button class="btn tcardpill" id="tcardPill" type="button" data-act="tcardoff" hidden></button>
       <div class="hgroup tablegrp">
         <button class="btn joinpill" id="joinPill" type="button" data-act="devices" title="Devices: who is connected, the addresses and the QR code"></button>
@@ -2630,6 +2672,7 @@ html:root #roster .tools .tog.blood[aria-pressed=false],html:root #roster .tools
         <button class="icon-btn lg" id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62A7.95 7.95 0 0112.5 10c3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 10.53 17.15 8 12.5 8z"/></svg></button>
         <button class="icon-btn lg" id="redoBtn" type="button" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg viewBox="0 0 24 24"><path d="M11.5 8c2.65 0 5.05 1 6.9 2.6L22 7v9h-9l3.62-3.62A7.95 7.95 0 0011.5 10c-3.54 0-6.55 2.31-7.6 5.5l-2.37-.78C2.92 10.53 6.85 8 11.5 8z"/></svg></button>
         <button class="icon-btn lg" id="setBtn" type="button" data-act="settingsopen" title="Settings and files" aria-label="Settings and files"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
       </div>
     </div>
     <div class="addr-row" id="addr" hidden></div>
@@ -2682,19 +2725,24 @@ html:root #roster .tools .tog.blood[aria-pressed=false],html:root #roster .tools
     <details class="panel" data-k="party" open><summary>Party</summary><section class="strip party" id="party" aria-label="Party"></section><div id="partyTbl"></div></details>
     <details class="panel" data-k="enc"><summary>Encounters</summary><section class="strip enc" id="enc" aria-label="Saved encounters"></section></details>
     <details class="panel" data-k="more"><summary>Settings and files</summary>
-    <div class="foot tools2 side-tools">
-      <label class="scene-pick" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="30" style="width:5em"> s</label>
-      <label class="scene-pick"><input type="checkbox" id="autoTimer"> start it on every player's turn</label>
-      <label class="scene-pick" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> roll monsters' Concentration saves for me (otherwise the app asks)</label>
+    <div class="foot tools2 side-tools setpanel">
+      <div class="sethead">During combat</div>
+      <label class="setopt" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="30" style="width:5em"> seconds</label>
+      <label class="setopt"><input type="checkbox" id="autoTimer"> Start the hourglass on every player's turn</label>
+      <label class="setopt" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> Roll monsters' Concentration saves for me <small>otherwise the app asks</small></label>
+      <div class="sethead">This laptop</div>
       <div class="setrow"><button class="btn pebox" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button></div>
       <div class="acts">
-        <button class="btn" type="button" data-act="keys">Shortcuts (?)</button>
-        <button class="btn" type="button" data-act="dmdev">DM devices</button>
-        <button class="btn" type="button" data-act="gdata">Game data</button>
-        <button class="btn" type="button" data-act="pics">Pictures</button>
-        <button class="btn" type="button" data-act="updates">Updates</button>
-        <button class="btn" type="button" data-act="export">Export</button>
-        <label class="btn" for="importFile" tabindex="0">Import</label><input type="file" id="importFile" accept="application/json,.json" hidden>
+        <button class="btn sm" type="button" data-act="dmdev">DM devices</button>
+        <button class="btn sm" type="button" data-act="updates">Updates</button>
+        <button class="btn sm" type="button" data-act="keys">Shortcuts (?)</button>
+      </div>
+      <div class="sethead">Data and files</div>
+      <div class="acts">
+        <button class="btn sm" type="button" data-act="gdata">Game data</button>
+        <button class="btn sm" type="button" data-act="pics">Pictures</button>
+        <button class="btn sm" type="button" data-act="export">Export</button>
+        <label class="btn sm" for="importFile" tabindex="0">Import</label><input type="file" id="importFile" accept="application/json,.json" hidden>
       </div>
     </div>
     </details>
@@ -6028,9 +6076,9 @@ function renderDM(){
       const cd=cdurOf(c,n);return `<button type="button" class="cond" data-act="rmcond" data-j="${j}" title="Remove${cd?" · "+esc(cdurTag(cd)):
         ""}">${esc(n)}${cd?`<i class="cdurb">${esc(cdurTag(cd))}</i>`:""}</button>`}).join("")
       +state.effects.filter(e=>e.targets.includes(c.id)).map(e=>{const by=byId(e.by);
-        return `<button type="button" class="cond eff" data-act="effrm" data-e="${esc(e.id)}" title="Remove effect from all targets">
-          <i class="eg" aria-hidden="true">✦</i>${esc(e.name)}${by?
-        ` · ${esc(by.name)}`:""}${effN(e)}</button>`}).join("");
+        return `<button type="button" class="cond eff" data-act="effrm" data-e="${esc(e.id)}" title="${esc(e.name)}${by?` from ${esc(by.name)}`:
+          ""} · click to remove it from all targets"><i class="eg" aria-hidden="true">✦</i>${esc(e.name)}${by?
+        `<span class="effby"> · ${esc(by.name)}</span>`:""}${effN(e)}</button>`}).join("");
     const ds=dsOf(c);
     const dsHtml=c.kind==="pc"&&c.down?`<span class="ds">
       <span class="grp">${[0,1,2].map(k=>`<button type="button" class="pip s${ds.s>k?" on":""}" data-act="ds" data-k="s" data-i="${k}" aria-label="Success ${k+
@@ -6044,7 +6092,7 @@ function renderDM(){
     const isTurn=!!(state.turn&&state.turn.id===c.id);
     const typeline=[isTurn?`<b class="nowtag">now</b>`:c.id===nextId?`<span class="nexttag">next</span>`:"",
       c.sb&&c.sb.raw?`<button type="button" class="sblink${sbViewId===c.id?" on":""}" data-act="sbview" title="${c.sb.pc?
-      "Open the character sheet":"Open the statblock"}">${I.book||"📜"} ${c.sb.pc?"Sheet":"Statblock"}</button>`:"",c.boss?
+      "Open the character sheet":"Open the statblock"}" aria-label="${c.sb.pc?"Sheet":"Statblock"}">${I.book||"📜"}</button>`:"",c.boss?
       `<span class="crown">${I.crown}Boss${c.rim?` · ${esc((RIMS.find(r=>r[0]===c.rim)||["",""])[1])}`:""}</span>`:"",typ?esc(typ):"",c.boss&&c.title?
       `<i>${esc(c.title)}</i>`:"",c.kind==="pc"?passivesLine(c):"",c.kind==="pc"&&c.psimple?
       `<span class="simpletag" title="${esc(c.name)} uses the simple phone: just HP and what you send">simple phone</span>`:""].filter(Boolean).join(" · ");

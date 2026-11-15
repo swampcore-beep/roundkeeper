@@ -1,0 +1,41 @@
+/* ---------- DM screen, 1.1.2: fitting a laptop (statblock open, narrower windows) and a tidier Settings ---------- */
+/* effects never break over two lines; with the statblock open (or a narrow window) the caster's name goes, the title keeps it */
+html:root #roster .cond.eff{white-space:nowrap}
+body.sbopen #roster .effby{display:none}
+@media (max-width:1200px){html:root #roster .effby{display:none}}
+
+/* the statblock link is just the book: the creature type after it stays readable */
+html:root #roster .sblink svg{width:14px;height:14px}
+html:root #roster .sblink{padding:1px 2px;border-radius:4px}
+
+/* header: the right side moves as one block, and shortens before it has to wrap */
+.barright{display:flex;align-items:center;gap:12px;flex:0 0 auto;margin-left:auto;flex-wrap:nowrap}
+@media (max-width:1320px){
+  .qkbtn .qkl,.atmobtn>span,.tvbtn small{display:none}
+  html:root .barright{gap:8px}
+  html:root .brand{margin-right:2px}
+}
+
+/* the bottom bar covers what scrolls under it, and keeps a little air above */
+html:root .dmmain>.foot{background:var(--dmbar);margin-top:10px}
+
+/* Settings and files: plain sentences in three groups, not small capitals */
+html:root .setpanel{gap:8px}
+.setpanel .sethead{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:8px;
+  padding-bottom:4px;border-bottom:1px solid var(--line)}
+.setpanel .sethead:first-child{margin-top:0}
+.setpanel .setopt{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--fg);line-height:1.3;cursor:pointer;flex-wrap:wrap}
+.setpanel .setopt small{color:var(--muted);font-size:.8rem;flex-basis:100%;padding-left:24px;margin-top:-2px}
+.setpanel .setopt input[type=checkbox]{width:16px;height:16px;margin:0;accent-color:var(--accent);flex:0 0 auto}
+.setpanel .setopt .field{padding:5px 8px}
+html:root .setpanel .btn.pebox,html:root .setpanel .btn.pebox[aria-pressed=true]{background:none;border:0;padding:0;min-height:0;font-size:.9rem;
+  font-weight:400;color:var(--fg);box-shadow:none}
+.setpanel .acts{display:flex;flex-wrap:wrap;gap:6px}
+html:root .setpanel .acts .btn{padding:6px 11px;font-size:.85rem;min-height:0}
+
+/* in a narrow chips column the hidden "+" no longer pushes a chip onto a second line: it floats over the end on hover */
+body.sbopen #roster .chips,#roster .chips{position:relative}
+body.sbopen #roster .chips:has(.cond:not(.addc)) .addc{position:absolute;right:0;top:50%;transform:translateY(-50%);background:var(--panel2);
+  box-shadow:-6px 0 8px var(--panel)}
+@media (max-width:1200px){#roster .chips:has(.cond:not(.addc)) .addc{position:absolute;right:0;top:50%;transform:translateY(-50%);
+  background:var(--panel2);box-shadow:-6px 0 8px var(--panel)}}

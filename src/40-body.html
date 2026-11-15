@@ -9,7 +9,8 @@
       <div class="sync" id="sync" data-s="off"><i></i><span>Connecting…</span></div>
       <div class="turnbox" id="turnBox"></div>
       <span class="barsp" aria-hidden="true"></span>
-      <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Rules</button>
+      <div class="barright">
+      <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)" aria-label="Rules"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span class="qkl">Rules</span></button>
       <button class="btn tcardpill" id="tcardPill" type="button" data-act="tcardoff" hidden></button>
       <div class="hgroup tablegrp">
         <button class="btn joinpill" id="joinPill" type="button" data-act="devices" title="Devices: who is connected, the addresses and the QR code"></button>
@@ -22,6 +23,7 @@
         <button class="icon-btn lg" id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62A7.95 7.95 0 0112.5 10c3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 10.53 17.15 8 12.5 8z"/></svg></button>
         <button class="icon-btn lg" id="redoBtn" type="button" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg viewBox="0 0 24 24"><path d="M11.5 8c2.65 0 5.05 1 6.9 2.6L22 7v9h-9l3.62-3.62A7.95 7.95 0 0011.5 10c-3.54 0-6.55 2.31-7.6 5.5l-2.37-.78C2.92 10.53 6.85 8 11.5 8z"/></svg></button>
         <button class="icon-btn lg" id="setBtn" type="button" data-act="settingsopen" title="Settings and files" aria-label="Settings and files"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
       </div>
     </div>
     <div class="addr-row" id="addr" hidden></div>
@@ -74,19 +76,24 @@
     <details class="panel" data-k="party" open><summary>Party</summary><section class="strip party" id="party" aria-label="Party"></section><div id="partyTbl"></div></details>
     <details class="panel" data-k="enc"><summary>Encounters</summary><section class="strip enc" id="enc" aria-label="Saved encounters"></section></details>
     <details class="panel" data-k="more"><summary>Settings and files</summary>
-    <div class="foot tools2 side-tools">
-      <label class="scene-pick" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="30" style="width:5em"> s</label>
-      <label class="scene-pick"><input type="checkbox" id="autoTimer"> start it on every player's turn</label>
-      <label class="scene-pick" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> roll monsters' Concentration saves for me (otherwise the app asks)</label>
+    <div class="foot tools2 side-tools setpanel">
+      <div class="sethead">During combat</div>
+      <label class="setopt" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="30" style="width:5em"> seconds</label>
+      <label class="setopt"><input type="checkbox" id="autoTimer"> Start the hourglass on every player's turn</label>
+      <label class="setopt" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> Roll monsters' Concentration saves for me <small>otherwise the app asks</small></label>
+      <div class="sethead">This laptop</div>
       <div class="setrow"><button class="btn pebox" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button></div>
       <div class="acts">
-        <button class="btn" type="button" data-act="keys">Shortcuts (?)</button>
-        <button class="btn" type="button" data-act="dmdev">DM devices</button>
-        <button class="btn" type="button" data-act="gdata">Game data</button>
-        <button class="btn" type="button" data-act="pics">Pictures</button>
-        <button class="btn" type="button" data-act="updates">Updates</button>
-        <button class="btn" type="button" data-act="export">Export</button>
-        <label class="btn" for="importFile" tabindex="0">Import</label><input type="file" id="importFile" accept="application/json,.json" hidden>
+        <button class="btn sm" type="button" data-act="dmdev">DM devices</button>
+        <button class="btn sm" type="button" data-act="updates">Updates</button>
+        <button class="btn sm" type="button" data-act="keys">Shortcuts (?)</button>
+      </div>
+      <div class="sethead">Data and files</div>
+      <div class="acts">
+        <button class="btn sm" type="button" data-act="gdata">Game data</button>
+        <button class="btn sm" type="button" data-act="pics">Pictures</button>
+        <button class="btn sm" type="button" data-act="export">Export</button>
+        <label class="btn sm" for="importFile" tabindex="0">Import</label><input type="file" id="importFile" accept="application/json,.json" hidden>
       </div>
     </div>
     </details>
