@@ -33,7 +33,7 @@ https://github.com/user-attachments/assets/75f9911a-5173-49b4-b7d1-d81dae34e699
 
 **Three short tours, under a minute each:** [the DM's laptop](#the-dms-laptop) · [the tablet and the TV](#the-tablet-and-the-tv) · [the players' phones](#on-players-phones)
 
-> **New in 1.1: a calmer DM screen.** The row whose turn it is stands out at a glance, and the statblock can follow the turn by itself. Tools you use every round stay in view; the rest moved into small ⋯ menus and Settings. [What changed](../../releases/tag/v1.1.0)
+> **New in 1.2: a calmer DM screen that fits a laptop.** The row whose turn it is stands out at a glance, and the statblock can follow the turn by itself. Tools you use every round stay in view; the rest moved into small ⋯ menus and Settings. One download for each computer: Windows, Mac or Linux. [What changed](../../releases/tag/v1.2.0)
 
 ---
 
