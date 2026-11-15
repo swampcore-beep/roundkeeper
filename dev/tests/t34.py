@@ -14,7 +14,7 @@ F='http://127.0.0.1:8799'
 def release(tag,**k):
     r={"tag_name":tag,"html_url":f"https://github.com/swampcore-beep/roundkeeper/releases/tag/{tag}","published_at":"2026-11-12T10:00:00Z",
        "body":"TV shows roll calls as cards.\n<b>not bold</b> & more","assets":[{"name":n,"browser_download_url":f"{F}/dl/{n}","size":8_000_000}
-       for n in ("Roundkeeper-windows.zip","Roundkeeper-mac.zip","Roundkeeper-linux.zip","Roundkeeper-python.zip","SHA256SUMS.txt")]}
+       for n in ("Roundkeeper-windows.zip","Roundkeeper-mac.zip","Roundkeeper-linux.zip","SHA256SUMS.txt")]}
     r.update(k);return r
 G={"mode":"json","code":200,"data":release("v1.0.8"),"hits":0}
 class Fake(BaseHTTPRequestHandler):
@@ -32,7 +32,7 @@ async def main():
     # ---- the server ----
     code,d=check()
     chk("asks the release and sees a newer one",code==200 and d.get('current')=='v1.0.7' and d.get('latest')=='v1.0.8' and d.get('newer') is True,d)
-    plat=d.get('platform');want={'linux':'Roundkeeper-linux.zip','python':'Roundkeeper-python.zip'}.get(plat)
+    plat=d.get('platform');want={'linux':'Roundkeeper-linux.zip'}.get(plat)
     chk("picks the download for this kind of program",want and (d.get('asset') or {}).get('name')==want and d['asset']['url']==f"{F}/dl/{want}",(plat,d.get('asset')))
     chk("release page and notes",d.get('page','').startswith('https://github.com/') and 'roll calls' in d.get('notes','') and d.get('published','').startswith('2026-11-12'),d)
     chk("not a development build",d.get('dev') is False and d.get('error') is None)
@@ -42,7 +42,7 @@ async def main():
     for tag,new in (("v1.0.7",False),("v1.0.6",False),("v1.0.10",True),("1.1",True),("v2",True),("nightly",False)):
         G["data"]=release(tag);code,d=check();chk(f"{tag} is {'newer' if new else 'not newer'}",d.get('newer') is new and d.get('error') is None,d.get('newer'))
     G["data"]=release("v1.0.8",html_url="https://evil.example/x",assets=[{"name":"Roundkeeper-linux.zip","browser_download_url":"https://evil.example/a.zip"},
-        {"name":"Roundkeeper-python.zip","browser_download_url":"https://evil.example/b.zip"}])
+        {"name":"Roundkeeper-mac.zip","browser_download_url":"https://evil.example/b.zip"}])
     code,d=check();chk("links that aren't GitHub's are dropped",d.get('page') is None and d.get('asset') is None and d.get('newer') is True,d)
     for mode,c,err in (("json",403,"limit"),("json",429,"limit"),("json",500,"bad"),("html",200,"bad"),("drop",200,"offline")):
         G.update(mode=mode,code=c,data=release("v1.0.8"));code,d=check()
@@ -79,7 +79,7 @@ async def main():
         # every state of the window
         for name,info,want_txt in (("latest",{"current":"v1.0.8","latest":"v1.0.8","newer":False,"dev":False,"platform":"windows"},"You have the latest version (v1.0.8)"),
                                    ("dev",{"current":"dev","latest":"v1.0.8","newer":False,"dev":True},"development build (dev)"),
-                                   ("offline",{"error":"offline"},"Couldn't reach GitHub."),("certs",{"error":"certs"},"Install Certificates.command"),
+                                   ("offline",{"error":"offline"},"Couldn't reach GitHub."),("certs",{"error":"certs"},"couldn't check GitHub's certificate"),
                                    ("limit",{"error":"limit"},"too many checks"),("host",{"error":"host"},"Only the computer running Roundkeeper"),
                                    ("windows",{"current":"v1.0.7","latest":"v1.0.8","newer":True,"platform":"windows","asset":{"url":"https://github.com/x/w.zip","size":4288433}},"Roundkeeper.exe"),
                                    ("mac",{"current":"v1.0.7","latest":"v1.0.8","newer":True,"platform":"mac","asset":{"url":"https://github.com/x/m.zip","size":0}},"Open Anyway")):

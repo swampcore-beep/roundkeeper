@@ -2636,7 +2636,7 @@ html:root #roster .tools .tog.blood[aria-pressed=false],html:root #roster .tools
   </header>
   <main class="dmgrid">
    <div class="dmmain">
-    <div class="note" id="fileNote" hidden>This file was opened directly, so the tablet can't see anything. Start the tracker by double-clicking <b>start.bat</b>.</div>
+    <div class="note" id="fileNote" hidden>This file was opened directly, so the tablet can't see anything. Start it with <b>Roundkeeper.exe</b> (or the Roundkeeper program on a Mac or Linux) instead.</div>
     <div class="note ended" id="endedNote" hidden><span>Players are seeing the end-of-combat screen.</span><button class="btn" type="button" data-act="unend">Show the order again</button></div>
     <section class="roster" id="roster" aria-label="Initiative order"></section>
     <div class="foot">
@@ -10144,7 +10144,7 @@ function joinCard(big){const u=joinUrl();if(!u)return "";
     u)}</div><div class="jc-help">${JOIN_HELP}</div></div></div>`}
 function qrSheet(){
   const u=chosenUrl(),all=laptopUrls();
-  if(!u){toast("Start the tracker with start.bat to get the address");return}
+  if(!u){toast("Start Roundkeeper with its program to get the address");return}
   $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true"><h2>Players join here</h2>
     <div class="qrsheet">${qrSvg(u)}<div class="jc-url">${esc(u)}</div>
       ${all.length>1?
@@ -10183,7 +10183,7 @@ function devRow(on,name,status,link,extra){
       ""}${extra||""}</div>`}
 function devSheet(){
   const u=chosenUrl(),all=laptopUrls(),base=devBase(),d=joinInfo||{};
-  if(!u){toast("Start the tracker with start.bat to get the address");return}
+  if(!u){toast("Start Roundkeeper with its program to get the address");return}
   const old=$("#devSheet"),top=old?old.scrollTop:0,keepOpen=old&&old.querySelector("details[open]");
   const pcs=devPcs(),tabA=d.tabletAgo!=null?d.tabletAgo:d.playerAgo;
   const phoneRows=pcs.map(c=>{const a=phoneAgo(c),tags=[c.psimple?"simple phone":"",c.php?"shares HP":"",state.sheets&&
@@ -10471,19 +10471,17 @@ function endFight(){
 /* Settings → Updates: is there a newer Roundkeeper? The server asks GitHub, only on the computer running it and only when the DM
    asks (or turned on "check when Roundkeeper starts"). Step 1: it says so, links the right download and explains the swap. */
 let updInfo=null,updBusy=false;
-const UPD_OS={windows:"Windows",mac:"Mac",linux:"Linux",python:"the Python version"};
+const UPD_OS={windows:"Windows",mac:"Mac",linux:"Linux"};
 const UPD_HOW={
   windows:"Close the Roundkeeper window, unzip the download and put the new <b>Roundkeeper.exe</b> in place of the old one, in the same folder. "+
     "Start it again: your fights, library and pictures stay.",
   mac:"Quit Roundkeeper (close its Terminal window), unzip the download and put the new <b>Roundkeeper</b> in place of the old one. Start it again; "+
     "the Mac may ask once more (System Settings → Privacy &amp; Security → Open Anyway). Your fights, library and pictures stay.",
-  linux:"Stop Roundkeeper, unzip the download into the same folder over the old files, and start it again. Your fights, library and pictures stay.",
-  python:"Stop the server, unzip the download into the same folder over the old files, and start it again. "+
-    "<code>state.json</code>, backups and pictures stay."};
+  linux:"Stop Roundkeeper, unzip the download into the same folder over the old files, and start it again. Your fights, library and pictures stay."};
 const UPD_ERR={offline:["Couldn't reach GitHub.","Check the internet connection, or try again later."],
   limit:["GitHub is busy right now (too many checks).","Try again in a while."],
-  certs:["This Python can't check secure websites yet.",
-    "On a Mac, run “Install Certificates.command” in the Python folder under Applications. Or look at the latest release on GitHub."],
+  certs:["This computer couldn't check GitHub's certificate.",
+    "A network filter or a wrong clock can cause it. Look at the latest release on GitHub instead."],
   bad:["GitHub gave an answer the app didn't understand.","Try again later."],server:["Roundkeeper didn't answer.","Is it still running?"]};
 async function updCheck(force){
   updBusy=true;if($("#updSheet"))updSheet();
@@ -10502,7 +10500,7 @@ function updSheet(){
   else if(U.newer)body=`<p class="updnew"><b>${esc(U.latest)} is out.</b> You have ${cur}.`+
       (U.published?` <span class="psub">Released ${esc(new Date(U.published).toLocaleDateString())}.</span>`:"")+`</p>`+
       (U.notes?`<div class="eyebrow2">What's new</div><div class="updnotes">${esc(U.notes)}</div>`:"")+
-      `<div class="eyebrow2">How to update</div><p>${UPD_HOW[U.platform]||UPD_HOW.python}</p><div class="spacts updlinks">`+
+      `<div class="eyebrow2">How to update</div><p>${UPD_HOW[U.platform]||UPD_HOW.linux}</p><div class="spacts updlinks">`+
       (U.asset?`<a class="btn primary" href="${esc(U.asset.url)}" download>Download for ${UPD_OS[U.platform]||"your computer"}`+
         (U.asset.size?` (${(U.asset.size/1048576).toFixed(1)} MB)`:"")+`</a>`:"")+
       (U.page?`<a class="btn" href="${esc(U.page)}" target="_blank" rel="noopener noreferrer">See the release on GitHub</a>`:"")+`</div>`;

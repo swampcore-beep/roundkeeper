@@ -1,5 +1,5 @@
 name: Release
-# Push a tag like v1.0 and GitHub builds the program for Windows, Mac and Linux and the Python version, and attaches them to a release.
+# Push a tag like v1.0 and GitHub builds the program for Windows, Mac and Linux and attaches them to a release.
 on:
   push:
     tags: ["v*"]
@@ -34,10 +34,6 @@ jobs:
           python3 ../tools/makefat.py Roundkeeper rk-mac-x86_64 rk-mac-arm64
           GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w -X main.version=${GITHUB_REF_NAME}" -o roundkeeper .
           GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "-s -w -X main.version=${GITHUB_REF_NAME}" -o roundkeeper-arm64 .
-      - name: Write the version into the Python server
-        # Settings → Updates compares it with the latest release; a build that isn't from a tag gets the branch name,
-        # which isn't a version, so it never offers an update
-        run: sed -i "s|^VERSION = \"dev\"|VERSION = \"${GITHUB_REF_NAME}\"|" server.py && grep -n '^VERSION = ' server.py
       - name: Zip
         run: |
           (cd go && zip -q ../Roundkeeper-mac.zip Roundkeeper)
@@ -46,7 +42,6 @@ jobs:
           zip -q Roundkeeper-linux.zip README.md THIRD-PARTY-NOTICES.txt LICENSE
           (cd go && zip -q ../Roundkeeper-windows.zip Roundkeeper.exe)
           zip -q Roundkeeper-windows.zip README.md THIRD-PARTY-NOTICES.txt LICENSE allow-network.bat
-          zip -qr Roundkeeper-python.zip initiative.html server.py start.bat allow-network.bat icon-192.png icon-512.png fonts srd README.md THIRD-PARTY-NOTICES.txt LICENSE
           sha256sum *.zip > SHA256SUMS.txt
       - uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -55,5 +50,4 @@ jobs:
             Roundkeeper-windows.zip
             Roundkeeper-mac.zip
             Roundkeeper-linux.zip
-            Roundkeeper-python.zip
             SHA256SUMS.txt

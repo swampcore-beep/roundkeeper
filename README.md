@@ -207,16 +207,13 @@ Windows may say *"Windows protected your PC"* because the app isn't signed. Clic
 2. Double-click `Roundkeeper`. A Terminal window opens and keeps the server running, and your browser opens the DM screen.
 3. The first time, the Mac says it can't check the developer, because the app isn't signed with an Apple account. Click **Done**, open **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to Roundkeeper. When the Mac asks whether to accept incoming network connections, choose **Allow**.
 
-The Mac version is new. If it doesn't start, please [open an issue](../../issues) and use the Python version below meanwhile.
+The Mac version is new. If it doesn't start, please [open an issue](../../issues).
 
 ### Linux
 Download `Roundkeeper-linux.zip`, unzip it, and run `./roundkeeper` (on a Raspberry Pi or another ARM computer, `./roundkeeper-arm64`). Nothing else to install. Then open the address it prints.
 
-### Python version (any computer with Python 3)
-`Roundkeeper-python.zip` does the same with Python 3 and no extra packages: run `python3 server.py` and open the address it prints. It's kept for now, alongside the programs above.
-
 ### Updating
-**Settings and files → Updates → Check for updates** says whether there's a newer version, shows what's new, and links the download for your computer. Close Roundkeeper, put the new program in place of the old one (or unzip the Python version over its files), and start it again: your fights, library and pictures stay. You can also let it check each time it starts; that's off unless you turn it on.
+**Settings and files → Updates → Check for updates** says whether there's a newer version, shows what's new, and links the download for your computer. Close Roundkeeper, put the new program in place of the old one, and start it again: your fights, library and pictures stay. You can also let it check each time it starts; that's off unless you turn it on.
 
 ### Server on a desktop, DM on a laptop
 Run the app on a desktop (on a cable, or connected to the TV), then pair your laptop as the DM under **Devices → DM devices**. Phones stay players.
@@ -255,7 +252,7 @@ Run the app on a desktop (on a cable, or connected to the TV), then pair your la
 
 **Which rules?** Fifth edition as revised in 2024 (conditions, durations, Concentration, death saves, Exhaustion). Players can switch their spell list to the 2014 versions when your files have them.
 
-**Mac or Linux?** Yes. There is a ready-made program for Windows 10 and 11, for Mac (Intel and Apple Silicon) and for Linux (x86-64 and ARM). The Python version runs anywhere with Python 3.
+**Mac or Linux?** Yes. There is a ready-made program for Windows 10 and 11, for Mac (Intel and Apple Silicon) and for Linux (x86-64 and ARM).
 
 **Can I use it online, with players at home?** It's made for a table in one room, on one Wi-Fi network.
 

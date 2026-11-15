@@ -130,19 +130,17 @@ function endFight(){
 /* Settings → Updates: is there a newer Roundkeeper? The server asks GitHub, only on the computer running it and only when the DM
    asks (or turned on "check when Roundkeeper starts"). Step 1: it says so, links the right download and explains the swap. */
 let updInfo=null,updBusy=false;
-const UPD_OS={windows:"Windows",mac:"Mac",linux:"Linux",python:"the Python version"};
+const UPD_OS={windows:"Windows",mac:"Mac",linux:"Linux"};
 const UPD_HOW={
   windows:"Close the Roundkeeper window, unzip the download and put the new <b>Roundkeeper.exe</b> in place of the old one, in the same folder. "+
     "Start it again: your fights, library and pictures stay.",
   mac:"Quit Roundkeeper (close its Terminal window), unzip the download and put the new <b>Roundkeeper</b> in place of the old one. Start it again; "+
     "the Mac may ask once more (System Settings → Privacy &amp; Security → Open Anyway). Your fights, library and pictures stay.",
-  linux:"Stop Roundkeeper, unzip the download into the same folder over the old files, and start it again. Your fights, library and pictures stay.",
-  python:"Stop the server, unzip the download into the same folder over the old files, and start it again. "+
-    "<code>state.json</code>, backups and pictures stay."};
+  linux:"Stop Roundkeeper, unzip the download into the same folder over the old files, and start it again. Your fights, library and pictures stay."};
 const UPD_ERR={offline:["Couldn't reach GitHub.","Check the internet connection, or try again later."],
   limit:["GitHub is busy right now (too many checks).","Try again in a while."],
-  certs:["This Python can't check secure websites yet.",
-    "On a Mac, run “Install Certificates.command” in the Python folder under Applications. Or look at the latest release on GitHub."],
+  certs:["This computer couldn't check GitHub's certificate.",
+    "A network filter or a wrong clock can cause it. Look at the latest release on GitHub instead."],
   bad:["GitHub gave an answer the app didn't understand.","Try again later."],server:["Roundkeeper didn't answer.","Is it still running?"]};
 async function updCheck(force){
   updBusy=true;if($("#updSheet"))updSheet();
@@ -161,7 +159,7 @@ function updSheet(){
   else if(U.newer)body=`<p class="updnew"><b>${esc(U.latest)} is out.</b> You have ${cur}.`+
       (U.published?` <span class="psub">Released ${esc(new Date(U.published).toLocaleDateString())}.</span>`:"")+`</p>`+
       (U.notes?`<div class="eyebrow2">What's new</div><div class="updnotes">${esc(U.notes)}</div>`:"")+
-      `<div class="eyebrow2">How to update</div><p>${UPD_HOW[U.platform]||UPD_HOW.python}</p><div class="spacts updlinks">`+
+      `<div class="eyebrow2">How to update</div><p>${UPD_HOW[U.platform]||UPD_HOW.linux}</p><div class="spacts updlinks">`+
       (U.asset?`<a class="btn primary" href="${esc(U.asset.url)}" download>Download for ${UPD_OS[U.platform]||"your computer"}`+
         (U.asset.size?` (${(U.asset.size/1048576).toFixed(1)} MB)`:"")+`</a>`:"")+
       (U.page?`<a class="btn" href="${esc(U.page)}" target="_blank" rel="noopener noreferrer">See the release on GitHub</a>`:"")+`</div>`;

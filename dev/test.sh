@@ -1,6 +1,7 @@
 #!/bin/bash
 # Run the browser test suites, each on a fresh server. One line per suite; details only when something fails.
-#   dev/test.sh [go|py|both] [suite ...]      e.g.  dev/test.sh go t29     dev/test.sh both
+#   dev/test.sh [go] [suite ...]      e.g.  dev/test.sh t29     dev/test.sh
+#   (go, and both from before 1.2, still work and mean the same: there is one server)
 # Default suites need nothing but the repo. Suites that need non-free files run only when those are set:
 #   RK_PRIVATE=folder with sb/gyreguard.md and sb/lich.md (2024 statblocks)  -> t5 t7 t8
 #   RK_5ETOOLS=a 5e.tools data folder                                       -> t16..t28, ui, hov
@@ -11,7 +12,7 @@ python3 tools/build.py --quiet || exit 1   # initiative.html from src/ (dev/serv
 SRD="verify t2 t4 t9 t10 t11 t12 t13 t14 t15 rulestest_v2 mob2_v2 t29 t30 t31 t32 t33 t34 t35"
 PRIVS="t5 t7 t8"; DATA="t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t28 ui hov"
 which=${1:-go}; shift 2>/dev/null
-case $which in go|py) servers=$which;; both) servers="go py";; *) set -- "$which" "$@"; servers=go;; esac
+case $which in go|both) servers=go;; py) echo "test: the Python server is gone since 1.2; use dev/test.sh"; exit 1;; *) set -- "$which" "$@"; servers=go;; esac
 if [ $# -gt 0 ]; then suites="$*"; else
   suites=$SRD
   [ -f "${RK_PRIVATE:-$ROOT/dev/.work/private}/sb/gyreguard.md" ] && suites="$suites $PRIVS"
@@ -31,5 +32,5 @@ for s in $servers; do for t in $suites; do
   if [ "$rc" = 0 ] && [ "$n" = 0 ] && ! grep -q Traceback "$log"; then echo "$s $t: ok"
   else bad=1; echo "$s $t: FAILED (exit $rc, $n FAIL) - $log"; grep -E "FAIL|Error|Traceback" "$log" | head -6 | sed 's/^/    /'; fi
 done; done
-pkill -x ti-linux 2>/dev/null; pkill -f "python3 [s]erver.py" 2>/dev/null
+pkill -x ti-linux 2>/dev/null
 exit $bad
