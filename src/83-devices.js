@@ -49,7 +49,7 @@ function joinCard(big){const u=joinUrl();if(!u)return "";
     u)}</div><div class="jc-help">${JOIN_HELP}</div></div></div>`}
 function qrSheet(){
   const u=chosenUrl(),all=laptopUrls();
-  if(!u){toast("Start the tracker with start.bat to get the address");return}
+  if(!u){toast("Start Roundkeeper with its program to get the address");return}
   $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true"><h2>Players join here</h2>
     <div class="qrsheet">${qrSvg(u)}<div class="jc-url">${esc(u)}</div>
       ${all.length>1?
@@ -88,7 +88,7 @@ function devRow(on,name,status,link,extra){
       ""}${extra||""}</div>`}
 function devSheet(){
   const u=chosenUrl(),all=laptopUrls(),base=devBase(),d=joinInfo||{};
-  if(!u){toast("Start the tracker with start.bat to get the address");return}
+  if(!u){toast("Start Roundkeeper with its program to get the address");return}
   const old=$("#devSheet"),top=old?old.scrollTop:0,keepOpen=old&&old.querySelector("details[open]");
   const pcs=devPcs(),tabA=d.tabletAgo!=null?d.tabletAgo:d.playerAgo;
   const phoneRows=pcs.map(c=>{const a=phoneAgo(c),tags=[c.psimple?"simple phone":"",c.php?"shares HP":"",state.sheets&&

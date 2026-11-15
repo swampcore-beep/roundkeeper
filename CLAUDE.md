@@ -7,13 +7,12 @@ A free, offline combat tracker for in-person 5e (2024 rules). The DM runs it on 
 | Path | What |
 |---|---|
 | `src/` | The app's source in parts (`NN-name.css`, `.js`, `.html`): **edit these** |
-| `initiative.html` | The whole app in one file, put together from `src/` by `tools/build.py`; never edit it by hand (the exe embeds it, the Python server serves it) |
-| `server.py` | Python server, standard library only (the Python zip, for any computer with Python 3) |
-| `go/main.go`, `go/fivetools.go` | Go server, the same behaviour, built into `Roundkeeper.exe` and the Mac and Linux programs |
+| `initiative.html` | The whole app in one file, put together from `src/` by `tools/build.py`; never edit it by hand (the programs embed it) |
+| `go/main.go`, `go/fivetools.go` | The server, built into `Roundkeeper.exe` and the Mac and Linux programs (the Python server was removed in 1.2) |
 | `srd/srd-5.2.1.json` | The built-in SRD (made by `tools/srd_from_open5e.py`) |
 | `media/` | README pictures and GIFs (regenerate with `dev/media/`) |
 | `dev/` | Test servers, test suites, media scripts: see `dev/README.md` |
-| `.github/workflows/release.yml` | A `v*` tag builds the Windows exe, the Mac program (universal, joined by `tools/makefat.py`), the Linux programs and the Python zip, and attaches them to the release |
+| `.github/workflows/release.yml` | A `v*` tag builds the Windows exe, the Mac program (universal, joined by `tools/makefat.py`), and the Linux programs, and attaches them to the release |
 | `.github/workflows/check.yml` | Every pull request: `initiative.html` must match `src/` |
 
 ### Inside the app (`src/`)
@@ -26,11 +25,11 @@ A free, offline combat tracker for in-person 5e (2024 rules). The DM runs it on 
 - TV: `tvRender`. Scenes: `SCENES`, `THEMES`, the `Scene` engine, `sceneReact`.
 - One delegated click handler in `85-events.js`: `document.addEventListener('click'`, keyed by `data-act` (search for `case "name"` or the name in quotes).
 
-### Servers
+### Server
 
-Settings → Updates: `/update/check` (`update_check` / `updateCheck`, the computer running the server only) asks GitHub for the latest release; the release workflow writes the tag into `VERSION` in `server.py` and `main.version` in Go (`dev` otherwise, which never offers an update). The release description is shown to users there, so draft release notes for users. Tests use a fake GitHub (`t34`).
+Settings → Updates: `/update/check` (`updateCheck` in `main.go`, the computer running the server only) asks GitHub for the latest release; the release workflow writes the tag into `main.version` (`dev` otherwise, which never offers an update). The release description is shown to users there, so draft release notes for users. Tests use a fake GitHub (`t34`).
 
-Both servers must behave the same. Any change to routes, `public_view` (what players may see) or player actions (`_player_action` in `server.py`, `playerAction` in `main.go`; `public_view` / `publicView`) goes into both, and the tests run on both.
+What players may see is decided in `publicView`, and player actions in `playerAction` (both in `main.go`); change them with care and cover the change in a test.
 
 ## Rules that must not break
 
@@ -42,8 +41,8 @@ Both servers must behave the same. Any change to routes, `public_view` (what pla
 
 ## Working on it
 
-- Start a test server with `dev/serve.sh go` (or `py`). Run tests with `dev/test.sh` (one line per suite); run just the suites you touched while working, and `dev/test.sh both` before a pull request.
-- Never put the strings `ti-linux` or `python3 server.py` in a shell command line together with the serve or test scripts: they stop servers with `pkill`, which would match your own shell.
+- Start a test server with `dev/serve.sh go`. Run tests with `dev/test.sh` (one line per suite); run just the suites you touched while working, and all of `dev/test.sh` before a pull request.
+- Never put the string `ti-linux` in a shell command line together with the serve or test scripts: they stop the server with `pkill`, which would match your own shell.
 - Work on a branch and open a pull request with `gh api repos/swampcore-beep/roundkeeper/pulls`; never push to `main` (it is protected). Merge only when the owner says so (`gh api -X PUT …/pulls/N/merge -f merge_method=merge`). Tags, releases, repo settings and branch deletion are done by the owner in the GitHub UI.
 - Commit as the owner with the Claude committer so commits show as Verified and no personal email appears:
   `GIT_AUTHOR_NAME=swampcore-beep GIT_AUTHOR_EMAIL=swampcore-beep@users.noreply.github.com git -c user.name=Claude -c user.email=noreply@anthropic.com commit …`
@@ -51,6 +50,6 @@ Both servers must behave the same. Any change to routes, `public_view` (what pla
 
 ## Models and helpers
 
-The owner has given standing permission (10. 11. 2026) to hand routine work to helper agents on a cheaper model (Sonnet or Haiku) without asking each time: running `dev/test.sh` and summarising failures, searching the code, porting a server change from `server.py` to `main.go` (or back) against the tests, regenerating media with `dev/media/`, and drafting text. Give the helper a short, exact brief, then review its diff and test results yourself before any pull request. Keep design decisions, hard bugs, changes across `initiative.html`, anything about what players may see, and licensing questions for the main session. Say briefly in the reply what was handed off.
+The owner has given standing permission (10. 11. 2026) to hand routine work to helper agents on a cheaper model (Sonnet or Haiku) without asking each time: running `dev/test.sh` and summarising failures, searching the code, regenerating media with `dev/media/`, and drafting text. Give the helper a short, exact brief, then review its diff and test results yourself before any pull request. Keep design decisions, hard bugs, changes across `initiative.html`, anything about what players may see, and licensing questions for the main session. Say briefly in the reply what was handed off.
 
 If a task looks too hard for the model this session runs on, or a helper's result isn't good enough, ask the owner to switch to a stronger model instead of pushing on.

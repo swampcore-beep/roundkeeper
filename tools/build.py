@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Put initiative.html together from the parts in src/.
 
-The app ships as one file (the exe embeds it, the Python server serves it, a newer copy next to the exe
+The app ships as one file (the program embeds it, a newer copy next to the exe
 replaces the built-in one), but it is edited in parts: src/NN-name.css|js|html, joined in the order of
 their numbers. The parts are pieces of that one file, not modules: the CSS parts sit inside one <style>,
 the app's JS parts inside one function, (function(){ in 60-data.js to })(); in 86-boot.js.

@@ -25,7 +25,6 @@ It breaks only where whitespace means nothing (after `;` `,` `{` and similar, ne
 
 ```bash
 dev/serve.sh go          # build and start the Go server, only the built-in SRD
-dev/serve.sh py          # the Python server instead
 dev/serve.sh go data     # with a 5e.tools data folder: RK_5ETOOLS=/path/to/5etools
 dev/serve.sh go srd keep # keep state.json and library.json from the last run
 ```
@@ -38,8 +37,7 @@ The server treats this computer (127.0.0.1) as the DM. Tests open player pages (
 
 ```bash
 dev/test.sh              # every suite that needs only the repo, on the Go server
-dev/test.sh both         # the same on Go, then on Python
-dev/test.sh py t29 t4    # some suites on one server
+dev/test.sh t29 t4       # just some suites
 ```
 
 One line per suite (`go t4: ok`). A failing suite shows its first FAIL lines and the path to its full log in `dev/.work/out/`.
