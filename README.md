@@ -27,13 +27,13 @@ It comes with the **SRD 5.2.1** built in: 331 monsters with clickable statblocks
 >
 > *Not a virtual tabletop:* there are no maps or tokens, and it isn't for online play. It's made for a group sitting around a real table.
 
-https://github.com/user-attachments/assets/75f9911a-5173-49b4-b7d1-d81dae34e699
+https://github.com/user-attachments/assets/f7578be1-2bc0-4fc1-84af-e42ae995edd6
 
 <p align="center"><sub>One fight on all four screens at once: the DM's laptop, the tablet, the TV and a phone (50 seconds, no sound).</sub></p>
 
 **Three short tours, under a minute each:** [the DM's laptop](#the-dms-laptop) · [the tablet and the TV](#the-tablet-and-the-tv) · [the players' phones](#on-players-phones)
 
-> **New in 1.1: a calmer DM screen.** The row whose turn it is stands out at a glance, and the statblock can follow the turn by itself. Tools you use every round stay in view; the rest moved into small ⋯ menus and Settings. [What changed](../../releases/tag/v1.1.0)
+> **New in 1.2: a calmer DM screen that fits a laptop.** The row whose turn it is stands out at a glance, and the statblock can follow the turn by itself. Tools you use every round stay in view; the rest moved into small ⋯ menus and Settings. One download for each computer: Windows, Mac or Linux. [What changed](../../releases/tag/v1.2.0)
 
 ---
 
@@ -47,7 +47,7 @@ Each screen shows what its people need, and only that. Monster HP, statblocks, h
 
 ## The DM's laptop
 
-https://github.com/user-attachments/assets/a4fb0408-8f47-4a24-8e49-7f584f39a5a8
+https://github.com/user-attachments/assets/dca33bcd-6d6c-4f08-8144-5024e681f508
 
 <p align="center"><sub>From the DM's seat: monsters from the built-in SRD, the statblock, a roll call, Hit several, conditions, Ctrl+K, Devices and Atmosphere (under a minute, no sound).</sub></p>
 
