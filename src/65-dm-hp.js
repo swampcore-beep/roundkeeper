@@ -250,9 +250,9 @@ function renderDM(){
       const cd=cdurOf(c,n);return `<button type="button" class="cond" data-act="rmcond" data-j="${j}" title="Remove${cd?" · "+esc(cdurTag(cd)):
         ""}">${esc(n)}${cd?`<i class="cdurb">${esc(cdurTag(cd))}</i>`:""}</button>`}).join("")
       +state.effects.filter(e=>e.targets.includes(c.id)).map(e=>{const by=byId(e.by);
-        return `<button type="button" class="cond eff" data-act="effrm" data-e="${esc(e.id)}" title="Remove effect from all targets">
-          <i class="eg" aria-hidden="true">✦</i>${esc(e.name)}${by?
-        ` · ${esc(by.name)}`:""}${effN(e)}</button>`}).join("");
+        return `<button type="button" class="cond eff" data-act="effrm" data-e="${esc(e.id)}" title="${esc(e.name)}${by?` from ${esc(by.name)}`:
+          ""} · click to remove it from all targets"><i class="eg" aria-hidden="true">✦</i>${esc(e.name)}${by?
+        `<span class="effby"> · ${esc(by.name)}</span>`:""}${effN(e)}</button>`}).join("");
     const ds=dsOf(c);
     const dsHtml=c.kind==="pc"&&c.down?`<span class="ds">
       <span class="grp">${[0,1,2].map(k=>`<button type="button" class="pip s${ds.s>k?" on":""}" data-act="ds" data-k="s" data-i="${k}" aria-label="Success ${k+
@@ -266,7 +266,7 @@ function renderDM(){
     const isTurn=!!(state.turn&&state.turn.id===c.id);
     const typeline=[isTurn?`<b class="nowtag">now</b>`:c.id===nextId?`<span class="nexttag">next</span>`:"",
       c.sb&&c.sb.raw?`<button type="button" class="sblink${sbViewId===c.id?" on":""}" data-act="sbview" title="${c.sb.pc?
-      "Open the character sheet":"Open the statblock"}">${I.book||"📜"} ${c.sb.pc?"Sheet":"Statblock"}</button>`:"",c.boss?
+      "Open the character sheet":"Open the statblock"}" aria-label="${c.sb.pc?"Sheet":"Statblock"}">${I.book||"📜"}</button>`:"",c.boss?
       `<span class="crown">${I.crown}Boss${c.rim?` · ${esc((RIMS.find(r=>r[0]===c.rim)||["",""])[1])}`:""}</span>`:"",typ?esc(typ):"",c.boss&&c.title?
       `<i>${esc(c.title)}</i>`:"",c.kind==="pc"?passivesLine(c):"",c.kind==="pc"&&c.psimple?
       `<span class="simpletag" title="${esc(c.name)} uses the simple phone: just HP and what you send">simple phone</span>`:""].filter(Boolean).join(" · ");
