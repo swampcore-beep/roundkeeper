@@ -18,6 +18,14 @@ document.addEventListener("click",e=>{
   const act=t.dataset.act;const row=t.closest(".row");const c=row?byId(row.dataset.id):null;
   switch(act){
     case "close": if(t.classList.contains("scrim")&&e.target!==t)return; closeSheet(); break;
+    case "handnew": handSheet(null);break;
+    case "handedit": handSheet(t.dataset.id);break;
+    case "handsaveshow": handSave(true);break;
+    case "handshow":{const h=(state.handouts||[]).find(x=>x.id===t.dataset.id);if(h){if(state.handout&&state.handout.id===h.id){state.handout=null;commit()}else handShow(h)}break}
+    case "handdown": state.handout=null;commit();break;
+    case "handdel": if(!t.classList.contains("armed")){t.classList.add("armed");setTimeout(()=>t.classList.remove("armed"),2500);break}
+      state.handouts=(state.handouts||[]).filter(x=>x.id!==t.dataset.id);if(state.handout&&state.handout.id===t.dataset.id)state.handout=null;commit();break;
+    case "handclose": if(state.handout){ls.set("handShut",state.handout.id);handoutRender()}break;
     case "phaseclear":{const f=$("#phaseForm"),c=f&&byId(f.dataset.id);if(c){delete c.phases;delete c.phase;commit()}closeSheet();break}
     case "example": state.list=EXAMPLE();commit();break;
     case "prm": state.party.splice(Number(t.dataset.i),1);commit();break;
@@ -700,6 +708,7 @@ document.addEventListener("submit",async e=>{
       all.push({id:uid(),name:nm,theme:atmoD.theme,look:Object.assign(lookOf(atmoD),L),scene:atmoD.scene,weather:atmoD.weather||"none",tod:atmoD.tod||"none",
       tune:atmoD.tune||{}});
     ls.set("myThemes",all.slice(-24));toast("Saved: "+nm);atmoRefresh();return}
+  if(f.id==="handForm"){e.preventDefault();handSave(false);return}
   if(f.id==="phaseForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){const ph=$("#phaseText").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,10);
     const pick=f.querySelector('input[name=phNow]:checked');if(ph.length>1){c.phases=ph;c.phase=Math.min(ph.length-1,pick?Number(pick.value):c.phase||0)}
     else{delete c.phases;delete c.phase}commit()}closeSheet();return}

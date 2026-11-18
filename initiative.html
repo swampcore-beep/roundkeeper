@@ -2881,6 +2881,59 @@ ol.plist li .pos b,#tvLayer .hex b,#tvLayer .hx,.p-round b{font-variant-numeric:
 html:root body:has(.pbar.acc) ol.plist li.me.fr{outline-color:var(--fc)}
 html:root body:has(.pbar.acc) ol.plist.compact li.me.fr{background:color-mix(in srgb,var(--fc) 20%,var(--panel))}
 body:has(.pbar.acc) ol.plist li.me.fr .badge.you{background:var(--fc);color:#15120c}
+
+/* E1: handouts. On the table they sit over the order on a dimmed screen; on a phone they come up as a sheet. */
+.handlayer{position:fixed;inset:0;z-index:64;display:grid;place-items:center;padding:4vmin;background:rgba(5,6,10,.62);animation:tcin .45s cubic-bezier(.2,.8,.2,1)}
+.handlayer .handin{display:grid;gap:12px;justify-items:center;max-height:92vh;max-width:min(92vw,760px);overflow:auto}
+.handlayer.phone{padding:12px;align-items:start;overflow:auto}.handlayer.phone .handin{max-width:100%}
+.handlayer .handx{min-height:44px}
+body.tvscreen .handlayer .ho{font-size:clamp(16px,1.6vw,30px)}
+@media (prefers-reduced-motion:reduce){.handlayer{animation:none}}
+.ho{position:relative;width:min(640px,88vw);box-sizing:border-box;font-size:clamp(15px,1.25vw,22px);line-height:1.45;color:#2b1d0e;text-align:left}
+.ho p{margin:0 0 .7em}.ho h3{margin:0 0 .4em;line-height:1.1;font-weight:400}
+.ho-parch{padding:2.6em 2.2em;font-family:"IM Fell English SC","Palatino Linotype",Georgia,serif;
+  background:radial-gradient(120% 90% at 40% 30%,#f0e2bf 0%,#dcc38e 60%,#b8925a 100%);box-shadow:inset 0 0 60px 14px rgba(90,50,15,.55),0 18px 40px rgba(0,0,0,.45);
+  clip-path:polygon(2% 1%,20% 0%,38% 1.5%,60% 0%,82% 1%,99% 0%,100% 18%,98.5% 40%,100% 62%,99% 84%,100% 99%,78% 100%,55% 98.5%,33% 100%,12% 99%,0% 100%,1% 80%,0% 58%,1.5% 36%,0% 16%)}
+.ho-parch h3{font-size:1.7em;text-align:center}.ho-parch hr{border:0;height:1px;background:rgba(59,42,22,.4);margin:0 0 1em}
+.ho-parch .hs{text-align:right;font-style:italic;margin-top:.6em}
+.ho-letter{padding:2.4em 2.2em 3.4em;font-family:"Palatino Linotype",Palatino,Georgia,serif;font-style:italic;color:#2a2238;
+  background:linear-gradient(180deg,transparent 32.8%,rgba(80,60,30,.16) 33.3%,transparent 34%,transparent 66.2%,rgba(80,60,30,.16) 66.7%,transparent 67.4%),
+  linear-gradient(160deg,#f7efdc,#e8dbbd);box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.ho-letter .hsal{font-size:1.35em;margin-bottom:.6em}.ho-letter .hs{font-size:1.2em;margin-top:.4em}
+.hseal{position:absolute;right:1.4em;bottom:1.2em;width:4.2em;height:4.2em;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 38% 32%,#d34a3c,#8e1d16 62%,#5e100c);box-shadow:0 4px 10px rgba(60,10,5,.5),inset 0 -4px 8px rgba(0,0,0,.35)}
+.hseal b{display:grid;place-items:center;width:2.9em;height:2.9em;border-radius:50%;border:2px solid rgba(255,190,170,.35);font-family:"Alegreya SC",Georgia,serif;
+  font-style:normal;font-size:1em;color:rgba(255,200,180,.7)}
+.ho-wanted{display:grid;justify-items:center;gap:.35em;padding:2em 1.8em;text-align:center;color:#2b1a0c;
+  background:radial-gradient(120% 100% at 50% 40%,#e6d3a6 0%,#cbb07a 70%,#a88654 100%);box-shadow:inset 0 0 40px 8px rgba(80,45,10,.45),0 18px 40px rgba(0,0,0,.45)}
+.ho-wanted .hw{font-family:"Pirata One",Georgia,serif;font-size:3.6em;line-height:1;letter-spacing:.04em}
+.ho-wanted .hdoa{font-family:"IM Fell English SC",Georgia,serif;font-size:1.1em}
+.ho-wanted .hpic{width:8em;height:8em;border:3px solid #2b1a0c;display:grid;align-items:end;justify-items:center;background:radial-gradient(circle at 50% 35%,#d8c290,#b39663)}
+.ho-wanted .hpic svg{width:85%;height:85%;fill:#5a4024;opacity:.75}
+.ho-wanted .hn{font-family:"Pirata One",Georgia,serif;font-size:2em;line-height:1.05}
+.ho-wanted .hb{font-family:"IM Fell English SC",Georgia,serif}.ho-wanted .hrew{font-family:"Pirata One",Georgia,serif;font-size:2.1em}
+.ho-page{padding:1.2em 1.8em 1.4em;font-family:"Palatino Linotype",Palatino,Georgia,serif;color:#2a2a2e;
+  background:linear-gradient(135deg,#f7f5f0 0%,#ece8df 45%,#f5f2ec 70%,#e6e1d6 100%);box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.ho-page h3{font-family:"Alegreya SC","Palatino Linotype",Georgia,serif;font-weight:800;font-size:1.5em;text-align:center;color:#8a6a1e;margin:.5em 0}
+.ho-page .hmk{display:block;height:.9em;margin:.2em 0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cpath d='M1 24V2H24V20H6V7H18V15H11' fill='none' stroke='%23b8923a' stroke-width='2.2'/%3E%3C/svg%3E") left/auto 100% repeat-x}
+.ho-page .hdrop>p:first-child::first-letter{float:left;font-family:"Alegreya SC",Georgia,serif;font-weight:800;font-size:3.6em;line-height:.8;margin:.08em .12em 0 0;color:#b8923a}
+.ho-page .hs{text-align:right;font-style:italic;color:#6a5a3a}
+/* the DM's side: the list, and the editor with a live preview */
+.side .strip.hand{display:grid;gap:8px;align-items:stretch}
+.handon{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:10px;
+  background:color-mix(in srgb,var(--accent) 12%,var(--panel2))}
+.handlist{display:grid;gap:4px}.handrow{display:flex;align-items:center;gap:6px}.handt{flex:1;min-width:0;display:grid}
+.handt small{color:var(--muted);font-size:.78rem}
+.handsheet{width:min(1040px,96vw)}
+.handform{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.handfields{display:grid;gap:10px}.handfields>label{display:grid;gap:4px;font-weight:600}
+.handfields fieldset{display:flex;flex-wrap:wrap;gap:6px 14px;border:0;padding:0;margin:0}.handfields legend{font-weight:600;margin-bottom:4px}
+.handfields fieldset label{display:flex;align-items:center;gap:6px}
+.handprev{display:grid;place-items:start center;max-height:70vh;overflow:auto;padding:10px;border-radius:12px;background:#0d0e12}
+.handprev .ho{width:100%;font-size:14px}
+.handbtns{grid-column:1 / -1;display:flex;justify-content:flex-end;gap:8px}
+@media (max-width:800px){.handform{grid-template-columns:1fr}}
+textarea.field{font-family:inherit;line-height:1.4}
 </style>
 </head>
 <body>
@@ -2957,6 +3010,7 @@ body:has(.pbar.acc) ol.plist li.me.fr .badge.you{background:var(--fc);color:#151
     <details class="panel" data-k="log" open><summary>Player activity <span class="pcount" id="logCount" hidden></span></summary><div class="actlog" id="actLog"></div></details>
     <details class="panel" data-k="call" open><summary>Roll call</summary><section class="strip call" id="callStrip" aria-label="Roll call"></section></details>
     <details class="panel" data-k="field" open><summary>Battlefield</summary><section class="strip field" id="fieldStrip" aria-label="Battlefield effects"></section></details>
+    <details class="panel" data-k="hand"><summary>Handouts <span class="pcount" id="handOn" hidden>on</span></summary><section class="strip hand" id="handStrip" aria-label="Handouts"></section></details>
     <details class="panel" data-k="party" open><summary>Party</summary><section class="strip party" id="party" aria-label="Party"></section><div id="partyTbl"></div></details>
     <details class="panel" data-k="enc"><summary>Encounters</summary><section class="strip enc" id="enc" aria-label="Saved encounters"></section></details>
     <details class="panel" data-k="more"><summary>Settings and files</summary>
@@ -6325,7 +6379,7 @@ function turnTiles(){
 function renderDM(){
   const ae=document.activeElement;
   if(ae&&$("#roster").contains(ae)&&ae.tagName==="INPUT"){pendingRender=true;return}
-  pendingRender=false;renderParty();renderEnc();renderCall();renderField();
+  pendingRender=false;renderParty();renderEnc();renderCall();renderField();renderHand();
   const tsec=$("#timerSecs");if(tsec&&document.activeElement!==tsec)tsec.value=state.timerSecs||30;
   {const ab=$("#atmoBtn"),sl=(SCENES.find(x=>x[0]===(state.scene||"none"))||["",""])[1];
    if(ab){ab.innerHTML=`${ic("palette")}<span>${esc(atmoLabel(state))}</span>`;
@@ -6503,6 +6557,55 @@ function renderCall(){
     <span class="callres">${to.map(c=>{const v=ans[c.id];const st=v==null?"wait":call.dc!=null?(v>=call.dc?"pass":"fail"):"done";
       return `<span class="cw ${st}">${esc(c.name)} <b>${v==null?"…":v}</b></span>`}).join("")}</span>
     <span class="spacer"></span><button class="btn" type="button" data-act="callclose">Close roll call</button>`;
+}
+/* E1 (1.3): handouts. The DM writes a note, a letter, a wanted poster or a page of lore, picks a style, and shows it on the tablet,
+   the TV or both, and on the phones if they want. The saved ones (state.handouts) are the DM's; only the one shown (state.handout) goes out. */
+const HSTYLES=[["parch","Parchment"],["letter","Sealed letter"],["wanted","Wanted poster"],["page","Book page"]];
+const HWHERE=[["table","Tablet"],["tv","TV"],["both","Both"]];
+function renderHand(){
+  const el=$("#handStrip");if(!el)return;const H=state.handouts||[],on=state.handout;
+  const o=$("#handOn");if(o)o.hidden=!on;
+  el.innerHTML=(on?`<div class="handon"><span>On the ${on.where==="tv"?"TV":on.where==="both"?"tablet and TV":"tablet"}${on.phones?" and phones":
+    ""}: <b>${esc(on.title||"(untitled)")}</b></span><button type="button" class="btn sm" data-act="handdown">Take it down</button></div>`:"")
+    +(H.length?`<div class="handlist">${H.map(h=>`<div class="handrow"><span class="handt">${esc(h.title||"(untitled)")}<small>${esc((HSTYLES.find(x=>
+      x[0]===h.style)||HSTYLES[0])[1])}</small></span><button type="button" class="btn sm${on&&on.id===h.id?" primary":""}" data-act="handshow" data-id="${
+      esc(h.id)}">${on&&on.id===h.id?"Shown":"Show"}</button><button type="button" class="btn sm" data-act="handedit" data-id="${esc(h.id)}">Edit</button><button type="button" class="icon-btn sm" data-act="handdel" data-id="${
+      esc(h.id)}" aria-label="Delete ${esc(h.title||"this handout")}" title="Delete (click twice)">${I.x}</button></div>`).join("")}</div>`
+      :`<p class="strip-empty" style="margin:0">A note, a letter, a wanted poster or a page of lore, shown on the table.</p>`)
+    +`<button type="button" class="btn sm" data-act="handnew">New handout…</button>`;
+}
+function handShow(h){const d=state.handoutWhere||{};state.handout={id:h.id,style:h.style||"parch",title:h.title||"",body:h.body||"",sign:h.sign||"",
+  where:d.where||"both",phones:!!d.phones,at:Date.now()};commit()}
+function handSheet(id){
+  const h=(state.handouts||[]).find(x=>x.id===id)||{id:"",style:"parch",title:"",body:"",sign:""},d=state.handoutWhere||{where:"both",phones:false};
+  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet handsheet" role="dialog" aria-modal="true" aria-label="Handout"><h2>${id?"Edit the handout":
+    "New handout"}</h2>
+    <form id="handForm" data-id="${esc(h.id)}" autocomplete="off" class="handform">
+      <div class="handfields">
+        <label>Title <input class="field" id="hTitle" maxlength="80" value="${esc(h.title)}" placeholder="Notice to all who pass the bridge"></label>
+        <label>Text <textarea class="field" id="hBody" rows="7" maxlength="1200" placeholder="By order of the Reeve…">${esc(h.body)}</textarea></label>
+        <label>Signature, reward or source <input class="field" id="hSign" maxlength="80" value="${esc(h.sign)}" placeholder="Harrow, Reeve of Millford"></label>
+        <fieldset class="seg2 hstyle"><legend>Style</legend>${HSTYLES.map(([k,l])=>`<label><input type="radio" name="hStyle" value="${k}"${h.style===k?" checked":
+          ""}> ${l}</label>`).join("")}</fieldset>
+        <fieldset class="seg2"><legend>Show it on</legend>${HWHERE.map(([k,l])=>`<label><input type="radio" name="hWhere" value="${k}"${(d.where||"both")===k?
+          " checked":""}> ${l}</label>`).join("")}<label class="hph"><input type="checkbox" id="hPhones"${d.phones?" checked":""}> and the phones</label></fieldset>
+      </div>
+      <div class="handprev" aria-label="Preview" id="hPrev"></div>
+      <div class="handbtns"><button class="btn" type="button" data-act="close">Cancel</button><button class="btn" type="submit">Save</button><button class="btn primary" type="button" data-act="handsaveshow">Save and show</button></div>
+    </form></div></div>`;
+  const upd=()=>{const p=$("#hPrev");if(p)p.innerHTML=handoutHtml(handFromForm())};
+  $("#handForm").addEventListener("input",upd);upd();setTimeout(()=>{const x=$("#hTitle");x&&x.focus()},0);
+}
+function handFromForm(){const f=$("#handForm"),st=f.querySelector("input[name=hStyle]:checked");
+  return {id:f.dataset.id||uid(),style:st?st.value:"parch",title:$("#hTitle").value.trim(),body:$("#hBody").value.replace(/\s+$/,""),sign:$("#hSign").value.trim()}}
+function handSave(show){
+  const f=$("#handForm");if(!f)return;const h=handFromForm(),w=f.querySelector("input[name=hWhere]:checked");
+  if(!h.title&&!h.body){toast("Write a title or some text first");return}
+  state.handoutWhere={where:w?w.value:"both",phones:$("#hPhones").checked};
+  const H=state.handouts=state.handouts||[],i=H.findIndex(x=>x.id===h.id);if(i>=0)H[i]=h;else H.unshift(h);
+  if(state.handout&&state.handout.id===h.id&&!show)Object.assign(state.handout,{style:h.style,title:h.title,body:h.body,sign:h.sign,where:state.handoutWhere.where,
+    phones:state.handoutWhere.phones});
+  closeSheet();if(show)handShow(h);else commit();
 }
 function renderField(){
   const area=state.effects.filter(e=>e.area),el=$("#fieldStrip");const _ae=document.activeElement;if(_ae&&el.contains(_ae)&&_ae.tagName==="INPUT")return;
@@ -7937,7 +8040,7 @@ function renderPlayer(){
     if(nowIds.has("__lair")&&!prev.has("__lair"))lairTremor(P)}
   callStamps(P,first);
   fxAfter(P,list,prev,first);
-  tcardRender();surfaceMoments(first);if(TV)tvRender(list,first);else if(meName==="*")phaseMoment(list,first);if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull()}
+  tcardRender();handoutRender();surfaceMoments(first);if(TV)tvRender(list,first);else if(meName==="*")phaseMoment(list,first);if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull()}
   if(reduced||first||dealing)return afterRender(list,prev,first);   // a new fight: no ghosts of the old one, no sliding
   // defeated and hidden: a ghost of the old row stays in place and fades
   if(tvCover())leaving.forEach(id=>{
@@ -10131,6 +10234,28 @@ function tvModeNow(list){const T=state.tv||{},m=T.mode||"auto",paused=T.pause&&T
   if(tvCallOn())return "call";
   if(!state.turn)return tvInitOn(list)?"init":"order";
   return "spot"}
+/* E1 (1.3): the handout the DM shows, on the tablet, the TV and (if the DM wants) the phones; a phone can put it away */
+function handoutHtml(h){
+  if(!h)return "";const pr=t=>String(t||"").split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${esc(p).replace(/\n/g,"<br>")}</p>`).join("");
+  const st=h.style||"parch",T=esc(h.title||""),S=esc(h.sign||"");
+  if(st==="letter")return `<div class="ho ho-letter">${T?`<div class="hsal">${T}</div>`:""}<div class="hb">${pr(h.body)}</div>${S?`<div class="hs">— ${S}</div>`:
+    ""}<span class="hseal" aria-hidden="true"><b>${esc((h.sign||h.title||"R").trim().charAt(0).toUpperCase())}</b></span></div>`;
+  if(st==="wanted")return `<div class="ho ho-wanted"><div class="hw">Wanted</div><div class="hdoa">dead or alive</div><div class="hpic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15.8 7a3.8 3.8 0 1 1-7.6 0 3.8 3.8 0 0 1 7.6 0zM4.5 21.5c0-4.7 3.2-7.8 7.5-7.8s7.5 3.1 7.5 7.8z"/></svg></div>${T?
+    `<div class="hn">${T}</div>`:""}<div class="hb">${pr(h.body)}</div>${S?`<div class="hrew">${S}</div>`:""}</div>`;
+  if(st==="page")return `<div class="ho ho-page"><i class="hmk" aria-hidden="true"></i>${T?`<h3>${T}</h3>`:""}<div class="hb hdrop">${pr(h.body)}</div>${S?
+    `<div class="hs">${S}</div>`:""}<i class="hmk" aria-hidden="true"></i></div>`;
+  return `<div class="ho ho-parch">${T?`<h3>${T}</h3><hr>`:""}<div class="hb">${pr(h.body)}</div>${S?`<div class="hs">${S}</div>`:""}</div>`;
+}
+function handoutRender(){
+  let el=$("#handLayer");const h=MODE==="player"?state.handout:null;
+  const want=h&&(TV?(h.where==="tv"||h.where==="both"):meName==="*"?(h.where!=="tv"||!state.tvSeen):(h.phones&&ls.get("handShut","")!==h.id));
+  if(!want){if(el)el.remove();return}
+  const key=h.id+"|"+h.at+"|"+(h.title||"").length+"|"+(h.body||"").length+"|"+h.style;if(el&&el.dataset.k===key)return;
+  if(!el){el=document.createElement("div");el.id="handLayer";el.className="handlayer";document.body.appendChild(el)}
+  el.dataset.k=key;el.classList.toggle("phone",meName!=="*");
+  el.innerHTML=`<div class="handin" role="dialog" aria-label="Handout${h.title?": "+esc(h.title):""}">${handoutHtml(h)}${meName!=="*"?
+    '<button type="button" class="btn handx" data-act="handclose">Put it away</button>':""}</div>`;
+}
 /* ---- TV pack 2 ---- */
 const tvRerender=()=>{if(TV)tvRender(grpRows(withLair(sorted().filter(shownToPlayers))),false)};
 const tvLater=(ms,k)=>{clearTimeout(tvLater[k]);tvLater[k]=setTimeout(tvRerender,ms+60)};
@@ -10894,6 +11019,14 @@ document.addEventListener("click",e=>{
   const act=t.dataset.act;const row=t.closest(".row");const c=row?byId(row.dataset.id):null;
   switch(act){
     case "close": if(t.classList.contains("scrim")&&e.target!==t)return; closeSheet(); break;
+    case "handnew": handSheet(null);break;
+    case "handedit": handSheet(t.dataset.id);break;
+    case "handsaveshow": handSave(true);break;
+    case "handshow":{const h=(state.handouts||[]).find(x=>x.id===t.dataset.id);if(h){if(state.handout&&state.handout.id===h.id){state.handout=null;commit()}else handShow(h)}break}
+    case "handdown": state.handout=null;commit();break;
+    case "handdel": if(!t.classList.contains("armed")){t.classList.add("armed");setTimeout(()=>t.classList.remove("armed"),2500);break}
+      state.handouts=(state.handouts||[]).filter(x=>x.id!==t.dataset.id);if(state.handout&&state.handout.id===t.dataset.id)state.handout=null;commit();break;
+    case "handclose": if(state.handout){ls.set("handShut",state.handout.id);handoutRender()}break;
     case "phaseclear":{const f=$("#phaseForm"),c=f&&byId(f.dataset.id);if(c){delete c.phases;delete c.phase;commit()}closeSheet();break}
     case "example": state.list=EXAMPLE();commit();break;
     case "prm": state.party.splice(Number(t.dataset.i),1);commit();break;
@@ -11576,6 +11709,7 @@ document.addEventListener("submit",async e=>{
       all.push({id:uid(),name:nm,theme:atmoD.theme,look:Object.assign(lookOf(atmoD),L),scene:atmoD.scene,weather:atmoD.weather||"none",tod:atmoD.tod||"none",
       tune:atmoD.tune||{}});
     ls.set("myThemes",all.slice(-24));toast("Saved: "+nm);atmoRefresh();return}
+  if(f.id==="handForm"){e.preventDefault();handSave(false);return}
   if(f.id==="phaseForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){const ph=$("#phaseText").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,10);
     const pick=f.querySelector('input[name=phNow]:checked');if(ph.length>1){c.phases=ph;c.phase=Math.min(ph.length-1,pick?Number(pick.value):c.phase||0)}
     else{delete c.phases;delete c.phase}commit()}closeSheet();return}
