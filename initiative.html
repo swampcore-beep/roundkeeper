@@ -2853,6 +2853,34 @@ body.tvlite .tvsp .deck .card{filter:none}
 .tvex.chap .ln i,.moment .mo-orn i{position:relative;width:12px;height:12px;transform:rotate(45deg);background:var(--accent);
   box-shadow:-26px 26px 0 -3px var(--accent),26px -26px 0 -3px var(--accent)}
 .moment .mo-orn{margin:.4em auto}
+
+/* tablet and TV order: the sigil sits in a frame whose shape says the side (players a circle, allies a shield, enemies a hexagon),
+   so the sides read apart without colour; Bloodied cracks the frame and reddens its rim. Numbers keep one width. */
+ol.plist li .pfr{position:relative;z-index:1;display:grid;place-items:center;width:1.18em;height:1.18em;flex:none;margin-right:.08em}
+ol.plist li .pfr::before{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--k,var(--fg)) 70%,transparent);
+  clip-path:polygon(50% 3%,93% 26%,93% 74%,50% 97%,7% 74%,7% 26%)}
+ol.plist li .pfr::after{content:"";position:absolute;inset:.07em;background:color-mix(in srgb,var(--k,var(--fg)) 14%,#0d0b0a);
+  clip-path:polygon(50% 3%,93% 26%,93% 74%,50% 97%,7% 74%,7% 26%)}
+ol.plist li.k-pc .pfr::before,ol.plist li.k-pc .pfr::after{clip-path:circle(48% at 50% 50%)}
+ol.plist li.k-ally .pfr::before,ol.plist li.k-ally .pfr::after{clip-path:polygon(50% 3%,92% 16%,92% 46%,86% 64%,75% 79%,62% 90%,50% 97%,38% 90%,25% 79%,14% 64%,8% 46%,8% 16%)}
+ol.plist li .pfr .sig{position:relative;z-index:2;width:.62em;height:.62em;margin:0}
+ol.plist li.turn .pfr::before{background:var(--accent)}
+ol.plist li.st-bloodied .pfr::before{background:var(--blood);filter:drop-shadow(0 0 .12em var(--blood))}
+ol.plist li.st-bloodied .pfr::after{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Cpath d='M31 5L36 22L31 31L40 45L36 58M66 27L50 33L53 42L42 51M6 46L20 44L22 56L16 68' fill='none' stroke='%23f6ecd9' stroke-width='3' stroke-linejoin='round' stroke-linecap='round' opacity='.8'/%3E%3C/svg%3E") center/100% no-repeat,
+  color-mix(in srgb,var(--blood) 30%,#0d0b0a)}
+html[data-plight] ol.plist li .pfr::after{background:color-mix(in srgb,var(--k,var(--fg)) 12%,#fffaf2)}
+ol.plist li .pos b,#tvLayer .hex b,#tvLayer .hx,.p-round b{font-variant-numeric:tabular-nums lining-nums}
+
+/* phones: the player's own part (name, tiles, their row, YOU) in their class colour; the rest keeps the table's theme */
+.pbar.acc{border-top:2px solid color-mix(in srgb,var(--fc) 70%,transparent);
+  background-image:linear-gradient(180deg,color-mix(in srgb,var(--fc) 13%,transparent),transparent 120px)}
+.pbar.acc .pme{color:color-mix(in srgb,var(--fc) 55%,var(--fg))}
+.pbar.acc .ptiles .tile{border-color:color-mix(in srgb,var(--fc) 45%,var(--line))}
+.pbar.acc .ptiles .tile svg{color:var(--fc)}
+.pbar.acc .ptiles .tile.want{border-color:var(--fc)}
+html:root body:has(.pbar.acc) ol.plist li.me.fr{outline-color:var(--fc)}
+html:root body:has(.pbar.acc) ol.plist.compact li.me.fr{background:color-mix(in srgb,var(--fc) 20%,var(--panel))}
+body:has(.pbar.acc) ol.plist li.me.fr .badge.you{background:var(--fc);color:#15120c}
 </style>
 </head>
 <body>
@@ -7893,7 +7921,7 @@ function renderPlayer(){
       const dealI=dealing?list.indexOf(c):-1;
       return `<li data-id="${esc(c.id)}" class="${cls.join(" ")}"${st.has("exhaustion")||dealI>=0?` style="${st.has("exhaustion")?`--exh:${exhOf(c)};`:
         ""}${dealI>=0?`--i:${dealI}`:""}"`:""}>${fx}<span class="pos" title="Initiative">${I.hex}<b>${iv}</b></span>${fk?
-        `<span class="sig" title="${esc(LABEL[fk])}"></span>`:""}<span class="nmw"><span class="nmb">${deco(st)}<span class="nm">${esc(c.name)}${c.boss&&
+        `<span class="pfr" aria-hidden="true"><span class="sig" title="${esc(LABEL[fk])}"></span></span>`:""}<span class="nmw"><span class="nmb">${deco(st)}<span class="nm">${esc(c.name)}${c.boss&&
         (c.title||phaseTag(c))?`<small>${esc([c.title,phaseTag(c)].filter(Boolean).join(" · "))}</small>`:""}</span></span></span>${c.kind!=="lair"&&c.showAc&&c.ac!=null?
         `<span class="acw"><span class="shield${isNew(c,"ac")}" data-info="ac" title="AC">${I.shield}<span>${esc(c.ac)}</span></span></span>`:
         ""}<span class="ic">${isMe?'<span class="badge you">You</span>':""}${c.kind==="lair"?"":icons(c,isNew)}</span></li>`}).join("")}</ol>`
@@ -9093,7 +9121,7 @@ function playerBar(){
     if(ed&&typeof me.init!=="number")T.push(tile("pinit",`<small>Init</small><b>?</b>`,"want","Initiative"));
     T.push(tile("php",hp.max?`<small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?`<i>+${hp.temp}</i>`:
       ""}</b><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span>Set HP</span>`,"hp"+hpCls,"Hit points"));
-    return `<div class="pbar simple"><div class="pmeline"><span class="pme">${esc(
+    return `<div class="pbar simple${me.kind==="pc"&&frameKey(me)?` acc fr-${frameKey(me)}`:""}"><div class="pmeline"><span class="pme">${esc(
       me.name)}<small>Simple</small></span><span class="pmeright"><button class="ptop sq" type="button" data-act="pmore" aria-label="More">${
       DOTS}</button></span></div>
       ${chips?`<div class="mystat" aria-label="Your status">${myStatus(me).map(x=>`<span class="mychip ${x.cls||""}">${esc(x.t)}${x.x||
@@ -9105,7 +9133,8 @@ function playerBar(){
   T.push(tile("pdice",`${D20}<span>Roll</span>`,"","Dice"));
   if(ed){T.push(tile("pconds",`${TI.cond}<span>Conditions</span>`));T.push(tile("peffs",`${TI.spark}<span>Effects</span>`))}
   T.push(book?tile("pbook",`${TI.book}<span>Spells</span>`):tile("pres",`${TI.pips}<span>Resources</span>`));
-  return `<div class="pbar${many?" many":""}"><div class="pmeline"><span class="pme">${esc(me.name)}</span>
+  const acc=me.kind==="pc"&&frameKey(me)?` acc fr-${frameKey(me)}`:"";   // 1.3: the player's own part of the phone in their class colour
+  return `<div class="pbar${many?" many":""}${acc}"><div class="pmeline"><span class="pme">${esc(me.name)}</span>
       <span class="pmeright">${book?`<button class="ptop" type="button" data-act="pres">${TI.pips}Resources</button>`:
         ""}<button class="ptop sq" type="button" data-act="pmore" aria-label="More">${DOTS}</button></span></div>
     ${chips?`<div class="mystat" aria-label="Your status">${chips}</div>`:""}${ed?"":`<div class="pnote">The DM has locked changes</div>`}

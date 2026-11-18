@@ -63,7 +63,7 @@ function playerBar(){
     if(ed&&typeof me.init!=="number")T.push(tile("pinit",`<small>Init</small><b>?</b>`,"want","Initiative"));
     T.push(tile("php",hp.max?`<small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?`<i>+${hp.temp}</i>`:
       ""}</b><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span>Set HP</span>`,"hp"+hpCls,"Hit points"));
-    return `<div class="pbar simple"><div class="pmeline"><span class="pme">${esc(
+    return `<div class="pbar simple${me.kind==="pc"&&frameKey(me)?` acc fr-${frameKey(me)}`:""}"><div class="pmeline"><span class="pme">${esc(
       me.name)}<small>Simple</small></span><span class="pmeright"><button class="ptop sq" type="button" data-act="pmore" aria-label="More">${
       DOTS}</button></span></div>
       ${chips?`<div class="mystat" aria-label="Your status">${myStatus(me).map(x=>`<span class="mychip ${x.cls||""}">${esc(x.t)}${x.x||
@@ -75,7 +75,8 @@ function playerBar(){
   T.push(tile("pdice",`${D20}<span>Roll</span>`,"","Dice"));
   if(ed){T.push(tile("pconds",`${TI.cond}<span>Conditions</span>`));T.push(tile("peffs",`${TI.spark}<span>Effects</span>`))}
   T.push(book?tile("pbook",`${TI.book}<span>Spells</span>`):tile("pres",`${TI.pips}<span>Resources</span>`));
-  return `<div class="pbar${many?" many":""}"><div class="pmeline"><span class="pme">${esc(me.name)}</span>
+  const acc=me.kind==="pc"&&frameKey(me)?` acc fr-${frameKey(me)}`:"";   // 1.3: the player's own part of the phone in their class colour
+  return `<div class="pbar${many?" many":""}${acc}"><div class="pmeline"><span class="pme">${esc(me.name)}</span>
       <span class="pmeright">${book?`<button class="ptop" type="button" data-act="pres">${TI.pips}Resources</button>`:
         ""}<button class="ptop sq" type="button" data-act="pmore" aria-label="More">${DOTS}</button></span></div>
     ${chips?`<div class="mystat" aria-label="Your status">${chips}</div>`:""}${ed?"":`<div class="pnote">The DM has locked changes</div>`}

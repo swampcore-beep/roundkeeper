@@ -77,7 +77,7 @@ function renderPlayer(){
       const dealI=dealing?list.indexOf(c):-1;
       return `<li data-id="${esc(c.id)}" class="${cls.join(" ")}"${st.has("exhaustion")||dealI>=0?` style="${st.has("exhaustion")?`--exh:${exhOf(c)};`:
         ""}${dealI>=0?`--i:${dealI}`:""}"`:""}>${fx}<span class="pos" title="Initiative">${I.hex}<b>${iv}</b></span>${fk?
-        `<span class="sig" title="${esc(LABEL[fk])}"></span>`:""}<span class="nmw"><span class="nmb">${deco(st)}<span class="nm">${esc(c.name)}${c.boss&&
+        `<span class="pfr" aria-hidden="true"><span class="sig" title="${esc(LABEL[fk])}"></span></span>`:""}<span class="nmw"><span class="nmb">${deco(st)}<span class="nm">${esc(c.name)}${c.boss&&
         (c.title||phaseTag(c))?`<small>${esc([c.title,phaseTag(c)].filter(Boolean).join(" · "))}</small>`:""}</span></span></span>${c.kind!=="lair"&&c.showAc&&c.ac!=null?
         `<span class="acw"><span class="shield${isNew(c,"ac")}" data-info="ac" title="AC">${I.shield}<span>${esc(c.ac)}</span></span></span>`:
         ""}<span class="ic">${isMe?'<span class="badge you">You</span>':""}${c.kind==="lair"?"":icons(c,isNew)}</span></li>`}).join("")}</ol>`
