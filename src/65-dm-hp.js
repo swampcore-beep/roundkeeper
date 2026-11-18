@@ -334,7 +334,9 @@ function renderDM(){
           "0 HP + ask for a death save"} ${K("S")}</button><button type="button" data-act="timer">${state.timer&&state.timer.cid===c.id?"Stop the hourglass":
           "Hourglass"} ${K("T")}</button><button type="button" data-act="insp">${c.insp?"Remove":"Give"} Heroic Inspiration ${K("I")}</button>`
           :`<button type="button" data-act="boss">${c.boss?"Not a boss":"Make it a boss"} ${K("I")}</button>${c.boss?
-            `<button type="button" data-act="titleedit">Intro title…</button><button type="button" data-act="intro">Replay intro</button><label>Background<select data-act="rim" aria-label="Boss background">${
+            `<button type="button" data-act="titleedit">Intro title…</button><button type="button" data-act="phases">Phases…${Array.isArray(c.phases)&&c.phases.length>1?
+            ` <small>${ROMAN[c.phase||0]||""} of ${c.phases.length}</small>`:""}</button>${Array.isArray(c.phases)&&(c.phase||0)<c.phases.length-1?
+            `<button type="button" data-act="phasenext">Next phase: ${esc(c.phases[(c.phase||0)+1])}</button>`:""}<button type="button" data-act="intro">Replay intro</button><label>Background<select data-act="rim" aria-label="Boss background">${
             RIMS.map(([k,l])=>`<option value="${k}"${(c.rim||"")===k?" selected":""}>${l}</option>`).join("")}</select></label>`:""}`}
         ${c.kind!=="pc"&&c.hpMax!=null?`<button type="button" data-act="hpclear">Stop tracking HP</button>`:""}
         ${sb?`<button type="button" data-act="sbresetall">Reset statblock counters</button>`:""}

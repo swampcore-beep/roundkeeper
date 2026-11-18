@@ -18,6 +18,7 @@ document.addEventListener("click",e=>{
   const act=t.dataset.act;const row=t.closest(".row");const c=row?byId(row.dataset.id):null;
   switch(act){
     case "close": if(t.classList.contains("scrim")&&e.target!==t)return; closeSheet(); break;
+    case "phaseclear":{const f=$("#phaseForm"),c=f&&byId(f.dataset.id);if(c){delete c.phases;delete c.phase;commit()}closeSheet();break}
     case "example": state.list=EXAMPLE();commit();break;
     case "prm": state.party.splice(Number(t.dataset.i),1);commit();break;
     case "pload": loadParty();state.ended=null;commit();break;
@@ -105,6 +106,9 @@ document.addEventListener("click",e=>{
     case "reacttoggle": state.sceneReact=state.sceneReact===false;commit();atmoRefresh();break;
     case "layoutpick": state.layout=t.dataset.v;commit();{const fr=$("#atmoFrame");if(fr)fr.remove()}atmoSheet();break;
     case "titleedit": titleSheet(c.id);break;
+    case "phases": phaseSheet(c.id);break;
+    case "phasenext": if(Array.isArray(c.phases)&&c.phases.length>1){c.phase=Math.min(c.phases.length-1,(c.phase||0)+1);menuId=null;commit();
+      toast(`${c.name}: phase ${ROMAN[c.phase]||c.phase+1}${c.phases[c.phase]?` · ${c.phases[c.phase]}`:""}`)}break;
     case "hpclear": c.hp=null;c.hpMax=null;commit();break;
     case "logundo": undoLog(t.dataset.l);break;
     case "qr": qrSheet();break;
@@ -696,6 +700,9 @@ document.addEventListener("submit",async e=>{
       all.push({id:uid(),name:nm,theme:atmoD.theme,look:Object.assign(lookOf(atmoD),L),scene:atmoD.scene,weather:atmoD.weather||"none",tod:atmoD.tod||"none",
       tune:atmoD.tune||{}});
     ls.set("myThemes",all.slice(-24));toast("Saved: "+nm);atmoRefresh();return}
+  if(f.id==="phaseForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){const ph=$("#phaseText").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,10);
+    const pick=f.querySelector('input[name=phNow]:checked');if(ph.length>1){c.phases=ph;c.phase=Math.min(ph.length-1,pick?Number(pick.value):c.phase||0)}
+    else{delete c.phases;delete c.phase}commit()}closeSheet();return}
   if(f.id==="titleForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){c.title=$("#titleText").value.trim();commit()}closeSheet();return}
   if(f.id==="callForm"){e.preventDefault();
     const text=$("#callText").value.trim();if(!text)return;const m=text.match(/\bDC\s*(\d+)/i);

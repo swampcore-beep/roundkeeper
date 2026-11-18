@@ -2814,6 +2814,45 @@ body.sbopen #roster .chips:has(.cond:not(.addc)) .addc{position:absolute;right:0
   :root[data-dmlook=tool] .ttile,:root[data-dmlook=tool] .tnav{min-height:44px}
   :root[data-dmlook=tool] .dmmain>.foot{gap:4px;padding-top:2px}
   :root[data-dmlook=tool] .dmmain>.foot .fgrp .btn{padding-top:6px;padding-bottom:6px}}
+/* ---------- 1.3: the table's screens (TV, tablet, phones), the handouts and the theme textures ---------- */
+:root{--cg-out:#ff8a80;--cg-body:#e8b84a;--cg-mind:#c9a6ff;--cg-sense:#8fd0e8;--cg-conc:#b3a5ff}
+html[data-plight]{--cg-out:#b3261e;--cg-body:#8a5a00;--cg-mind:#6a3fb0;--cg-sense:#0a6a96;--cg-conc:#6248c9}
+
+/* TV: each condition with its line icon, coloured by group (out of the fight, body, mind, senses, Concentration) */
+#tvLayer .cico,#player .cico{display:block;flex:none;fill:none;stroke:var(--cc);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#tvLayer .chip .cico{width:1.15em;height:1.15em}
+#tvLayer .chip[class*=cg-]{border-color:var(--cc);background:color-mix(in srgb,var(--cc) 16%,transparent)}
+
+/* TV: the one on turn in a pool of light, the ones on deck dimmed and without colour */
+.tvsp .spot::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(55% 75% at 22% 50%,color-mix(in srgb,var(--fc,var(--accent)) 20%,transparent),transparent 72%)}
+.tvsp .spot>*{position:relative;z-index:1}
+.tvsp .deck .card{opacity:.5;filter:saturate(.4) brightness(.82);transition:opacity .6s,filter .6s}
+.tvsp .deck .card.n1{opacity:.74;filter:saturate(.7)}
+body.tvlite .tvsp .deck .card{filter:none}
+
+/* TV4: the boss's phases, a bar of skewed segments (past ones cracked and grey, the current one alight) */
+.phbar{display:flex;gap:.6vw;margin-top:.9vw}
+.phbar i{width:7vw;max-width:150px;height:1.1vw;min-height:10px;transform:skewX(-16deg);border:1.5px solid color-mix(in srgb,var(--boss,#c99a3e) 70%,transparent);
+  background:rgba(0,0,0,.25)}
+.phbar i.gone{border-color:color-mix(in srgb,var(--fg) 25%,transparent);background:repeating-linear-gradient(110deg,rgba(255,255,255,.06) 0 6px,rgba(0,0,0,.25) 6px 11px)}
+.phbar i.now{border-color:#ffd28a;background:linear-gradient(180deg,#ffbf6a,#e0592c 60%,#a8301c);box-shadow:0 0 22px rgba(255,140,60,.6)}
+.phname{font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:clamp(13px,1.2vw,24px);color:#ffcf8a;margin-top:.5vw}
+.moment.tvphase .mo-num{color:#ffcf8a;text-shadow:0 0 50px rgba(255,120,50,.6)}
+.phpick{display:grid;gap:6px;margin:4px 0 10px}.phpick label{display:flex;gap:8px;align-items:center}
+
+/* TV: the title card as the opening of a chapter, the first letter a framed initial, a line with diamonds */
+.dcap{display:inline-grid;place-items:center;min-width:1.05em;padding:.04em .08em 0;margin-right:.06em;border:2px solid color-mix(in srgb,var(--accent) 75%,transparent);
+  color:var(--accent);background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--accent) 18%,transparent),rgba(0,0,0,.25) 75%);line-height:1;
+  font-size:1.25em;vertical-align:-.12em;text-shadow:0 0 30px color-mix(in srgb,var(--accent) 40%,transparent)}
+.tvex.chap{left:50%;right:auto;bottom:auto;top:50%;transform:translate(-50%,-50%);justify-items:center;text-align:center;max-width:80vw}
+.tvex.chap .eb{letter-spacing:.32em}
+.tvex.chap .ln,.moment .mo-orn{position:relative;width:min(36vw,640px);height:14px;background:none;display:grid;place-items:center}
+.tvex.chap .ln::before,.moment .mo-orn::before{content:"";position:absolute;left:0;right:0;top:50%;height:1.5px;
+  background:linear-gradient(90deg,transparent,var(--accent) 30%,var(--accent) 70%,transparent)}
+.tvex.chap .ln i,.moment .mo-orn i{position:relative;width:12px;height:12px;transform:rotate(45deg);background:var(--accent);
+  box-shadow:-26px 26px 0 -3px var(--accent),26px -26px 0 -3px var(--accent)}
+.moment .mo-orn{margin:.4em auto}
 </style>
 </head>
 <body>
@@ -6359,7 +6398,9 @@ function renderDM(){
           "0 HP + ask for a death save"} ${K("S")}</button><button type="button" data-act="timer">${state.timer&&state.timer.cid===c.id?"Stop the hourglass":
           "Hourglass"} ${K("T")}</button><button type="button" data-act="insp">${c.insp?"Remove":"Give"} Heroic Inspiration ${K("I")}</button>`
           :`<button type="button" data-act="boss">${c.boss?"Not a boss":"Make it a boss"} ${K("I")}</button>${c.boss?
-            `<button type="button" data-act="titleedit">Intro title…</button><button type="button" data-act="intro">Replay intro</button><label>Background<select data-act="rim" aria-label="Boss background">${
+            `<button type="button" data-act="titleedit">Intro title…</button><button type="button" data-act="phases">Phases…${Array.isArray(c.phases)&&c.phases.length>1?
+            ` <small>${ROMAN[c.phase||0]||""} of ${c.phases.length}</small>`:""}</button>${Array.isArray(c.phases)&&(c.phase||0)<c.phases.length-1?
+            `<button type="button" data-act="phasenext">Next phase: ${esc(c.phases[(c.phase||0)+1])}</button>`:""}<button type="button" data-act="intro">Replay intro</button><label>Background<select data-act="rim" aria-label="Boss background">${
             RIMS.map(([k,l])=>`<option value="${k}"${(c.rim||"")===k?" selected":""}>${l}</option>`).join("")}</select></label>`:""}`}
         ${c.kind!=="pc"&&c.hpMax!=null?`<button type="button" data-act="hpclear">Stop tracking HP</button>`:""}
         ${sb?`<button type="button" data-act="sbresetall">Reset statblock counters</button>`:""}
@@ -6635,6 +6676,18 @@ function titleSheet(id){
       <p class="psub">Shown under the name when the boss enters.</p>
       <div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="submit">Save</button></div></form></div></div>`;
   setTimeout(()=>{const x=$("#titleText");x&&x.focus();x&&x.select()},0);
+}
+/* TV4: the boss's phases, one per line; the DM lights the next one by hand (the row's ⋯ or here) */
+function phaseSheet(id){
+  const c=byId(id);if(!c)return;const ph=Array.isArray(c.phases)?c.phases:[],k=c.phase||0;
+  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true" aria-label="Phases"><h2>Phases · ${esc(c.name)}</h2>
+    <form id="phaseForm" data-id="${esc(c.id)}" autocomplete="off" class="psec"><textarea class="field" id="phaseText" rows="5" maxlength="400" aria-label="Phases, one per line"
+      placeholder="The wyrm awakens&#10;The skies burn&#10;Last stand">${esc(ph.join("\n"))}</textarea>
+      <p class="psub">One phase per line, two or more. The TV and the tablet show which phase the fight is in (no HP), and a new phase gets a big moment.</p>
+      ${ph.length>1?`<div class="phpick" role="radiogroup" aria-label="Current phase">${ph.map((n,i)=>`<label><input type="radio" name="phNow" value="${i}"${i===k?
+        " checked":""}> ${ROMAN[i]||i+1} · ${esc(n)}</label>`).join("")}</div>`:""}
+      <div style="display:flex;justify-content:flex-end;gap:8px">${ph.length?'<button class="btn danger" type="button" data-act="phaseclear">No phases</button>':""}<span style="flex:1"></span><button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="submit">Save</button></div></form></div></div>`;
+  setTimeout(()=>{const x=$("#phaseText");x&&x.focus()},0);
 }
 function knowSheet(id){
   const c=byId(id);if(!c)return;
@@ -7841,7 +7894,7 @@ function renderPlayer(){
       return `<li data-id="${esc(c.id)}" class="${cls.join(" ")}"${st.has("exhaustion")||dealI>=0?` style="${st.has("exhaustion")?`--exh:${exhOf(c)};`:
         ""}${dealI>=0?`--i:${dealI}`:""}"`:""}>${fx}<span class="pos" title="Initiative">${I.hex}<b>${iv}</b></span>${fk?
         `<span class="sig" title="${esc(LABEL[fk])}"></span>`:""}<span class="nmw"><span class="nmb">${deco(st)}<span class="nm">${esc(c.name)}${c.boss&&
-        c.title?`<small>${esc(c.title)}</small>`:""}</span></span></span>${c.kind!=="lair"&&c.showAc&&c.ac!=null?
+        (c.title||phaseTag(c))?`<small>${esc([c.title,phaseTag(c)].filter(Boolean).join(" · "))}</small>`:""}</span></span></span>${c.kind!=="lair"&&c.showAc&&c.ac!=null?
         `<span class="acw"><span class="shield${isNew(c,"ac")}" data-info="ac" title="AC">${I.shield}<span>${esc(c.ac)}</span></span></span>`:
         ""}<span class="ic">${isMe?'<span class="badge you">You</span>':""}${c.kind==="lair"?"":icons(c,isNew)}</span></li>`}).join("")}</ol>`
     :`<div class="p-empty"><div><strong>Waiting for combat</strong>The initiative order will appear here.${meName==="*"?joinCard(false):""}</div></div>`;
@@ -7856,7 +7909,7 @@ function renderPlayer(){
     if(nowIds.has("__lair")&&!prev.has("__lair"))lairTremor(P)}
   callStamps(P,first);
   fxAfter(P,list,prev,first);
-  tcardRender();surfaceMoments(first);if(TV)tvRender(list,first);if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull()}
+  tcardRender();surfaceMoments(first);if(TV)tvRender(list,first);else if(meName==="*")phaseMoment(list,first);if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull()}
   if(reduced||first||dealing)return afterRender(list,prev,first);   // a new fight: no ghosts of the old one, no sliding
   // defeated and hidden: a ghost of the old row stays in place and fades
   if(tvCover())leaving.forEach(id=>{
@@ -10166,9 +10219,10 @@ function tvRender(list,first){
     if(tm){clearTimeout(momentShow.t);tm.classList.add("out");setTimeout(()=>tm.remove(),700)}}
   pv.tvHadList=list.length;
   const top=`<div class="tvtop"><span>${state.turn&&mode!=="spot"?`Round ${state.turn.round}`:""}</span>${clocksHtml()}</div>`;
+  const cgOf=n=>CICON[n]?"cg-"+CICON[n][0]:"";   // 1.3: each condition with its line icon, coloured by group
   const conds=c=>(c.conds||[]).map(x=>x.n||x).filter(n=>n!=="Concentrating").slice(0,3).map(n=>
-    `<span class="chip" style="--cc:var(--stone)">${esc(n)}</span>`).join("")
-    +((c.conds||[]).some(x=>(x.n||x)==="Concentrating")?`<span class="chip" style="--cc:var(--arcane)">Concentrating</span>`:"")
+    `<span class="chip ${cgOf(n)}"${cgOf(n)?"":' style="--cc:var(--stone)"'}>${condIco(n,"tvci")}${esc(n)}</span>`).join("")
+    +((c.conds||[]).some(x=>(x.n||x)==="Concentrating")?`<span class="chip cg-conc">${condIco("Concentrating","tvci")}Concentrating</span>`:"")
     +(state.effects||[]).filter(e=>(e.targets||[]).includes(c.id)).slice(0,3).map(e=>
       `<span class="chip" style="--cc:#e8c06a">✦ ${esc(e.name)}</span>`).join("")+(c.insp?
       `<span class="chip" style="--cc:var(--accent)">Inspiration</span>`:"");
@@ -10178,8 +10232,8 @@ function tvRender(list,first){
   if(mode==="call")h=tvCallHtml();
   else if(mode==="init")h=tvInitHtml(list);
   else if(mode==="end")h=tvEndHtml();
-  else if(mode==="scene"){const t=T.title;h=t&&t.t?`<div class="tvex"><div class="eb">${esc(t.eb||
-    "")}</div><div class="ti">${esc(t.t)}</div><div class="ln"></div>${t.sub?`<div class="sub">${esc(t.sub)}</div>`:""}</div>`:""}
+  else if(mode==="scene"){const t=T.title;h=t&&t.t?`<div class="tvex chap"><div class="eb">${esc(t.eb||
+    "")}</div><div class="ti">${dropCap(t.t)}</div><div class="ln" aria-hidden="true"><i></i></div>${t.sub?`<div class="sub">${esc(t.sub)}</div>`:""}</div>`:""}
   else if(mode==="pause"){const left=Math.max(0,Math.round((T.pause.until-dmNow())/1000));
     h=`<div class="tvpz"><div class="in"><div class="k">${esc(T.pause.msg||"Short break")}</div><div class="t">${Math.floor(left/60)}:${String(
     left%60).padStart(2,"0")}</div><div class="s">We continue at ${new Date(T.pause.until-(dmNow()-Date.now())).toLocaleTimeString([],{hour:"2-digit",minute:
@@ -10200,7 +10254,7 @@ function tvRender(list,first){
       ""}" data-tid="${esc(c.id)}"><div class="eyeb"><span>On turn</span><span class="rnd">Round ${state.turn?state.turn.round:1}</span></div>
       <div class="who"><span class="emb"></span><div><div class="big${c.name.length>18?" xl":c.name.length>11?" long":
         ""}">${esc(c.name)}</div><div class="sub">${esc(who(c))}${c.kind==="pc"?" · <b>your move</b>":""}</div>${c.boss&&c.title?
-        `<div class="plate">${esc(c.title)}</div>`:""}</div></div><div class="chips">${conds(c)}</div></section>
+        `<div class="plate">${esc(c.title)}</div>`:""}${phaseHtml(c)}</div></div><div class="chips">${conds(c)}</div></section>
       <section class="deck"><h4>On deck</h4>${nx.map((d,k)=>`<div class="card k-${d.kind}${fk(d)?" fr fr-"+fk(d):""}${k===0?" n1":
         ""}" data-tid="${esc(d.id)}">${k===0?`<span class="tag">NEXT</span>`:""}<div class="row1"><span class="hex">${hx}<b>${d.kind==="lair"?20:initOf(d)>-999?
         initOf(d):"–"}</b></span><span class="ce"></span></div><div><div class="cn">${esc(d.name)}</div><div class="cs">${esc(who(d))}${nr(k+1)?" · next round":
@@ -10212,10 +10266,11 @@ function tvRender(list,first){
     k<24&&n.scrollWidth>n.clientWidth+1&&fs>14;k++){fs*=.93;n.style.fontSize=fs+"px"}});
   // a new round: the big number and what happened (once per round)
   const r=state.turn&&state.turn.round;if(r&&pv.tvRound!==undefined&&r>pv.tvRound&&!first&&screenWants("round")&&mode!=="pause")tvRoundShow(r);pv.tvRound=r||0;
+  phaseMoment(list,first);
   // a new title card: big for a moment
   const t=T.title;if(first&&pv.tvTitle===undefined)pv.tvTitle=t&&t.at||0;
     if(t&&t.at&&t.at!==pv.tvTitle){if(!first&&dmNow()-t.at<15000)momentShow("tvtitle",`<div class="mo-eb">${esc(t.eb||
-    "")}</div><div class="mo-big">${esc(t.t)}</div>${t.sub?`<div class="mo-q">${esc(t.sub)}</div>`:""}`,5000);pv.tvTitle=t.at}
+    "")}</div><div class="mo-big">${dropCap(t.t)}</div><div class="mo-orn" aria-hidden="true"><i></i></div>${t.sub?`<div class="mo-q">${esc(t.sub)}</div>`:""}`,5000);pv.tvTitle=t.at}
 }
 function tvRoundShow(r){const L=(state.rsum&&state.rsum.r===r-1?state.rsum.lines:[]).slice(0,3);
   momentShow("tvround",`<div class="mo-eb">Round</div><div class="mo-num">${r}</div>${L.length?`<ul>${L.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}`,3200);
@@ -10356,6 +10411,18 @@ function callHtml(){
       if(call.dc==null)return `<span class="callsum">Everyone rolled</span>`;
       const ok=got.filter(c=>ans[c.id]>=call.dc).length;return `<span class="callsum">${ok} of ${to.length} succeeded</span>`})()}</div>`;
 }
+/* 1.3: a title card set like the start of a chapter, its first letter as a framed initial */
+const dropCap=t=>{const s=String(t||""),m=s.match(/^(\s*)(\S)([\s\S]*)$/);return m?`${esc(m[1])}<span class="dcap">${esc(m[2])}</span>${esc(m[3])}`:esc(s)};
+/* TV4: a boss's phases, lit by the DM by hand; no HP numbers, just which part of the fight this is */
+const ROMAN=["I","II","III","IV","V","VI","VII","VIII","IX","X"];
+function phaseHtml(c){const ph=c&&c.boss&&Array.isArray(c.phases)?c.phases:[];if(ph.length<2)return "";const k=Math.max(0,Math.min(ph.length-1,c.phase||0));
+  return `<div class="phbar" role="img" aria-label="Phase ${k+1} of ${ph.length}">${ph.map((_,i)=>`<i class="${i<k?"gone":i===k?"now":""}"></i>`).join(
+    "")}</div><div class="phname">Phase ${ROMAN[k]||k+1}${ph[k]?` · ${esc(ph[k])}`:""}</div>`}
+function phaseMoment(list,first){pv.phase=pv.phase||{};
+  list.forEach(c=>{if(!c.boss||!Array.isArray(c.phases)||c.phases.length<2)return;const k=c.phase||0,was=pv.phase[c.id];pv.phase[c.id]=k;
+    if(!first&&was!=null&&k>was&&screenWants("intro"))momentShow("tvphase",`<div class="mo-eb">${esc(c.name)}</div><div class="mo-num">${ROMAN[k]||k+
+      1}</div><div class="mo-q">${esc(c.phases[k]||"Phase "+(k+1))}</div>`,4200)})}
+const phaseTag=c=>c&&c.boss&&Array.isArray(c.phases)&&c.phases.length>1?`Phase ${ROMAN[c.phase||0]||(c.phase||0)+1}`:"";
 /* ---------- join QR: the tablet uses the address it was opened with, the laptop uses what the server reports ---------- */
 let joinInfo=null;
 async function loadJoinInfo(){try{const r=await fetch("/info",{cache:"no-store"});joinInfo=await r.json()}catch(e){}}
@@ -10798,6 +10865,7 @@ document.addEventListener("click",e=>{
   const act=t.dataset.act;const row=t.closest(".row");const c=row?byId(row.dataset.id):null;
   switch(act){
     case "close": if(t.classList.contains("scrim")&&e.target!==t)return; closeSheet(); break;
+    case "phaseclear":{const f=$("#phaseForm"),c=f&&byId(f.dataset.id);if(c){delete c.phases;delete c.phase;commit()}closeSheet();break}
     case "example": state.list=EXAMPLE();commit();break;
     case "prm": state.party.splice(Number(t.dataset.i),1);commit();break;
     case "pload": loadParty();state.ended=null;commit();break;
@@ -10885,6 +10953,9 @@ document.addEventListener("click",e=>{
     case "reacttoggle": state.sceneReact=state.sceneReact===false;commit();atmoRefresh();break;
     case "layoutpick": state.layout=t.dataset.v;commit();{const fr=$("#atmoFrame");if(fr)fr.remove()}atmoSheet();break;
     case "titleedit": titleSheet(c.id);break;
+    case "phases": phaseSheet(c.id);break;
+    case "phasenext": if(Array.isArray(c.phases)&&c.phases.length>1){c.phase=Math.min(c.phases.length-1,(c.phase||0)+1);menuId=null;commit();
+      toast(`${c.name}: phase ${ROMAN[c.phase]||c.phase+1}${c.phases[c.phase]?` · ${c.phases[c.phase]}`:""}`)}break;
     case "hpclear": c.hp=null;c.hpMax=null;commit();break;
     case "logundo": undoLog(t.dataset.l);break;
     case "qr": qrSheet();break;
@@ -11476,6 +11547,9 @@ document.addEventListener("submit",async e=>{
       all.push({id:uid(),name:nm,theme:atmoD.theme,look:Object.assign(lookOf(atmoD),L),scene:atmoD.scene,weather:atmoD.weather||"none",tod:atmoD.tod||"none",
       tune:atmoD.tune||{}});
     ls.set("myThemes",all.slice(-24));toast("Saved: "+nm);atmoRefresh();return}
+  if(f.id==="phaseForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){const ph=$("#phaseText").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,10);
+    const pick=f.querySelector('input[name=phNow]:checked');if(ph.length>1){c.phases=ph;c.phase=Math.min(ph.length-1,pick?Number(pick.value):c.phase||0)}
+    else{delete c.phases;delete c.phase}commit()}closeSheet();return}
   if(f.id==="titleForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){c.title=$("#titleText").value.trim();commit()}closeSheet();return}
   if(f.id==="callForm"){e.preventDefault();
     const text=$("#callText").value.trim();if(!text)return;const m=text.match(/\bDC\s*(\d+)/i);
