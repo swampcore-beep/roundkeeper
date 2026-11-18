@@ -215,10 +215,28 @@ function applyHp(c,raw,was){
 }
 let menuId=null,turnMenuOn=false;
 const TFRAME='<span class="tframe" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></span>';
+/* 1.3, the tool look: the turn as tiles in the bottom bar (round, whose turn, how long, the nearest countdown, back and next) */
+function turnTiles(){
+  const t=state.turn,who=t&&byId(t.id),f=state.fightAt&&!state.ended?Math.max(0,Math.round((Date.now()-state.fightAt)/60000)):null;
+  const tile=(v,l,cls)=>`<span class="ttile${cls?" "+cls:""}"><b>${v}</b><small>${l}</small></span>`;
+  const k=(state.clocks||[]).filter(x=>x.n>0).sort((a,b)=>a.n-b.n)[0];
+  return (t?tile(t.round,"Round","trnd")+tile(esc(who?who.name:t.id==="__lair"?"Lair action":"–"),"Turn","twho"):"")
+    +(f!=null&&state.list.length?tile(f<1?"< 1 min":f+" min","Fight"):"")
+    +(k?`<span class="ttile tclk"><button type="button" class="tstep" data-act="clkm" data-id="${esc(k.id)}" aria-label="${esc(
+      k.name)}: one less">−</button><span><b>${
+      k.n}</b><small title="${esc(k.name)}">${esc(k.name)}${k.secret?" · secret":
+        ""}</small></span><button type="button" class="tstep" data-act="clkp" data-id="${
+      esc(k.id)}" aria-label="${esc(k.name)}: one more">+</button></span>`:"")
+    +(t?`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
+      "prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${
+      ic("next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
+      turnMenuOn}" aria-label="Turn options" title="Turn options: stop tracking turns">${DOTS}</button>${turnMenuOn?
+      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`
+      :`<button class="tnav primary" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${ic("next")}</button>`)}
 function renderDM(){
   const ae=document.activeElement;
   if(ae&&$("#roster").contains(ae)&&ae.tagName==="INPUT"){pendingRender=true;return}
-  pendingRender=false;renderParty();renderEnc();renderCall();renderField();
+  pendingRender=false;renderParty();renderEnc();renderCall();renderField();renderHand();
   const tsec=$("#timerSecs");if(tsec&&document.activeElement!==tsec)tsec.value=state.timerSecs||30;
   {const ab=$("#atmoBtn"),sl=(SCENES.find(x=>x[0]===(state.scene||"none"))||["",""])[1];
    if(ab){ab.innerHTML=`${ic("palette")}<span>${esc(atmoLabel(state))}</span>`;
@@ -248,7 +266,7 @@ function renderDM(){
         ""}" title="Exhaustion level">Exhaustion <button type="button" data-act="exh" data-d="-1" aria-label="Lower level">−</button><b>${
         l}</b><button type="button" data-act="exh" data-d="1" aria-label="Raise level" ${l>=6?"disabled":""}>+</button>${l>=6?" dead":""}</span>`}
       const cd=cdurOf(c,n);return `<button type="button" class="cond" data-act="rmcond" data-j="${j}" title="Remove${cd?" · "+esc(cdurTag(cd)):
-        ""}">${esc(n)}${cd?`<i class="cdurb">${esc(cdurTag(cd))}</i>`:""}</button>`}).join("")
+        ""}">${condIco(n)}${esc(n)}${cd?`<i class="cdurb">${esc(cdurTag(cd))}</i>`:""}</button>`}).join("")
       +state.effects.filter(e=>e.targets.includes(c.id)).map(e=>{const by=byId(e.by);
         return `<button type="button" class="cond eff" data-act="effrm" data-e="${esc(e.id)}" title="${esc(e.name)}${by?` from ${esc(by.name)}`:
           ""} · click to remove it from all targets"><i class="eg" aria-hidden="true">✦</i>${esc(e.name)}${by?
@@ -319,7 +337,11 @@ function renderDM(){
           "0 HP + ask for a death save"} ${K("S")}</button><button type="button" data-act="timer">${state.timer&&state.timer.cid===c.id?"Stop the hourglass":
           "Hourglass"} ${K("T")}</button><button type="button" data-act="insp">${c.insp?"Remove":"Give"} Heroic Inspiration ${K("I")}</button>`
           :`<button type="button" data-act="boss">${c.boss?"Not a boss":"Make it a boss"} ${K("I")}</button>${c.boss?
-            `<button type="button" data-act="titleedit">Intro title…</button><button type="button" data-act="intro">Replay intro</button><label>Background<select data-act="rim" aria-label="Boss background">${
+            `<button type="button" data-act="titleedit">Intro title…</button><button type="button" data-act="phases">Phases…${Array.isArray(c.phases)&&
+              c.phases.length>1?
+            ` <small>${ROMAN[c.phase||0]||""} of ${c.phases.length}</small>`:""}</button>${Array.isArray(c.phases)&&(c.phase||0)<c.phases.length-1?
+            `<button type="button" data-act="phasenext">Next phase: ${esc(c.phases[(c.phase||0)+1])}</button>`:
+              ""}<button type="button" data-act="intro">Replay intro</button><label>Background<select data-act="rim" aria-label="Boss background">${
             RIMS.map(([k,l])=>`<option value="${k}"${(c.rim||"")===k?" selected":""}>${l}</option>`).join("")}</select></label>`:""}`}
         ${c.kind!=="pc"&&c.hpMax!=null?`<button type="button" data-act="hpclear">Stop tracking HP</button>`:""}
         ${sb?`<button type="button" data-act="sbresetall">Reset statblock counters</button>`:""}
@@ -337,8 +359,9 @@ function renderDM(){
         ""}" id="init-${c.id}" type="number" inputmode="numeric" value="${typeof c.init==="number"?c.init:""}" placeholder="${typeof c.ib==="number"?(c.ib>=0?
         "+":"")+c.ib:"?"}" data-act="init" aria-label="Initiative"${typeof c.ib==="number"?` title="Initiative bonus ${c.ib>=0?"+":
         ""}${c.ib}: type the d20 total"`:""}></span>
-      <div class="who"><span class="nmrow">${(k=>k?`<span class="sig dmsig fr-${k}" role="img" aria-label="${esc(LABEL[k])}" title="${esc(
-        LABEL[k])}"></span>`:`<span class="sig dmsig nosig" aria-hidden="true"></span>`)(frameKey(c))}<input class="name-in" id="name-${c.id}" value="${esc(
+      <div class="who"><span class="nmrow"><span class="dmpic">${(k=>k?`<span class="sig dmsig fr-${k}" role="img" aria-label="${esc(LABEL[k])}" title="${esc(
+        LABEL[k])}"></span>`:`<span class="sig dmsig nosig" aria-hidden="true"></span>`)(frameKey(c))}</span><input class="name-in" id="name-${
+          c.id}" value="${esc(
         c.name)}" data-act="name" aria-label="Name"></span>${typeline?
         `<div class="typeline">${typeline}</div>`:""}</div>
       <div class="chips">${chips}</div>
@@ -355,7 +378,8 @@ function renderDM(){
           c.id}" aria-label="More for ${esc(c.name)}">${DOTS}</button>
       </div>${sbHtml}${menu}${isTurn?TFRAME:""}</div>`}).join("");
   freshIds.clear();markSel();renderSbDrawer();
-  const tb=$("#turnBox");if(tb){const t=state.turn;
+  const tb=$("#turnBox");if(tb&&document.documentElement.dataset.dmlook==="tool")tb.innerHTML=turnTiles();
+  else if(tb){const t=state.turn;
     tb.innerHTML=t?`<span class="rnd">Round <b>${
       t.round}</b></span><button class="icon-btn" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
       "prev")}</button><button class="btn primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${ic(

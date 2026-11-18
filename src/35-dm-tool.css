@@ -1,0 +1,168 @@
+/* ---------- DM screen, 1.3: the tool look (default; Settings → This laptop → Classic look brings back 1.1) ----------
+   After Encounter+: a neutral app around the content. Near-black graphite in three steps (page, panels, rows), the system font,
+   one orange accent only for the turn and Next turn, blue only for what steps up and down. The statblock is the one bookish place. */
+.cico{display:none}
+.dmpic{display:contents}
+.tiledock{display:none}
+:root[data-dmlook=tool]{
+  --bg:#111113;--panel:#1b1b1e;--panel2:#2a2a2e;--line:#2e2e33;--fg:#f5f5f7;--muted:#a3a3aa;--faint:#7b7b82;
+  --accent:#f08a24;--accent-ink:#1a1005;--pc:#5eb8f0;--enemy:#ff6b62;--ally:#5ad36e;--blood:#e5484d;--arcane:#bf94f5;--boss:#e3a64e;
+  --save:#4cc46a;--fail:#ff5f57;--step:#3d9bff;--row:#222226;--rownow:#2d2a27;
+  --ui:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",system-ui,"Helvetica Neue",Arial,sans-serif;
+  --display:var(--ui);--body:var(--ui);
+  --cg-out:#ff7a70;--cg-body:#e4a93a;--cg-mind:#c49cf7;--cg-sense:#6cc7ef;--cg-conc:#bf94f5}
+:root[data-dmlook=tool][data-dm=light]{
+  --bg:#e9e9ee;--panel:#f7f7f9;--panel2:#e4e4ea;--line:#d6d6dd;--fg:#1c1c1e;--muted:#5d5d64;--faint:#7c7c83;
+  --accent:#b85c00;--accent-ink:#ffffff;--pc:#0a63c9;--enemy:#c4001a;--ally:#1f7a35;--blood:#c4001a;--arcane:#7c3aa0;--boss:#94600c;
+  --save:#1f7a35;--fail:#c4001a;--step:#0a63c9;--row:#ffffff;--rownow:#fff2e4;
+  --cg-out:#c4001a;--cg-body:#9a6200;--cg-mind:#7c3aa0;--cg-sense:#0a6fa3;--cg-conc:#7c3aa0}
+:root[data-dmlook=tool] body{font-family:var(--ui);font-size:15px}
+
+/* header: plain, buttons as rounded pills on a grey step, the brand small */
+:root[data-dmlook=tool] #dm>.bar{background:var(--bg);box-shadow:none;border-bottom:0;padding-top:10px;padding-bottom:8px}
+:root[data-dmlook=tool] #dm .brand{font-family:var(--ui);font-weight:650;font-size:1rem;letter-spacing:0;font-variant:normal;text-transform:none}
+:root[data-dmlook=tool] #dm>.bar .btn,:root[data-dmlook=tool] #dm>.bar .icon-btn{border:0;border-radius:999px;background:var(--panel2);font-weight:550;
+  min-height:38px}
+:root[data-dmlook=tool] #dm>.bar .icon-btn{width:38px;height:38px;display:inline-grid;place-items:center;padding:0}
+:root[data-dmlook=tool] #dm>.bar .btn:hover,:root[data-dmlook=tool] #dm>.bar .icon-btn:hover{background:color-mix(in srgb,var(--fg) 14%,var(--panel2))}
+:root[data-dmlook=tool] #dm>.bar .hgroup{gap:4px;padding:3px;border-radius:999px;background:color-mix(in srgb,var(--fg) 4%,transparent)}
+:root[data-dmlook=tool] #dm>.bar .btn.primary{background:var(--accent);color:var(--accent-ink)}
+
+/* the order: rows on their own step, no ledger lines; the turn is a lighter row with an orange edge */
+:root[data-dmlook=tool] #roster.roster{background:transparent;border:0;padding:0;display:grid;gap:4px}
+:root[data-dmlook=tool] #roster .row{background:var(--row);border:0;border-radius:10px;box-shadow:none;margin:0;min-height:62px;
+  padding:6px 12px 6px 8px;grid-template-columns:40px minmax(210px,290px) minmax(0,1fr) auto}
+:root[data-dmlook=tool] #roster .row.turn{background:var(--rownow);border:0;border-radius:10px;margin:0;box-shadow:inset 4px 0 0 var(--accent)}
+:root[data-dmlook=tool] #roster .row.hid{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--arcane) 9%,var(--row)) 0 8px,var(--row) 8px 16px)}
+:root[data-dmlook=tool] #roster .row.mtsel{box-shadow:inset 0 0 0 1.5px var(--fail);background:color-mix(in srgb,var(--fail) 9%,var(--row))}
+:root[data-dmlook=tool] #roster .tframe{display:none}
+
+/* initiative: a plain number, no hexagon */
+:root[data-dmlook=tool] #roster .hexw,:root[data-dmlook=tool] #roster .lair-init{width:40px;height:auto}
+:root[data-dmlook=tool] #roster .hexw::before,:root[data-dmlook=tool] #roster .hexw::after,:root[data-dmlook=tool] #roster .lair-init::before,
+:root[data-dmlook=tool] #roster .lair-init::after{display:none}
+:root[data-dmlook=tool] #roster .hexw .init-in{width:40px;height:32px;font-family:var(--ui);font-weight:600;font-size:1rem;font-variant-numeric:tabular-nums;
+  color:var(--muted);border-radius:6px}
+:root[data-dmlook=tool] #roster .row.turn .hexw .init-in{color:var(--accent)}
+:root[data-dmlook=tool] #roster .hexw .init-in.missing{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--fg)}
+:root[data-dmlook=tool] #roster .hexw .init-in:hover{background:var(--panel2)}
+
+/* who: a picture square, the name in the system font, a grey second line */
+:root[data-dmlook=tool] #roster .who{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:12px;align-items:center}
+:root[data-dmlook=tool] #roster .nmrow{display:contents}
+:root[data-dmlook=tool] #roster .dmpic{display:grid;place-items:center;grid-row:1 / span 2;width:44px;height:44px;border-radius:9px;
+  background:radial-gradient(circle at 50% 35%,#45454c,#2c2c31 85%)}
+:root[data-dmlook=tool] #roster .dmsig{width:24px;height:24px;margin:0}
+:root[data-dmlook=tool] #roster .name-in{font-family:var(--ui);font-weight:550;font-size:1.06rem;letter-spacing:0;padding:1px 4px;font-variant:normal}
+:root[data-dmlook=tool] #roster .typeline{padding-left:4px;font-style:normal;font-size:.82rem;color:var(--muted);grid-column:2}
+:root[data-dmlook=tool] #roster .who:not(:has(.typeline)) .dmpic{grid-row:1}
+:root[data-dmlook=tool] .nowtag{font-family:var(--ui);font-weight:650;font-size:.72rem;letter-spacing:.02em;color:var(--accent-ink);background:var(--accent);
+  border-radius:999px;padding:1px 7px;text-transform:uppercase}
+:root[data-dmlook=tool] .nexttag{font-family:var(--ui);font-weight:600;font-size:.72rem;color:var(--muted);background:var(--panel2);border-radius:999px;
+  padding:1px 7px;text-transform:uppercase}
+
+/* conditions and effects: small grey tags with a line icon in the group's colour */
+:root[data-dmlook=tool] #roster .chips{gap:5px}
+:root[data-dmlook=tool] #roster .chips .cond{font-family:var(--ui);font-weight:500;font-size:.82rem;border:0!important;border-radius:6px;
+  background:var(--panel2)!important;color:var(--fg)!important;padding:3px 8px;display:inline-flex;align-items:center;gap:5px}
+:root[data-dmlook=tool] #roster .chips .cond.add{background:transparent!important;color:var(--muted)!important}
+:root[data-dmlook=tool] #roster .chips .cond.hidchip{color:var(--arcane)!important;background:color-mix(in srgb,var(--arcane) 13%,transparent)!important}
+:root[data-dmlook=tool] .cico{display:block;width:15px;height:15px;flex:none;fill:none;stroke:var(--cc,currentColor);stroke-width:2;stroke-linecap:round;
+  stroke-linejoin:round}
+.cg-out{--cc:var(--cg-out)}.cg-body{--cc:var(--cg-body)}.cg-mind{--cc:var(--cg-mind)}.cg-sense{--cc:var(--cg-sense)}.cg-conc{--cc:var(--cg-conc)}
+:root[data-dmlook=tool] .eg{color:#e0a92a}
+:root[data-dmlook=tool][data-dm=light] .eg{color:#94600c}
+
+/* HP: a big number and a thin bar, no box; only the DM sees it, so the eye on the AC says what players see */
+:root[data-dmlook=tool] #roster .hpw{border:0!important;background:transparent!important;box-shadow:none}
+:root[data-dmlook=tool] #roster .hpw .hpl{display:none}
+:root[data-dmlook=tool] #roster .hpw .hpn{font-family:var(--ui);font-weight:550;font-size:1.12rem;font-variant-numeric:tabular-nums}
+:root[data-dmlook=tool] #roster .hpw.pchp .hpn{color:var(--pc)}
+:root[data-dmlook=tool] #roster .hpw .hpbar3{height:3px;border-radius:2px;background:color-mix(in srgb,var(--fg) 10%,transparent)}
+:root[data-dmlook=tool] #roster .hpw .hpbar3 .hpv{background:var(--save)}
+:root[data-dmlook=tool] #roster .hpw.half .hpbar3 .hpv,:root[data-dmlook=tool] #roster .hpw.zero .hpbar3 .hpv{background:var(--fail)}
+:root[data-dmlook=tool] #roster .hpw.pchp .hpbar3 .hpv{background:var(--pc)}
+:root[data-dmlook=tool] #roster .hpw.hpb:hover{background:var(--panel2)!important}
+:root[data-dmlook=tool] #roster .hpw.hpnone{color:var(--faint)}
+
+/* AC on a plain shield */
+:root[data-dmlook=tool] #roster .ac-wrap input{font-family:var(--ui);font-weight:600;font-size:.95rem;font-variant-numeric:tabular-nums;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l8 3v5.5c0 5-3.3 9-8 10.5-4.7-1.5-8-5.5-8-10.5V5.5z' fill='none' stroke='%237b7b82' stroke-width='1.3'/%3E%3C/svg%3E")}
+:root[data-dmlook=tool][data-dm=light] #roster .ac-wrap input{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l8 3v5.5c0 5-3.3 9-8 10.5-4.7-1.5-8-5.5-8-10.5V5.5z' fill='none' stroke='%238a8a90' stroke-width='1.3'/%3E%3C/svg%3E")}
+
+/* Bloodied and Down: always there, one click, as quiet pills; on, they turn red */
+:root[data-dmlook=tool] #roster .tools .tog.blood,:root[data-dmlook=tool] #roster .tools .tog[data-act=down]{font-family:var(--ui);font-weight:600;
+  font-size:.78rem;border-radius:999px;border:1px solid transparent;background:var(--panel2)!important;color:var(--muted);padding:5px 10px;
+  text-transform:none;letter-spacing:0}
+:root[data-dmlook=tool] #roster .tools .tog.blood[aria-pressed=true]{border-color:var(--blood);
+  background:color-mix(in srgb,var(--blood) 18%,transparent)!important;
+  color:var(--blood)}
+:root[data-dmlook=tool] #roster .tools .tog[data-act=down][aria-pressed=true]{border-color:var(--fail);background:var(--fail)!important;color:var(--bg)}
+:root[data-dmlook=tool] #roster .morebtn2{border-radius:8px;color:var(--muted)}
+
+/* the side: panels on the middle step, titles in the system font */
+:root[data-dmlook=tool] .side .panel{background:var(--panel);border:0;border-radius:12px;box-shadow:none}
+:root[data-dmlook=tool] .side .panel>summary{font-family:var(--ui);font-weight:650;font-size:.95rem;letter-spacing:0;color:var(--fg);
+  font-variant:normal;text-transform:none;border-bottom-color:var(--line)}
+:root[data-dmlook=tool] .side .strip{background:transparent;border:0;padding:4px 0}
+:root[data-dmlook=tool] .side .btn,:root[data-dmlook=tool] .dmmain>.foot .btn{border:0;border-radius:8px;background:var(--panel2);font-weight:550}
+:root[data-dmlook=tool] .side .btn.primary,:root[data-dmlook=tool] .dmmain>.foot .btn.primary{background:var(--accent);color:var(--accent-ink)}
+:root[data-dmlook=tool] .field{background:var(--bg);border-color:var(--line);border-radius:8px}
+:root[data-dmlook=tool] .side .sbbtn{background:color-mix(in srgb,var(--accent) 12%,var(--panel2));border:0}
+:root[data-dmlook=tool] .sethead,:root[data-dmlook=tool] .quick label,:root[data-dmlook=tool] .strip-label{font-family:var(--ui);letter-spacing:0;
+  text-transform:none;font-variant:normal}
+
+/* the bottom bar: the tools on the left, then the turn as tiles (round, turn, fight time, a countdown, back and next) */
+:root[data-dmlook=tool] .dmmain>.foot{background:var(--bg);border:0;border-radius:0;padding:6px 0 4px;display:grid;gap:8px}
+:root[data-dmlook=tool] .dmmain>.foot .hint{display:none}
+:root[data-dmlook=tool] .dmmain>.foot .fgrp .btn:not(.primary):not(#endBtn):not(.pebox){background:transparent}
+:root[data-dmlook=tool] .dmmain>.foot .fgrp .btn:not(.primary):not(#endBtn):not(.pebox):hover{background:var(--panel2)}
+:root[data-dmlook=tool] #endBtn:not(.primary){color:var(--fail);background:var(--panel2)}
+:root[data-dmlook=tool] .tiledock{display:flex}
+:root[data-dmlook=tool] .tiledock{width:100%}
+:root[data-dmlook=tool] .tiledock .turnbox{display:flex;flex-wrap:nowrap;align-items:stretch;gap:8px;flex:1 1 auto;min-width:0;margin:0}
+:root[data-dmlook=tool] .ttile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;min-height:50px;padding:4px 16px;
+  border-radius:12px;background:var(--panel);min-width:84px}
+:root[data-dmlook=tool] .ttile b{font-weight:550;font-size:1.05rem;font-variant-numeric:tabular-nums;white-space:nowrap;max-width:22ch;overflow:hidden;
+  text-overflow:ellipsis}
+:root[data-dmlook=tool] .ttile small{font-size:.64rem;font-weight:650;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);max-width:18ch;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+:root[data-dmlook=tool] .ttile.twho{flex:1 1 0;min-width:110px}
+:root[data-dmlook=tool] .ttile.tclk{flex-direction:row;gap:6px;padding:4px 8px}
+:root[data-dmlook=tool] .ttile.tclk>span{display:flex;flex-direction:column;align-items:center}
+:root[data-dmlook=tool] .tstep{width:36px;height:36px;border:0;border-radius:8px;background:transparent;color:var(--step);font-size:1.5rem;line-height:1}
+:root[data-dmlook=tool] .tstep:hover{background:var(--panel2)}
+:root[data-dmlook=tool] .tnav{min-width:58px;min-height:50px;border:0;border-radius:26px;background:var(--panel);display:inline-flex;align-items:center;
+  justify-content:center;gap:6px;padding:0 18px;font-weight:600}
+:root[data-dmlook=tool] .tnav.primary{background:var(--accent);color:var(--accent-ink)}
+:root[data-dmlook=tool] .tnav svg{width:18px;height:18px}
+:root[data-dmlook=tool] .tiledock .turnmore{display:flex;align-items:center;flex:none}
+:root[data-dmlook=tool] .tiledock .turnmore .rmenu{top:auto;bottom:calc(100% + 6px)}
+:root[data-dmlook=tool] .ttile.tclk{min-width:0;flex:0 1 auto}
+
+/* the statblock: the one bookish place, a cream card in the drawer */
+:root[data-dmlook=tool] #sbDrawer{background:var(--panel);border-left:0;box-shadow:-14px 0 40px rgba(0,0,0,.45)}
+:root[data-dmlook=tool] #sbDrawer .sbhead h3{font-family:"Alegreya SC","Palatino Linotype",Georgia,serif}
+:root[data-dmlook=tool] #sbDrawer .sbbody{margin:10px 12px 12px;padding:12px 16px 20px;border:2px solid #c0682a;border-radius:6px;background:#fbf6ec;
+  color:#1f1b16;font-family:Alegreya,"Palatino Linotype",Georgia,serif;font-size:.98rem;--fg:#1f1b16;--muted:#5c5246;--panel2:#f1e4cc;--line:#e0cfae;
+  --accent:#9a3b12;--arcane:#5b3a9a}
+:root[data-dmlook=tool] #sbDrawer .sbbody h4{font-family:"Alegreya SC","Palatino Linotype",Georgia,serif;color:#7a200d;border-bottom-color:#c0682a}
+:root[data-dmlook=tool] #sbDrawer .sbbody b,:root[data-dmlook=tool] #sbDrawer .sbbody strong{color:inherit}
+:root[data-dmlook=tool] #sbDrawer .sbab span{background:#f1e4cc}
+:root[data-dmlook=tool] #sbDrawer .sbab small{color:#7a200d}
+:root[data-dmlook=tool] #sbDrawer .sbr{border-color:#c0682a;background:#fff4e3;color:#5a1a0c;font-family:var(--ui);font-size:.86rem}
+:root[data-dmlook=tool] #sbDrawer .sbr:hover{background:#c0682a;color:#fff}
+:root[data-dmlook=tool] #sbDrawer .sbr.save{border-color:#7b5bb0;background:#f1eafc;color:#3d2470}
+:root[data-dmlook=tool] .side .panel[open]>summary{border-bottom-color:var(--line)}
+:root[data-dmlook=tool] .side .panel>summary:hover{color:var(--fg)}
+/* a laptop (768 px high): denser rows and tiles, so the order and the turn fit without scrolling */
+@media (max-height:820px){
+  :root[data-dmlook=tool] #roster .row{min-height:52px;padding-top:4px;padding-bottom:4px}
+  :root[data-dmlook=tool] #roster .dmpic{width:36px;height:36px;border-radius:8px}
+  :root[data-dmlook=tool] #roster .who{grid-template-columns:36px minmax(0,1fr);column-gap:10px}
+  :root[data-dmlook=tool] #roster .dmsig{width:20px;height:20px}
+  :root[data-dmlook=tool] #roster .ac-wrap input{height:40px}
+  :root[data-dmlook=tool] .ttile,:root[data-dmlook=tool] .tnav{min-height:44px}
+  :root[data-dmlook=tool] .dmmain>.foot{gap:4px;padding-top:2px}
+  :root[data-dmlook=tool] .dmmain>.foot .fgrp .btn{padding-top:6px;padding-bottom:6px}}

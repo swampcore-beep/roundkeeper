@@ -18,6 +18,16 @@ document.addEventListener("click",e=>{
   const act=t.dataset.act;const row=t.closest(".row");const c=row?byId(row.dataset.id):null;
   switch(act){
     case "close": if(t.classList.contains("scrim")&&e.target!==t)return; closeSheet(); break;
+    case "handnew": handSheet(null);break;
+    case "handedit": handSheet(t.dataset.id);break;
+    case "handsaveshow": handSave(true);break;
+    case "handshow":{const h=(state.handouts||[]).find(x=>x.id===t.dataset.id);if(h){if(state.handout&&state.handout.id===h.id){state.handout=null;
+      commit()}else handShow(h)}break}
+    case "handdown": state.handout=null;commit();break;
+    case "handdel": if(!t.classList.contains("armed")){t.classList.add("armed");setTimeout(()=>t.classList.remove("armed"),2500);break}
+      state.handouts=(state.handouts||[]).filter(x=>x.id!==t.dataset.id);if(state.handout&&state.handout.id===t.dataset.id)state.handout=null;commit();break;
+    case "handclose": if(state.handout){ls.set("handShut",state.handout.id);handoutRender()}break;
+    case "phaseclear":{const f=$("#phaseForm"),c=f&&byId(f.dataset.id);if(c){delete c.phases;delete c.phase;commit()}closeSheet();break}
     case "example": state.list=EXAMPLE();commit();break;
     case "prm": state.party.splice(Number(t.dataset.i),1);commit();break;
     case "pload": loadParty();state.ended=null;commit();break;
@@ -97,6 +107,7 @@ document.addEventListener("click",e=>{
       toast("Removed: that device is a player again")});break;
     case "dmforget": fetch("/dm-forget",{method:"POST",body:"{}"}).then(()=>{location.href="/players"});break;
     case "dmlight": ls.set("dmLight",!ls.get("dmLight",false));dmLightApply();break;
+    case "dmlook": ls.set("dmLook",ls.get("dmLook","tool")==="classic"?"tool":"classic");dmLookApply();render();break;
     case "atmodiscard": atmoD=atmoFromState();atmoRefresh();break;
     case "atmoclose": if(atmoChanged().length){toast("Not sent: the tablet keeps what it had");}atmoD=null;closeSheet();break;
     case "bgdel":{const f=t.dataset.f;fetch("/bg-delete",{method:"POST",body:JSON.stringify({file:f})}).then(()=>{if(state.bg===f){state.bg="";
@@ -104,6 +115,9 @@ document.addEventListener("click",e=>{
     case "reacttoggle": state.sceneReact=state.sceneReact===false;commit();atmoRefresh();break;
     case "layoutpick": state.layout=t.dataset.v;commit();{const fr=$("#atmoFrame");if(fr)fr.remove()}atmoSheet();break;
     case "titleedit": titleSheet(c.id);break;
+    case "phases": phaseSheet(c.id);break;
+    case "phasenext": if(Array.isArray(c.phases)&&c.phases.length>1){c.phase=Math.min(c.phases.length-1,(c.phase||0)+1);menuId=null;commit();
+      toast(`${c.name}: phase ${ROMAN[c.phase]||c.phase+1}${c.phases[c.phase]?` · ${c.phases[c.phase]}`:""}`)}break;
     case "hpclear": c.hp=null;c.hpMax=null;commit();break;
     case "logundo": undoLog(t.dataset.l);break;
     case "qr": qrSheet();break;
@@ -155,7 +169,7 @@ document.addEventListener("click",e=>{
     case "revpvagain": revealPreview.play&&revealPreview.play();break;
     case "revpvgo":{const c2=byId(t.dataset.id);closeSheet();if(c2){c2.hidden=false;commit();toast(`${c2.name} revealed`)}break}
     case "titleedit2": titleSheet(t.dataset.id);break;
-    case "clkm": case "clkp":{const k=(state.clocks||[]).find(x=>x.id===t.dataset.id);if(!k)break;if(a==="clkm"){k.n=Math.max(0,k.n-1);
+    case "clkm": case "clkp":{const k=(state.clocks||[]).find(x=>x.id===t.dataset.id);if(!k)break;if(act==="clkm"){k.n=Math.max(0,k.n-1);
       if(k.n===0&&!k.secret)state.clockFx={id:uid(),name:k.name,max:k.max,at:Date.now()}}else{k.n=Math.min(20,k.n+1);k.max=Math.max(k.max,k.n)}commit();break}
     case "clkrm": state.clocks=(state.clocks||[]).filter(x=>x.id!==t.dataset.id);commit();break;
     case "ongapply":{const k=dmCards.find(x=>x.id===t.dataset.id);if(!k)break;const c2=byId(k.cid);dmCards=dmCards.filter(x=>x!==k);
@@ -695,6 +709,11 @@ document.addEventListener("submit",async e=>{
       all.push({id:uid(),name:nm,theme:atmoD.theme,look:Object.assign(lookOf(atmoD),L),scene:atmoD.scene,weather:atmoD.weather||"none",tod:atmoD.tod||"none",
       tune:atmoD.tune||{}});
     ls.set("myThemes",all.slice(-24));toast("Saved: "+nm);atmoRefresh();return}
+  if(f.id==="handForm"){e.preventDefault();handSave(false);return}
+  if(f.id==="phaseForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){const ph=$("#phaseText").value.split("\n").map(x=>
+    x.trim()).filter(Boolean).slice(0,10);
+    const pick=f.querySelector('input[name=phNow]:checked');if(ph.length>1){c.phases=ph;c.phase=Math.min(ph.length-1,pick?Number(pick.value):c.phase||0)}
+    else{delete c.phases;delete c.phase}commit()}closeSheet();return}
   if(f.id==="titleForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){c.title=$("#titleText").value.trim();commit()}closeSheet();return}
   if(f.id==="callForm"){e.preventDefault();
     const text=$("#callText").value.trim();if(!text)return;const m=text.match(/\bDC\s*(\d+)/i);

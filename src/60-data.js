@@ -116,6 +116,13 @@ const FONTS=[["alegreya","Alegreya SC","'Alegreya SC'"],["cinzel","Cinzel","Cinz
 /* the DM screen in light or dark: only on this laptop, never on the tablet or phones */
 const SUN='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   MOON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill="currentColor"/></svg>';
+/* the DM screen's look (1.3): "tool" (neutral, the default) or "classic" (the table's language, 1.1); this laptop only */
+function dmLookApply(){if(MODE!=="dm"||PREVIEW)return;const tool=ls.get("dmLook","tool")!=="classic",d=document.documentElement.dataset;
+  if(tool)d.dmlook="tool";else delete d.dmlook;
+  const b=document.getElementById("dmLookBtn");if(b){b.textContent="Classic look";b.title=tool?"Switch to the 1.1 look in the table's style":
+    "Switch to the neutral tool look";b.setAttribute("aria-pressed",String(!tool))}
+  const tb=document.getElementById("turnBox"),dock=document.getElementById("tileDock"),home=document.getElementById("turnHome");
+  if(tb&&dock&&home){if(tool&&tb.parentElement!==dock)dock.prepend(tb);else if(!tool&&tb.parentElement!==home)home.after(tb)}}
 function dmLightApply(){if(MODE!=="dm"||PREVIEW)return;const on=!!ls.get("dmLight",false),d=document.documentElement.dataset;if(on)d.dm="light";
   else delete d.dm;
   const b=document.getElementById("dmLightBtn");if(b){b.textContent="Light screen";
@@ -177,3 +184,28 @@ function fsToggle(){
 }
 ["fullscreenchange","webkitfullscreenchange"].forEach(ev=>document.addEventListener(ev,()=>document.querySelectorAll('[data-act="fs"]').forEach(b=>
   b.textContent=fsLabel())));
+/* 1.3: one line icon per condition (the DM's rows in the tool look, the TV's spotlight), coloured by group:
+   out of the fight, the body, the mind, the senses, Concentration */
+const CICON={
+  Blinded:["sense","M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM3 3l18 18"],
+  Deafened:["sense","M7 9a5 5 0 0 1 10 0c0 4-4 4.5-4 8a2.5 2.5 0 0 1-5 0M10 9a2 2 0 0 1 4 0M3 3l18 18"],
+  Invisible:["sense","M12 3.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM5 21c0-4.5 3-7.5 7-7.5s7 3 7 7.5",1],
+  Charmed:["mind","M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"],
+  Frightened:["mind","M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM8.5 9.5l2 1M15.5 9.5l-2 1M10 16.5a2 2 0 0 1 4 0"],
+  Incapacitated:["out","M12 12a1 1 0 1 1 1-1 3 3 0 1 1-4 3 5 5 0 1 1 7-5 7 7 0 1 1-10 7"],
+  Paralyzed:["out","M13 2L4.5 13.5H11L10 22l8.5-11.5H12z"],
+  Petrified:["out","M4 18.5l2-8 5.5-4.5 6.5 2 2.5 6-2.5 4.5zM11.5 6l1 5-3.5 3M12.5 11l4 1.5"],
+  Stunned:["out","M12 3.5l1.3 2.7 3 .4-2.2 2.1.5 3-2.6-1.4-2.6 1.4.5-3-2.2-2.1 3-.4zM3 16.5c0-2 4-3.5 9-3.5s9 1.5 9 3.5-4 3.5-9 3.5-9-1.5-9-3.5z"],
+  Unconscious:["out","M4.5 5h6l-6 7h6M13.5 12h6l-6 7h6"],
+  Grappled:[
+    "body","M7 11V6.5a1.5 1.5 0 0 1 3 0V11M10 10V5a1.5 1.5 0 0 1 3 0v5M13 10V6a1.5 1.5 0 0 1 3 0v6M16 11.5a1.5 1.5 0 0 1 3 0V14c0 4-3 7-7 7s-6-2-7.5-5L3 12.5a1.5 1.5 0 0 1 2.5-1.6L7 13"],
+  Restrained:["body","M9.5 14.5l-2 2a3 3 0 0 1-4.2-4.2l3-3a3 3 0 0 1 4.2 0M14.5 9.5l2-2a3 3 0 0 1 4.2 4.2l-3 3a3 3 0 0 1-4.2 0M9.5 14.5l5-5"],
+  Prone:["body","M5 13a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM8 16h13M10 16l3.5-3.5H18"],
+  Poisoned:["body","M12 3s6.5 6.8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 9.8 12 3 12 3zM9.8 14h.01M14.2 14h.01M10 17.5h4"],
+  Exhaustion:["body","M3 8h15v8H3zM20.5 11v2M5.5 10.5h3v3h-3z"],
+  Burning:["body","M12 3c1.2 4.5 6 5.8 6 11a6 6 0 0 1-12 0c0-2.4 1.2-4 2.4-5.2 0 2.4 1.2 3.5 2.4 3.5 0-3.5-1.2-6 1.2-9.3z"],
+  Concentrating:["conc","M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM12 10.8a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z"],
+  Bloodied:["out","M12 3s-6.5 7-6.5 11.5a6.5 6.5 0 0 0 13 0C18.5 10 12 3 12 3zM9 14.5a3 3 0 0 0 3 3"]
+};
+const condIco=(n,cls)=>{const x=CICON[n];return x?`<svg class="cico ${cls||""} cg-${x[0]}" viewBox="0 0 24 24" aria-hidden="true"><path d="${x[1]}"${x[2]?
+  ' stroke-dasharray="2.2 2.6"':""}/></svg>`:""};

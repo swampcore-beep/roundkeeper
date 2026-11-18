@@ -25,7 +25,7 @@ if(MODE==="player"){
   if(served)poll(500,render);
   if(served)spLoad();
 }else{
-  $("#dm").hidden=false;dmLightApply();render();
+  $("#dm").hidden=false;dmLightApply();dmLookApply();render();
   if(new URLSearchParams(location.search).has("paired")){history.replaceState(null,"","/");
     setTimeout(()=>toast("This device is now paired as the DM"),400)}updUndo();renderLog();setInterval(dmTimerTick,250);libLoad();fetRefresh();
     if(served)spLoad();   // durations of 5e.tools spells

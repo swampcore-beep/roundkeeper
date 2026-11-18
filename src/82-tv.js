@@ -115,9 +115,10 @@ function tvRender(list,first){
     if(tm){clearTimeout(momentShow.t);tm.classList.add("out");setTimeout(()=>tm.remove(),700)}}
   pv.tvHadList=list.length;
   const top=`<div class="tvtop"><span>${state.turn&&mode!=="spot"?`Round ${state.turn.round}`:""}</span>${clocksHtml()}</div>`;
+  const cgOf=n=>CICON[n]?"cg-"+CICON[n][0]:"";   // 1.3: each condition with its line icon, coloured by group
   const conds=c=>(c.conds||[]).map(x=>x.n||x).filter(n=>n!=="Concentrating").slice(0,3).map(n=>
-    `<span class="chip" style="--cc:var(--stone)">${esc(n)}</span>`).join("")
-    +((c.conds||[]).some(x=>(x.n||x)==="Concentrating")?`<span class="chip" style="--cc:var(--arcane)">Concentrating</span>`:"")
+    `<span class="chip ${cgOf(n)}"${cgOf(n)?"":' style="--cc:var(--stone)"'}>${condIco(n,"tvci")}${esc(n)}</span>`).join("")
+    +((c.conds||[]).some(x=>(x.n||x)==="Concentrating")?`<span class="chip cg-conc">${condIco("Concentrating","tvci")}Concentrating</span>`:"")
     +(state.effects||[]).filter(e=>(e.targets||[]).includes(c.id)).slice(0,3).map(e=>
       `<span class="chip" style="--cc:#e8c06a">✦ ${esc(e.name)}</span>`).join("")+(c.insp?
       `<span class="chip" style="--cc:var(--accent)">Inspiration</span>`:"");
@@ -127,8 +128,8 @@ function tvRender(list,first){
   if(mode==="call")h=tvCallHtml();
   else if(mode==="init")h=tvInitHtml(list);
   else if(mode==="end")h=tvEndHtml();
-  else if(mode==="scene"){const t=T.title;h=t&&t.t?`<div class="tvex"><div class="eb">${esc(t.eb||
-    "")}</div><div class="ti">${esc(t.t)}</div><div class="ln"></div>${t.sub?`<div class="sub">${esc(t.sub)}</div>`:""}</div>`:""}
+  else if(mode==="scene"){const t=T.title;h=t&&t.t?`<div class="tvex chap"><div class="eb">${esc(t.eb||
+    "")}</div><div class="ti">${dropCap(t.t)}</div><div class="ln" aria-hidden="true"><i></i></div>${t.sub?`<div class="sub">${esc(t.sub)}</div>`:""}</div>`:""}
   else if(mode==="pause"){const left=Math.max(0,Math.round((T.pause.until-dmNow())/1000));
     h=`<div class="tvpz"><div class="in"><div class="k">${esc(T.pause.msg||"Short break")}</div><div class="t">${Math.floor(left/60)}:${String(
     left%60).padStart(2,"0")}</div><div class="s">We continue at ${new Date(T.pause.until-(dmNow()-Date.now())).toLocaleTimeString([],{hour:"2-digit",minute:
@@ -149,7 +150,7 @@ function tvRender(list,first){
       ""}" data-tid="${esc(c.id)}"><div class="eyeb"><span>On turn</span><span class="rnd">Round ${state.turn?state.turn.round:1}</span></div>
       <div class="who"><span class="emb"></span><div><div class="big${c.name.length>18?" xl":c.name.length>11?" long":
         ""}">${esc(c.name)}</div><div class="sub">${esc(who(c))}${c.kind==="pc"?" · <b>your move</b>":""}</div>${c.boss&&c.title?
-        `<div class="plate">${esc(c.title)}</div>`:""}</div></div><div class="chips">${conds(c)}</div></section>
+        `<div class="plate">${esc(c.title)}</div>`:""}${phaseHtml(c)}</div></div><div class="chips">${conds(c)}</div></section>
       <section class="deck"><h4>On deck</h4>${nx.map((d,k)=>`<div class="card k-${d.kind}${fk(d)?" fr fr-"+fk(d):""}${k===0?" n1":
         ""}" data-tid="${esc(d.id)}">${k===0?`<span class="tag">NEXT</span>`:""}<div class="row1"><span class="hex">${hx}<b>${d.kind==="lair"?20:initOf(d)>-999?
         initOf(d):"–"}</b></span><span class="ce"></span></div><div><div class="cn">${esc(d.name)}</div><div class="cs">${esc(who(d))}${nr(k+1)?" · next round":
@@ -161,10 +162,12 @@ function tvRender(list,first){
     k<24&&n.scrollWidth>n.clientWidth+1&&fs>14;k++){fs*=.93;n.style.fontSize=fs+"px"}});
   // a new round: the big number and what happened (once per round)
   const r=state.turn&&state.turn.round;if(r&&pv.tvRound!==undefined&&r>pv.tvRound&&!first&&screenWants("round")&&mode!=="pause")tvRoundShow(r);pv.tvRound=r||0;
+  phaseMoment(list,first);
   // a new title card: big for a moment
   const t=T.title;if(first&&pv.tvTitle===undefined)pv.tvTitle=t&&t.at||0;
     if(t&&t.at&&t.at!==pv.tvTitle){if(!first&&dmNow()-t.at<15000)momentShow("tvtitle",`<div class="mo-eb">${esc(t.eb||
-    "")}</div><div class="mo-big">${esc(t.t)}</div>${t.sub?`<div class="mo-q">${esc(t.sub)}</div>`:""}`,5000);pv.tvTitle=t.at}
+    "")}</div><div class="mo-big">${dropCap(t.t)}</div><div class="mo-orn" aria-hidden="true"><i></i></div>${t.sub?`<div class="mo-q">${esc(t.sub)}</div>`:""}`,
+      5000);pv.tvTitle=t.at}
 }
 function tvRoundShow(r){const L=(state.rsum&&state.rsum.r===r-1?state.rsum.lines:[]).slice(0,3);
   momentShow("tvround",`<div class="mo-eb">Round</div><div class="mo-num">${r}</div>${L.length?`<ul>${L.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}`,3200);
@@ -305,3 +308,15 @@ function callHtml(){
       if(call.dc==null)return `<span class="callsum">Everyone rolled</span>`;
       const ok=got.filter(c=>ans[c.id]>=call.dc).length;return `<span class="callsum">${ok} of ${to.length} succeeded</span>`})()}</div>`;
 }
+/* 1.3: a title card set like the start of a chapter, its first letter as a framed initial */
+const dropCap=t=>{const s=String(t||""),m=s.match(/^(\s*)(\S)([\s\S]*)$/);return m?`${esc(m[1])}<span class="dcap">${esc(m[2])}</span>${esc(m[3])}`:esc(s)};
+/* TV4: a boss's phases, lit by the DM by hand; no HP numbers, just which part of the fight this is */
+const ROMAN=["I","II","III","IV","V","VI","VII","VIII","IX","X"];
+function phaseHtml(c){const ph=c&&c.boss&&Array.isArray(c.phases)?c.phases:[];if(ph.length<2)return "";const k=Math.max(0,Math.min(ph.length-1,c.phase||0));
+  return `<div class="phbar" role="img" aria-label="Phase ${k+1} of ${ph.length}">${ph.map((_,i)=>`<i class="${i<k?"gone":i===k?"now":""}"></i>`).join(
+    "")}</div><div class="phname">Phase ${ROMAN[k]||k+1}${ph[k]?` · ${esc(ph[k])}`:""}</div>`}
+function phaseMoment(list,first){pv.phase=pv.phase||{};
+  list.forEach(c=>{if(!c.boss||!Array.isArray(c.phases)||c.phases.length<2)return;const k=c.phase||0,was=pv.phase[c.id];pv.phase[c.id]=k;
+    if(!first&&was!=null&&k>was&&screenWants("intro"))momentShow("tvphase",`<div class="mo-eb">${esc(c.name)}</div><div class="mo-num">${ROMAN[k]||k+
+      1}</div><div class="mo-q">${esc(c.phases[k]||"Phase "+(k+1))}</div>`,4200)})}
+const phaseTag=c=>c&&c.boss&&Array.isArray(c.phases)&&c.phases.length>1?`Phase ${ROMAN[c.phase||0]||(c.phase||0)+1}`:"";

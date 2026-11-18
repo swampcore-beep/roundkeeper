@@ -172,6 +172,23 @@ function titleSheet(id){
       <div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="submit">Save</button></div></form></div></div>`;
   setTimeout(()=>{const x=$("#titleText");x&&x.focus();x&&x.select()},0);
 }
+/* TV4: the boss's phases, one per line; the DM lights the next one by hand (the row's ⋯ or here) */
+function phaseSheet(id){
+  const c=byId(id);if(!c)return;const ph=Array.isArray(c.phases)?c.phases:[],k=c.phase||0;
+  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true" aria-label="Phases"><h2>Phases · ${esc(
+    c.name)}</h2>
+    <form id="phaseForm" data-id="${esc(
+      c.id)}" autocomplete="off" class="psec"><textarea class="field" id="phaseText" rows="5" maxlength="400" aria-label="Phases, one per line"
+      placeholder="The wyrm awakens&#10;The skies burn&#10;Last stand">${esc(ph.join("\n"))}</textarea>
+      <p class="psub">One phase per line, two or more. The TV and the tablet show which phase the fight is in (no HP), and a new phase gets a big moment.</p>
+      ${ph.length>1?`<div class="phpick" role="radiogroup" aria-label="Current phase">${ph.map((n,i)=>
+        `<label><input type="radio" name="phNow" value="${i}"${i===k?
+        " checked":""}> ${ROMAN[i]||i+1} · ${esc(n)}</label>`).join("")}</div>`:""}
+      <div style="display:flex;justify-content:flex-end;gap:8px">${ph.length?
+        '<button class="btn danger" type="button" data-act="phaseclear">No phases</button>':
+        ""}<span style="flex:1"></span><button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="submit">Save</button></div></form></div></div>`;
+  setTimeout(()=>{const x=$("#phaseText");x&&x.focus()},0);
+}
 function knowSheet(id){
   const c=byId(id);if(!c)return;
   $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true"><h2>What the party knows · ${esc(c.name)}</h2>

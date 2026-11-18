@@ -210,7 +210,8 @@ function renderSbDrawer(){
         ""}"><span>${esc(r.who)} · ${esc(r.what)}</span><b>${r.tot}</b><small>${esc(r.how)}</small>${r.cid?
         `<button type="button" class="btn sm sbapply" data-act="sbapply" data-i="${
         i}" title="Pick who it hits; saves are rolled or asked">Apply to targets…</button>`:""}</div>`).join(""):
-        (ls.get("sbHintSeen",false)?"":`<p class="psub">Click a bonus to roll the attack, a damage number to roll damage, a saving throw to ask the players. Only you see these rolls.</p>`)}</div></div>
+        (ls.get("sbHintSeen",false)?
+          "":`<p class="psub">Click a bonus to roll the attack, a damage number to roll damage, a saving throw to ask the players. Only you see these rolls.</p>`)}</div></div>
     ${sbSaveAsk?`<div class="sbask"><b>${esc(sbSaveAsk.ab)} save DC ${sbSaveAsk.dc}</b>${sbSaveAsk.n?` <span class="psub">· ${esc(sbSaveAsk.n)}</span>`:""}
       <div class="chipgrid">${pcs.map(p=>`<button type="button" data-act="sbasktgt" data-id="${esc(p.id)}" aria-pressed="${sbSaveAsk.to.includes(p.id)}">${esc(
         p.name)}</button>`).join("")}</div>

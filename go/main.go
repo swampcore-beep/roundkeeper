@@ -503,7 +503,7 @@ func publicView(st map[string]any) map[string]any {
 	}
 	out := map[string]any{}
 	for k, v := range st {
-		if k == "party" || k == "sheets" || k == "encounters" || k == "clog" || k == "cstat" || k == "tstat" || k == "nstat" { // the combat recap, turn times and dice statistics are the DM's notes
+		if k == "party" || k == "sheets" || k == "encounters" || k == "clog" || k == "cstat" || k == "tstat" || k == "nstat" || k == "handouts" || k == "handoutWhere" { // the combat recap, turn times, dice statistics and saved handouts are the DM's notes
 			continue
 		}
 		out[k] = v
