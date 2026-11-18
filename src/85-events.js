@@ -97,6 +97,7 @@ document.addEventListener("click",e=>{
       toast("Removed: that device is a player again")});break;
     case "dmforget": fetch("/dm-forget",{method:"POST",body:"{}"}).then(()=>{location.href="/players"});break;
     case "dmlight": ls.set("dmLight",!ls.get("dmLight",false));dmLightApply();break;
+    case "dmlook": ls.set("dmLook",ls.get("dmLook","tool")==="classic"?"tool":"classic");dmLookApply();render();break;
     case "atmodiscard": atmoD=atmoFromState();atmoRefresh();break;
     case "atmoclose": if(atmoChanged().length){toast("Not sent: the tablet keeps what it had");}atmoD=null;closeSheet();break;
     case "bgdel":{const f=t.dataset.f;fetch("/bg-delete",{method:"POST",body:JSON.stringify({file:f})}).then(()=>{if(state.bg===f){state.bg="";
