@@ -65,6 +65,7 @@ Never commit those files.
 | t30–t33 | the phone's tracker circles, UI polish (Add monsters, badges without codes), the Devices window and who is connected, TV pack 2 (dice, roll call, death saves, countdown, initiative, end of the fight) |
 | t34 | Settings → Updates against a fake GitHub on port 8799 (`dev/test.sh` sets `ROUNDKEEPER_UPDATE_URL` and `ROUNDKEEPER_VERSION=v1.0.7` for this suite only): newer or not, cache, errors, links, who may ask, the window and the start-up check |
 | t35 | the DM screen of v1.1: the grouped header, the ⋯ menus (stop turns, New combat, Clear all), one End/New combat button, Players can edit, HP placeholders and lined-up columns, the statblock that follows the turn and the line for what waits under it |
+| t36 | 1.3: the DM screen's tool look (turn tiles, the countdown tile, condition icons, Classic look), boss phases on the TV and tablet, the tablet's frames by side, the phone's class colour, and handouts (the editor, where each one shows, players never getting the saved ones) |
 | ui, hov | the monster search sheet; hover cards for spells and rules |
 
 ## Media for the README

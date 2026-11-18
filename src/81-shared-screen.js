@@ -55,9 +55,11 @@ function tvModeNow(list){const T=state.tv||{},m=T.mode||"auto",paused=T.pause&&T
 function handoutHtml(h){
   if(!h)return "";const pr=t=>String(t||"").split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${esc(p).replace(/\n/g,"<br>")}</p>`).join("");
   const st=h.style||"parch",T=esc(h.title||""),S=esc(h.sign||"");
-  if(st==="letter")return `<div class="ho ho-letter">${T?`<div class="hsal">${T}</div>`:""}<div class="hb">${pr(h.body)}</div>${S?`<div class="hs">— ${S}</div>`:
+  if(st==="letter")return `<div class="ho ho-letter">${T?`<div class="hsal">${T}</div>`:""}<div class="hb">${pr(h.body)}</div>${S?
+    `<div class="hs">— ${S}</div>`:
     ""}<span class="hseal" aria-hidden="true"><b>${esc((h.sign||h.title||"R").trim().charAt(0).toUpperCase())}</b></span></div>`;
-  if(st==="wanted")return `<div class="ho ho-wanted"><div class="hw">Wanted</div><div class="hdoa">dead or alive</div><div class="hpic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15.8 7a3.8 3.8 0 1 1-7.6 0 3.8 3.8 0 0 1 7.6 0zM4.5 21.5c0-4.7 3.2-7.8 7.5-7.8s7.5 3.1 7.5 7.8z"/></svg></div>${T?
+  if(
+    st==="wanted")return `<div class="ho ho-wanted"><div class="hw">Wanted</div><div class="hdoa">dead or alive</div><div class="hpic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15.8 7a3.8 3.8 0 1 1-7.6 0 3.8 3.8 0 0 1 7.6 0zM4.5 21.5c0-4.7 3.2-7.8 7.5-7.8s7.5 3.1 7.5 7.8z"/></svg></div>${T?
     `<div class="hn">${T}</div>`:""}<div class="hb">${pr(h.body)}</div>${S?`<div class="hrew">${S}</div>`:""}</div>`;
   if(st==="page")return `<div class="ho ho-page"><i class="hmk" aria-hidden="true"></i>${T?`<h3>${T}</h3>`:""}<div class="hb hdrop">${pr(h.body)}</div>${S?
     `<div class="hs">${S}</div>`:""}<i class="hmk" aria-hidden="true"></i></div>`;

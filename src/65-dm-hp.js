@@ -222,10 +222,13 @@ function turnTiles(){
   const k=(state.clocks||[]).filter(x=>x.n>0).sort((a,b)=>a.n-b.n)[0];
   return (t?tile(t.round,"Round","trnd")+tile(esc(who?who.name:t.id==="__lair"?"Lair action":"–"),"Turn","twho"):"")
     +(f!=null&&state.list.length?tile(f<1?"< 1 min":f+" min","Fight"):"")
-    +(k?`<span class="ttile tclk"><button type="button" class="tstep" data-act="clkm" data-id="${esc(k.id)}" aria-label="${esc(k.name)}: one less">−</button><span><b>${
-      k.n}</b><small title="${esc(k.name)}">${esc(k.name)}${k.secret?" · secret":""}</small></span><button type="button" class="tstep" data-act="clkp" data-id="${
+    +(k?`<span class="ttile tclk"><button type="button" class="tstep" data-act="clkm" data-id="${esc(k.id)}" aria-label="${esc(
+      k.name)}: one less">−</button><span><b>${
+      k.n}</b><small title="${esc(k.name)}">${esc(k.name)}${k.secret?" · secret":
+        ""}</small></span><button type="button" class="tstep" data-act="clkp" data-id="${
       esc(k.id)}" aria-label="${esc(k.name)}: one more">+</button></span>`:"")
-    +(t?`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic("prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${
+    +(t?`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
+      "prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${
       ic("next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
       turnMenuOn}" aria-label="Turn options" title="Turn options: stop tracking turns">${DOTS}</button>${turnMenuOn?
       `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`
@@ -334,9 +337,11 @@ function renderDM(){
           "0 HP + ask for a death save"} ${K("S")}</button><button type="button" data-act="timer">${state.timer&&state.timer.cid===c.id?"Stop the hourglass":
           "Hourglass"} ${K("T")}</button><button type="button" data-act="insp">${c.insp?"Remove":"Give"} Heroic Inspiration ${K("I")}</button>`
           :`<button type="button" data-act="boss">${c.boss?"Not a boss":"Make it a boss"} ${K("I")}</button>${c.boss?
-            `<button type="button" data-act="titleedit">Intro title…</button><button type="button" data-act="phases">Phases…${Array.isArray(c.phases)&&c.phases.length>1?
+            `<button type="button" data-act="titleedit">Intro title…</button><button type="button" data-act="phases">Phases…${Array.isArray(c.phases)&&
+              c.phases.length>1?
             ` <small>${ROMAN[c.phase||0]||""} of ${c.phases.length}</small>`:""}</button>${Array.isArray(c.phases)&&(c.phase||0)<c.phases.length-1?
-            `<button type="button" data-act="phasenext">Next phase: ${esc(c.phases[(c.phase||0)+1])}</button>`:""}<button type="button" data-act="intro">Replay intro</button><label>Background<select data-act="rim" aria-label="Boss background">${
+            `<button type="button" data-act="phasenext">Next phase: ${esc(c.phases[(c.phase||0)+1])}</button>`:
+              ""}<button type="button" data-act="intro">Replay intro</button><label>Background<select data-act="rim" aria-label="Boss background">${
             RIMS.map(([k,l])=>`<option value="${k}"${(c.rim||"")===k?" selected":""}>${l}</option>`).join("")}</select></label>`:""}`}
         ${c.kind!=="pc"&&c.hpMax!=null?`<button type="button" data-act="hpclear">Stop tracking HP</button>`:""}
         ${sb?`<button type="button" data-act="sbresetall">Reset statblock counters</button>`:""}
@@ -355,7 +360,8 @@ function renderDM(){
         "+":"")+c.ib:"?"}" data-act="init" aria-label="Initiative"${typeof c.ib==="number"?` title="Initiative bonus ${c.ib>=0?"+":
         ""}${c.ib}: type the d20 total"`:""}></span>
       <div class="who"><span class="nmrow"><span class="dmpic">${(k=>k?`<span class="sig dmsig fr-${k}" role="img" aria-label="${esc(LABEL[k])}" title="${esc(
-        LABEL[k])}"></span>`:`<span class="sig dmsig nosig" aria-hidden="true"></span>`)(frameKey(c))}</span><input class="name-in" id="name-${c.id}" value="${esc(
+        LABEL[k])}"></span>`:`<span class="sig dmsig nosig" aria-hidden="true"></span>`)(frameKey(c))}</span><input class="name-in" id="name-${
+          c.id}" value="${esc(
         c.name)}" data-act="name" aria-label="Name"></span>${typeline?
         `<div class="typeline">${typeline}</div>`:""}</div>
       <div class="chips">${chips}</div>

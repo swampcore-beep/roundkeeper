@@ -37,7 +37,8 @@ function renderHand(){
     ""}: <b>${esc(on.title||"(untitled)")}</b></span><button type="button" class="btn sm" data-act="handdown">Take it down</button></div>`:"")
     +(H.length?`<div class="handlist">${H.map(h=>`<div class="handrow"><span class="handt">${esc(h.title||"(untitled)")}<small>${esc((HSTYLES.find(x=>
       x[0]===h.style)||HSTYLES[0])[1])}</small></span><button type="button" class="btn sm${on&&on.id===h.id?" primary":""}" data-act="handshow" data-id="${
-      esc(h.id)}">${on&&on.id===h.id?"Shown":"Show"}</button><button type="button" class="btn sm" data-act="handedit" data-id="${esc(h.id)}">Edit</button><button type="button" class="icon-btn sm" data-act="handdel" data-id="${
+      esc(h.id)}">${on&&on.id===h.id?"Shown":"Show"}</button><button type="button" class="btn sm" data-act="handedit" data-id="${esc(
+        h.id)}">Edit</button><button type="button" class="icon-btn sm" data-act="handdel" data-id="${
       esc(h.id)}" aria-label="Delete ${esc(h.title||"this handout")}" title="Delete (click twice)">${I.x}</button></div>`).join("")}</div>`
       :`<p class="strip-empty" style="margin:0">A note, a letter, a wanted poster or a page of lore, shown on the table.</p>`)
     +`<button type="button" class="btn sm" data-act="handnew">New handout…</button>`;
@@ -46,17 +47,21 @@ function handShow(h){const d=state.handoutWhere||{};state.handout={id:h.id,style
   where:d.where||"both",phones:!!d.phones,at:Date.now()};commit()}
 function handSheet(id){
   const h=(state.handouts||[]).find(x=>x.id===id)||{id:"",style:"parch",title:"",body:"",sign:""},d=state.handoutWhere||{where:"both",phones:false};
-  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet handsheet" role="dialog" aria-modal="true" aria-label="Handout"><h2>${id?"Edit the handout":
+  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet handsheet" role="dialog" aria-modal="true" aria-label="Handout"><h2>${id?
+    "Edit the handout":
     "New handout"}</h2>
     <form id="handForm" data-id="${esc(h.id)}" autocomplete="off" class="handform">
       <div class="handfields">
         <label>Title <input class="field" id="hTitle" maxlength="80" value="${esc(h.title)}" placeholder="Notice to all who pass the bridge"></label>
         <label>Text <textarea class="field" id="hBody" rows="7" maxlength="1200" placeholder="By order of the Reeve…">${esc(h.body)}</textarea></label>
-        <label>Signature, reward or source <input class="field" id="hSign" maxlength="80" value="${esc(h.sign)}" placeholder="Harrow, Reeve of Millford"></label>
-        <fieldset class="seg2 hstyle"><legend>Style</legend>${HSTYLES.map(([k,l])=>`<label><input type="radio" name="hStyle" value="${k}"${h.style===k?" checked":
+        <label>Signature, reward or source <input class="field" id="hSign" maxlength="80" value="${esc(
+          h.sign)}" placeholder="Harrow, Reeve of Millford"></label>
+        <fieldset class="seg2 hstyle"><legend>Style</legend>${HSTYLES.map(([k,l])=>`<label><input type="radio" name="hStyle" value="${k}"${h.style===
+          k?" checked":
           ""}> ${l}</label>`).join("")}</fieldset>
         <fieldset class="seg2"><legend>Show it on</legend>${HWHERE.map(([k,l])=>`<label><input type="radio" name="hWhere" value="${k}"${(d.where||"both")===k?
-          " checked":""}> ${l}</label>`).join("")}<label class="hph"><input type="checkbox" id="hPhones"${d.phones?" checked":""}> and the phones</label></fieldset>
+          " checked":""}> ${l}</label>`).join("")}<label class="hph"><input type="checkbox" id="hPhones"${d.phones?" checked":
+            ""}> and the phones</label></fieldset>
       </div>
       <div class="handprev" aria-label="Preview" id="hPrev"></div>
       <div class="handbtns"><button class="btn" type="button" data-act="close">Cancel</button><button class="btn" type="submit">Save</button><button class="btn primary" type="button" data-act="handsaveshow">Save and show</button></div>
@@ -65,13 +70,15 @@ function handSheet(id){
   $("#handForm").addEventListener("input",upd);upd();setTimeout(()=>{const x=$("#hTitle");x&&x.focus()},0);
 }
 function handFromForm(){const f=$("#handForm"),st=f.querySelector("input[name=hStyle]:checked");
-  return {id:f.dataset.id||uid(),style:st?st.value:"parch",title:$("#hTitle").value.trim(),body:$("#hBody").value.replace(/\s+$/,""),sign:$("#hSign").value.trim()}}
+  return {id:f.dataset.id||uid(),style:st?st.value:"parch",title:$("#hTitle").value.trim(),body:$("#hBody").value.replace(/\s+$/,""),sign:
+    $("#hSign").value.trim()}}
 function handSave(show){
   const f=$("#handForm");if(!f)return;const h=handFromForm(),w=f.querySelector("input[name=hWhere]:checked");
   if(!h.title&&!h.body){toast("Write a title or some text first");return}
   state.handoutWhere={where:w?w.value:"both",phones:$("#hPhones").checked};
   const H=state.handouts=state.handouts||[],i=H.findIndex(x=>x.id===h.id);if(i>=0)H[i]=h;else H.unshift(h);
-  if(state.handout&&state.handout.id===h.id&&!show)Object.assign(state.handout,{style:h.style,title:h.title,body:h.body,sign:h.sign,where:state.handoutWhere.where,
+  if(state.handout&&state.handout.id===h.id&&!show)Object.assign(state.handout,{style:h.style,title:h.title,body:h.body,sign:h.sign,where:
+    state.handoutWhere.where,
     phones:state.handoutWhere.phones});
   closeSheet();if(show)handShow(h);else commit();
 }

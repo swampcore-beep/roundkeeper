@@ -33,7 +33,7 @@ https://github.com/user-attachments/assets/f7578be1-2bc0-4fc1-84af-e42ae995edd6
 
 **Three short tours, under a minute each:** [the DM's laptop](#the-dms-laptop) · [the tablet and the TV](#the-tablet-and-the-tv) · [the players' phones](#on-players-phones)
 
-> **New in 1.2: a calmer DM screen that fits a laptop.** The row whose turn it is stands out at a glance, and the statblock can follow the turn by itself. Tools you use every round stay in view; the rest moved into small ⋯ menus and Settings. One download for each computer: Windows, Mac or Linux. [What changed](../../releases/tag/v1.2.0)
+> **New in 1.3: a new look for the DM screen, and handouts.** The laptop now looks like a tool: calm greys, the system font, one orange accent for the turn, and the turn itself as tiles at the bottom (round, whose turn, fight time, a countdown, back and next). Classic look in Settings brings back the old one. Show notes, sealed letters, wanted posters and pages of lore on the table. On the TV: condition icons, a boss's phases and title cards set like a chapter. [What changed](../../releases/tag/v1.3.0)
 
 ---
 
@@ -53,10 +53,11 @@ https://github.com/user-attachments/assets/dca33bcd-6d6c-4f08-8144-5024e681f508
 
 <img src="media/dm.jpg" width="100%" alt="The DM screen: the turn order with the Adult Red Dragon's turn, HP, AC and conditions in each row, and its statblock open on the right">
 
-One row per creature, in turn order: initiative, name, conditions, HP and AC. The creature whose turn it is gets a gold frame, and the one after it is marked *next*. The statblock opens beside the list, so the order stays in view.
+One row per creature, in turn order: initiative, picture, name, conditions (each with its icon), HP and AC, and Bloodied and Down one click away. The row whose turn it is is lighter with an orange edge, and the one after it is marked *next*. The turn sits at the bottom as tiles: round, whose turn, how long the fight has run, the nearest countdown with − and +, and back and Next turn. The statblock opens beside the list as a cream page, so the order stays in view. Prefer the old look in the table's style? **Settings → Classic look**.
 
 - **Initiative and turns:** add players and monsters, roll or type initiative, step through turns and rounds. Undo is always there.
 - **Statblocks you click:** an attack bonus rolls the attack, a damage number rolls damage, a save sends a roll call to the players it targets. Recharge, X/Day and Legendary actions are tracked as you use them. With **Follow the turn** on, the statblock switches to each monster as its turn comes up.
+- **Handouts:** write a notice, a sealed letter, a wanted poster or a page of lore, see it as you type, and show it on the tablet, the TV or both, and on the phones if you like. Your saved handouts never leave the laptop.
 - **Monster HP that only you see:** damage, healing, temp HP and a history you can undo one entry at a time. Bloodied and Down stay your call.
 - **Hit several:** one Fireball or breath weapon on several targets, with saves rolled from each statblock, resistances applied, and players asked on their phones.
 - **Conditions and spells with their 2024 durations**, ending by themselves at the right turn; Concentration saves worked out for you.
@@ -130,7 +131,7 @@ One big thing at a time, readable from across the room. In **Auto** the TV follo
 
 - **Before the fight:** your scene or picture (it drifts and zooms slowly), title cards for locations and chapters, and a **break timer** ("we continue at 21:40").
 - **Roll for initiative:** each player's number arrives as a card, and it shows who hasn't rolled yet.
-- **Spotlight:** whose turn it is, huge, with who's up next. **Order:** the whole initiative as cards.
+- **Spotlight:** whose turn it is, huge and in a pool of light, with its conditions as icons; who's up next waits dimmed beside it. A boss can have **phases** that you light by hand: a bar of segments, no HP numbers, and a big moment when the next one starts. **Order:** the whole initiative as cards.
 - **Roll calls as cards** that flip as players answer, with the DC and "3 of 4 succeeded".
 - **Its own dice:** a shared roll lands big on the TV; a nat 20 or nat 1 stays longer.
 - **Death saves:** on a downed player's turn, a heartbeat and three plus three boxes.

@@ -166,7 +166,8 @@ function tvRender(list,first){
   // a new title card: big for a moment
   const t=T.title;if(first&&pv.tvTitle===undefined)pv.tvTitle=t&&t.at||0;
     if(t&&t.at&&t.at!==pv.tvTitle){if(!first&&dmNow()-t.at<15000)momentShow("tvtitle",`<div class="mo-eb">${esc(t.eb||
-    "")}</div><div class="mo-big">${dropCap(t.t)}</div><div class="mo-orn" aria-hidden="true"><i></i></div>${t.sub?`<div class="mo-q">${esc(t.sub)}</div>`:""}`,5000);pv.tvTitle=t.at}
+    "")}</div><div class="mo-big">${dropCap(t.t)}</div><div class="mo-orn" aria-hidden="true"><i></i></div>${t.sub?`<div class="mo-q">${esc(t.sub)}</div>`:""}`,
+      5000);pv.tvTitle=t.at}
 }
 function tvRoundShow(r){const L=(state.rsum&&state.rsum.r===r-1?state.rsum.lines:[]).slice(0,3);
   momentShow("tvround",`<div class="mo-eb">Round</div><div class="mo-num">${r}</div>${L.length?`<ul>${L.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}`,3200);

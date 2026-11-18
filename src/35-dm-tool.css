@@ -95,7 +95,8 @@
 :root[data-dmlook=tool] #roster .tools .tog.blood,:root[data-dmlook=tool] #roster .tools .tog[data-act=down]{font-family:var(--ui);font-weight:600;
   font-size:.78rem;border-radius:999px;border:1px solid transparent;background:var(--panel2)!important;color:var(--muted);padding:5px 10px;
   text-transform:none;letter-spacing:0}
-:root[data-dmlook=tool] #roster .tools .tog.blood[aria-pressed=true]{border-color:var(--blood);background:color-mix(in srgb,var(--blood) 18%,transparent)!important;
+:root[data-dmlook=tool] #roster .tools .tog.blood[aria-pressed=true]{border-color:var(--blood);
+  background:color-mix(in srgb,var(--blood) 18%,transparent)!important;
   color:var(--blood)}
 :root[data-dmlook=tool] #roster .tools .tog[data-act=down][aria-pressed=true]{border-color:var(--fail);background:var(--fail)!important;color:var(--bg)}
 :root[data-dmlook=tool] #roster .morebtn2{border-radius:8px;color:var(--muted)}

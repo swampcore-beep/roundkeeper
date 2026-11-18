@@ -2744,7 +2744,8 @@ body.sbopen #roster .chips:has(.cond:not(.addc)) .addc{position:absolute;right:0
 :root[data-dmlook=tool] #roster .tools .tog.blood,:root[data-dmlook=tool] #roster .tools .tog[data-act=down]{font-family:var(--ui);font-weight:600;
   font-size:.78rem;border-radius:999px;border:1px solid transparent;background:var(--panel2)!important;color:var(--muted);padding:5px 10px;
   text-transform:none;letter-spacing:0}
-:root[data-dmlook=tool] #roster .tools .tog.blood[aria-pressed=true]{border-color:var(--blood);background:color-mix(in srgb,var(--blood) 18%,transparent)!important;
+:root[data-dmlook=tool] #roster .tools .tog.blood[aria-pressed=true]{border-color:var(--blood);
+  background:color-mix(in srgb,var(--blood) 18%,transparent)!important;
   color:var(--blood)}
 :root[data-dmlook=tool] #roster .tools .tog[data-act=down][aria-pressed=true]{border-color:var(--fail);background:var(--fail)!important;color:var(--bg)}
 :root[data-dmlook=tool] #roster .morebtn2{border-radius:8px;color:var(--muted)}
@@ -2833,16 +2834,19 @@ body.tvlite .tvsp .deck .card{filter:none}
 
 /* TV4: the boss's phases, a bar of skewed segments (past ones cracked and grey, the current one alight) */
 .phbar{display:flex;gap:.6vw;margin-top:.9vw}
-.phbar i{width:7vw;max-width:150px;height:1.1vw;min-height:10px;transform:skewX(-16deg);border:1.5px solid color-mix(in srgb,var(--boss,#c99a3e) 70%,transparent);
+.phbar i{width:7vw;max-width:150px;height:1.1vw;min-height:10px;transform:skewX(-16deg);
+  border:1.5px solid color-mix(in srgb,var(--boss,#c99a3e) 70%,transparent);
   background:rgba(0,0,0,.25)}
-.phbar i.gone{border-color:color-mix(in srgb,var(--fg) 25%,transparent);background:repeating-linear-gradient(110deg,rgba(255,255,255,.06) 0 6px,rgba(0,0,0,.25) 6px 11px)}
+.phbar i.gone{border-color:color-mix(in srgb,var(--fg) 25%,transparent);
+  background:repeating-linear-gradient(110deg,rgba(255,255,255,.06) 0 6px,rgba(0,0,0,.25) 6px 11px)}
 .phbar i.now{border-color:#ffd28a;background:linear-gradient(180deg,#ffbf6a,#e0592c 60%,#a8301c);box-shadow:0 0 22px rgba(255,140,60,.6)}
 .phname{font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:clamp(13px,1.2vw,24px);color:#ffcf8a;margin-top:.5vw}
 .moment.tvphase .mo-num{color:#ffcf8a;text-shadow:0 0 50px rgba(255,120,50,.6)}
 .phpick{display:grid;gap:6px;margin:4px 0 10px}.phpick label{display:flex;gap:8px;align-items:center}
 
 /* TV: the title card as the opening of a chapter, the first letter a framed initial, a line with diamonds */
-.dcap{display:inline-grid;place-items:center;min-width:1.05em;padding:.04em .08em 0;margin-right:.06em;border:2px solid color-mix(in srgb,var(--accent) 75%,transparent);
+.dcap{display:inline-grid;place-items:center;min-width:1.05em;padding:.04em .08em 0;margin-right:.06em;
+  border:2px solid color-mix(in srgb,var(--accent) 75%,transparent);
   color:var(--accent);background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--accent) 18%,transparent),rgba(0,0,0,.25) 75%);line-height:1;
   font-size:1.25em;vertical-align:-.12em;text-shadow:0 0 30px color-mix(in srgb,var(--accent) 40%,transparent)}
 .tvex.chap{left:50%;right:auto;bottom:auto;top:50%;transform:translate(-50%,-50%);justify-items:center;text-align:center;max-width:80vw}
@@ -2859,15 +2863,16 @@ body.tvlite .tvsp .deck .card{filter:none}
 ol.plist li .pfr{position:relative;z-index:1;display:grid;place-items:center;width:1.18em;height:1.18em;flex:none;margin-right:.08em}
 ol.plist li .pfr::before{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--k,var(--fg)) 70%,transparent);
   clip-path:polygon(50% 3%,93% 26%,93% 74%,50% 97%,7% 74%,7% 26%)}
-ol.plist li .pfr::after{content:"";position:absolute;inset:.07em;background:color-mix(in srgb,var(--k,var(--fg)) 14%,#0d0b0a);
+ol.plist li .pfr::after{content:"";position:absolute;inset:.07em;background:color-mix(in srgb,var(--k,var(--fg)) 14%,var(--bg));
   clip-path:polygon(50% 3%,93% 26%,93% 74%,50% 97%,7% 74%,7% 26%)}
 ol.plist li.k-pc .pfr::before,ol.plist li.k-pc .pfr::after{clip-path:circle(48% at 50% 50%)}
-ol.plist li.k-ally .pfr::before,ol.plist li.k-ally .pfr::after{clip-path:polygon(50% 3%,92% 16%,92% 46%,86% 64%,75% 79%,62% 90%,50% 97%,38% 90%,25% 79%,14% 64%,8% 46%,8% 16%)}
+ol.plist li.k-ally .pfr::before,ol.plist li.k-ally .pfr::after{clip-path:polygon(50% 3%,92% 16%,92% 46%,86% 64%,75% 79%,62% 90%,50% 97%,38% 90%,25% 79%,14% 64%,
+  8% 46%,8% 16%)}
 ol.plist li .pfr .sig{position:relative;z-index:2;width:.62em;height:.62em;margin:0}
 ol.plist li.turn .pfr::before{background:var(--accent)}
 ol.plist li.st-bloodied .pfr::before{background:var(--blood);filter:drop-shadow(0 0 .12em var(--blood))}
 ol.plist li.st-bloodied .pfr::after{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Cpath d='M31 5L36 22L31 31L40 45L36 58M66 27L50 33L53 42L42 51M6 46L20 44L22 56L16 68' fill='none' stroke='%23f6ecd9' stroke-width='3' stroke-linejoin='round' stroke-linecap='round' opacity='.8'/%3E%3C/svg%3E") center/100% no-repeat,
-  color-mix(in srgb,var(--blood) 30%,#0d0b0a)}
+  color-mix(in srgb,var(--blood) 30%,var(--bg))}
 html[data-plight] ol.plist li .pfr::after{background:color-mix(in srgb,var(--k,var(--fg)) 12%,#fffaf2)}
 ol.plist li .pos b,#tvLayer .hex b,#tvLayer .hx,.p-round b{font-variant-numeric:tabular-nums lining-nums}
 
@@ -2883,7 +2888,8 @@ html:root body:has(.pbar.acc) ol.plist.compact li.me.fr{background:color-mix(in 
 body:has(.pbar.acc) ol.plist li.me.fr .badge.you{background:var(--fc);color:#15120c}
 
 /* E1: handouts. On the table they sit over the order on a dimmed screen; on a phone they come up as a sheet. */
-.handlayer{position:fixed;inset:0;z-index:64;display:grid;place-items:center;padding:4vmin;background:rgba(5,6,10,.62);animation:tcin .45s cubic-bezier(.2,.8,.2,1)}
+.handlayer{position:fixed;inset:0;z-index:64;display:grid;place-items:center;padding:4vmin;background:rgba(5,6,10,.62);
+  animation:tcin .45s cubic-bezier(.2,.8,.2,1)}
 .handlayer .handin{display:grid;gap:12px;justify-items:center;max-height:92vh;max-width:min(92vw,760px);overflow:auto}
 .handlayer.phone{padding:12px;align-items:start;overflow:auto}.handlayer.phone .handin{max-width:100%}
 .handlayer .handx{min-height:44px}
@@ -2892,8 +2898,10 @@ body.tvscreen .handlayer .ho{font-size:clamp(16px,1.6vw,30px)}
 .ho{position:relative;width:min(640px,88vw);box-sizing:border-box;font-size:clamp(15px,1.25vw,22px);line-height:1.45;color:#2b1d0e;text-align:left}
 .ho p{margin:0 0 .7em}.ho h3{margin:0 0 .4em;line-height:1.1;font-weight:400}
 .ho-parch{padding:2.6em 2.2em;font-family:"IM Fell English SC","Palatino Linotype",Georgia,serif;
-  background:radial-gradient(120% 90% at 40% 30%,#f0e2bf 0%,#dcc38e 60%,#b8925a 100%);box-shadow:inset 0 0 60px 14px rgba(90,50,15,.55),0 18px 40px rgba(0,0,0,.45);
-  clip-path:polygon(2% 1%,20% 0%,38% 1.5%,60% 0%,82% 1%,99% 0%,100% 18%,98.5% 40%,100% 62%,99% 84%,100% 99%,78% 100%,55% 98.5%,33% 100%,12% 99%,0% 100%,1% 80%,0% 58%,1.5% 36%,0% 16%)}
+  background:radial-gradient(120% 90% at 40% 30%,#f0e2bf 0%,#dcc38e 60%,#b8925a 100%);
+    box-shadow:inset 0 0 60px 14px rgba(90,50,15,.55),0 18px 40px rgba(0,0,0,.45);
+  clip-path:polygon(2% 1%,20% 0%,38% 1.5%,60% 0%,82% 1%,99% 0%,100% 18%,98.5% 40%,100% 62%,99% 84%,100% 99%,78% 100%,55% 98.5%,33% 100%,12% 99%,0% 100%,1% 80%,
+    0% 58%,1.5% 36%,0% 16%)}
 .ho-parch h3{font-size:1.7em;text-align:center}.ho-parch hr{border:0;height:1px;background:rgba(59,42,22,.4);margin:0 0 1em}
 .ho-parch .hs{text-align:right;font-style:italic;margin-top:.6em}
 .ho-letter{padding:2.4em 2.2em 3.4em;font-family:"Palatino Linotype",Palatino,Georgia,serif;font-style:italic;color:#2a2238;
@@ -2902,21 +2910,26 @@ body.tvscreen .handlayer .ho{font-size:clamp(16px,1.6vw,30px)}
 .ho-letter .hsal{font-size:1.35em;margin-bottom:.6em}.ho-letter .hs{font-size:1.2em;margin-top:.4em}
 .hseal{position:absolute;right:1.4em;bottom:1.2em;width:4.2em;height:4.2em;border-radius:50%;display:grid;place-items:center;
   background:radial-gradient(circle at 38% 32%,#d34a3c,#8e1d16 62%,#5e100c);box-shadow:0 4px 10px rgba(60,10,5,.5),inset 0 -4px 8px rgba(0,0,0,.35)}
-.hseal b{display:grid;place-items:center;width:2.9em;height:2.9em;border-radius:50%;border:2px solid rgba(255,190,170,.35);font-family:"Alegreya SC",Georgia,serif;
+.hseal b{display:grid;place-items:center;width:2.9em;height:2.9em;border-radius:50%;border:2px solid rgba(255,190,170,.35);
+  font-family:"Alegreya SC",Georgia,serif;
   font-style:normal;font-size:1em;color:rgba(255,200,180,.7)}
 .ho-wanted{display:grid;justify-items:center;gap:.35em;padding:2em 1.8em;text-align:center;color:#2b1a0c;
-  background:radial-gradient(120% 100% at 50% 40%,#e6d3a6 0%,#cbb07a 70%,#a88654 100%);box-shadow:inset 0 0 40px 8px rgba(80,45,10,.45),0 18px 40px rgba(0,0,0,.45)}
+  background:radial-gradient(120% 100% at 50% 40%,#e6d3a6 0%,#cbb07a 70%,#a88654 100%);
+    box-shadow:inset 0 0 40px 8px rgba(80,45,10,.45),0 18px 40px rgba(0,0,0,.45)}
 .ho-wanted .hw{font-family:"Pirata One",Georgia,serif;font-size:3.6em;line-height:1;letter-spacing:.04em}
 .ho-wanted .hdoa{font-family:"IM Fell English SC",Georgia,serif;font-size:1.1em}
-.ho-wanted .hpic{width:8em;height:8em;border:3px solid #2b1a0c;display:grid;align-items:end;justify-items:center;background:radial-gradient(circle at 50% 35%,#d8c290,#b39663)}
+.ho-wanted .hpic{width:8em;height:8em;border:3px solid #2b1a0c;display:grid;align-items:end;justify-items:center;
+  background:radial-gradient(circle at 50% 35%,#d8c290,#b39663)}
 .ho-wanted .hpic svg{width:85%;height:85%;fill:#5a4024;opacity:.75}
 .ho-wanted .hn{font-family:"Pirata One",Georgia,serif;font-size:2em;line-height:1.05}
 .ho-wanted .hb{font-family:"IM Fell English SC",Georgia,serif}.ho-wanted .hrew{font-family:"Pirata One",Georgia,serif;font-size:2.1em}
 .ho-page{padding:1.2em 1.8em 1.4em;font-family:"Palatino Linotype",Palatino,Georgia,serif;color:#2a2a2e;
   background:linear-gradient(135deg,#f7f5f0 0%,#ece8df 45%,#f5f2ec 70%,#e6e1d6 100%);box-shadow:0 18px 40px rgba(0,0,0,.45)}
 .ho-page h3{font-family:"Alegreya SC","Palatino Linotype",Georgia,serif;font-weight:800;font-size:1.5em;text-align:center;color:#8a6a1e;margin:.5em 0}
-.ho-page .hmk{display:block;height:.9em;margin:.2em 0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cpath d='M1 24V2H24V20H6V7H18V15H11' fill='none' stroke='%23b8923a' stroke-width='2.2'/%3E%3C/svg%3E") left/auto 100% repeat-x}
-.ho-page .hdrop>p:first-child::first-letter{float:left;font-family:"Alegreya SC",Georgia,serif;font-weight:800;font-size:3.6em;line-height:.8;margin:.08em .12em 0 0;color:#b8923a}
+.ho-page .hmk{display:block;height:.9em;margin:.2em 0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Cpath d='M1 24V2H24V20H6V7H18V15H11' fill='none' stroke='%23b8923a' stroke-width='2.2'/%3E%3C/svg%3E") left/auto 100% repeat-x}
+.ho-page .hdrop>p:first-child::first-letter{float:left;font-family:"Alegreya SC",Georgia,serif;font-weight:800;font-size:3.6em;line-height:.8;
+  margin:.08em .12em 0 0;color:#b8923a}
 .ho-page .hs{text-align:right;font-style:italic;color:#6a5a3a}
 /* the DM's side: the list, and the editor with a live preview */
 .side .strip.hand{display:grid;gap:8px;align-items:stretch}
@@ -2934,6 +2947,39 @@ body.tvscreen .handlayer .ho{font-size:clamp(16px,1.6vw,30px)}
 .handbtns{grid-column:1 / -1;display:flex;justify-content:flex-end;gap:8px}
 @media (max-width:800px){.handform{grid-template-columns:1fr}}
 textarea.field{font-family:inherit;line-height:1.4}
+
+/* theme textures on the tablet and the TV: a faint grain and a vignette, so a theme reads as a material, not only a palette.
+   Under the order (z-index 0, after the scene), never over text; off on the DM screen, in High contrast, in the TV's Light mode */
+#grain{position:fixed;inset:0;z-index:0;pointer-events:none;display:none}
+body:has(#player:not([hidden])) #grain{display:block;box-shadow:inset 0 0 22vmin 6vmin rgba(0,0,0,.42)}
+body:has(#player:not([hidden])) #grain::before{content:"";position:absolute;inset:0;opacity:.13;mix-blend-mode:overlay;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E")}
+html[data-skin=oldmap] #grain::before,html[data-skin=amphora] #grain::before,html[data-skin=sun] #grain::before{opacity:.22;mix-blend-mode:multiply}
+html[data-skin=oldmap] #grain{box-shadow:inset 0 0 24vmin 8vmin rgba(90,55,20,.38)}
+html[data-skin=forge] #grain::before{opacity:.2;background-size:520px;filter:contrast(1.4)}
+html[data-skin=forge] #grain{background:radial-gradient(80% 40% at 50% 112%,rgba(255,110,40,.2),transparent)}
+html[data-skin=wyrm] #grain::after,html[data-skin=hoard] #grain::after{content:"";position:absolute;inset:0;opacity:.5;
+  background:radial-gradient(circle at 50% 0%,transparent 13px,rgba(0,0,0,.3) 14px,transparent 17px) 0 0/30px 18px,
+  radial-gradient(circle at 50% 0%,transparent 13px,rgba(0,0,0,.3) 14px,transparent 17px) 15px 9px/30px 18px}
+html[data-skin=frost] #grain{background:radial-gradient(70% 60% at 50% 50%,transparent 60%,rgba(220,240,255,.16) 100%)}
+html[data-skin=frost] #grain::before{mix-blend-mode:screen;opacity:.1;background-size:120px}
+html[data-skin=hc] #grain,html[data-plight] #grain,body.tvlite #grain{display:none!important}
+
+/* motion, one move per event: a new row is written in as if with ink; a player who becomes Stable gets a wax seal stamped
+   by their name; in the bookish themes the new round turns like a page. Reduced motion skips them all. */
+@keyframes rkink{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+ol.plist li.enter .nm,ol.plist li.reveal .nm{animation:rkink .7s cubic-bezier(.2,.7,.2,1) .1s both}
+@keyframes rkseal{0%{transform:scale(1.9) rotate(-14deg);opacity:0}45%{transform:scale(.9) rotate(-6deg);opacity:1}62%{transform:scale(1.05) rotate(-8deg)}
+  100%{transform:scale(1) rotate(-8deg);opacity:1}}
+ol.plist li.st-stable .nmw::after{content:"";position:relative;z-index:2;display:inline-block;width:1.05em;height:1.05em;margin-left:.35em;
+  vertical-align:middle;
+  border-radius:50%;background:radial-gradient(circle at 38% 32%,#d34a3c,#8e1d16 62%,#5e100c);box-shadow:0 .05em .12em rgba(0,0,0,.45),
+  inset 0 0 0 .14em rgba(255,190,170,.25);animation:rkseal .6s cubic-bezier(.2,.7,.2,1) both}
+html[data-skin=oldmap] .fxround,html[data-skin=marble] .fxround,html[data-skin=amphora] .fxround,html:not([data-skin]) .fxround{perspective:1100px}
+@keyframes rkpage{0%{transform:rotateY(-95deg);opacity:0}60%{opacity:1}100%{transform:rotateY(0);opacity:1}}
+html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[data-skin=amphora] .fxround>div{transform-origin:left center;
+  animation:rkpage .9s cubic-bezier(.2,.7,.2,1) both}
+@media (prefers-reduced-motion:reduce){ol.plist li .nm,ol.plist li.st-stable .nmw::after,.fxround>div{animation:none!important}}
 </style>
 </head>
 <body>
@@ -3043,6 +3089,7 @@ textarea.field{font-family:inherit;line-height:1.4}
 <canvas id="scene" hidden></canvas>
 <canvas id="scene2" hidden aria-hidden="true"></canvas>
 <div id="todTint" aria-hidden="true"></div>
+<div id="grain" aria-hidden="true"></div>
 <canvas id="sceneFx" aria-hidden="true"></canvas>
 <div id="player" hidden></div>
 <div id="entry" hidden></div>
@@ -5541,7 +5588,8 @@ const CICON={
   Petrified:["out","M4 18.5l2-8 5.5-4.5 6.5 2 2.5 6-2.5 4.5zM11.5 6l1 5-3.5 3M12.5 11l4 1.5"],
   Stunned:["out","M12 3.5l1.3 2.7 3 .4-2.2 2.1.5 3-2.6-1.4-2.6 1.4.5-3-2.2-2.1 3-.4zM3 16.5c0-2 4-3.5 9-3.5s9 1.5 9 3.5-4 3.5-9 3.5-9-1.5-9-3.5z"],
   Unconscious:["out","M4.5 5h6l-6 7h6M13.5 12h6l-6 7h6"],
-  Grappled:["body","M7 11V6.5a1.5 1.5 0 0 1 3 0V11M10 10V5a1.5 1.5 0 0 1 3 0v5M13 10V6a1.5 1.5 0 0 1 3 0v6M16 11.5a1.5 1.5 0 0 1 3 0V14c0 4-3 7-7 7s-6-2-7.5-5L3 12.5a1.5 1.5 0 0 1 2.5-1.6L7 13"],
+  Grappled:[
+    "body","M7 11V6.5a1.5 1.5 0 0 1 3 0V11M10 10V5a1.5 1.5 0 0 1 3 0v5M13 10V6a1.5 1.5 0 0 1 3 0v6M16 11.5a1.5 1.5 0 0 1 3 0V14c0 4-3 7-7 7s-6-2-7.5-5L3 12.5a1.5 1.5 0 0 1 2.5-1.6L7 13"],
   Restrained:["body","M9.5 14.5l-2 2a3 3 0 0 1-4.2-4.2l3-3a3 3 0 0 1 4.2 0M14.5 9.5l2-2a3 3 0 0 1 4.2 4.2l-3 3a3 3 0 0 1-4.2 0M9.5 14.5l5-5"],
   Prone:["body","M5 13a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM8 16h13M10 16l3.5-3.5H18"],
   Poisoned:["body","M12 3s6.5 6.8 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 9.8 12 3 12 3zM9.8 14h.01M14.2 14h.01M10 17.5h4"],
@@ -5739,7 +5787,8 @@ function lairRowHtml(){
     " · ":""}Lair action<small>${b?`${sb.lair.length} to pick from${last&&last.r===R-1?` · not “${esc(lairShort(sb.lair[last.i]||""))}” again`:""}`:
     "On initiative 20, loses ties"}</small></div></div><div class="chips">${b&&!turn?
     `<button type="button" class="cond add" data-act="lairshow" aria-expanded="${lairShow}">${lairShow?"Hide":"Show"} actions</button>`:
-    ""}</div><div class="tools"><button type="button" class="icon-btn" data-act="lairoff" aria-label="Remove lair action">${I.x}</button></div>${acts}${turn?TFRAME:""}</div>`;
+    ""}</div><div class="tools"><button type="button" class="icon-btn" data-act="lairoff" aria-label="Remove lair action">${I.x}</button></div>${acts}${turn?
+      TFRAME:""}</div>`;
 }
 function withLair(arr){if(!state.lair)return arr;const a=[...arr];const i=a.findIndex(c=>initOf(c)<20);a.splice(i<0?a.length:i,0,LAIR);return a}
 const dsOf=c=>c.ds||{s:0,f:0};
@@ -6368,10 +6417,13 @@ function turnTiles(){
   const k=(state.clocks||[]).filter(x=>x.n>0).sort((a,b)=>a.n-b.n)[0];
   return (t?tile(t.round,"Round","trnd")+tile(esc(who?who.name:t.id==="__lair"?"Lair action":"–"),"Turn","twho"):"")
     +(f!=null&&state.list.length?tile(f<1?"< 1 min":f+" min","Fight"):"")
-    +(k?`<span class="ttile tclk"><button type="button" class="tstep" data-act="clkm" data-id="${esc(k.id)}" aria-label="${esc(k.name)}: one less">−</button><span><b>${
-      k.n}</b><small title="${esc(k.name)}">${esc(k.name)}${k.secret?" · secret":""}</small></span><button type="button" class="tstep" data-act="clkp" data-id="${
+    +(k?`<span class="ttile tclk"><button type="button" class="tstep" data-act="clkm" data-id="${esc(k.id)}" aria-label="${esc(
+      k.name)}: one less">−</button><span><b>${
+      k.n}</b><small title="${esc(k.name)}">${esc(k.name)}${k.secret?" · secret":
+        ""}</small></span><button type="button" class="tstep" data-act="clkp" data-id="${
       esc(k.id)}" aria-label="${esc(k.name)}: one more">+</button></span>`:"")
-    +(t?`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic("prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${
+    +(t?`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
+      "prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${
       ic("next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
       turnMenuOn}" aria-label="Turn options" title="Turn options: stop tracking turns">${DOTS}</button>${turnMenuOn?
       `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`
@@ -6480,9 +6532,11 @@ function renderDM(){
           "0 HP + ask for a death save"} ${K("S")}</button><button type="button" data-act="timer">${state.timer&&state.timer.cid===c.id?"Stop the hourglass":
           "Hourglass"} ${K("T")}</button><button type="button" data-act="insp">${c.insp?"Remove":"Give"} Heroic Inspiration ${K("I")}</button>`
           :`<button type="button" data-act="boss">${c.boss?"Not a boss":"Make it a boss"} ${K("I")}</button>${c.boss?
-            `<button type="button" data-act="titleedit">Intro title…</button><button type="button" data-act="phases">Phases…${Array.isArray(c.phases)&&c.phases.length>1?
+            `<button type="button" data-act="titleedit">Intro title…</button><button type="button" data-act="phases">Phases…${Array.isArray(c.phases)&&
+              c.phases.length>1?
             ` <small>${ROMAN[c.phase||0]||""} of ${c.phases.length}</small>`:""}</button>${Array.isArray(c.phases)&&(c.phase||0)<c.phases.length-1?
-            `<button type="button" data-act="phasenext">Next phase: ${esc(c.phases[(c.phase||0)+1])}</button>`:""}<button type="button" data-act="intro">Replay intro</button><label>Background<select data-act="rim" aria-label="Boss background">${
+            `<button type="button" data-act="phasenext">Next phase: ${esc(c.phases[(c.phase||0)+1])}</button>`:
+              ""}<button type="button" data-act="intro">Replay intro</button><label>Background<select data-act="rim" aria-label="Boss background">${
             RIMS.map(([k,l])=>`<option value="${k}"${(c.rim||"")===k?" selected":""}>${l}</option>`).join("")}</select></label>`:""}`}
         ${c.kind!=="pc"&&c.hpMax!=null?`<button type="button" data-act="hpclear">Stop tracking HP</button>`:""}
         ${sb?`<button type="button" data-act="sbresetall">Reset statblock counters</button>`:""}
@@ -6501,7 +6555,8 @@ function renderDM(){
         "+":"")+c.ib:"?"}" data-act="init" aria-label="Initiative"${typeof c.ib==="number"?` title="Initiative bonus ${c.ib>=0?"+":
         ""}${c.ib}: type the d20 total"`:""}></span>
       <div class="who"><span class="nmrow"><span class="dmpic">${(k=>k?`<span class="sig dmsig fr-${k}" role="img" aria-label="${esc(LABEL[k])}" title="${esc(
-        LABEL[k])}"></span>`:`<span class="sig dmsig nosig" aria-hidden="true"></span>`)(frameKey(c))}</span><input class="name-in" id="name-${c.id}" value="${esc(
+        LABEL[k])}"></span>`:`<span class="sig dmsig nosig" aria-hidden="true"></span>`)(frameKey(c))}</span><input class="name-in" id="name-${
+          c.id}" value="${esc(
         c.name)}" data-act="name" aria-label="Name"></span>${typeline?
         `<div class="typeline">${typeline}</div>`:""}</div>
       <div class="chips">${chips}</div>
@@ -6569,7 +6624,8 @@ function renderHand(){
     ""}: <b>${esc(on.title||"(untitled)")}</b></span><button type="button" class="btn sm" data-act="handdown">Take it down</button></div>`:"")
     +(H.length?`<div class="handlist">${H.map(h=>`<div class="handrow"><span class="handt">${esc(h.title||"(untitled)")}<small>${esc((HSTYLES.find(x=>
       x[0]===h.style)||HSTYLES[0])[1])}</small></span><button type="button" class="btn sm${on&&on.id===h.id?" primary":""}" data-act="handshow" data-id="${
-      esc(h.id)}">${on&&on.id===h.id?"Shown":"Show"}</button><button type="button" class="btn sm" data-act="handedit" data-id="${esc(h.id)}">Edit</button><button type="button" class="icon-btn sm" data-act="handdel" data-id="${
+      esc(h.id)}">${on&&on.id===h.id?"Shown":"Show"}</button><button type="button" class="btn sm" data-act="handedit" data-id="${esc(
+        h.id)}">Edit</button><button type="button" class="icon-btn sm" data-act="handdel" data-id="${
       esc(h.id)}" aria-label="Delete ${esc(h.title||"this handout")}" title="Delete (click twice)">${I.x}</button></div>`).join("")}</div>`
       :`<p class="strip-empty" style="margin:0">A note, a letter, a wanted poster or a page of lore, shown on the table.</p>`)
     +`<button type="button" class="btn sm" data-act="handnew">New handout…</button>`;
@@ -6578,17 +6634,21 @@ function handShow(h){const d=state.handoutWhere||{};state.handout={id:h.id,style
   where:d.where||"both",phones:!!d.phones,at:Date.now()};commit()}
 function handSheet(id){
   const h=(state.handouts||[]).find(x=>x.id===id)||{id:"",style:"parch",title:"",body:"",sign:""},d=state.handoutWhere||{where:"both",phones:false};
-  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet handsheet" role="dialog" aria-modal="true" aria-label="Handout"><h2>${id?"Edit the handout":
+  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet handsheet" role="dialog" aria-modal="true" aria-label="Handout"><h2>${id?
+    "Edit the handout":
     "New handout"}</h2>
     <form id="handForm" data-id="${esc(h.id)}" autocomplete="off" class="handform">
       <div class="handfields">
         <label>Title <input class="field" id="hTitle" maxlength="80" value="${esc(h.title)}" placeholder="Notice to all who pass the bridge"></label>
         <label>Text <textarea class="field" id="hBody" rows="7" maxlength="1200" placeholder="By order of the Reeve…">${esc(h.body)}</textarea></label>
-        <label>Signature, reward or source <input class="field" id="hSign" maxlength="80" value="${esc(h.sign)}" placeholder="Harrow, Reeve of Millford"></label>
-        <fieldset class="seg2 hstyle"><legend>Style</legend>${HSTYLES.map(([k,l])=>`<label><input type="radio" name="hStyle" value="${k}"${h.style===k?" checked":
+        <label>Signature, reward or source <input class="field" id="hSign" maxlength="80" value="${esc(
+          h.sign)}" placeholder="Harrow, Reeve of Millford"></label>
+        <fieldset class="seg2 hstyle"><legend>Style</legend>${HSTYLES.map(([k,l])=>`<label><input type="radio" name="hStyle" value="${k}"${h.style===
+          k?" checked":
           ""}> ${l}</label>`).join("")}</fieldset>
         <fieldset class="seg2"><legend>Show it on</legend>${HWHERE.map(([k,l])=>`<label><input type="radio" name="hWhere" value="${k}"${(d.where||"both")===k?
-          " checked":""}> ${l}</label>`).join("")}<label class="hph"><input type="checkbox" id="hPhones"${d.phones?" checked":""}> and the phones</label></fieldset>
+          " checked":""}> ${l}</label>`).join("")}<label class="hph"><input type="checkbox" id="hPhones"${d.phones?" checked":
+            ""}> and the phones</label></fieldset>
       </div>
       <div class="handprev" aria-label="Preview" id="hPrev"></div>
       <div class="handbtns"><button class="btn" type="button" data-act="close">Cancel</button><button class="btn" type="submit">Save</button><button class="btn primary" type="button" data-act="handsaveshow">Save and show</button></div>
@@ -6597,13 +6657,15 @@ function handSheet(id){
   $("#handForm").addEventListener("input",upd);upd();setTimeout(()=>{const x=$("#hTitle");x&&x.focus()},0);
 }
 function handFromForm(){const f=$("#handForm"),st=f.querySelector("input[name=hStyle]:checked");
-  return {id:f.dataset.id||uid(),style:st?st.value:"parch",title:$("#hTitle").value.trim(),body:$("#hBody").value.replace(/\s+$/,""),sign:$("#hSign").value.trim()}}
+  return {id:f.dataset.id||uid(),style:st?st.value:"parch",title:$("#hTitle").value.trim(),body:$("#hBody").value.replace(/\s+$/,""),sign:
+    $("#hSign").value.trim()}}
 function handSave(show){
   const f=$("#handForm");if(!f)return;const h=handFromForm(),w=f.querySelector("input[name=hWhere]:checked");
   if(!h.title&&!h.body){toast("Write a title or some text first");return}
   state.handoutWhere={where:w?w.value:"both",phones:$("#hPhones").checked};
   const H=state.handouts=state.handouts||[],i=H.findIndex(x=>x.id===h.id);if(i>=0)H[i]=h;else H.unshift(h);
-  if(state.handout&&state.handout.id===h.id&&!show)Object.assign(state.handout,{style:h.style,title:h.title,body:h.body,sign:h.sign,where:state.handoutWhere.where,
+  if(state.handout&&state.handout.id===h.id&&!show)Object.assign(state.handout,{style:h.style,title:h.title,body:h.body,sign:h.sign,where:
+    state.handoutWhere.where,
     phones:state.handoutWhere.phones});
   closeSheet();if(show)handShow(h);else commit();
 }
@@ -6811,13 +6873,18 @@ function titleSheet(id){
 /* TV4: the boss's phases, one per line; the DM lights the next one by hand (the row's ⋯ or here) */
 function phaseSheet(id){
   const c=byId(id);if(!c)return;const ph=Array.isArray(c.phases)?c.phases:[],k=c.phase||0;
-  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true" aria-label="Phases"><h2>Phases · ${esc(c.name)}</h2>
-    <form id="phaseForm" data-id="${esc(c.id)}" autocomplete="off" class="psec"><textarea class="field" id="phaseText" rows="5" maxlength="400" aria-label="Phases, one per line"
+  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true" aria-label="Phases"><h2>Phases · ${esc(
+    c.name)}</h2>
+    <form id="phaseForm" data-id="${esc(
+      c.id)}" autocomplete="off" class="psec"><textarea class="field" id="phaseText" rows="5" maxlength="400" aria-label="Phases, one per line"
       placeholder="The wyrm awakens&#10;The skies burn&#10;Last stand">${esc(ph.join("\n"))}</textarea>
       <p class="psub">One phase per line, two or more. The TV and the tablet show which phase the fight is in (no HP), and a new phase gets a big moment.</p>
-      ${ph.length>1?`<div class="phpick" role="radiogroup" aria-label="Current phase">${ph.map((n,i)=>`<label><input type="radio" name="phNow" value="${i}"${i===k?
+      ${ph.length>1?`<div class="phpick" role="radiogroup" aria-label="Current phase">${ph.map((n,i)=>
+        `<label><input type="radio" name="phNow" value="${i}"${i===k?
         " checked":""}> ${ROMAN[i]||i+1} · ${esc(n)}</label>`).join("")}</div>`:""}
-      <div style="display:flex;justify-content:flex-end;gap:8px">${ph.length?'<button class="btn danger" type="button" data-act="phaseclear">No phases</button>':""}<span style="flex:1"></span><button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="submit">Save</button></div></form></div></div>`;
+      <div style="display:flex;justify-content:flex-end;gap:8px">${ph.length?
+        '<button class="btn danger" type="button" data-act="phaseclear">No phases</button>':
+        ""}<span style="flex:1"></span><button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="submit">Save</button></div></form></div></div>`;
   setTimeout(()=>{const x=$("#phaseText");x&&x.focus()},0);
 }
 function knowSheet(id){
@@ -7586,7 +7653,8 @@ function renderSbDrawer(){
         ""}"><span>${esc(r.who)} · ${esc(r.what)}</span><b>${r.tot}</b><small>${esc(r.how)}</small>${r.cid?
         `<button type="button" class="btn sm sbapply" data-act="sbapply" data-i="${
         i}" title="Pick who it hits; saves are rolled or asked">Apply to targets…</button>`:""}</div>`).join(""):
-        (ls.get("sbHintSeen",false)?"":`<p class="psub">Click a bonus to roll the attack, a damage number to roll damage, a saving throw to ask the players. Only you see these rolls.</p>`)}</div></div>
+        (ls.get("sbHintSeen",false)?
+          "":`<p class="psub">Click a bonus to roll the attack, a damage number to roll damage, a saving throw to ask the players. Only you see these rolls.</p>`)}</div></div>
     ${sbSaveAsk?`<div class="sbask"><b>${esc(sbSaveAsk.ab)} save DC ${sbSaveAsk.dc}</b>${sbSaveAsk.n?` <span class="psub">· ${esc(sbSaveAsk.n)}</span>`:""}
       <div class="chipgrid">${pcs.map(p=>`<button type="button" data-act="sbasktgt" data-id="${esc(p.id)}" aria-pressed="${sbSaveAsk.to.includes(p.id)}">${esc(
         p.name)}</button>`).join("")}</div>
@@ -8024,8 +8092,10 @@ function renderPlayer(){
       const dealI=dealing?list.indexOf(c):-1;
       return `<li data-id="${esc(c.id)}" class="${cls.join(" ")}"${st.has("exhaustion")||dealI>=0?` style="${st.has("exhaustion")?`--exh:${exhOf(c)};`:
         ""}${dealI>=0?`--i:${dealI}`:""}"`:""}>${fx}<span class="pos" title="Initiative">${I.hex}<b>${iv}</b></span>${fk?
-        `<span class="pfr" aria-hidden="true"><span class="sig" title="${esc(LABEL[fk])}"></span></span>`:""}<span class="nmw"><span class="nmb">${deco(st)}<span class="nm">${esc(c.name)}${c.boss&&
-        (c.title||phaseTag(c))?`<small>${esc([c.title,phaseTag(c)].filter(Boolean).join(" · "))}</small>`:""}</span></span></span>${c.kind!=="lair"&&c.showAc&&c.ac!=null?
+        `<span class="pfr" aria-hidden="true"><span class="sig" title="${esc(LABEL[fk])}"></span></span>`:
+          ""}<span class="nmw"><span class="nmb">${deco(st)}<span class="nm">${esc(c.name)}${c.boss&&
+        (c.title||phaseTag(c))?`<small>${esc([c.title,phaseTag(c)].filter(Boolean).join(" · "))}</small>`:""}</span></span></span>${c.kind!=="lair"&&
+          c.showAc&&c.ac!=null?
         `<span class="acw"><span class="shield${isNew(c,"ac")}" data-info="ac" title="AC">${I.shield}<span>${esc(c.ac)}</span></span></span>`:
         ""}<span class="ic">${isMe?'<span class="badge you">You</span>':""}${c.kind==="lair"?"":icons(c,isNew)}</span></li>`}).join("")}</ol>`
     :`<div class="p-empty"><div><strong>Waiting for combat</strong>The initiative order will appear here.${meName==="*"?joinCard(false):""}</div></div>`;
@@ -8040,7 +8110,8 @@ function renderPlayer(){
     if(nowIds.has("__lair")&&!prev.has("__lair"))lairTremor(P)}
   callStamps(P,first);
   fxAfter(P,list,prev,first);
-  tcardRender();handoutRender();surfaceMoments(first);if(TV)tvRender(list,first);else if(meName==="*")phaseMoment(list,first);if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull()}
+  tcardRender();handoutRender();surfaceMoments(first);if(TV)tvRender(list,first);else if(meName==="*")phaseMoment(list,first);
+    if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull()}
   if(reduced||first||dealing)return afterRender(list,prev,first);   // a new fight: no ghosts of the old one, no sliding
   // defeated and hidden: a ghost of the old row stays in place and fades
   if(tvCover())leaving.forEach(id=>{
@@ -10238,9 +10309,11 @@ function tvModeNow(list){const T=state.tv||{},m=T.mode||"auto",paused=T.pause&&T
 function handoutHtml(h){
   if(!h)return "";const pr=t=>String(t||"").split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${esc(p).replace(/\n/g,"<br>")}</p>`).join("");
   const st=h.style||"parch",T=esc(h.title||""),S=esc(h.sign||"");
-  if(st==="letter")return `<div class="ho ho-letter">${T?`<div class="hsal">${T}</div>`:""}<div class="hb">${pr(h.body)}</div>${S?`<div class="hs">— ${S}</div>`:
+  if(st==="letter")return `<div class="ho ho-letter">${T?`<div class="hsal">${T}</div>`:""}<div class="hb">${pr(h.body)}</div>${S?
+    `<div class="hs">— ${S}</div>`:
     ""}<span class="hseal" aria-hidden="true"><b>${esc((h.sign||h.title||"R").trim().charAt(0).toUpperCase())}</b></span></div>`;
-  if(st==="wanted")return `<div class="ho ho-wanted"><div class="hw">Wanted</div><div class="hdoa">dead or alive</div><div class="hpic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15.8 7a3.8 3.8 0 1 1-7.6 0 3.8 3.8 0 0 1 7.6 0zM4.5 21.5c0-4.7 3.2-7.8 7.5-7.8s7.5 3.1 7.5 7.8z"/></svg></div>${T?
+  if(
+    st==="wanted")return `<div class="ho ho-wanted"><div class="hw">Wanted</div><div class="hdoa">dead or alive</div><div class="hpic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15.8 7a3.8 3.8 0 1 1-7.6 0 3.8 3.8 0 0 1 7.6 0zM4.5 21.5c0-4.7 3.2-7.8 7.5-7.8s7.5 3.1 7.5 7.8z"/></svg></div>${T?
     `<div class="hn">${T}</div>`:""}<div class="hb">${pr(h.body)}</div>${S?`<div class="hrew">${S}</div>`:""}</div>`;
   if(st==="page")return `<div class="ho ho-page"><i class="hmk" aria-hidden="true"></i>${T?`<h3>${T}</h3>`:""}<div class="hb hdrop">${pr(h.body)}</div>${S?
     `<div class="hs">${S}</div>`:""}<i class="hmk" aria-hidden="true"></i></div>`;
@@ -10424,7 +10497,8 @@ function tvRender(list,first){
   // a new title card: big for a moment
   const t=T.title;if(first&&pv.tvTitle===undefined)pv.tvTitle=t&&t.at||0;
     if(t&&t.at&&t.at!==pv.tvTitle){if(!first&&dmNow()-t.at<15000)momentShow("tvtitle",`<div class="mo-eb">${esc(t.eb||
-    "")}</div><div class="mo-big">${dropCap(t.t)}</div><div class="mo-orn" aria-hidden="true"><i></i></div>${t.sub?`<div class="mo-q">${esc(t.sub)}</div>`:""}`,5000);pv.tvTitle=t.at}
+    "")}</div><div class="mo-big">${dropCap(t.t)}</div><div class="mo-orn" aria-hidden="true"><i></i></div>${t.sub?`<div class="mo-q">${esc(t.sub)}</div>`:""}`,
+      5000);pv.tvTitle=t.at}
 }
 function tvRoundShow(r){const L=(state.rsum&&state.rsum.r===r-1?state.rsum.lines:[]).slice(0,3);
   momentShow("tvround",`<div class="mo-eb">Round</div><div class="mo-num">${r}</div>${L.length?`<ul>${L.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}`,3200);
@@ -11022,7 +11096,8 @@ document.addEventListener("click",e=>{
     case "handnew": handSheet(null);break;
     case "handedit": handSheet(t.dataset.id);break;
     case "handsaveshow": handSave(true);break;
-    case "handshow":{const h=(state.handouts||[]).find(x=>x.id===t.dataset.id);if(h){if(state.handout&&state.handout.id===h.id){state.handout=null;commit()}else handShow(h)}break}
+    case "handshow":{const h=(state.handouts||[]).find(x=>x.id===t.dataset.id);if(h){if(state.handout&&state.handout.id===h.id){state.handout=null;
+      commit()}else handShow(h)}break}
     case "handdown": state.handout=null;commit();break;
     case "handdel": if(!t.classList.contains("armed")){t.classList.add("armed");setTimeout(()=>t.classList.remove("armed"),2500);break}
       state.handouts=(state.handouts||[]).filter(x=>x.id!==t.dataset.id);if(state.handout&&state.handout.id===t.dataset.id)state.handout=null;commit();break;
@@ -11169,7 +11244,7 @@ document.addEventListener("click",e=>{
     case "revpvagain": revealPreview.play&&revealPreview.play();break;
     case "revpvgo":{const c2=byId(t.dataset.id);closeSheet();if(c2){c2.hidden=false;commit();toast(`${c2.name} revealed`)}break}
     case "titleedit2": titleSheet(t.dataset.id);break;
-    case "clkm": case "clkp":{const k=(state.clocks||[]).find(x=>x.id===t.dataset.id);if(!k)break;if(a==="clkm"){k.n=Math.max(0,k.n-1);
+    case "clkm": case "clkp":{const k=(state.clocks||[]).find(x=>x.id===t.dataset.id);if(!k)break;if(act==="clkm"){k.n=Math.max(0,k.n-1);
       if(k.n===0&&!k.secret)state.clockFx={id:uid(),name:k.name,max:k.max,at:Date.now()}}else{k.n=Math.min(20,k.n+1);k.max=Math.max(k.max,k.n)}commit();break}
     case "clkrm": state.clocks=(state.clocks||[]).filter(x=>x.id!==t.dataset.id);commit();break;
     case "ongapply":{const k=dmCards.find(x=>x.id===t.dataset.id);if(!k)break;const c2=byId(k.cid);dmCards=dmCards.filter(x=>x!==k);
@@ -11710,7 +11785,8 @@ document.addEventListener("submit",async e=>{
       tune:atmoD.tune||{}});
     ls.set("myThemes",all.slice(-24));toast("Saved: "+nm);atmoRefresh();return}
   if(f.id==="handForm"){e.preventDefault();handSave(false);return}
-  if(f.id==="phaseForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){const ph=$("#phaseText").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,10);
+  if(f.id==="phaseForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){const ph=$("#phaseText").value.split("\n").map(x=>
+    x.trim()).filter(Boolean).slice(0,10);
     const pick=f.querySelector('input[name=phNow]:checked');if(ph.length>1){c.phases=ph;c.phase=Math.min(ph.length-1,pick?Number(pick.value):c.phase||0)}
     else{delete c.phases;delete c.phase}commit()}closeSheet();return}
   if(f.id==="titleForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){c.title=$("#titleText").value.trim();commit()}closeSheet();return}

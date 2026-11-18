@@ -21,7 +21,8 @@ document.addEventListener("click",e=>{
     case "handnew": handSheet(null);break;
     case "handedit": handSheet(t.dataset.id);break;
     case "handsaveshow": handSave(true);break;
-    case "handshow":{const h=(state.handouts||[]).find(x=>x.id===t.dataset.id);if(h){if(state.handout&&state.handout.id===h.id){state.handout=null;commit()}else handShow(h)}break}
+    case "handshow":{const h=(state.handouts||[]).find(x=>x.id===t.dataset.id);if(h){if(state.handout&&state.handout.id===h.id){state.handout=null;
+      commit()}else handShow(h)}break}
     case "handdown": state.handout=null;commit();break;
     case "handdel": if(!t.classList.contains("armed")){t.classList.add("armed");setTimeout(()=>t.classList.remove("armed"),2500);break}
       state.handouts=(state.handouts||[]).filter(x=>x.id!==t.dataset.id);if(state.handout&&state.handout.id===t.dataset.id)state.handout=null;commit();break;
@@ -168,7 +169,7 @@ document.addEventListener("click",e=>{
     case "revpvagain": revealPreview.play&&revealPreview.play();break;
     case "revpvgo":{const c2=byId(t.dataset.id);closeSheet();if(c2){c2.hidden=false;commit();toast(`${c2.name} revealed`)}break}
     case "titleedit2": titleSheet(t.dataset.id);break;
-    case "clkm": case "clkp":{const k=(state.clocks||[]).find(x=>x.id===t.dataset.id);if(!k)break;if(a==="clkm"){k.n=Math.max(0,k.n-1);
+    case "clkm": case "clkp":{const k=(state.clocks||[]).find(x=>x.id===t.dataset.id);if(!k)break;if(act==="clkm"){k.n=Math.max(0,k.n-1);
       if(k.n===0&&!k.secret)state.clockFx={id:uid(),name:k.name,max:k.max,at:Date.now()}}else{k.n=Math.min(20,k.n+1);k.max=Math.max(k.max,k.n)}commit();break}
     case "clkrm": state.clocks=(state.clocks||[]).filter(x=>x.id!==t.dataset.id);commit();break;
     case "ongapply":{const k=dmCards.find(x=>x.id===t.dataset.id);if(!k)break;const c2=byId(k.cid);dmCards=dmCards.filter(x=>x!==k);
@@ -709,7 +710,8 @@ document.addEventListener("submit",async e=>{
       tune:atmoD.tune||{}});
     ls.set("myThemes",all.slice(-24));toast("Saved: "+nm);atmoRefresh();return}
   if(f.id==="handForm"){e.preventDefault();handSave(false);return}
-  if(f.id==="phaseForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){const ph=$("#phaseText").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,10);
+  if(f.id==="phaseForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){const ph=$("#phaseText").value.split("\n").map(x=>
+    x.trim()).filter(Boolean).slice(0,10);
     const pick=f.querySelector('input[name=phNow]:checked');if(ph.length>1){c.phases=ph;c.phase=Math.min(ph.length-1,pick?Number(pick.value):c.phase||0)}
     else{delete c.phases;delete c.phase}commit()}closeSheet();return}
   if(f.id==="titleForm"){e.preventDefault();const c=byId(f.dataset.id);if(c){c.title=$("#titleText").value.trim();commit()}closeSheet();return}
