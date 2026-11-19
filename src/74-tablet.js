@@ -58,7 +58,7 @@ function renderPlayer(){
     nextId=tIdx>=0&&list.length>1?list[(tIdx+1)%list.length].id:null;
   const body=list.length?`<div class="p-head"><div class="p-title">Initiative${state.turn?` <span class="p-round">Round <b>${state.turn.round}</b></span>`:
     ""}</div>${legend}</div>${callHtml()}${battlefieldHtml()}${clocksHtml()}
-    <ol class="plist" id="plist">${list.map(c=>{
+    <ol class="plist" id="plist" tabindex="0" aria-label="Initiative order">${list.map(c=>{
       const st=pv.seen.get(c.id);
       const cls=[`k-${c.kind}`,...[...st].map(k=>"st-"+k)];
       if(dealing)cls.push("deal");else if(!first&&!prev.has(c.id))cls.push(c.revealedAt&&dmNow()-c.revealedAt<20000?"reveal":"enter");

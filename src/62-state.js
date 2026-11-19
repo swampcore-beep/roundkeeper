@@ -37,8 +37,7 @@ function lairRowHtml(){
     " · ":""}Lair action<small>${b?`${sb.lair.length} to pick from${last&&last.r===R-1?` · not “${esc(lairShort(sb.lair[last.i]||""))}” again`:""}`:
     "On initiative 20, loses ties"}</small></div></div><div class="chips">${b&&!turn?
     `<button type="button" class="cond add" data-act="lairshow" aria-expanded="${lairShow}">${lairShow?"Hide":"Show"} actions</button>`:
-    ""}</div><div class="tools"><button type="button" class="icon-btn" data-act="lairoff" aria-label="Remove lair action">${I.x}</button></div>${acts}${turn?
-      TFRAME:""}</div>`;
+    ""}</div><div class="tools"><button type="button" class="icon-btn" data-act="lairoff" aria-label="Remove lair action">${I.x}</button></div>${acts}</div>`;
 }
 function withLair(arr){if(!state.lair)return arr;const a=[...arr];const i=a.findIndex(c=>initOf(c)<20);a.splice(i<0?a.length:i,0,LAIR);return a}
 const dsOf=c=>c.ds||{s:0,f:0};

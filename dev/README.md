@@ -65,7 +65,9 @@ Never commit those files.
 | t30–t33 | the phone's tracker circles, UI polish (Add monsters, badges without codes), the Devices window and who is connected, TV pack 2 (dice, roll call, death saves, countdown, initiative, end of the fight) |
 | t34 | Settings → Updates against a fake GitHub on port 8799 (`dev/test.sh` sets `ROUNDKEEPER_UPDATE_URL` and `ROUNDKEEPER_VERSION=v1.0.7` for this suite only): newer or not, cache, errors, links, who may ask, the window and the start-up check |
 | t35 | the DM screen of v1.1: the grouped header, the ⋯ menus (stop turns, New combat, Clear all), one End/New combat button, Players can edit, HP placeholders and lined-up columns, the statblock that follows the turn and the line for what waits under it |
-| t36 | 1.3: the DM screen's tool look (turn tiles, the countdown tile, condition icons, Classic look), boss phases on the TV and tablet, the tablet's frames by side, the phone's class colour, and handouts (the editor, where each one shows, players never getting the saved ones) |
+| t36 | 1.3: the DM screen's tool look (turn tiles, the countdown tile, condition icons; the Classic look went in 1.4), boss phases on the TV and tablet, the tablet's frames by side, the phone's class colour, and handouts (the editor, where each one shows, players never getting the saved ones) |
+| t37 | 1.4: the DM screen on a laptop (1920×1080 and 1536×864): the turn in one row, nothing covers the order, columns line up, empty cells (Set HP, AC, a person outline), the lair action on one line, Hit several in the Init column, toasts up top, the panel by phase, the drawer under 1100 px; the phone's dock and four tabs with nothing under 12 px. With `dev/.work/axe.min.js` (from `npm i axe-core`) it also runs axe, WCAG 2.2 AA |
+| t38 | 1.4 on the phones: the Your turn screen and its switch, the table's roll log (E18) and what it carries to the players, the aura reminder in a save roll call (E19), Bless and Bane on saves and attacks, the HP sheet's preview |
 | ui, hov | the monster search sheet; hover cards for spells and rules |
 
 ## Media for the README

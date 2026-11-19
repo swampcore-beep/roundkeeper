@@ -3214,6 +3214,76 @@ html:root[data-dmlook=tool] #roster .sbline .sbpip{width:14px;height:14px}
 html:root[data-dmlook=tool] #roster .cond .x,html:root[data-dmlook=tool] .side .pchip .x{min-width:24px;min-height:24px}
 html:root[data-dmlook=tool] #dm>.bar :is(.btn,.icon-btn){font-weight:500}
 html:root[data-dmlook=tool] #dm h1.brand{margin:0;font-size:var(--fs17);font-weight:600;line-height:1.2}
+/* ---------- phones, 1.4: a dock in the class colour and four tabs where the thumb is; nothing on a phone under 12 px ----------
+   The dock: HP (tap to change), AC and initiative, then what's on you. The tabs: Roll, Conditions, Spells (or Resources), More. */
+.pbar.v14{gap:8px;padding:10px max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
+  background:color-mix(in srgb,var(--fc,var(--accent)) 10%,var(--bg));border-top:1.5px solid color-mix(in srgb,var(--fc,var(--accent)) 70%,transparent)}
+.pbar.v14 .pmeline{min-height:28px}
+.pbar.v14 .pme{font-size:1.15rem}
+.pbar.v14 .ptop{height:36px;border-radius:10px;font-size:.88rem;padding:0 12px}
+.pdock{display:flex;gap:8px;align-items:stretch}
+.dbox{min-width:56px;height:56px;border:0;border-radius:12px;background:color-mix(in srgb,#000 30%,var(--panel));color:var(--fg);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:1px;font-family:var(--body);position:relative;overflow:hidden;padding:0 8px}
+.dbox small{font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;color:color-mix(in srgb,var(--fc,var(--accent)) 55%,var(--fg))}
+.dbox b{font-family:var(--body);font-size:1.25rem;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
+.dbox.want{box-shadow:inset 0 0 0 2px var(--fc,var(--accent))}.dbox.want b{color:var(--fc,var(--accent))}
+.dbox.dbhp{flex:1 1 auto;flex-direction:row;justify-content:flex-start;gap:12px;padding:0 14px}
+.dbox.dbhp .dhp{display:flex;flex-direction:column;align-items:flex-start}
+.dbox.dbhp .of{font-size:.75em;font-weight:500;color:var(--muted)}
+.dbox.dbhp b i{font-style:normal;font-size:.7em;color:#8ec5ff}
+.dbox.dbhp .hpbar{position:static;flex:1 1 auto;height:6px;border:0;border-radius:999px;background:color-mix(in srgb,var(--fg) 14%,transparent)}
+.dbox.dbhp .hpbar i{display:block;height:100%;border-radius:999px;background:var(--save)}
+.dbox.dbhp.low .hpbar i{background:var(--blood)}
+.dbox.dbhp.zero{background:color-mix(in srgb,var(--blood) 30%,var(--panel))}
+.dbox.dbhp .ti{width:22px;height:22px;color:var(--fc,var(--accent))}
+.dbox.dbhp .dset{font-weight:700}
+.dbox:active{box-shadow:inset 0 0 0 2px var(--fc,var(--accent))}
+.pbar.v14 .ptabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:0;margin:0 calc(-1 * max(12px,env(safe-area-inset-left,0px)));
+  border-top:1px solid color-mix(in srgb,var(--fc,var(--accent)) 25%,var(--line));padding-bottom:env(safe-area-inset-bottom,0px)}
+.pbar.v14 .ptabs .tab,.pbar.v14.many .ptabs .tab{min-height:56px;border:0;border-radius:0;background:none;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;padding:6px 2px;font-size:12px;font-weight:600;color:color-mix(in srgb,var(--fg) 82%,transparent);grid-auto-flow:row}
+.pbar.v14 .ptabs .tab svg{width:22px;height:22px;color:var(--fc,var(--accent));fill:none}
+.pbar.v14 .ptabs .tab[data-act=pmore] svg{fill:currentColor;color:color-mix(in srgb,var(--fg) 82%,transparent)}
+.pbar.v14 .ptabs .tab:active{background:color-mix(in srgb,var(--fc,var(--accent)) 14%,transparent)}
+.pbar.v14 .mystat{gap:6px}
+.pbar.v14 .mychip{padding:6px 12px;font-size:.9rem;min-height:36px}
+
+/* the order on a phone: nothing smaller than 12 px; on the tablet, nothing smaller than 14 px */
+html body:not(.shared) #player :is(.lt,.effn,.badge.you,.t,.eyebrow2,li small,.shield,.shield *){font-size:max(12px,.75rem)!important}
+html body:not(.shared) #player ol.plist .nm small{color:color-mix(in srgb,currentColor 55%,var(--fg))}
+html body:not(.shared) #player ol.plist .cond .lt{color:color-mix(in srgb,currentColor 55%,var(--fg))}
+body:not(.shared) #player ol.plist .effn{font-size:12px;padding:0 5px}
+body.shared #player :is(.eyebrow2,.fieldchip small,li small){font-size:max(14px,.85rem)}
+
+/* "On you": effects on top, then the round, cover, conditions; what's on you is ticked, not only coloured */
+.peffl{display:grid;gap:6px;margin-bottom:8px}
+.peffi{display:flex;flex-direction:column;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,#000 22%,var(--panel))}
+.peffi b{font-weight:700}.peffi small{font-size:12px;color:var(--muted)}
+.psheet .chipgrid [aria-pressed=true]::before{content:"✓";margin-right:6px;font-weight:800}
+
+/* the HP sheet: where Damage or Heal would leave you, before you press it */
+.hpprev{display:flex;justify-content:space-between;gap:8px;min-height:20px;font-size:13px;color:var(--muted)}
+.hpprev b{color:var(--fg);font-size:15px}.hpprev .hpvd b{color:var(--blood)}.hpprev .hpvh b{color:var(--save)}
+
+/* "Your turn": what matters this turn, one card each */
+.ytcs{display:grid;gap:8px}
+.ytc{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,#000 22%,var(--panel))}
+.ytc b{font-weight:700}.ytc p{margin:2px 0 0;font-size:13px;color:var(--muted);line-height:1.35}
+.ytc .btn{margin-top:8px}
+.tci{width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--fg) 8%,transparent)}
+svg.tci{display:block;padding:5px;fill:none;stroke:var(--cc,currentColor);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tce{color:var(--fc,var(--accent));font-size:15px}
+
+/* E18: the table's rolls under the dice */
+.tlog{display:grid}
+.tlr{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
+.tlr:first-child{border-top:0}
+.tlr b{font-weight:700}.tlr span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tlr em{margin-left:auto;font-style:normal;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
+.tld{width:8px;height:8px;border-radius:999px;flex:none;background:var(--fc,var(--muted))}
+
+/* E19: an aura reminder in the roll call */
+.aurahint{display:block;font-size:13px;color:color-mix(in srgb,var(--accent) 70%,var(--fg));padding:2px 0}
 </style>
 </head>
 <body>
@@ -6016,8 +6086,7 @@ function lairRowHtml(){
     " · ":""}Lair action<small>${b?`${sb.lair.length} to pick from${last&&last.r===R-1?` · not “${esc(lairShort(sb.lair[last.i]||""))}” again`:""}`:
     "On initiative 20, loses ties"}</small></div></div><div class="chips">${b&&!turn?
     `<button type="button" class="cond add" data-act="lairshow" aria-expanded="${lairShow}">${lairShow?"Hide":"Show"} actions</button>`:
-    ""}</div><div class="tools"><button type="button" class="icon-btn" data-act="lairoff" aria-label="Remove lair action">${I.x}</button></div>${acts}${turn?
-      TFRAME:""}</div>`;
+    ""}</div><div class="tools"><button type="button" class="icon-btn" data-act="lairoff" aria-label="Remove lair action">${I.x}</button></div>${acts}</div>`;
 }
 function withLair(arr){if(!state.lair)return arr;const a=[...arr];const i=a.findIndex(c=>initOf(c)<20);a.splice(i<0?a.length:i,0,LAIR);return a}
 const dsOf=c=>c.ds||{s:0,f:0};
@@ -6822,6 +6891,12 @@ function renderDM(){
 let callSkip=new Set();   // players left out of the next roll call (everyone is in by default)
 const callTargets=()=>state.list.filter(c=>c.kind==="pc"&&!c.hidden&&!callSkip.has(c.id));
 const CLOCK='<svg class="cwi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+/* E19 (1.4): a saving throw roll call reminds everyone of a Paladin's Aura of Protection (level 6+: + Charisma modifier, at least +1,
+   within 10 ft). Level and Charisma come from the sheet the DM keeps; no sheet, no reminder. */
+function callAuras(){const out=[];state.list.filter(c=>c.kind==="pc"&&!c.hidden&&!c.down).forEach(c=>{
+  const sh=(state.sheets||{})[c.name.toLowerCase()];if(!sh)return;const m=String(sh.cls||"").match(/paladin\s*(\d+)/i);
+  const lvl=m?Number(m[1]):c.cls==="paladin"?Number(sh.lvl)||0:0;if(lvl<6)return;const cha=shMod((sh.ab||{}).cha);
+  out.push({id:c.id,t:`${c.name}'s aura: +${Math.max(1,cha)} to the save if you're within 10 ft`})});return out}
 function renderCall(){
   const call=state.call,el=$("#callStrip");const _ae=document.activeElement;if(_ae&&el.contains(_ae)&&_ae.tagName==="INPUT")return;
   const pcs=state.list.filter(c=>c.kind==="pc"&&!c.hidden);
@@ -6842,7 +6917,8 @@ function renderCall(){
   }
   const to=(call.to&&call.to.length?call.to:pcs.map(c=>c.id)).map(byId).filter(Boolean),ans=call.answers||{};
   const nin=to.filter(c=>ans[c.id]!=null).length;
-  el.innerHTML=`<span class="strip-label">Roll call</span><b class="calltxt">${esc(call.text)}</b><small class="callin">${nin===to.length?"all in":
+  el.innerHTML=`<span class="strip-label">Roll call</span><b class="calltxt">${esc(call.text)}</b>${(call.aura||[]).map(a=>
+    `<small class="aurahint">${esc(a.t)}</small>`).join("")}<small class="callin">${nin===to.length?"all in":
     `${nin} of ${to.length} in`}</small>
     <span class="callres">${to.map(c=>{const v=ans[c.id];const st=v==null?"wait":call.dc!=null?(v>=call.dc?"pass":"fail"):"done";
       return `<span class="cw ${st}">${v==null?CLOCK:""}${esc(c.name)} <b>${v==null?"waiting":v}</b></span>`}).join("")}</span>
@@ -8313,7 +8389,7 @@ function renderPlayer(){
     nextId=tIdx>=0&&list.length>1?list[(tIdx+1)%list.length].id:null;
   const body=list.length?`<div class="p-head"><div class="p-title">Initiative${state.turn?` <span class="p-round">Round <b>${state.turn.round}</b></span>`:
     ""}</div>${legend}</div>${callHtml()}${battlefieldHtml()}${clocksHtml()}
-    <ol class="plist" id="plist">${list.map(c=>{
+    <ol class="plist" id="plist" tabindex="0" aria-label="Initiative order">${list.map(c=>{
       const st=pv.seen.get(c.id);
       const cls=[`k-${c.kind}`,...[...st].map(k=>"st-"+k)];
       if(dealing)cls.push("deal");else if(!first&&!prev.has(c.id))cls.push(c.revealedAt&&dmNow()-c.revealedAt<20000?"reveal":"enter");
@@ -9541,18 +9617,24 @@ function playerBar(){
       ${chips?`<div class="mystat" aria-label="Your status">${myStatus(me).map(x=>`<span class="mychip ${x.cls||""}">${esc(x.t)}${x.x||
         ""}</span>`).join("")}</div>`:""}
       ${giftsHtml(me)}<div class="ptiles">${T.join("")}</div></div>`}
-  if(ed)T.push(tile("pinit",`<small>Init</small><b>${typeof me.init==="number"?me.init:"?"}</b>`,typeof me.init==="number"?"":"want","Initiative"));
-  T.push(tile("php",hp.max?`<small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?`<i>+${hp.temp}</i>`:
-    ""}</b><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span>Set HP</span>`,"hp"+hpCls,"Hit points"));
-  T.push(tile("pdice",`${D20}<span>Roll</span>`,"","Dice"));
-  if(ed){T.push(tile("pconds",`${TI.cond}<span>Conditions</span>`));T.push(tile("peffs",`${TI.spark}<span>Effects</span>`))}
-  T.push(book?tile("pbook",`${TI.book}<span>Spells</span>`):tile("pres",`${TI.pips}<span>Resources</span>`));
+  /* 1.4: a dock in the class colour (HP, AC, initiative, what's on me) and four tabs where the thumb is: Roll, Conditions, Spells, More */
+  const box=(act,inner,cls,label)=>act?`<button class="dbox${cls?" "+cls:""}" type="button" data-act="${act}"${label?` aria-label="${esc(label)}"`:
+    ""}>${inner}</button>`:
+    `<span class="dbox${cls?" "+cls:""}"${label?` aria-label="${esc(label)}"`:""}>${inner}</span>`;
+  const hpIn=hp.max?`<span class="dhp"><small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?` <i>+${hp.temp}</i>`:
+    ""}</b></span><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span class="dset">Set HP</span>`;
+  const dock=box("php",hpIn,"dbhp"+hpCls,hp.max?`HP ${hp.cur} of ${hp.max}, change it`:"Set your HP")
+    +(typeof me.ac==="number"||(me.ac!=null&&me.ac!=="")?box("",`<small>AC</small><b>${esc(me.ac)}</b>`,"dbsq","AC "+me.ac):"")
+    +(ed?box("pinit",`<small>Init</small><b>${typeof me.init==="number"?me.init:"?"}</b>`,"dbsq"+(typeof me.init==="number"?"":" want"),"Initiative"):"");
+  const tab=(act,ico,label)=>`<button class="tile tab" type="button" data-act="${act}">${ico}<span>${label}</span></button>`;
+  const tabs=[tab("pdice",D20,"Roll"),ed?tab("pconds",TI.cond,"Conditions"):"",book?tab("pbook",TI.book,"Spells"):tab("pres",TI.pips,"Resources"),
+    `<button class="tile tab" type="button" data-act="pmore" aria-label="More">${DOTS}<span>More</span></button>`].join("");
   const acc=me.kind==="pc"&&frameKey(me)?` acc fr-${frameKey(me)}`:"";   // 1.3: the player's own part of the phone in their class colour
-  return `<div class="pbar${many?" many":""}${acc}"><div class="pmeline"><span class="pme">${esc(me.name)}</span>
-      <span class="pmeright">${book?`<button class="ptop" type="button" data-act="pres">${TI.pips}Resources</button>`:
-        ""}<button class="ptop sq" type="button" data-act="pmore" aria-label="More">${DOTS}</button></span></div>
+  return `<div class="pbar v14${many?" many":""}${acc}"><div class="pmeline"><span class="pme">${esc(me.name)}</span>
+      <span class="pmeright">${book?`<button class="ptop" type="button" data-act="pres">${TI.pips}Resources</button>`:""}</span></div>
+    <div class="pdock">${dock}</div>
     ${chips?`<div class="mystat" aria-label="Your status">${chips}</div>`:""}${ed?"":`<div class="pnote">The DM has locked changes</div>`}
-    ${giftsHtml(me)}<div class="ptiles">${T.join("")}</div>${compHtml(me)}</div>`;
+    ${giftsHtml(me)}${compHtml(me)}<nav class="ptiles ptabs" aria-label="Your tools">${tabs}</nav></div>`;
 }
 /* 45: dice someone gave you (Bardic Inspiration…), to use when you want */
 function giftsHtml(me){const G=me.gifts||[];if(!G.length)return "";
@@ -9889,8 +9971,16 @@ function shPull(){   // a sheet the DM sent, or this character's sheet on a new 
       renderPSheet()}).catch(()=>{shPullV=null})}
 /* rolling from the sheet */
 let shLast=null,shAll=false,shDraft=null,shStep=0,shPaste=null;
+/* 1.4: Bless (+1d4) and Bane (−1d4) on you go onto attack rolls and saving throws by themselves */
+function blessAdd(){const me=meChar();if(!me)return {n:0,t:""};const on=n=>state.effects.some(e=>(e.targets||[]).includes(me.id)&&
+  String(e.name).toLowerCase()===n);
+  let n=0,t="";if(on("bless")){const r=1+Math.floor(Math.random()*4);n+=r;t+=` +${r} Bless`}if(on("bane")){const r=1+Math.floor(Math.random()*4);n-=r;
+    t+=` −${r} Bane`}
+  return {n,t}}
+const blessFor=label=>/\bsave\b|to hit|attack/i.test(label);
 function shRoll(label,bonus){
-  const d=1+Math.floor(Math.random()*20),ex=myExh(),tot=d+bonus-2*ex,text=`${label}: d20 (${d}) ${shS(bonus)}${ex?` −${2*ex} exhaustion`:""}`;
+  const bl=blessFor(label)?blessAdd():{n:0,t:""};
+  const d=1+Math.floor(Math.random()*20),ex=myExh(),tot=d+bonus-2*ex+bl.n,text=`${label}: d20 (${d}) ${shS(bonus)}${bl.t}${ex?` −${2*ex} exhaustion`:""}`;
   shLast={label,tot,how:text,n:d===20?"n20":d===1?"n1":""};if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
   try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1?[300]:[60])}catch(e){}return {d,tot,text}}
 function shDmg(label,expr){const r=sbDice(String(expr).split(" ")[0],false);if(!r)return;
@@ -10011,6 +10101,34 @@ function pcBuild(){   // new numbers, but what you've already spent stays spent
   resSet(next.concat(keep));profSet(prof);pcDraft=null;return next.length;
 }
 let effDraft={name:"",conc:false,area:false,targets:new Set(),custom:false},resDraft={name:"",max:"",reset:"long",custom:false},resEditI=-1;
+/* E18 (1.4): the rolls people showed to the table, newest first, on every phone */
+function tableLogHtml(){const L=(state.rollLog||[]).slice(0,6);if(!L.length)return "";
+  const col=n=>{const c=state.list.find(x=>x.kind==="pc"&&x.name===n),k=c&&frameKey(c);return k?` fr-${k}`:""};
+  return `<div class="psec"><div class="eyebrow2">At the table</div><div class="tlog">${L.map(r=>
+    `<div class="tlr"><i class="tld${col(r.by)}" aria-hidden="true"></i><b>${esc(
+    r.by)}</b><span>${esc(String(r.text||"").replace(/:.*$/,"")||"roll")}</span><em>${esc(String(r.total))}</em></div>`).join("")}</div></div>`}
+/* 1.4: the "Your turn" screen. What matters this turn, in plain words: conditions (from RULES), effects and how long they last,
+   your Concentration, dice someone gave you, and whether your reaction is spent. It can be turned off in More. */
+const pTurnCard=()=>ls.get("pTurnCard",true)!==false;
+function turnCardHtml(me){
+  const conds=(me.conds||[]).map(x=>x.n||x),out=[],tags=new Set(me.tags||[]),ed=canEdit();
+  const card=(ico,t,lines,btn)=>out.push(`<div class="ytc">${ico}<div><b>${t}</b>${lines.map(l=>`<p>${l}</p>`).join("")}${btn||""}</div></div>`);
+  conds.filter(n=>n!=="Concentrating").forEach(n=>{const r=RULES[n.toLowerCase()];if(!r)return;
+    card(condIco(n,"tci"),n==="Exhaustion"?`Exhaustion ${exhOf(me)}`:esc(r.t),r.d.slice(0,2).map(esc),
+      n==="Prone"&&ed?`<button class="btn sm" type="button" data-act="pcond" data-n="Prone" aria-pressed="true">I stand up</button>`:"")});
+  state.effects.filter(e=>(e.targets||[]).includes(me.id)).forEach(e=>{const by=byId(e.by),n=effLeft(e);
+    card('<span class="tci tce" aria-hidden="true">✦</span>',esc(e.name)+(n!=null?` · ${n} round${n===1?"":"s"} left`:""),
+      [by&&by.id!==me.id?`From ${esc(by.name)}.`:"Your own effect."].concat(e.name==="Bless"?["Your phone adds 1d4 to your attack rolls and saving throws."]:
+        e.name==="Bane"?["Your phone takes 1d4 off your attack rolls and saving throws."]:[]))});
+  const mine=state.effects.filter(e=>e.by===me.id&&e.conc);
+  if(conds.includes("Concentrating"))card(condIco("Concentrating","tci"),"Concentrating"+(mine.length?` on ${esc(mine.map(e=>e.name).join(", "))}`:""),
+    ["Damage means a Constitution save: DC 10 or half the damage."]);
+  (me.gifts||[]).forEach(g=>card('<span class="tci tce" aria-hidden="true">◆</span>',`${esc(g.n)} · ${esc(g.die)}`,
+    [`From ${esc(g.from)}: add it to a roll when you want.`]));
+  card('<span class="tci tce" aria-hidden="true">↺</span>',tags.has("reaction")?"Reaction used":"Reaction ready",[tags.has("reaction")?
+    "It comes back at the start of your turn.":"You can still use it before your next turn."]);
+  return `<div class="ytcs">${out.join("")}</div>`;
+}
 /* the phone's own number pad: the system keyboard would cover the buttons under the field */
 let padVal="",padFor=null,spellQ="",spellScope=null,resAll=false;
 const padHtml=(ph,neg)=>`<div class="padshow" id="padShow" data-ph="${esc(ph)}" aria-live="polite">${esc(padVal)}</div>
@@ -10020,8 +10138,14 @@ const padHtml=(ph,neg)=>`<div class="padshow" id="padShow" data-ph="${esc(ph)}" 
 function padKey(k){
   if(k==="back")padVal=padVal.slice(0,-1);else if(k==="clr")padVal="";else if(k==="neg")padVal=padVal.startsWith("-")?padVal.slice(1):"-"+padVal;
   else if(padVal.replace("-","").length<3||(padVal.length<4&&!padVal.startsWith("-")))padVal=(padVal==="0"?"":padVal==="-0"?"-":padVal)+k;
-  const el=$("#padShow");if(el)el.textContent=padVal;
+  const el=$("#padShow");if(el)el.textContent=padVal;hpPrevSync();
 }
+/* 1.4: before you press Damage or Heal, the phone shows where each would leave you */
+function hpPrevSync(){const el=$("#hpPrev");if(!el)return;const hp=hpGet(),n=Number(padVal);
+  if(!padVal||!(n>0)||!hp.max){el.innerHTML="";return}
+  const a=Math.min(hp.temp||0,n),dmg=Math.max(0,hp.cur-(n-a)),heal=Math.min(hp.max,hp.cur+n),half=Math.floor(hp.max/2);
+  el.innerHTML=`<span class="hpvd">Damage: ${hp.cur} → <b>${dmg}</b>${dmg===0?" · 0 HP":dmg<=half&&hp.cur>half?" · Bloodied":
+    ""}</span><span class="hpvh">Heal: ${hp.cur} → <b>${heal}</b></span>`}
 /* the app's own keyboard for every other field on the phone: docked at the bottom, it never covers the sheet's buttons */
 let kbShift=null;   // null = automatic capitals (start of the field, after a space)
 function kbField(){const a=document.activeElement;return a&&a.matches&&a.matches("input[data-kb]")?a:null}
@@ -10118,7 +10242,8 @@ function renderPSheet(){
     const me=meChar();if(me&&!me.down&&pSheet!=="dsave")dsLast=null;
     const padKeyNow=pSheet+(hpEditMax?":max":"");if(padFor!==padKeyNow){padFor=padKeyNow;padVal=""}
     const free=pSheet==="res"||pSheet==="resedit"||pSheet==="pcset"||pSheet==="pcfeat"||pSheet==="give"||pSheet==="comphp"||pSheet==="compsb"||pSheet==="hp"||
-      pSheet==="dice"||pSheet==="more"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||(pSheet==="spell"&&(!spView||spView.from!=="effs"));
+      pSheet==="dice"||pSheet==="more"||pSheet==="turn"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||(pSheet==="spell"&&(!spView||
+        spView.from!=="effs"));
     if(!me||(!canEdit()&&!free&&pSheet!=="call")){pSheet=null;return renderPSheet()}
     if(pSheet==="dsave"){
       const ds=dsOf(me),done=isDead(me)||isStable(me);
@@ -10152,6 +10277,9 @@ function renderPSheet(){
         <div class="hpbtns"><button class="btn primary" type="button" data-act="pconroll">Roll it</button><button class="btn" type="button" data-act="pconroll" data-adv="1">Roll with advantage</button></div>
         <div class="psec"><div class="eyebrow2">Rolled real dice?</div><div class="hpbtns"><button class="btn heal" type="button" data-act="pconres" data-ok="1">I made it</button><button class="btn dmg" type="button" data-act="pconres" data-ok="0">I lost it</button></div></div>`}
         ${!still&&!r?`<p class="psub">You're no longer Concentrating.</p>`:""}`;
+    }else if(pSheet==="turn"){
+      body=`<h2>Your turn, ${esc(me.name)}</h2>${turnCardHtml(me)}
+        <div style="display:flex;justify-content:flex-end"><button class="btn primary" type="button" data-act="pclose">Got it</button></div>`;
     }else if(pSheet==="more"){
       body=`<h2>${esc(me.name)}</h2><div class="morelist">
         <button class="pcline" type="button" data-act="psheet">${shLocal()?`<b>My character sheet</b><small>${esc(shLocal().cls||
@@ -10161,6 +10289,8 @@ function renderPSheet(){
         <button class="btn" type="button" data-act="fs">${fsLabel()}</button>
         <button class="btn" type="button" data-act="plight" aria-pressed="${!!ls.get("pLight",false)}">${ls.get("pLight",false)?MOON+" Dark screen":SUN+
           " Light screen"}</button>
+        <button class="btn" type="button" data-act="pturncard" aria-pressed="${pTurnCard()}">${pTurnCard()?"Your turn screen: on":
+          "Your turn screen: off"}</button>
         <button class="btn" type="button" data-act="psimple" aria-pressed="${pSimple()}">${pSimple()?"Show everything again":
           "Simple: just my HP"}<br><small style="font-weight:600;color:var(--muted)">${pSimple()?"Resources, spells, dice, conditions and the rest come back.":
           "Only your HP, and whatever the DM sends you. For players who keep the rest on paper."}</small></button></div>
@@ -10176,6 +10306,7 @@ function renderPSheet(){
       const call=state.call;if(!call||(call.answers||{})[me.id]!=null){pSheet=null;return renderPSheet()}
       const ask=shAsk(call.text);
       body=`<div class="callhead">${D20}<div><div class="eyebrow2">The DM calls for a roll</div><h2>${esc(call.text)}</h2></div></div>
+        ${(call.aura||[]).filter(a=>a.id!==me.id).map(a=>`<div class="aurahint">${esc(a.t)}</div>`).join("")}
         ${ask?`<button class="shrollbig" type="button" data-act="pcallroll"><b>Roll ${esc(ask.label)} ${shS(
           ask.b)}</b><small>from your sheet</small></button><div class="eyebrow2">Rolled real dice?</div>`:""}
         <div class="psec padsec">${padHtml("Your total",true)}<button class="btn primary e-send" type="button" data-act="pcallsend">Send result</button></div>
@@ -10195,7 +10326,7 @@ function renderPSheet(){
         body=`<h2>HP · ${esc(me.name)}</h2>
           <div class="hpbig${hp.cur===0?" zero":""}"><b>${hp.cur}</b><span>/ ${hp.max}</span>${hp.temp?`<i>+${hp.temp} temp</i>`:""}</div>
           <div class="hpbar"><span style="width:${Math.round(100*hp.cur/hp.max)}%"></span></div>
-          <div class="psec padsec">${padHtml("How much?")}
+          <div class="psec padsec">${padHtml("How much?")}<div class="hpprev" id="hpPrev" aria-live="polite"></div>
             <div class="hpbtns"><button class="btn dmg" type="button" data-act="phpdo" data-hp="dmg">Damage</button><button class="btn heal" type="button" data-act="phpdo" data-hp="heal">Heal</button><button class="btn" type="button" data-act="phpdo" data-hp="temp">Temp HP</button></div>
           </div>
           <button class="linkbtn hpmaxlink" type="button" data-act="phpmax">Change max HP (${hp.max})</button>
@@ -10220,6 +10351,8 @@ function renderPSheet(){
         <button class="btn primary e-send" type="button" data-act="proll">Roll ${dice.count}d${dice.die}${dice.mod?(dice.mod>0?"+":"")+dice.mod:""}</button>
         ${L?`<div class="dresult${L.nat===20?" n20":L.nat===1?" n1":""}"><b>${L.total}</b><small>${esc(L.text)}</small></div>`:""}
         <div class="psec"><div class="eyebrow2">Rolled real dice?</div><div class="hpbtns"><button class="btn n20b" type="button" data-act="pnat" data-k="nat20">Nat 20!</button><button class="btn n1b" type="button" data-act="pnat" data-k="nat1">Nat 1</button></div></div>
+        ${shLocal()?`<button class="btn" type="button" data-act="psheet">Roll from my sheet (saves, skills, attacks)</button>`:""}
+        ${tableLogHtml()}
         <div style="display:flex;justify-content:flex-end"><button class="btn" type="button" data-act="pclose">Close</button></div>`;
     }else if(pSheet==="effs"){
       const mine=state.effects.filter(e=>e.by===me.id);const names=id=>{const c=byId(id);return c?esc(c.name):"?"};
@@ -10405,7 +10538,12 @@ function renderPSheet(){
           ${isDead(me)||isStable(me)?"":`<button class="btn primary e-send" type="button" data-act="pdsroll">Roll death save</button>`}
           ${dsLast?`<div class="dresult${dsLast.d===20?" n20":dsLast.d===1?" n1":
             ""}"><b>${dsLast.tot}</b><small>d20 (${dsLast.d}) · ${esc(dsLast.msg)}</small></div>`:""}</div>`:"";
-      body=`<h2>My conditions · ${esc(me.name)}</h2>${dsHtml}
+      const onMe=state.effects.filter(e=>(e.targets||[]).includes(me.id));   // 1.4: effects live here too (one tab, "On you")
+      const effHtml=`<div class="psec"><div class="eyebrow2">Effects on you</div>${onMe.length?`<div class="peffl">${onMe.map(e=>{const by=byId(e.by);
+        return `<span class="peffi"><b>✦ ${esc(e.name)}</b><small>${by&&by.id!==me.id?"from "+esc(by.name):"yours"}${effN(e)?" · "+
+          effN(e).replace(/<[^>]+>/g,"")+
+          " rounds":""}</small></span>`}).join("")}</div>`:""}<button class="btn" type="button" data-act="peffs">Effects…</button></div>`;
+      body=`<h2>On you · ${esc(me.name)}</h2>${dsHtml}${effHtml}
         <div class="psec"><div class="eyebrow2">This round</div><div class="chipgrid">${TAGS.map(([k,l])=>
           `<button type="button" data-act="ptag" data-t="${k}" aria-pressed="${tags.has(k)}">${l}</button>`).join("")}</div></div>
         <div class="psec"><div class="eyebrow2">Cover</div><div class="seg2">${COVERS.map(([k,l])=>
@@ -10451,12 +10589,13 @@ function hpReport(){
 const myExh=()=>{const me=meChar();return me&&(me.conds||[]).some(x=>(x.n||x)==="Exhaustion")?exhOf(me):0};
 /* ---- death saves rolled on the phone: 10+ success, 1 counts twice, 20 brings you back with 1 HP ---- */
 function rollDeathSave(face){
-  const me=meChar();if(!me||!me.down||isDead(me)||isStable(me))return;const real=face>=1&&face<=20,d=real?face:1+Math.floor(Math.random()*20),ex=myExh(),tot=d-
-    2*ex,ds=Object.assign({s:0,f:0},me.ds);let msg;
+  const me=meChar();if(!me||!me.down||isDead(me)||isStable(me))return;const real=face>=1&&face<=20,d=real?face:1+Math.floor(Math.random()*20),ex=myExh(),
+    bl=real?{n:0,t:""}:blessAdd(),tot=d-
+    2*ex+bl.n,ds=Object.assign({s:0,f:0},me.ds);let msg;
   if(d===20){const hp=hpGet();if(hp.max){hp.cur=1;hpSet(hp)}pSend({action:"hpstate",bloodied:true,down:false});msg="Natural 20! You're back up with 1 HP"}
   else{if(d===1)ds.f=Math.min(3,ds.f+2);else if(tot>=10)ds.s=Math.min(3,ds.s+1);else ds.f=Math.min(3,ds.f+1);pSend({action:"ds",s:ds.s,f:ds.f});
     msg=d===1?"Natural 1: two failures":tot>=10?"Success":"Failure";if(ds.f>=3)msg+=" — you die";else if(ds.s>=3)msg+=" — you're stable"}
-  const text=`Death save ${real?"real ":""}d20 (${d})${ex?` −${2*ex} exhaustion`:""}`;
+  const text=`Death save ${real?"real ":""}d20 (${d})${bl.t}${ex?` −${2*ex} exhaustion`:""}`;
   if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
   dsLast={d,tot,msg};try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1||tot<10?[300]:[80])}catch(e){}
   renderPSheet();
@@ -10472,8 +10611,8 @@ function askConcentration(dmg){
 function rollConcentration(adv){
   if(!pConc)return;const me=meChar(),typed=ls.get("conmod:"+(meName||"").toLowerCase(),""),sh=shLocal();
     const mod=(String(typed).trim()===""&&sh?shCalc(sh).sv.con:Number(typed)||0),ex=myExh();
-  const a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20),d=adv?Math.max(a,b):a,tot=d+mod-2*ex,ok=tot>=pConc.dc;
-  pConc.res={d,tot,ok,text:`d20${adv?` advantage (${a}, ${b})`:` (${d})`}${mod?(mod>0?" +":" ")+mod:""}${ex?` −${2*ex} exhaustion`:""}`};
+  const bl=blessAdd(),a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20),d=adv?Math.max(a,b):a,tot=d+mod-2*ex+bl.n,ok=tot>=pConc.dc;
+  pConc.res={d,tot,ok,text:`d20${adv?` advantage (${a}, ${b})`:` (${d})`}${mod?(mod>0?" +":" ")+mod:""}${bl.t}${ex?` −${2*ex} exhaustion`:""}`};
   if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text:"Concentration "+pConc.res.text,total:tot});
   if(pConc.ask)pSend({action:"concans",ask:pConc.ask,ok,total:tot});
   else if(!ok&&me)pSend({action:"cond",cond:"Concentrating",on:false});
@@ -11020,7 +11159,8 @@ function devSheet(){
 }
 let rollSeen=null,timerSeen=null,dsAskSeen=null,wasDown=null,fightSeen=null,turnSeen=null;
 function yourTurn(me){
-  if(!reduced){const el=document.createElement("div");el.className="yourturn";
+  if(pTurnCard()&&!pSimple()&&!me.down&&(!pSheet||pSheet==="turn")){pSheet="turn";renderPSheet()}
+  else if(!reduced){const el=document.createElement("div");el.className="yourturn";
     el.innerHTML=`<div><small>Round ${state.turn.round}</small>Your turn, ${esc(me.name)}!</div>`;document.body.appendChild(el);
     setTimeout(()=>el.remove(),2600)}
   try{navigator.vibrate&&navigator.vibrate([200,100,200,100,400])}catch(e){}
@@ -11536,7 +11676,8 @@ document.addEventListener("click",e=>{
     case "turnmenu": turnMenuOn=!turnMenuOn;renderDM();break;
     case "footmore": footMenu(!$("#footMenu").hidden?false:true);break;
     case "sidetoggle":{const d=$("#dm"),on=!d.classList.contains("sideon");d.classList.toggle("sideon",on);t.setAttribute("aria-expanded",String(on));break}
-    case "settingsopen":{$("#dm").classList.add("sideon");if(sbViewId){sbViewId=null;renderDM()}const pn=document.querySelector('.panel[data-k="more"]');
+    case "settingsopen":{if(matchMedia("(max-width:1100px)").matches)$("#dm").classList.add("sideon");if(sbViewId){sbViewId=null;
+      renderDM()}const pn=document.querySelector('.panel[data-k="more"]');
       if(pn){if(pn.classList.contains("on")&&pn.open){pn.open=false;pn.classList.remove("on");break}
       pn.classList.add("on");pn.open=true;if(!pn.dataset.tw){pn.dataset.tw="1";pn.addEventListener("toggle",()=>{if(!pn.open)pn.classList.remove("on")})}
       pn.scrollIntoView({block:"nearest",behavior:"smooth"});pn.classList.remove("ping");void pn.offsetWidth;pn.classList.add("ping")}break}
@@ -11635,6 +11776,7 @@ document.addEventListener("click",e=>{
     case "fs": fsToggle();break;
     case "pwho": pSheet="who";renderPSheet();break;
     case "pmore": pSheet="more";renderPSheet();break;
+    case "pturncard": ls.set("pTurnCard",!pTurnCard());renderPSheet();break;
     case "plight": ls.set("pLight",!ls.get("pLight",false));renderPlayer();renderPSheet();break;
     case "psimple": ls.set("pSimple",!pSimple());pmodeSync(true);renderPlayer();renderPSheet();
       toast(pSimple()?"Simple mode: just your HP":"Everything is back");break;
@@ -12037,6 +12179,7 @@ document.addEventListener("submit",async e=>{
     const to=callTargets().map(c=>c.id);if(!to.length){toast("Pick at least one player");return}
     const all=to.length===state.list.filter(c=>c.kind==="pc"&&!c.hidden).length;
     state.call={id:uid(),text,dc:m?Number(m[1]):null,at:Date.now(),to,answers:{}};callSkip=new Set();
+    {const au=/\bsave\b/i.test(text)?callAuras():[];if(au.length)state.call.aura=au}
     $("#callText").value="";commit();toast(all?"Roll call sent":`Roll call sent to ${to.length} player${to.length>1?"s":""}`)}
   if(f.id==="fieldForm"){e.preventDefault();
     const name=$("#fieldName").value.trim();if(!name)return;state.effects.push({id:uid(),name,by:"dm",targets:[],conc:false,area:true});
@@ -12201,6 +12344,8 @@ if(MODE==="player"){
           else if(a.action==="hpstate"){const inv={t:"hp",bloodied:!!c.bloodied,down:!!c.down,ds:Object.assign({s:0,f:0},c.ds)};
             c.bloodied=a.bloodied;if(a.down!==!!c.down){c.down=a.down;c.ds={s:0,f:0}}L(`${c.name}: ${a.down?"0 HP":a.bloodied?"Bloodied":"healthy"}`,inv)}
           else if(a.action==="roll"){state.roll={id:uid(),by:c.name,kind:a.kind,text:a.text,total:a.total,at:Date.now()};
+            (state.rollLog=state.rollLog||[]).unshift({id:state.roll.id,by:c.name,text:a.text,total:a.total,at:state.roll.at});   // E18 (1.4)
+            if(state.rollLog.length>8)state.rollLog.length=8;
             if(!a.nat&&(a.kind==="nat20"||a.kind==="nat1"))natAdd(c.id,a.kind==="nat20"?20:1);
             if(a.kind==="nat20"||a.kind==="nat1")clogPush(`${c.name}: natural ${a.kind==="nat20"?"20":"1"}`);
             L(`${c.name}: ${a.kind==="nat20"?"NAT 20!":a.kind==="nat1"?"nat 1":a.text+" = "+a.total}`)}

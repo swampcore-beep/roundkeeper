@@ -127,7 +127,8 @@ function devSheet(){
 }
 let rollSeen=null,timerSeen=null,dsAskSeen=null,wasDown=null,fightSeen=null,turnSeen=null;
 function yourTurn(me){
-  if(!reduced){const el=document.createElement("div");el.className="yourturn";
+  if(pTurnCard()&&!pSimple()&&!me.down&&(!pSheet||pSheet==="turn")){pSheet="turn";renderPSheet()}
+  else if(!reduced){const el=document.createElement("div");el.className="yourturn";
     el.innerHTML=`<div><small>Round ${state.turn.round}</small>Your turn, ${esc(me.name)}!</div>`;document.body.appendChild(el);
     setTimeout(()=>el.remove(),2600)}
   try{navigator.vibrate&&navigator.vibrate([200,100,200,100,400])}catch(e){}

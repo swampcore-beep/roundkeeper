@@ -2,6 +2,12 @@
 let callSkip=new Set();   // players left out of the next roll call (everyone is in by default)
 const callTargets=()=>state.list.filter(c=>c.kind==="pc"&&!c.hidden&&!callSkip.has(c.id));
 const CLOCK='<svg class="cwi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+/* E19 (1.4): a saving throw roll call reminds everyone of a Paladin's Aura of Protection (level 6+: + Charisma modifier, at least +1,
+   within 10 ft). Level and Charisma come from the sheet the DM keeps; no sheet, no reminder. */
+function callAuras(){const out=[];state.list.filter(c=>c.kind==="pc"&&!c.hidden&&!c.down).forEach(c=>{
+  const sh=(state.sheets||{})[c.name.toLowerCase()];if(!sh)return;const m=String(sh.cls||"").match(/paladin\s*(\d+)/i);
+  const lvl=m?Number(m[1]):c.cls==="paladin"?Number(sh.lvl)||0:0;if(lvl<6)return;const cha=shMod((sh.ab||{}).cha);
+  out.push({id:c.id,t:`${c.name}'s aura: +${Math.max(1,cha)} to the save if you're within 10 ft`})});return out}
 function renderCall(){
   const call=state.call,el=$("#callStrip");const _ae=document.activeElement;if(_ae&&el.contains(_ae)&&_ae.tagName==="INPUT")return;
   const pcs=state.list.filter(c=>c.kind==="pc"&&!c.hidden);
@@ -22,7 +28,8 @@ function renderCall(){
   }
   const to=(call.to&&call.to.length?call.to:pcs.map(c=>c.id)).map(byId).filter(Boolean),ans=call.answers||{};
   const nin=to.filter(c=>ans[c.id]!=null).length;
-  el.innerHTML=`<span class="strip-label">Roll call</span><b class="calltxt">${esc(call.text)}</b><small class="callin">${nin===to.length?"all in":
+  el.innerHTML=`<span class="strip-label">Roll call</span><b class="calltxt">${esc(call.text)}</b>${(call.aura||[]).map(a=>
+    `<small class="aurahint">${esc(a.t)}</small>`).join("")}<small class="callin">${nin===to.length?"all in":
     `${nin} of ${to.length} in`}</small>
     <span class="callres">${to.map(c=>{const v=ans[c.id];const st=v==null?"wait":call.dc!=null?(v>=call.dc?"pass":"fail"):"done";
       return `<span class="cw ${st}">${v==null?CLOCK:""}${esc(c.name)} <b>${v==null?"waiting":v}</b></span>`}).join("")}</span>

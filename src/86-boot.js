@@ -103,6 +103,8 @@ if(MODE==="player"){
           else if(a.action==="hpstate"){const inv={t:"hp",bloodied:!!c.bloodied,down:!!c.down,ds:Object.assign({s:0,f:0},c.ds)};
             c.bloodied=a.bloodied;if(a.down!==!!c.down){c.down=a.down;c.ds={s:0,f:0}}L(`${c.name}: ${a.down?"0 HP":a.bloodied?"Bloodied":"healthy"}`,inv)}
           else if(a.action==="roll"){state.roll={id:uid(),by:c.name,kind:a.kind,text:a.text,total:a.total,at:Date.now()};
+            (state.rollLog=state.rollLog||[]).unshift({id:state.roll.id,by:c.name,text:a.text,total:a.total,at:state.roll.at});   // E18 (1.4)
+            if(state.rollLog.length>8)state.rollLog.length=8;
             if(!a.nat&&(a.kind==="nat20"||a.kind==="nat1"))natAdd(c.id,a.kind==="nat20"?20:1);
             if(a.kind==="nat20"||a.kind==="nat1")clogPush(`${c.name}: natural ${a.kind==="nat20"?"20":"1"}`);
             L(`${c.name}: ${a.kind==="nat20"?"NAT 20!":a.kind==="nat1"?"nat 1":a.text+" = "+a.total}`)}
