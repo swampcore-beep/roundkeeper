@@ -64,6 +64,7 @@ function queueMoments(list,prev){
     add.filter(k=>k.startsWith("eff")).forEach(k=>{const e=state.effects.find(x=>"eff"+x.id===k);if(!e)return;const m=MO_SPELL.find(([re])=>re.test(e.name));
       play("sp",m?m[1]:"gen",d,e.name);d+=200});
     const dsN=s=>{const k=[...s].find(x=>/^ds\d\d$/.test(x));return k?{s:+k[2],f:+k[3]}:null},a=dsN(was),b=dsN(now);
+    if(TV&&c.kind==="pc"&&add.includes("down")&&!add.includes("dead"))setTimeout(()=>tvStrip(c.id,"drops to 0 HP"),300);
     if(add.includes("dead"))play("death");
     else if(add.includes("stable"))play("stable");
     else if(a&&b&&b.f>a.f)play("dsfail");

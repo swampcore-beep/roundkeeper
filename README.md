@@ -53,7 +53,7 @@ https://github.com/user-attachments/assets/dca33bcd-6d6c-4f08-8144-5024e681f508
 
 <img src="media/dm.jpg" width="100%" alt="The DM screen: the turn order with the Adult Red Dragon's turn, HP, AC and conditions in each row, and its statblock open on the right">
 
-The order is a table, one row per creature: initiative, picture, name, conditions (each with its icon), HP, AC, and Bloodied and Down, quiet icons until they're on. The row whose turn it is is lighter with a white edge (black on the light screen), and the one after it is marked *next*. The combat tools sit above the order, and the turn sits below it in one row: round, whose turn and who's next, how long the fight has run, the nearest countdown with − and +, and back and Next turn. The order scrolls on its own, so nothing covers a row, and on a laptop with scaling (1536×864) a whole fight still fits. The statblock opens beside the list as a cream page, so the order stays in view.
+The order is a table, one row per creature: initiative, picture, name, conditions (each with its icon), HP, AC, and Bloodied and Down, quiet icons until they're on. The row whose turn it is is lighter with a white edge (black on the light screen), and the one after it is marked *next*. The combat tools sit above the order, and the turn sits below it in one row: round, whose turn and who's next, the nearest countdown with − and +, and back and Next turn. The order scrolls on its own, so nothing covers a row, and on a laptop with scaling (1536×864) a whole fight still fits. The statblock opens beside the list as a cream page, so the order stays in view.
 
 - **Initiative and turns:** add players and monsters, roll or type initiative, step through turns and rounds. Undo is always there.
 - **Statblocks you click:** an attack bonus rolls the attack, a damage number rolls damage, a save sends a roll call to the players it targets. Recharge, X/Day and Legendary actions are tracked as you use them. With **Follow the turn** on, the statblock switches to each monster as its turn comes up.
@@ -131,7 +131,7 @@ One big thing at a time, readable from across the room. In **Auto** the TV follo
 
 - **Before the fight:** your scene or picture (it drifts and zooms slowly), title cards for locations and chapters, and a **break timer** ("we continue at 21:40").
 - **Roll for initiative:** each player's number arrives as a card, and it shows who hasn't rolled yet.
-- **Spotlight:** whose turn it is, huge and in a pool of light, with its conditions as icons; who's up next waits dimmed beside it. A boss can have **phases** that you light by hand: a bar of segments, no HP numbers, and a big moment when the next one starts. **Order:** the whole initiative as cards.
+- **Spotlight:** whose turn it is, huge and in a pool of light, with its picture from Lore & picture (or its sigil), its conditions as icons and Bloodied or Down; who's up next waits dimmed beside it, with **This round** below (who fell, who dropped to 0 HP, natural 20s), and the whole **party** runs along the bottom with what is on each of them, never their HP. Both can be switched off in the TV menu. A boss can have **phases** that you light by hand: a bar of segments, no HP numbers, and a big moment when the next one starts. **Order:** the whole initiative as cards.
 - **Roll calls as cards** that flip as players answer, with the DC and "3 of 4 succeeded".
 - **Its own dice:** a shared roll lands big on the TV; a nat 20 or nat 1 stays longer.
 - **Death saves:** on a downed player's turn, a heartbeat and three plus three boxes.

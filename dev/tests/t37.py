@@ -70,7 +70,7 @@ async def main():
                 chk("toasts sit up top, not over the turn row",tt)
                 await axe(dm,"the DM screen")
                 await T(dm,"state.turn=null;commit()"); await asyncio.sleep(.3)
-                chk("before turns: no fight time",await dm.locator('#turnBox .tfight').count()==0 and 'Start turns' in await dm.locator('#turnBox').inner_text())
+                chk("before turns: Start turns",'Start turns' in await dm.locator('#turnBox').inner_text())
                 chk("before turns: the panel puts Add to combat first",await dm.evaluate("()=>getComputedStyle(document.querySelector('.panel[data-k=add]')).order")=='1')
                 await dm.click('[data-act=tnext]'); await asyncio.sleep(.3)
                 chk("in a fight: Roll call first",await dm.evaluate("()=>getComputedStyle(document.querySelector('.panel[data-k=call]')).order")=='1')

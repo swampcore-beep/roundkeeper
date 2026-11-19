@@ -2194,13 +2194,13 @@ body.tvcover #player{visibility:hidden}
   background:color-mix(in srgb,var(--bg) 78%,transparent);border:1.5px solid color-mix(in srgb,var(--fc,var(--accent)) 35%,var(--line))}
 .tvsp.B .card{flex:1;flex-direction:column;align-items:flex-start;gap:.6vw}.tvsp.B .card.n1{flex:1.35}
 .tvsp .card.n1{border-color:color-mix(in srgb,var(--fc,var(--accent)) 75%,transparent)}
-.tvsp .card .tag,.tvord .tag{position:absolute;top:-.75em;right:1em;font-size:clamp(11px,.95vw,18px);font-weight:900;letter-spacing:.2em;
+.tvsp .card .tag,.tvord .tag,.tvparty .tag{position:absolute;top:-.75em;right:1em;font-size:clamp(11px,.95vw,18px);font-weight:900;letter-spacing:.2em;
   background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:2px 10px}
 .tvsp .card .row1{display:flex;align-items:center;gap:.8vw}
 .tvsp .hex{position:relative;width:3.3vw;height:3.3vw;flex:none;display:grid;place-items:center}.tvsp .hex svg{position:absolute;inset:0;width:100%;height:100%;
   fill:none;stroke:color-mix(in srgb,var(--fc,var(--accent)) 70%,var(--fg));stroke-width:1.4}
 .tvsp .hex b{font-size:clamp(13px,1.35vw,26px);font-weight:800}
-.tvsp .card .ce,.tvord .ce{width:2.8vw;height:2.8vw;flex:none;background:var(--fc,var(--accent));-webkit-mask:var(--sig) center/contain no-repeat;
+.tvsp .card .ce,.tvord .ce,.tvparty .ce{width:2.8vw;height:2.8vw;flex:none;background:var(--fc,var(--accent));-webkit-mask:var(--sig) center/contain no-repeat;
   mask:var(--sig) center/contain no-repeat}
 .tvsp .card .cn{font-family:var(--display);font-size:clamp(20px,2.4vw,46px);font-weight:800;line-height:1}.tvsp .card.n1 .cn{font-size:clamp(22px,2.8vw,54px)}
 .tvsp .card .cs{font-size:clamp(12px,1.05vw,20px);color:var(--muted);font-weight:700;margin-top:.3em}
@@ -2428,6 +2428,73 @@ html[data-mfont=A] .mo-q,html[data-mfont=F] .mo-q{font-size:clamp(22px,3.6vw,56p
 .tvev .seg3 button{font-size:.75rem;padding:4px 9px}
 .apfrm.tv{border-width:6px}
 .atabs{margin-left:10px;vertical-align:middle;font-size:.9rem}
+/* 1.4.1: Bloodied, Down, Stable and Dead on every TV card (spotlight, on deck, order) */
+#tvLayer .chip.tvst{--cc:var(--blood);border-color:var(--cc);background:color-mix(in srgb,var(--cc) 22%,transparent);
+  color:color-mix(in srgb,var(--cc) 50%,var(--fg))}
+#tvLayer .chip.tvst.st-down,#tvLayer .chip.tvst.st-dead{--cc:#9a9aa6}#tvLayer .chip.tvst.st-stable{--cc:#7fc48f}
+#tvLayer .tvst svg{width:1.1em;height:1.1em;flex:none;fill:currentColor}#tvLayer .tvst svg [stroke]{fill:none}
+#tvLayer .tvst:not(.chip){display:inline-flex;align-items:center;gap:.35em;margin-left:.6em;padding:.1em .6em;border-radius:999px;font-weight:800;
+  color:color-mix(in srgb,var(--blood) 55%,var(--fg));background:color-mix(in srgb,var(--blood) 22%,transparent);vertical-align:middle}
+#tvLayer .tvst.st-down:not(.chip),#tvLayer .tvst.st-dead:not(.chip){color:var(--fg);background:color-mix(in srgb,var(--fg) 14%,transparent)}
+#tvLayer .tvst.st-stable:not(.chip){color:color-mix(in srgb,#3f9a55 55%,var(--fg));background:rgba(127,196,143,.2)}
+.tvord .cd .tvst:not(.chip){margin:0;font-size:clamp(11px,.9vw,17px)}
+.tvsp .spot.st-bloodied{border-color:color-mix(in srgb,var(--blood) 70%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--blood) 45%,transparent),
+  0 0 80px color-mix(in srgb,var(--blood) 18%,transparent)}
+.tvsp .deck .card.st-down,.tvsp .deck .card.st-dead,.tvord .cd.st-down,.tvord .cd.st-dead{filter:grayscale(1) brightness(.7)}
+.tvord .cd.st-bloodied{border-color:color-mix(in srgb,var(--blood) 60%,transparent)}
+/* a new turn: the card is there for the light to land on, its words follow (they used to show before the light arrived) */
+.tvsp .spot.arrive>*{animation:tvArrive .5s cubic-bezier(.2,.7,.2,1) .34s both}
+@keyframes tvArrive{from{opacity:0;transform:translateY(.35em)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tvsp .spot.arrive>*{animation:none}}body.tvlite .tvsp .spot.arrive>*{animation:none}
+/* 1.4.1 (1): the picture from Lore & picture in the spotlight, in place of the sigil */
+.tvsp .emb.pic{-webkit-mask:none;mask:none;background:center/cover no-repeat;width:15vw;height:20vw;max-height:40vh;max-width:30vh;border-radius:22px;
+  border:2px solid var(--fc,var(--accent));filter:none;box-shadow:0 30px 60px rgba(0,0,0,.45)}
+.tvsp.B .emb.pic{width:8vw;height:10.7vw;max-height:22vh;max-width:16.5vh;border-radius:16px}
+/* 1.4.1 (2): the party along the bottom */
+.tvsp.wp{bottom:calc(5vh + 17vh + 2vh)}
+.tvparty{position:fixed;left:5vw;right:5vw;bottom:5vh;height:17vh;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:1.2vw}
+.tvparty .pt{position:relative;min-width:0;box-sizing:border-box;display:flex;flex-direction:column;gap:.7vw;padding:1vw 1.2vw;border-radius:20px;
+  border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);background:color-mix(in srgb,var(--fg) 4%,transparent)}
+.tvparty .pt.on{border:2px solid var(--fc,var(--accent));background:color-mix(in srgb,var(--fc,var(--accent)) 13%,transparent)}
+.tvparty .pt.st-down .ph,.tvparty .pt.st-dead .ph{filter:grayscale(1);opacity:.7}
+.tvparty .ph{display:flex;align-items:center;gap:.8vw;min-width:0}.tvparty .ph>div{min-width:0}
+.tvparty .cn{font-family:var(--display);font-size:clamp(17px,2vw,40px);font-weight:800;line-height:1.1;white-space:nowrap;overflow:hidden}
+.tvparty .cs{font-size:clamp(11px,.95vw,19px);color:var(--muted);font-weight:700;margin-top:.2em}
+.tvparty .pst{display:flex;flex-wrap:wrap;align-content:flex-start;gap:.45vw;overflow:hidden;min-height:0;flex:1}
+.tvparty .ptg,#tvLayer .tvparty .tvst:not(.chip){display:inline-flex;align-items:center;gap:.35em;margin:0;padding:.18em .65em;border-radius:999px;
+  font-weight:800;
+  font-size:clamp(11px,1vw,20px);line-height:1.2;white-space:nowrap;--c:var(--muted);color:color-mix(in srgb,var(--c) 30%,var(--fg));
+  background:color-mix(in srgb,var(--c) 20%,transparent)}
+.tvparty .ptg.conc{--c:#bf94f5}.tvparty .ptg.eff{--c:#e8c06a}.tvparty .ptg.cond{--c:#e4a93a}.tvparty .ptg.insp{--c:var(--accent)}
+.tvparty .ptg.rx{--c:var(--muted);color:var(--muted)}
+.tvparty .dsp{display:inline-flex;align-items:center;gap:.25vw;padding:.18em .5em}.tvparty .dsp b{width:.35vw}
+.tvparty .dsp i{width:max(9px,.85vw);height:max(9px,.85vw);border-radius:50%;box-sizing:border-box;border:2px solid #7fc48f}
+.tvparty .dsp i.on{background:#7fc48f}.tvparty .dsp i.f{border-color:var(--blood)}.tvparty .dsp i.f.on{background:var(--blood)}
+/* 1.4.1 (3): this round, under On deck */
+.tvsp .deck.wf{justify-content:flex-start}
+.tvfeed{margin-top:auto;display:flex;flex-direction:column;gap:.75vw;padding:1.1vw 1.3vw;border-radius:20px;background:color-mix(in srgb,#000 22%,transparent);
+  border:1px solid color-mix(in srgb,var(--fg) 10%,transparent)}
+.tvfeed .fl{display:flex;align-items:center;gap:.8vw;font-size:clamp(13px,1.25vw,25px);font-weight:700;line-height:1.15;min-width:0}
+.tvfeed .fl>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tvfeed .fi{display:inline-flex;flex:none}.tvfeed .fi svg{width:1.3em;height:1.3em;fill:currentColor}.tvfeed .fi svg [stroke]{fill:none}
+.tvfeed .fi.sk{color:var(--muted)}.tvfeed .fi.bl{color:var(--blood)}
+.tvfeed .d20{flex:none;min-width:1.5em;height:1.5em;display:grid;place-items:center;font-size:.7em;font-weight:900;border:2px solid var(--muted);
+  border-radius:.4em;color:var(--muted)}
+.tvfeed .d20.n20{border-color:var(--accent);color:var(--accent)}
+.tvfeed .cring{flex:none;width:1.2em;height:1.2em;border-radius:50%;box-sizing:border-box;border:2px dashed #bf94f5}
+.tvfeed .dot{flex:none;width:.5em;height:.5em;border-radius:50%;background:var(--muted);margin:0 .35em}
+/* with the party and This round, everything keeps to its row: the deck gets compact cards and one-line names */
+.tvsp.wp{grid-template-rows:minmax(0,1fr)}.tvsp.wp.B{grid-template-rows:minmax(0,1fr) auto}.tvsp .deck{min-height:0}
+.tvsp .deck.wf{gap:.8vw}.tvsp .deck.wf .card{padding:.75vw 1.2vw}.tvsp .deck.wf .card .cn{white-space:nowrap;font-size:clamp(18px,2vw,40px)}
+.tvsp .deck.wf .card.n1 .cn{font-size:clamp(20px,2.3vw,46px)}.tvsp .deck.wf .hex{width:2.8vw;height:2.8vw}
+.tvfeed .fl.key{color:var(--fg)}.tvfeed .fl:not(.key){color:color-mix(in srgb,var(--fg) 80%,var(--muted))}
+.tvparty .tvst.st-bloodied{--c:var(--blood)!important}.tvparty .tvst.st-stable{--c:#7fc48f!important}
+#tvLayer .tvparty .tvst:not(.chip) svg{width:1.05em;height:1.05em}
+/* layout B with the party: the spotlight keeps its words in one row so nothing is cut */
+.tvsp.B.wp .spot{gap:.7vw;padding:1.4vw 3vw}.tvsp.B.wp .who{flex-direction:row;gap:2vw;text-align:left}
+.tvsp.B.wp .emb{width:5.5vw;height:5.5vw}.tvsp.B.wp .emb.pic{width:6.6vw;height:8.8vw;max-height:20vh}
+.tvsp.B.wp .big,.tvsp.B.wp .big.long{font-size:clamp(34px,5vw,100px)}.tvsp.B.wp .big.xl{font-size:clamp(30px,3.8vw,76px)}
+.tvsp.B.wp .card{padding:.7vw 1vw;gap:.35vw}.tvsp.B.wp .card .cn{white-space:nowrap;font-size:clamp(17px,1.8vw,36px)}
 /* ---------- DM screen, v1.1 layout: grouped header, quieter rows, grouped bottom bar ---------- */
 /* header: the fight on the left (Round · ← · Next turn · ⋯), then Rules, the table's screens, undo/redo and settings */
 html:root .brand{margin-right:10px}
@@ -2763,7 +2830,7 @@ body.sbopen #roster .chips:has(.cond:not(.addc)) .addc{position:absolute;right:0
 :root[data-dmlook=tool] .sethead,:root[data-dmlook=tool] .quick label,:root[data-dmlook=tool] .strip-label{font-family:var(--ui);letter-spacing:0;
   text-transform:none;font-variant:normal}
 
-/* the bottom bar: the tools on the left, then the turn as tiles (round, turn, fight time, a countdown, back and next) */
+/* the bottom bar: the tools on the left, then the turn as tiles (round, turn, a countdown, back and next) */
 :root[data-dmlook=tool] .dmmain>.foot{background:var(--bg);border:0;border-radius:0;padding:6px 0 4px;display:grid;gap:8px}
 :root[data-dmlook=tool] .dmmain>.foot .hint{display:none}
 :root[data-dmlook=tool] .dmmain>.foot .fgrp .btn:not(.primary):not(#endBtn):not(.pebox){background:transparent}
@@ -3129,7 +3196,6 @@ html:root[data-dmlook=tool] .ttile.twho b{display:flex;align-items:center;gap:10
 html:root[data-dmlook=tool] .ttile .tdot{width:8px;height:8px;border-radius:999px;background:var(--accent);flex:none}
 html:root[data-dmlook=tool] .ttile.tidle .tdot{display:none}
 html:root[data-dmlook=tool] .ttile .tini{font-size:var(--fs13);font-weight:500;color:var(--muted)}
-html:root[data-dmlook=tool] .ttile.tfight{width:120px;flex:none;align-items:flex-start}
 html:root[data-dmlook=tool] .tnav{min-height:52px;height:52px;min-width:52px;padding:0 14px;border-radius:8px;background:var(--panel)}
 html:root[data-dmlook=tool] .tnav.primary{padding:0 24px;border-radius:999px;font-size:var(--fs17);font-weight:600;gap:10px}
 html:root[data-dmlook=tool] .tnav kbd{font:500 var(--fs12)/18px var(--ui);padding:0 5px;border-radius:4px;
@@ -6150,6 +6216,14 @@ function clogScan(){
     if(v.pc&&o.down&&!v.down)clogPush(`${v.name} is back on their feet`)});
   clogSeen=now;
 }
+/* 1.4.1: the TV's "This round": the last four public lines of the round (the round before while this one is empty). Only
+   what the table saw happen: no rolls or DCs, no lair text, nothing that names a hidden creature. */
+const RFEED_RX=/ is defeated$| drops to 0 HP$| dies$| is stable$| is back on their feet$|: natural (20|1)$| loses Concentration| is Bloodied$| appears$/;
+function rfeedSync(){const t=state.turn;if(!t||state.ended){state.rfeed=null;return}
+  const hid=state.list.filter(c=>c.hidden).map(c=>c.name.toLowerCase()),pick=r=>(state.clog||[]).filter(x=>x.r===r&&typeof x.t==="string"&&
+    RFEED_RX.test(x.t)&&!hid.some(n=>x.t.toLowerCase().includes(n))).map(x=>x.t.replace(/ loses Concentration.*$/," loses Concentration"));
+  let r=t.round,L=pick(r);if(!L.length&&r>1){r--;L=pick(r)}
+  state.rfeed=L.length?{r,lines:L.slice(-4)}:null}
 function callRecap(){const k=state.call;if(!k||k.logged)return;const a=k.answers||{};
   const to=(k.to&&k.to.length?k.to:state.list.filter(c=>c.kind==="pc"&&!c.hidden).map(c=>c.id)).map(byId).filter(Boolean);
   if(!to.length||to.some(c=>a[c.id]==null))return;k.logged=true;
@@ -6167,8 +6241,8 @@ function recapStats(){
 }
 function recapText(){
   const out=[],f=state.fightAt,e=state.ended,end=e?e.at:Date.now(),d=new Date(f||end),log=state.clog||[];
-  const dur=f?Math.max(1,Math.round((end-f)/60000)):null,rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
-  out.push(`Combat · ${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}${dur?` · ${dur} min`:""}${rounds?
+  const rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
+  out.push(`Combat · ${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}${rounds?
     ` · ${rounds} round${rounds>1?"s":""}`:""}`);
   const pcs=sorted().filter(c=>c.kind==="pc"),foes=sorted().filter(c=>c.kind!=="pc"&&c.kind!=="lair");
   if(pcs.length)out.push("","Party: "+pcs.map(c=>`${c.name}${typeof c.init==="number"?` (init ${c.init})`:""}${c.down?(isDead(c)?" · dead":isStable(c)?
@@ -6190,7 +6264,7 @@ function recapText(){
 /* 18: the recap as a page to keep, print or send (no DM secrets beyond what the recap already says) */
 function recapDoc(){
   const f=state.fightAt,e=state.ended,end=e?e.at:Date.now(),d=new Date(f||end),log=state.clog||[];
-  const dur=f?Math.max(1,Math.round((end-f)/60000)):null,rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
+  const rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
   const pcs=sorted().filter(c=>c.kind==="pc"),foes=sorted().filter(c=>c.kind!=="pc"&&c.kind!=="lair"&&!c.hidden);
   const S=Object.entries(state.cstat||{}).filter(([,x])=>x.d>0).sort((a,b)=>b[1].d-a[1].d),{turns,dice}=recapStats(),top=S[0];
   const sec=(t,h)=>h?`<section><h2>${t}</h2>${h}</section>`:"";
@@ -6206,7 +6280,7 @@ h2{font-size:1.15rem;text-transform:uppercase;letter-spacing:.14em;color:var(--a
 h3{font-size:1rem;margin:16px 0 4px}table{border-collapse:collapse;width:100%;font-family:system-ui,sans-serif;font-size:.92rem}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}
 ul{margin:0;padding-left:1.2em}li{margin:2px 0}.hl{background:#fbedc6;border:1px solid #e3c27a;border-radius:10px;padding:12px 14px;font-family:system-ui,sans-serif}@media print{body{background:#fff}main{padding:0}}</style></head><body><main>
 <h1>Combat${foes.length?" · "+esc(foes.filter(c=>c.boss).map(c=>c.name)[0]||foes[0].name):""}</h1>
-<p class="meta">${esc(d.toLocaleDateString())} ${esc(d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}))}${dur?` · ${dur} min`:""}${rounds?
+<p class="meta">${esc(d.toLocaleDateString())} ${esc(d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}))}${rounds?
   ` · ${rounds} round${rounds>1?"s":""}`:""}</p>
 ${top?`<p class="hl"><b>Most damage:</b> ${esc(top[0])} with ${top[1].d}${top[1].top?` · biggest hit ${top[1].top.n} on ${esc(top[1].top.t)}`:""}</p>`:""}
 ${sec("Party",pcs.length?rows(["Character","Initiative","At the end"],pcs.map(c=>[esc(c.name),typeof c.init==="number"?c.init:"",c.down?(isDead(c)?"dead":
@@ -6250,7 +6324,7 @@ function finish(){
     if(state.clogAt!==state.fightAt){state.clog=[];state.cstat={};state.tstat={};state.nstat={};state.clogAt=state.fightAt;clogSeen=null}
     lost.forEach(n=>clogPush(`${n} loses Concentration`));
     state.list.forEach(c=>{if(c.cdur)for(const n in c.cdur)if(!hasCond(c,n))delete c.cdur[n]});
-    clogScan();callRecap();
+    clogScan();callRecap();rfeedSync();
   }
   // effects disappear with their targets, with the caster, and when the caster loses Concentrating
   state.effects=(state.effects||[]).map(e=>Object.assign({},e,{targets:e.targets.filter(id=>byId(id))})).filter(e=>{const c=byId(e.by);
@@ -6722,9 +6796,9 @@ function applyHp(c,raw,was){
 }
 let menuId=null,turnMenuOn=false;
 const SKULL='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a8 8 0 0 0-8 8c0 2.6 1.2 4.5 3 5.7V19a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-2.8c1.8-1.2 3-3.1 3-5.7a8 8 0 0 0-8-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="11" r="1.7" fill="currentColor"/><circle cx="15" cy="11" r="1.7" fill="currentColor"/><path d="M10.5 20v-2.5M13.5 20v-2.5" stroke="currentColor" stroke-width="1.6"/></svg>';
-/* the turn, one row in the bottom bar (1.4): round, whose turn (and who's next), fight time, the nearest countdown, back and next */
+/* the turn, one row in the bottom bar (1.4): round, whose turn (and who's next), the nearest countdown, back and next */
 function turnTiles(){
-  const t=state.turn,who=t&&byId(t.id),f=t&&state.fightAt&&!state.ended?Math.max(0,Math.round((Date.now()-state.fightAt)/60000)):null;
+  const t=state.turn,who=t&&byId(t.id);
   const k=(state.clocks||[]).filter(x=>x.n>0).sort((a,b)=>a.n-b.n)[0];
   const ord=t?turnOrder():[],i=t?ord.findIndex(x=>x.id===t.id):-1,nx=i>=0&&ord.length>1?ord[(i+1)%ord.length]:null;
   const nm=who?who.name:t&&t.id==="__lair"?"Lair action":"";
@@ -6741,7 +6815,7 @@ function turnTiles(){
     "–")}${who&&
       typeof who.init==="number"?`<span class="tini">initiative ${who.init}</span>`:""}</b><small>${nx?`Next: ${esc(nx.kind==="lair"?"Lair action":nx.name)}`:
       "&nbsp;"}</small></span>`
-    +(f!=null?`<span class="ttile tfight"><b>${f<1?"< 1 min":f+" min"}</b><small>Fight time</small></span>`:"")+clk
+    +clk
     +`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
       "prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn <kbd>N</kbd>${
       ic("next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
@@ -8611,6 +8685,7 @@ function queueMoments(list,prev){
     add.filter(k=>k.startsWith("eff")).forEach(k=>{const e=state.effects.find(x=>"eff"+x.id===k);if(!e)return;const m=MO_SPELL.find(([re])=>re.test(e.name));
       play("sp",m?m[1]:"gen",d,e.name);d+=200});
     const dsN=s=>{const k=[...s].find(x=>/^ds\d\d$/.test(x));return k?{s:+k[2],f:+k[3]}:null},a=dsN(was),b=dsN(now);
+    if(TV&&c.kind==="pc"&&add.includes("down")&&!add.includes("dead"))setTimeout(()=>tvStrip(c.id,"drops to 0 HP"),300);
     if(add.includes("dead"))play("death");
     else if(add.includes("stable"))play("stable");
     else if(a&&b&&b.f>a.f)play("dsfail");
@@ -10751,11 +10826,11 @@ function tvCallHtml(){const call=state.call,to=callTo(call),ans=call.answers||{}
       '<svg style="width:.9em;height:.9em;vertical-align:-.08em"')+" Failed":"Rolled"}</span></div>`}).join("");
   to.forEach(c=>{if(ans[c.id]!=null)pv.tvCallSeen.ans[c.id]=1});
   const got=to.filter(c=>ans[c.id]!=null),ok=dc!=null?got.filter(c=>ans[c.id]>=dc).length:0,wait=to.filter(c=>ans[c.id]==null);
-  const sum=dc!=null?`<b>${ok} of ${got.length===to.length?to.length:got.length}</b>succeeded${got.length<to.length?" so far":""}`:
-    `<b>${got.length} of ${to.length}</b>rolled`;
+  const sum=!got.length?"":dc!=null?`<b>${ok} of ${got.length===to.length?to.length:got.length}</b>succeeded${got.length<to.length?" so far":""}`:
+    `<b>${got.length} of ${to.length}</b>rolled`;   // nobody yet: only who we're waiting for (it said "0 of 0 succeeded")
   return `<div class="tvcall"><div class="t2hd"><div class="t2t"><span class="tveb">Roll call</span><span class="tvbig">${esc(title)}</span></div>${dc!=null?
     `<div class="t2dc"><span class="tveb">DC</span><span class="tvbig">${esc(String(dc))}</span></div>`:""}</div>
-    <div class="t2cards">${cards}</div><div class="t2sum">${sum}${wait.length?` <span>· waiting for ${esc(wait.map(c=>c.name).join(", "))}</span>`:
+    <div class="t2cards">${cards}</div><div class="t2sum">${sum}${wait.length?` <span>${sum?"· w":"W"}aiting for ${esc(wait.map(c=>c.name).join(", "))}</span>`:
       ""}</div></div>`}
 function tvInitHtml(list){const got=list.filter(c=>initOf(c)>-999||c.kind==="lair"),wait=list.filter(c=>c.kind!=="lair"&&initOf(c)<=-999);
   const ids=new Set(got.map(c=>c.id)),prev=pv.tvIniPrev||new Set();const fresh=[...ids].filter(id=>!prev.has(id));
@@ -10833,6 +10908,28 @@ function tvKenBurns(on){const b=$("#bgimg");if(!b)return;on=on&&b.classList.cont
     b.style.scale=k?"1.14":"1";b.style.translate=k?"-2.5% -1.5%":"0 0"};
   setTimeout(go,50);tvKenBurns.t=setInterval(go,40000)}
 let tvTick=null;
+const picOk=c=>!!c.introImg&&/^[a-f0-9]{12}\.(jpg|png|webp)$/.test(c.introImg);
+/* 1.4.1 (2): the whole party along the bottom of the spotlight, with what is on each of them; never their HP */
+function tvPartyHtml(pcs,onId,stTag,stCls,fk){
+  const tag=(cls,t)=>`<span class="ptg ${cls}">${t}</span>`;
+  return `<div class="tvparty" style="--n:${pcs.length}">${pcs.map(p=>{const on=p.id===onId,cs=(p.conds||[]).map(x=>x.n||x),ds=p.ds||{};
+    const dsp=p.down&&!isStable(p)&&!isDead(p)?`<span class="dsp" aria-label="Death saves: ${ds.s||0} saved, ${ds.f||0} failed">${[0,1,2].map(k=>
+      `<i class="s${k<(ds.s||0)?" on":""}"></i>`).join("")}<b></b>${[0,1,2].map(k=>`<i class="f${k<(ds.f||0)?" on":""}"></i>`).join("")}</span>`:"";
+    const b=[stTag(p),dsp,cs.includes("Concentrating")?tag("conc","Concentrating"):"",
+      ...(state.effects||[]).filter(e=>(e.targets||[]).includes(p.id)).slice(0,2).map(e=>tag("eff","✦ "+esc(e.name))),
+      ...cs.filter(n=>n!=="Concentrating").slice(0,2).map(n=>tag("cond",esc(n))),p.insp?tag("insp","★ Inspiration"):"",
+      (p.tags||[]).includes("reaction")?tag("rx","Reaction used"):""].filter(Boolean).join("");
+    return `<div class="pt fr fr-${fk(p)}${on?" on":""}${stCls(p)}">${on?`<span class="tag">NOW</span>`:
+      ""}<div class="ph"><span class="ce"></span><div><div class="cn" title="${esc(p.name)}">${
+      esc(pcs.length>4&&p.name.length>12&&/\s/.test(p.name)?p.name.split(/\s+/)[0]:p.name)}</div><div class="cs">${esc(LABEL[p.cls]||
+        "Player")}</div></div></div><div class="pst">${b}</div></div>`}).join("")}</div>`}
+/* 1.4.1 (3): what happened this round (the DM's log, filtered to public lines in rfeedSync) */
+function tvFeedHtml(F){const ico=x=>/defeated|dies/.test(x)?`<span class="fi sk">${SKULL}</span>`:/drops to 0|Bloodied/.test(x)?
+  `<span class="fi bl">${I.drop}</span>`:/natural 20/.test(x)?`<span class="d20 n20">20</span>`:
+    /natural 1\b/.test(x)?`<span class="d20">1</span>`:/Concentration/.test(x)?`<span class="cring"></span>`:`<span class="dot"></span>`;
+  const say=x=>x.replace(/^(.+): natural (20|1)$/,"$1 rolls a natural $2");
+  return `<div class="tvfeed"><h4>${state.turn&&F.r===state.turn.round?"This round":"Last round"}</h4>${F.lines.map(x=>
+    `<div class="fl${/defeated|dies|drops to 0/.test(x)?" key":""}">${ico(x)}<span>${esc(say(x))}</span></div>`).join("")}</div>`}
 function tvRender(list,first){
   let el=$("#tvLayer");if(!el){el=document.createElement("div");el.id="tvLayer";document.body.appendChild(el)}
   const T=state.tv||{},mode=tvModeNow(list),hx=I.hex,fk=c=>c.kind==="lair"?"":frameKey(c);
@@ -10849,6 +10946,13 @@ function tvRender(list,first){
       `<span class="chip" style="--cc:#e8c06a">✦ ${esc(e.name)}</span>`).join("")+(c.insp?
       `<span class="chip" style="--cc:var(--accent)">Inspiration</span>`:"");
   const who=c=>c.kind==="pc"?(LABEL[c.cls]||"Player"):c.kind==="ally"?"Ally":c.kind==="lair"?"Lair":c.boss?"Boss":"Enemy";
+  // Bloodied, Down, Stable and Dead, the same on every card (1.4.1: the TV showed none of them)
+  const stOf=c=>c.kind==="lair"?null:isDead(c)?["dead","Dead"]:isStable(c)?["stable","Stable"]:c.down?["down",c.kind==="pc"?"Down":"Defeated"]:
+    c.bloodied?["bloodied","Bloodied"]:null;
+  const stIco=k=>k==="bloodied"?I.drop:k==="stable"?"":SKULL;
+  const stChip=c=>{const s=stOf(c);return s?`<span class="chip tvst st-${s[0]}">${stIco(s[0])}${s[1]}</span>`:""};
+  const stTag=c=>{const s=stOf(c);return s?`<span class="tvst st-${s[0]}">${stIco(s[0])}${s[1]}</span>`:""};
+  const stCls=c=>{const s=stOf(c);return s?" st-"+s[0]:""};
   let h="";
   tvKenBurns(mode==="scene");
   if(mode==="call")h=tvCallHtml();
@@ -10863,28 +10967,34 @@ function tvRender(list,first){
     clearTimeout(tvTick);tvTick=setTimeout(()=>{if(TV)tvRender(grpRows(withLair(sorted().filter(shownToPlayers))),false)},1000)}
   else if(mode==="order"){h=`${top}<div class="tvord"><div class="orow">${list.map(c=>{const on=state.turn&&(state.turn.id===c.id||(c.grpIds||
     []).includes(state.turn.id));
-      return `<div class="cd k-${c.kind}${fk(c)?" fr fr-"+fk(c):""}${on?" on":""}" data-tid="${esc(c.id)}">${on?`<span class="tag">NOW</span>`:
+      return `<div class="cd k-${c.kind}${fk(c)?" fr fr-"+fk(c):""}${on?" on":""}${stCls(c)}" data-tid="${esc(c.id)}">${on?`<span class="tag">NOW</span>`:
         ""}<span class="ce"></span><div class="cn">${esc(c.name)}</div><div class="hx">${c.kind==="lair"?20:initOf(c)>-999?initOf(c):
-        "–"}</div><small>${esc(who(c))}</small></div>`}).join("")}</div></div>`}
+        "–"}</div><small>${esc(who(c))}</small>${stTag(c)}</div>`}).join("")}</div></div>`}
   else if(mode==="spot"&&(()=>{const c=list.find(c=>state.turn&&c.id===state.turn.id);return c&&c.kind==="pc"&&c.down&&!isStable(c)&&!isDead(c)})())
     h=tvDsHtml(list.find(c=>c.id===state.turn.id));
   else if(mode==="spot"){
-    const i=list.findIndex(c=>state.turn&&(c.id===state.turn.id||(c.grpIds||[]).includes(state.turn.id))),c=list[i]||list[0];
+    let i=list.findIndex(c=>state.turn&&(c.id===state.turn.id||(c.grpIds||[]).includes(state.turn.id)));const away=i<0&&!!state.turn;
+    if(away){const ti=state.turn.init??99,v=c=>c.kind==="lair"?20:initOf(c);i=list.findIndex(c=>v(c)<ti);if(i<0)i=0}
+    const c=list[i]||list[0],arrive=!first&&pv.tvSpotId!==undefined&&pv.tvSpotId!==c.id;pv.tvSpotId=c.id;   // a new turn: the words wait for the glide
     const nx=[];for(let k=1;k<list.length&&nx.length<((T.layout||"A")==="B"?4:3);k++)nx.push(list[(i+k)%list.length]);
-    const nr=k=>i+k>=list.length;
-    h=`${top}<div class="tvsp ${T.layout==="B"?"B":"A"}"><section class="spot k-${c.kind}${fk(c)?" fr fr-"+fk(c):
-      ""}" data-tid="${esc(c.id)}"><div class="eyeb"><span>On turn</span><span class="rnd">Round ${state.turn?state.turn.round:1}</span></div>
-      <div class="who"><span class="emb"></span><div><div class="big${c.name.length>18?" xl":c.name.length>11?" long":
-        ""}">${esc(c.name)}</div><div class="sub">${esc(who(c))}${c.kind==="pc"?" · <b>your move</b>":""}</div>${c.boss&&c.title?
-        `<div class="plate">${esc(c.title)}</div>`:""}${phaseHtml(c)}</div></div><div class="chips">${conds(c)}</div></section>
-      <section class="deck"><h4>On deck</h4>${nx.map((d,k)=>`<div class="card k-${d.kind}${fk(d)?" fr fr-"+fk(d):""}${k===0?" n1":
-        ""}" data-tid="${esc(d.id)}">${k===0?`<span class="tag">NEXT</span>`:""}<div class="row1"><span class="hex">${hx}<b>${d.kind==="lair"?20:initOf(d)>-999?
+    const nr=k=>i+k>=list.length,pcs=list.filter(p=>p.kind==="pc"),wp=T.party!==false&&pcs.length>0,F=state.rfeed,
+      wf=T.feed!==false&&(T.layout||"A")==="A"&&F&&F.lines&&F.lines.length>0;
+    h=`${top}<div class="tvsp ${T.layout==="B"?"B":"A"}${wp?" wp":""}"><section class="spot k-${c.kind}${fk(c)?" fr fr-"+fk(c):
+      ""}${stCls(c)}${arrive?" arrive":""}" data-tid="${esc(c.id)}"><div class="eyeb"><span>${away?"Up next":
+        "On turn"}</span><span class="rnd">Round ${state.turn?state.turn.round:1}</span></div>
+      <div class="who">${picOk(c)?`<span class="emb pic" style="background-image:url(/bg/${c.introImg})"></span>`:
+        `<span class="emb"></span>`}<div><div class="big${c.name.length>18?" xl":c.name.length>11?" long":
+        ""}">${esc(c.name)}</div><div class="sub">${esc(who(c))}${c.kind==="pc"&&!away?" · <b>your move</b>":""}</div>${c.boss&&c.title?
+        `<div class="plate">${esc(c.title)}</div>`:""}${phaseHtml(c)}</div></div><div class="chips">${stChip(c)}${conds(c)}</div></section>
+      <section class="deck${wf?" wf":""}"><h4>On deck</h4>${nx.map((d,k)=>`<div class="card k-${d.kind}${fk(d)?" fr fr-"+fk(d):""}${k===0&&!away?" n1":
+        ""}${stCls(d)}" data-tid="${esc(d.id)}">${k===0&&!away?`<span class="tag">NEXT</span>`:""}<div class="row1"><span class="hex">${hx}<b>${d.kind==="lair"?
+          20:initOf(d)>-999?
         initOf(d):"–"}</b></span><span class="ce"></span></div><div><div class="cn">${esc(d.name)}</div><div class="cs">${esc(who(d))}${nr(k+1)?" · next round":
-        ""}</div></div></div>`).join("")}</section></div>`}
+        ""}${stTag(d)}</div></div></div>`).join("")}${wf?tvFeedHtml(F):""}</section></div>${wp?tvPartyHtml(pcs,away?null:c.id,stTag,stCls,fk):""}`}
   pv.tvOld=new Map([...el.querySelectorAll("[data-tid]")].map(n=>[n.dataset.tid,{node:n,rect:n.getBoundingClientRect()}]));
   el.innerHTML=h+(document.fullscreenElement?"":`<button class="fsbtn tvfs" type="button" data-act="fs">${fsLabel()}</button>`);
   // a long name shrinks to fit its card instead of breaking mid-word (smaller TVs, 1280×720)
-  el.querySelectorAll(".tvsp .big,.tvsp .cn,.tvord .cn").forEach(n=>{let fs=parseFloat(getComputedStyle(n).fontSize);for(let k=0;
+  el.querySelectorAll(".tvsp .big,.tvsp .cn,.tvord .cn,.tvparty .cn").forEach(n=>{let fs=parseFloat(getComputedStyle(n).fontSize);for(let k=0;
     k<24&&n.scrollWidth>n.clientWidth+1&&fs>14;k++){fs*=.93;n.style.fontSize=fs+"px"}});
   // a new round: the big number and what happened (once per round)
   const r=state.turn&&state.turn.round;if(r&&pv.tvRound!==undefined&&r>pv.tvRound&&!first&&screenWants("round")&&mode!=="pause")tvRoundShow(r);pv.tvRound=r||0;
@@ -10916,7 +11026,7 @@ function tvBarRender(){
       k}">${l}</button>`).join("")}</div>
     <p class="psub">Auto: the scene when there's no fight, the order while initiative comes in, Spotlight during turns, the end screen after.</p>
     <div class="tvp-g"><div><div class="eyebrow2">Title card</div><form id="tvTitleForm" class="tvtf" autocomplete="off"><input class="field" id="tvT" maxlength="50" placeholder="The Misty Woods" value="${
-      esc(t.t||"")}"><input class="field" id="tvSub" maxlength="70" placeholder="Two days north of Daggerford" value="${esc(t.sub||
+      esc(t.t||"")}"><input class="field" id="tvSub" maxlength="70" placeholder="Two days north of the river" value="${esc(t.sub||
       "")}"><input class="field" id="tvEb" maxlength="40" placeholder="Session 12 · Exploring" value="${esc(t.eb||"")}">
         <div class="spacts"><button class="btn" type="button" data-act="tvtitleclr">Clear</button><button class="btn primary" type="submit">Show on the TV</button></div></form></div>
       <div><div class="eyebrow2">Pause</div><div class="spacts">${paused?
@@ -10924,6 +11034,8 @@ function tvBarRender(){
         `<button class="btn" type="button" data-act="tvpause" data-v="${m}">${m} min</button>`).join("")}</div>
         <div class="eyebrow2" style="margin-top:10px">In a fight</div><div class="seg2">${[["A","On deck at the side"],["B","On deck below"]].map(([k,l])=>
           `<button type="button" data-act="tvlayout" data-v="${k}" aria-pressed="${(T.layout||"A")===k}">${l}</button>`).join("")}</div>
+        <div class="seg2" style="margin-top:8px">${[["party","The party"],["feed","This round"]].map(([k,l])=>
+          `<button type="button" data-act="tvshow" data-k="${k}" aria-pressed="${T[k]!==false}">${l}</button>`).join("")}</div>
         <button type="button" class="btn" style="margin-top:10px" data-act="tvlook">The TV's look…</button></div></div>
     <div class="eyebrow2">Where each moment shows (while the TV is connected)</div><div class="tvev">${TV_EV.map(([k,l,def])=>
       `<span>${esc(l)}</span><span class="seg3">${[["surface","Tablet"],["tv","TV"],["both","Both"]].map(([v,lb])=>
@@ -11397,9 +11509,9 @@ const CR_XP={"0":10,"1/8":25,"1/4":50,"1/2":100,"1":200,"2":450,"3":700,"4":1100
 function endSummary(){
   const seen=state.list.filter(c=>!c.hidden),pcs=seen.filter(c=>c.kind==="pc"),foes=seen.filter(c=>c.kind==="enemy"),names=new Set(seen.map(c=>c.name));
   const won=foes.length&&foes.every(c=>c.down),lost=pcs.length&&pcs.every(c=>c.down),boss=foes.find(c=>c.boss&&c.down);
-  const mins=state.fightAt?Math.max(1,Math.round((Date.now()-state.fightAt)/60000)):null,rd=state.turn?state.turn.round:null;
-  const sub=[boss?`${boss.name} defeated`:won&&foes.length?`${foes.length} ${foes.length===1?"foe":"foes"} defeated`:"",rd?`${rd} round${rd>1?"s":""}`:"",mins?
-    `${mins} minute${mins>1?"s":""}`:""].filter(Boolean).join(" · ");
+  const rd=state.turn?state.turn.round:null;
+  const sub=[boss?`${boss.name} defeated`:won&&foes.length?`${foes.length} ${foes.length===1?"foe":"foes"} defeated`:"",rd?`${rd} round${rd>1?"s":""}`:
+    ""].filter(Boolean).join(" · ");
   const S=Object.entries(state.cstat||{}).filter(([n,x])=>x.d>0&&pcs.some(c=>c.name===n)).sort((a,b)=>b[1].d-a[1].d),cards=[];
   if(S.length){const [n,x]=S[0];cards.push({k:"MVP · most damage",name:n,v:String(x.d),note:x.top&&names.has(x.top.t)?`biggest hit ${x.top.n}${x.top.w?" "+
     x.top.w:""} on ${x.top.t}`:""})}
@@ -11572,6 +11684,8 @@ document.addEventListener("click",e=>{
     case "atvsame": atmoD={same:true};atmoRefresh();break;
     case "amfont": atmoD.mfont=t.dataset.v;atmoRefresh();break;
     case "tvlayout": state.tv=Object.assign({},state.tv,{layout:t.dataset.v});commit();if($(".sheet.atmo2"))atmoRefresh();tvBarRender();break;
+    case "tvshow":{const k=t.dataset.k;if(k!=="party"&&k!=="feed")break;state.tv=Object.assign({},state.tv,{[k]:(state.tv||{})[k]===false});commit();
+      tvBarRender();break}
     case "dmdev": dmPair=null;dmDevLoad().then(dmDevSheet);break;
     case "dmpairnew": dmPairMake(dmPair&&dmPair.name||"");break;
     case "dmpaircancel": dmPair=null;dmDevLoad().then(dmDevSheet);break;

@@ -39,13 +39,13 @@ body.tvcover #player{visibility:hidden}
   background:color-mix(in srgb,var(--bg) 78%,transparent);border:1.5px solid color-mix(in srgb,var(--fc,var(--accent)) 35%,var(--line))}
 .tvsp.B .card{flex:1;flex-direction:column;align-items:flex-start;gap:.6vw}.tvsp.B .card.n1{flex:1.35}
 .tvsp .card.n1{border-color:color-mix(in srgb,var(--fc,var(--accent)) 75%,transparent)}
-.tvsp .card .tag,.tvord .tag{position:absolute;top:-.75em;right:1em;font-size:clamp(11px,.95vw,18px);font-weight:900;letter-spacing:.2em;
+.tvsp .card .tag,.tvord .tag,.tvparty .tag{position:absolute;top:-.75em;right:1em;font-size:clamp(11px,.95vw,18px);font-weight:900;letter-spacing:.2em;
   background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:2px 10px}
 .tvsp .card .row1{display:flex;align-items:center;gap:.8vw}
 .tvsp .hex{position:relative;width:3.3vw;height:3.3vw;flex:none;display:grid;place-items:center}.tvsp .hex svg{position:absolute;inset:0;width:100%;height:100%;
   fill:none;stroke:color-mix(in srgb,var(--fc,var(--accent)) 70%,var(--fg));stroke-width:1.4}
 .tvsp .hex b{font-size:clamp(13px,1.35vw,26px);font-weight:800}
-.tvsp .card .ce,.tvord .ce{width:2.8vw;height:2.8vw;flex:none;background:var(--fc,var(--accent));-webkit-mask:var(--sig) center/contain no-repeat;
+.tvsp .card .ce,.tvord .ce,.tvparty .ce{width:2.8vw;height:2.8vw;flex:none;background:var(--fc,var(--accent));-webkit-mask:var(--sig) center/contain no-repeat;
   mask:var(--sig) center/contain no-repeat}
 .tvsp .card .cn{font-family:var(--display);font-size:clamp(20px,2.4vw,46px);font-weight:800;line-height:1}.tvsp .card.n1 .cn{font-size:clamp(22px,2.8vw,54px)}
 .tvsp .card .cs{font-size:clamp(12px,1.05vw,20px);color:var(--muted);font-weight:700;margin-top:.3em}
@@ -273,3 +273,70 @@ html[data-mfont=A] .mo-q,html[data-mfont=F] .mo-q{font-size:clamp(22px,3.6vw,56p
 .tvev .seg3 button{font-size:.75rem;padding:4px 9px}
 .apfrm.tv{border-width:6px}
 .atabs{margin-left:10px;vertical-align:middle;font-size:.9rem}
+/* 1.4.1: Bloodied, Down, Stable and Dead on every TV card (spotlight, on deck, order) */
+#tvLayer .chip.tvst{--cc:var(--blood);border-color:var(--cc);background:color-mix(in srgb,var(--cc) 22%,transparent);
+  color:color-mix(in srgb,var(--cc) 50%,var(--fg))}
+#tvLayer .chip.tvst.st-down,#tvLayer .chip.tvst.st-dead{--cc:#9a9aa6}#tvLayer .chip.tvst.st-stable{--cc:#7fc48f}
+#tvLayer .tvst svg{width:1.1em;height:1.1em;flex:none;fill:currentColor}#tvLayer .tvst svg [stroke]{fill:none}
+#tvLayer .tvst:not(.chip){display:inline-flex;align-items:center;gap:.35em;margin-left:.6em;padding:.1em .6em;border-radius:999px;font-weight:800;
+  color:color-mix(in srgb,var(--blood) 55%,var(--fg));background:color-mix(in srgb,var(--blood) 22%,transparent);vertical-align:middle}
+#tvLayer .tvst.st-down:not(.chip),#tvLayer .tvst.st-dead:not(.chip){color:var(--fg);background:color-mix(in srgb,var(--fg) 14%,transparent)}
+#tvLayer .tvst.st-stable:not(.chip){color:color-mix(in srgb,#3f9a55 55%,var(--fg));background:rgba(127,196,143,.2)}
+.tvord .cd .tvst:not(.chip){margin:0;font-size:clamp(11px,.9vw,17px)}
+.tvsp .spot.st-bloodied{border-color:color-mix(in srgb,var(--blood) 70%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--blood) 45%,transparent),
+  0 0 80px color-mix(in srgb,var(--blood) 18%,transparent)}
+.tvsp .deck .card.st-down,.tvsp .deck .card.st-dead,.tvord .cd.st-down,.tvord .cd.st-dead{filter:grayscale(1) brightness(.7)}
+.tvord .cd.st-bloodied{border-color:color-mix(in srgb,var(--blood) 60%,transparent)}
+/* a new turn: the card is there for the light to land on, its words follow (they used to show before the light arrived) */
+.tvsp .spot.arrive>*{animation:tvArrive .5s cubic-bezier(.2,.7,.2,1) .34s both}
+@keyframes tvArrive{from{opacity:0;transform:translateY(.35em)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tvsp .spot.arrive>*{animation:none}}body.tvlite .tvsp .spot.arrive>*{animation:none}
+/* 1.4.1 (1): the picture from Lore & picture in the spotlight, in place of the sigil */
+.tvsp .emb.pic{-webkit-mask:none;mask:none;background:center/cover no-repeat;width:15vw;height:20vw;max-height:40vh;max-width:30vh;border-radius:22px;
+  border:2px solid var(--fc,var(--accent));filter:none;box-shadow:0 30px 60px rgba(0,0,0,.45)}
+.tvsp.B .emb.pic{width:8vw;height:10.7vw;max-height:22vh;max-width:16.5vh;border-radius:16px}
+/* 1.4.1 (2): the party along the bottom */
+.tvsp.wp{bottom:calc(5vh + 17vh + 2vh)}
+.tvparty{position:fixed;left:5vw;right:5vw;bottom:5vh;height:17vh;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:1.2vw}
+.tvparty .pt{position:relative;min-width:0;box-sizing:border-box;display:flex;flex-direction:column;gap:.7vw;padding:1vw 1.2vw;border-radius:20px;
+  border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);background:color-mix(in srgb,var(--fg) 4%,transparent)}
+.tvparty .pt.on{border:2px solid var(--fc,var(--accent));background:color-mix(in srgb,var(--fc,var(--accent)) 13%,transparent)}
+.tvparty .pt.st-down .ph,.tvparty .pt.st-dead .ph{filter:grayscale(1);opacity:.7}
+.tvparty .ph{display:flex;align-items:center;gap:.8vw;min-width:0}.tvparty .ph>div{min-width:0}
+.tvparty .cn{font-family:var(--display);font-size:clamp(17px,2vw,40px);font-weight:800;line-height:1.1;white-space:nowrap;overflow:hidden}
+.tvparty .cs{font-size:clamp(11px,.95vw,19px);color:var(--muted);font-weight:700;margin-top:.2em}
+.tvparty .pst{display:flex;flex-wrap:wrap;align-content:flex-start;gap:.45vw;overflow:hidden;min-height:0;flex:1}
+.tvparty .ptg,#tvLayer .tvparty .tvst:not(.chip){display:inline-flex;align-items:center;gap:.35em;margin:0;padding:.18em .65em;border-radius:999px;
+  font-weight:800;
+  font-size:clamp(11px,1vw,20px);line-height:1.2;white-space:nowrap;--c:var(--muted);color:color-mix(in srgb,var(--c) 30%,var(--fg));
+  background:color-mix(in srgb,var(--c) 20%,transparent)}
+.tvparty .ptg.conc{--c:#bf94f5}.tvparty .ptg.eff{--c:#e8c06a}.tvparty .ptg.cond{--c:#e4a93a}.tvparty .ptg.insp{--c:var(--accent)}
+.tvparty .ptg.rx{--c:var(--muted);color:var(--muted)}
+.tvparty .dsp{display:inline-flex;align-items:center;gap:.25vw;padding:.18em .5em}.tvparty .dsp b{width:.35vw}
+.tvparty .dsp i{width:max(9px,.85vw);height:max(9px,.85vw);border-radius:50%;box-sizing:border-box;border:2px solid #7fc48f}
+.tvparty .dsp i.on{background:#7fc48f}.tvparty .dsp i.f{border-color:var(--blood)}.tvparty .dsp i.f.on{background:var(--blood)}
+/* 1.4.1 (3): this round, under On deck */
+.tvsp .deck.wf{justify-content:flex-start}
+.tvfeed{margin-top:auto;display:flex;flex-direction:column;gap:.75vw;padding:1.1vw 1.3vw;border-radius:20px;background:color-mix(in srgb,#000 22%,transparent);
+  border:1px solid color-mix(in srgb,var(--fg) 10%,transparent)}
+.tvfeed .fl{display:flex;align-items:center;gap:.8vw;font-size:clamp(13px,1.25vw,25px);font-weight:700;line-height:1.15;min-width:0}
+.tvfeed .fl>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tvfeed .fi{display:inline-flex;flex:none}.tvfeed .fi svg{width:1.3em;height:1.3em;fill:currentColor}.tvfeed .fi svg [stroke]{fill:none}
+.tvfeed .fi.sk{color:var(--muted)}.tvfeed .fi.bl{color:var(--blood)}
+.tvfeed .d20{flex:none;min-width:1.5em;height:1.5em;display:grid;place-items:center;font-size:.7em;font-weight:900;border:2px solid var(--muted);
+  border-radius:.4em;color:var(--muted)}
+.tvfeed .d20.n20{border-color:var(--accent);color:var(--accent)}
+.tvfeed .cring{flex:none;width:1.2em;height:1.2em;border-radius:50%;box-sizing:border-box;border:2px dashed #bf94f5}
+.tvfeed .dot{flex:none;width:.5em;height:.5em;border-radius:50%;background:var(--muted);margin:0 .35em}
+/* with the party and This round, everything keeps to its row: the deck gets compact cards and one-line names */
+.tvsp.wp{grid-template-rows:minmax(0,1fr)}.tvsp.wp.B{grid-template-rows:minmax(0,1fr) auto}.tvsp .deck{min-height:0}
+.tvsp .deck.wf{gap:.8vw}.tvsp .deck.wf .card{padding:.75vw 1.2vw}.tvsp .deck.wf .card .cn{white-space:nowrap;font-size:clamp(18px,2vw,40px)}
+.tvsp .deck.wf .card.n1 .cn{font-size:clamp(20px,2.3vw,46px)}.tvsp .deck.wf .hex{width:2.8vw;height:2.8vw}
+.tvfeed .fl.key{color:var(--fg)}.tvfeed .fl:not(.key){color:color-mix(in srgb,var(--fg) 80%,var(--muted))}
+.tvparty .tvst.st-bloodied{--c:var(--blood)!important}.tvparty .tvst.st-stable{--c:#7fc48f!important}
+#tvLayer .tvparty .tvst:not(.chip) svg{width:1.05em;height:1.05em}
+/* layout B with the party: the spotlight keeps its words in one row so nothing is cut */
+.tvsp.B.wp .spot{gap:.7vw;padding:1.4vw 3vw}.tvsp.B.wp .who{flex-direction:row;gap:2vw;text-align:left}
+.tvsp.B.wp .emb{width:5.5vw;height:5.5vw}.tvsp.B.wp .emb.pic{width:6.6vw;height:8.8vw;max-height:20vh}
+.tvsp.B.wp .big,.tvsp.B.wp .big.long{font-size:clamp(34px,5vw,100px)}.tvsp.B.wp .big.xl{font-size:clamp(30px,3.8vw,76px)}
+.tvsp.B.wp .card{padding:.7vw 1vw;gap:.35vw}.tvsp.B.wp .card .cn{white-space:nowrap;font-size:clamp(17px,1.8vw,36px)}

@@ -215,9 +215,9 @@ function applyHp(c,raw,was){
 }
 let menuId=null,turnMenuOn=false;
 const SKULL='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a8 8 0 0 0-8 8c0 2.6 1.2 4.5 3 5.7V19a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-2.8c1.8-1.2 3-3.1 3-5.7a8 8 0 0 0-8-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="11" r="1.7" fill="currentColor"/><circle cx="15" cy="11" r="1.7" fill="currentColor"/><path d="M10.5 20v-2.5M13.5 20v-2.5" stroke="currentColor" stroke-width="1.6"/></svg>';
-/* the turn, one row in the bottom bar (1.4): round, whose turn (and who's next), fight time, the nearest countdown, back and next */
+/* the turn, one row in the bottom bar (1.4): round, whose turn (and who's next), the nearest countdown, back and next */
 function turnTiles(){
-  const t=state.turn,who=t&&byId(t.id),f=t&&state.fightAt&&!state.ended?Math.max(0,Math.round((Date.now()-state.fightAt)/60000)):null;
+  const t=state.turn,who=t&&byId(t.id);
   const k=(state.clocks||[]).filter(x=>x.n>0).sort((a,b)=>a.n-b.n)[0];
   const ord=t?turnOrder():[],i=t?ord.findIndex(x=>x.id===t.id):-1,nx=i>=0&&ord.length>1?ord[(i+1)%ord.length]:null;
   const nm=who?who.name:t&&t.id==="__lair"?"Lair action":"";
@@ -234,7 +234,7 @@ function turnTiles(){
     "–")}${who&&
       typeof who.init==="number"?`<span class="tini">initiative ${who.init}</span>`:""}</b><small>${nx?`Next: ${esc(nx.kind==="lair"?"Lair action":nx.name)}`:
       "&nbsp;"}</small></span>`
-    +(f!=null?`<span class="ttile tfight"><b>${f<1?"< 1 min":f+" min"}</b><small>Fight time</small></span>`:"")+clk
+    +clk
     +`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
       "prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn <kbd>N</kbd>${
       ic("next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${

@@ -17,6 +17,14 @@ function clogScan(){
     if(v.pc&&o.down&&!v.down)clogPush(`${v.name} is back on their feet`)});
   clogSeen=now;
 }
+/* 1.4.1: the TV's "This round": the last four public lines of the round (the round before while this one is empty). Only
+   what the table saw happen: no rolls or DCs, no lair text, nothing that names a hidden creature. */
+const RFEED_RX=/ is defeated$| drops to 0 HP$| dies$| is stable$| is back on their feet$|: natural (20|1)$| loses Concentration| is Bloodied$| appears$/;
+function rfeedSync(){const t=state.turn;if(!t||state.ended){state.rfeed=null;return}
+  const hid=state.list.filter(c=>c.hidden).map(c=>c.name.toLowerCase()),pick=r=>(state.clog||[]).filter(x=>x.r===r&&typeof x.t==="string"&&
+    RFEED_RX.test(x.t)&&!hid.some(n=>x.t.toLowerCase().includes(n))).map(x=>x.t.replace(/ loses Concentration.*$/," loses Concentration"));
+  let r=t.round,L=pick(r);if(!L.length&&r>1){r--;L=pick(r)}
+  state.rfeed=L.length?{r,lines:L.slice(-4)}:null}
 function callRecap(){const k=state.call;if(!k||k.logged)return;const a=k.answers||{};
   const to=(k.to&&k.to.length?k.to:state.list.filter(c=>c.kind==="pc"&&!c.hidden).map(c=>c.id)).map(byId).filter(Boolean);
   if(!to.length||to.some(c=>a[c.id]==null))return;k.logged=true;
@@ -34,8 +42,8 @@ function recapStats(){
 }
 function recapText(){
   const out=[],f=state.fightAt,e=state.ended,end=e?e.at:Date.now(),d=new Date(f||end),log=state.clog||[];
-  const dur=f?Math.max(1,Math.round((end-f)/60000)):null,rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
-  out.push(`Combat · ${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}${dur?` · ${dur} min`:""}${rounds?
+  const rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
+  out.push(`Combat · ${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}${rounds?
     ` · ${rounds} round${rounds>1?"s":""}`:""}`);
   const pcs=sorted().filter(c=>c.kind==="pc"),foes=sorted().filter(c=>c.kind!=="pc"&&c.kind!=="lair");
   if(pcs.length)out.push("","Party: "+pcs.map(c=>`${c.name}${typeof c.init==="number"?` (init ${c.init})`:""}${c.down?(isDead(c)?" · dead":isStable(c)?
@@ -57,7 +65,7 @@ function recapText(){
 /* 18: the recap as a page to keep, print or send (no DM secrets beyond what the recap already says) */
 function recapDoc(){
   const f=state.fightAt,e=state.ended,end=e?e.at:Date.now(),d=new Date(f||end),log=state.clog||[];
-  const dur=f?Math.max(1,Math.round((end-f)/60000)):null,rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
+  const rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
   const pcs=sorted().filter(c=>c.kind==="pc"),foes=sorted().filter(c=>c.kind!=="pc"&&c.kind!=="lair"&&!c.hidden);
   const S=Object.entries(state.cstat||{}).filter(([,x])=>x.d>0).sort((a,b)=>b[1].d-a[1].d),{turns,dice}=recapStats(),top=S[0];
   const sec=(t,h)=>h?`<section><h2>${t}</h2>${h}</section>`:"";
@@ -73,7 +81,7 @@ h2{font-size:1.15rem;text-transform:uppercase;letter-spacing:.14em;color:var(--a
 h3{font-size:1rem;margin:16px 0 4px}table{border-collapse:collapse;width:100%;font-family:system-ui,sans-serif;font-size:.92rem}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}
 ul{margin:0;padding-left:1.2em}li{margin:2px 0}.hl{background:#fbedc6;border:1px solid #e3c27a;border-radius:10px;padding:12px 14px;font-family:system-ui,sans-serif}@media print{body{background:#fff}main{padding:0}}</style></head><body><main>
 <h1>Combat${foes.length?" · "+esc(foes.filter(c=>c.boss).map(c=>c.name)[0]||foes[0].name):""}</h1>
-<p class="meta">${esc(d.toLocaleDateString())} ${esc(d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}))}${dur?` · ${dur} min`:""}${rounds?
+<p class="meta">${esc(d.toLocaleDateString())} ${esc(d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}))}${rounds?
   ` · ${rounds} round${rounds>1?"s":""}`:""}</p>
 ${top?`<p class="hl"><b>Most damage:</b> ${esc(top[0])} with ${top[1].d}${top[1].top?` · biggest hit ${top[1].top.n} on ${esc(top[1].top.t)}`:""}</p>`:""}
 ${sec("Party",pcs.length?rows(["Character","Initiative","At the end"],pcs.map(c=>[esc(c.name),typeof c.init==="number"?c.init:"",c.down?(isDead(c)?"dead":
@@ -117,7 +125,7 @@ function finish(){
     if(state.clogAt!==state.fightAt){state.clog=[];state.cstat={};state.tstat={};state.nstat={};state.clogAt=state.fightAt;clogSeen=null}
     lost.forEach(n=>clogPush(`${n} loses Concentration`));
     state.list.forEach(c=>{if(c.cdur)for(const n in c.cdur)if(!hasCond(c,n))delete c.cdur[n]});
-    clogScan();callRecap();
+    clogScan();callRecap();rfeedSync();
   }
   // effects disappear with their targets, with the caster, and when the caster loses Concentrating
   state.effects=(state.effects||[]).map(e=>Object.assign({},e,{targets:e.targets.filter(id=>byId(id))})).filter(e=>{const c=byId(e.by);
