@@ -68,6 +68,7 @@ Never commit those files.
 | t36 | 1.3: the DM screen's tool look (turn tiles, the countdown tile, condition icons; the Classic look went in 1.4), boss phases on the TV and tablet, the tablet's frames by side, the phone's class colour, and handouts (the editor, where each one shows, players never getting the saved ones) |
 | t37 | 1.4: the DM screen on a laptop (1920×1080 and 1536×864): the turn in one row, nothing covers the order, columns line up, empty cells (Set HP, AC, a person outline), the lair action on one line, Hit several in the Init column, toasts up top, the panel by phase, the drawer under 1100 px; the phone's dock and four tabs with nothing under 12 px. With `dev/.work/axe.min.js` (from `npm i axe-core`) it also runs axe, WCAG 2.2 AA |
 | t38 | 1.4 on the phones: the Your turn screen and its switch, the table's roll log (E18) and what it carries to the players, the aura reminder in a save roll call (E19), Bless and Bane on saves and attacks, the HP sheet's preview |
+| t39 | 1.4.1 on the TV: Bloodied, Down, Stable and Dead on the spotlight, on deck and in the order; "Up next" when the creature on turn is hidden or already defeated; a roll call with no answers yet; the end card without minutes |
 | ui, hov | the monster search sheet; hover cards for spells and rules |
 
 ## Media for the README

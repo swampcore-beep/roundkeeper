@@ -273,3 +273,21 @@ html[data-mfont=A] .mo-q,html[data-mfont=F] .mo-q{font-size:clamp(22px,3.6vw,56p
 .tvev .seg3 button{font-size:.75rem;padding:4px 9px}
 .apfrm.tv{border-width:6px}
 .atabs{margin-left:10px;vertical-align:middle;font-size:.9rem}
+/* 1.4.1: Bloodied, Down, Stable and Dead on every TV card (spotlight, on deck, order) */
+#tvLayer .chip.tvst{--cc:var(--blood);border-color:var(--cc);background:color-mix(in srgb,var(--cc) 22%,transparent);
+  color:color-mix(in srgb,var(--cc) 50%,var(--fg))}
+#tvLayer .chip.tvst.st-down,#tvLayer .chip.tvst.st-dead{--cc:#9a9aa6}#tvLayer .chip.tvst.st-stable{--cc:#7fc48f}
+#tvLayer .tvst svg{width:1.1em;height:1.1em;flex:none;fill:currentColor}#tvLayer .tvst svg [stroke]{fill:none}
+#tvLayer .tvst:not(.chip){display:inline-flex;align-items:center;gap:.35em;margin-left:.6em;padding:.1em .6em;border-radius:999px;font-weight:800;
+  color:color-mix(in srgb,var(--blood) 55%,var(--fg));background:color-mix(in srgb,var(--blood) 22%,transparent);vertical-align:middle}
+#tvLayer .tvst.st-down:not(.chip),#tvLayer .tvst.st-dead:not(.chip){color:var(--fg);background:color-mix(in srgb,var(--fg) 14%,transparent)}
+#tvLayer .tvst.st-stable:not(.chip){color:color-mix(in srgb,#3f9a55 55%,var(--fg));background:rgba(127,196,143,.2)}
+.tvord .cd .tvst:not(.chip){margin:0;font-size:clamp(11px,.9vw,17px)}
+.tvsp .spot.st-bloodied{border-color:color-mix(in srgb,var(--blood) 70%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--blood) 45%,transparent),
+  0 0 80px color-mix(in srgb,var(--blood) 18%,transparent)}
+.tvsp .deck .card.st-down,.tvsp .deck .card.st-dead,.tvord .cd.st-down,.tvord .cd.st-dead{filter:grayscale(1) brightness(.7)}
+.tvord .cd.st-bloodied{border-color:color-mix(in srgb,var(--blood) 60%,transparent)}
+/* a new turn: the card is there for the light to land on, its words follow (they used to show before the light arrived) */
+.tvsp .spot.arrive>*{animation:tvArrive .5s cubic-bezier(.2,.7,.2,1) .34s both}
+@keyframes tvArrive{from{opacity:0;transform:translateY(.35em)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tvsp .spot.arrive>*{animation:none}}body.tvlite .tvsp .spot.arrive>*{animation:none}

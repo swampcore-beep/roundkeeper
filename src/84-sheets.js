@@ -101,9 +101,9 @@ const CR_XP={"0":10,"1/8":25,"1/4":50,"1/2":100,"1":200,"2":450,"3":700,"4":1100
 function endSummary(){
   const seen=state.list.filter(c=>!c.hidden),pcs=seen.filter(c=>c.kind==="pc"),foes=seen.filter(c=>c.kind==="enemy"),names=new Set(seen.map(c=>c.name));
   const won=foes.length&&foes.every(c=>c.down),lost=pcs.length&&pcs.every(c=>c.down),boss=foes.find(c=>c.boss&&c.down);
-  const mins=state.fightAt?Math.max(1,Math.round((Date.now()-state.fightAt)/60000)):null,rd=state.turn?state.turn.round:null;
-  const sub=[boss?`${boss.name} defeated`:won&&foes.length?`${foes.length} ${foes.length===1?"foe":"foes"} defeated`:"",rd?`${rd} round${rd>1?"s":""}`:"",mins?
-    `${mins} minute${mins>1?"s":""}`:""].filter(Boolean).join(" · ");
+  const rd=state.turn?state.turn.round:null;
+  const sub=[boss?`${boss.name} defeated`:won&&foes.length?`${foes.length} ${foes.length===1?"foe":"foes"} defeated`:"",rd?`${rd} round${rd>1?"s":""}`:
+    ""].filter(Boolean).join(" · ");
   const S=Object.entries(state.cstat||{}).filter(([n,x])=>x.d>0&&pcs.some(c=>c.name===n)).sort((a,b)=>b[1].d-a[1].d),cards=[];
   if(S.length){const [n,x]=S[0];cards.push({k:"MVP · most damage",name:n,v:String(x.d),note:x.top&&names.has(x.top.t)?`biggest hit ${x.top.n}${x.top.w?" "+
     x.top.w:""} on ${x.top.t}`:""})}

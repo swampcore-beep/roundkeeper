@@ -25,11 +25,11 @@ function tvCallHtml(){const call=state.call,to=callTo(call),ans=call.answers||{}
       '<svg style="width:.9em;height:.9em;vertical-align:-.08em"')+" Failed":"Rolled"}</span></div>`}).join("");
   to.forEach(c=>{if(ans[c.id]!=null)pv.tvCallSeen.ans[c.id]=1});
   const got=to.filter(c=>ans[c.id]!=null),ok=dc!=null?got.filter(c=>ans[c.id]>=dc).length:0,wait=to.filter(c=>ans[c.id]==null);
-  const sum=dc!=null?`<b>${ok} of ${got.length===to.length?to.length:got.length}</b>succeeded${got.length<to.length?" so far":""}`:
-    `<b>${got.length} of ${to.length}</b>rolled`;
+  const sum=!got.length?"":dc!=null?`<b>${ok} of ${got.length===to.length?to.length:got.length}</b>succeeded${got.length<to.length?" so far":""}`:
+    `<b>${got.length} of ${to.length}</b>rolled`;   // nobody yet: only who we're waiting for (it said "0 of 0 succeeded")
   return `<div class="tvcall"><div class="t2hd"><div class="t2t"><span class="tveb">Roll call</span><span class="tvbig">${esc(title)}</span></div>${dc!=null?
     `<div class="t2dc"><span class="tveb">DC</span><span class="tvbig">${esc(String(dc))}</span></div>`:""}</div>
-    <div class="t2cards">${cards}</div><div class="t2sum">${sum}${wait.length?` <span>· waiting for ${esc(wait.map(c=>c.name).join(", "))}</span>`:
+    <div class="t2cards">${cards}</div><div class="t2sum">${sum}${wait.length?` <span>${sum?"· w":"W"}aiting for ${esc(wait.map(c=>c.name).join(", "))}</span>`:
       ""}</div></div>`}
 function tvInitHtml(list){const got=list.filter(c=>initOf(c)>-999||c.kind==="lair"),wait=list.filter(c=>c.kind!=="lair"&&initOf(c)<=-999);
   const ids=new Set(got.map(c=>c.id)),prev=pv.tvIniPrev||new Set();const fresh=[...ids].filter(id=>!prev.has(id));
@@ -123,6 +123,13 @@ function tvRender(list,first){
       `<span class="chip" style="--cc:#e8c06a">✦ ${esc(e.name)}</span>`).join("")+(c.insp?
       `<span class="chip" style="--cc:var(--accent)">Inspiration</span>`:"");
   const who=c=>c.kind==="pc"?(LABEL[c.cls]||"Player"):c.kind==="ally"?"Ally":c.kind==="lair"?"Lair":c.boss?"Boss":"Enemy";
+  // Bloodied, Down, Stable and Dead, the same on every card (1.4.1: the TV showed none of them)
+  const stOf=c=>c.kind==="lair"?null:isDead(c)?["dead","Dead"]:isStable(c)?["stable","Stable"]:c.down?["down",c.kind==="pc"?"Down":"Defeated"]:
+    c.bloodied?["bloodied","Bloodied"]:null;
+  const stIco=k=>k==="bloodied"?I.drop:k==="stable"?"":SKULL;
+  const stChip=c=>{const s=stOf(c);return s?`<span class="chip tvst st-${s[0]}">${stIco(s[0])}${s[1]}</span>`:""};
+  const stTag=c=>{const s=stOf(c);return s?`<span class="tvst st-${s[0]}">${stIco(s[0])}${s[1]}</span>`:""};
+  const stCls=c=>{const s=stOf(c);return s?" st-"+s[0]:""};
   let h="";
   tvKenBurns(mode==="scene");
   if(mode==="call")h=tvCallHtml();
@@ -137,24 +144,28 @@ function tvRender(list,first){
     clearTimeout(tvTick);tvTick=setTimeout(()=>{if(TV)tvRender(grpRows(withLair(sorted().filter(shownToPlayers))),false)},1000)}
   else if(mode==="order"){h=`${top}<div class="tvord"><div class="orow">${list.map(c=>{const on=state.turn&&(state.turn.id===c.id||(c.grpIds||
     []).includes(state.turn.id));
-      return `<div class="cd k-${c.kind}${fk(c)?" fr fr-"+fk(c):""}${on?" on":""}" data-tid="${esc(c.id)}">${on?`<span class="tag">NOW</span>`:
+      return `<div class="cd k-${c.kind}${fk(c)?" fr fr-"+fk(c):""}${on?" on":""}${stCls(c)}" data-tid="${esc(c.id)}">${on?`<span class="tag">NOW</span>`:
         ""}<span class="ce"></span><div class="cn">${esc(c.name)}</div><div class="hx">${c.kind==="lair"?20:initOf(c)>-999?initOf(c):
-        "–"}</div><small>${esc(who(c))}</small></div>`}).join("")}</div></div>`}
+        "–"}</div><small>${esc(who(c))}</small>${stTag(c)}</div>`}).join("")}</div></div>`}
   else if(mode==="spot"&&(()=>{const c=list.find(c=>state.turn&&c.id===state.turn.id);return c&&c.kind==="pc"&&c.down&&!isStable(c)&&!isDead(c)})())
     h=tvDsHtml(list.find(c=>c.id===state.turn.id));
   else if(mode==="spot"){
-    const i=list.findIndex(c=>state.turn&&(c.id===state.turn.id||(c.grpIds||[]).includes(state.turn.id))),c=list[i]||list[0];
+    let i=list.findIndex(c=>state.turn&&(c.id===state.turn.id||(c.grpIds||[]).includes(state.turn.id)));const away=i<0&&!!state.turn;
+    if(away){const ti=state.turn.init??99,v=c=>c.kind==="lair"?20:initOf(c);i=list.findIndex(c=>v(c)<ti);if(i<0)i=0}
+    const c=list[i]||list[0],arrive=!first&&pv.tvSpotId!==undefined&&pv.tvSpotId!==c.id;pv.tvSpotId=c.id;   // a new turn: the words wait for the glide
     const nx=[];for(let k=1;k<list.length&&nx.length<((T.layout||"A")==="B"?4:3);k++)nx.push(list[(i+k)%list.length]);
     const nr=k=>i+k>=list.length;
     h=`${top}<div class="tvsp ${T.layout==="B"?"B":"A"}"><section class="spot k-${c.kind}${fk(c)?" fr fr-"+fk(c):
-      ""}" data-tid="${esc(c.id)}"><div class="eyeb"><span>On turn</span><span class="rnd">Round ${state.turn?state.turn.round:1}</span></div>
+      ""}${stCls(c)}${arrive?" arrive":""}" data-tid="${esc(c.id)}"><div class="eyeb"><span>${away?"Up next":
+        "On turn"}</span><span class="rnd">Round ${state.turn?state.turn.round:1}</span></div>
       <div class="who"><span class="emb"></span><div><div class="big${c.name.length>18?" xl":c.name.length>11?" long":
-        ""}">${esc(c.name)}</div><div class="sub">${esc(who(c))}${c.kind==="pc"?" · <b>your move</b>":""}</div>${c.boss&&c.title?
-        `<div class="plate">${esc(c.title)}</div>`:""}${phaseHtml(c)}</div></div><div class="chips">${conds(c)}</div></section>
-      <section class="deck"><h4>On deck</h4>${nx.map((d,k)=>`<div class="card k-${d.kind}${fk(d)?" fr fr-"+fk(d):""}${k===0?" n1":
-        ""}" data-tid="${esc(d.id)}">${k===0?`<span class="tag">NEXT</span>`:""}<div class="row1"><span class="hex">${hx}<b>${d.kind==="lair"?20:initOf(d)>-999?
+        ""}">${esc(c.name)}</div><div class="sub">${esc(who(c))}${c.kind==="pc"&&!away?" · <b>your move</b>":""}</div>${c.boss&&c.title?
+        `<div class="plate">${esc(c.title)}</div>`:""}${phaseHtml(c)}</div></div><div class="chips">${stChip(c)}${conds(c)}</div></section>
+      <section class="deck"><h4>On deck</h4>${nx.map((d,k)=>`<div class="card k-${d.kind}${fk(d)?" fr fr-"+fk(d):""}${k===0&&!away?" n1":
+        ""}${stCls(d)}" data-tid="${esc(d.id)}">${k===0&&!away?`<span class="tag">NEXT</span>`:""}<div class="row1"><span class="hex">${hx}<b>${d.kind==="lair"?
+          20:initOf(d)>-999?
         initOf(d):"–"}</b></span><span class="ce"></span></div><div><div class="cn">${esc(d.name)}</div><div class="cs">${esc(who(d))}${nr(k+1)?" · next round":
-        ""}</div></div></div>`).join("")}</section></div>`}
+        ""}${stTag(d)}</div></div></div>`).join("")}</section></div>`}
   pv.tvOld=new Map([...el.querySelectorAll("[data-tid]")].map(n=>[n.dataset.tid,{node:n,rect:n.getBoundingClientRect()}]));
   el.innerHTML=h+(document.fullscreenElement?"":`<button class="fsbtn tvfs" type="button" data-act="fs">${fsLabel()}</button>`);
   // a long name shrinks to fit its card instead of breaking mid-word (smaller TVs, 1280×720)
