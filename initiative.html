@@ -3218,6 +3218,15 @@ html:root[data-dmlook=tool] #roster .sbline .sbpip{width:14px;height:14px}
 html:root[data-dmlook=tool] #roster .cond .x,html:root[data-dmlook=tool] .side .pchip .x{min-width:24px;min-height:24px}
 html:root[data-dmlook=tool] #dm>.bar :is(.btn,.icon-btn){font-weight:500}
 html:root[data-dmlook=tool] #dm h1.brand{margin:0;font-size:var(--fs17);font-weight:600;line-height:1.2}
+
+/* ---- the header's Table group: devices, TV and the atmosphere, everything the players see ---- */
+html:root[data-dmlook=tool] .tablegrp .grplbl{padding:0 6px 0 10px;font-size:var(--fs12);font-weight:600;color:var(--muted)}
+html:root[data-dmlook=tool] .joinpill .jd.some{background:var(--boss);box-shadow:0 0 0 3px color-mix(in srgb,var(--boss) 25%,transparent)}
+html:root[data-dmlook=tool] .atmobtn{max-width:none}
+html:root[data-dmlook=tool] .atmobtn .atsw{display:inline-flex;align-items:center;padding:2px 3px;border-radius:999px;background:var(--sw0);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--fg) 18%,transparent)}
+html:root[data-dmlook=tool] .atmobtn .atsw b{width:8px;height:8px;border-radius:999px;margin-left:-2px;box-shadow:0 0 0 1px var(--sw0)}
+html:root[data-dmlook=tool] .atmobtn .atsw b:first-child{margin-left:0}
 /* ---------- phones, 1.4: a dock in the class colour and four tabs where the thumb is; nothing on a phone under 12 px ----------
    The dock: HP (tap to change), AC and initiative, then what's on you. The tabs: Roll, Conditions, Spells (or Resources), More. */
 .pbar.v14{gap:8px;padding:10px max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
@@ -3302,10 +3311,11 @@ svg.tci{display:block;padding:5px;fill:none;stroke:var(--cc,currentColor);stroke
       <button class="btn sidebtn" id="sideBtn" type="button" data-act="sidetoggle" aria-expanded="false" aria-controls="side">Panel</button>
       <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)" aria-label="Rules"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span class="qkl">Rules</span></button>
       <button class="btn tcardpill" id="tcardPill" type="button" data-act="tcardoff" hidden></button>
-      <div class="hgroup tablegrp">
+      <div class="hgroup tablegrp" role="group" aria-labelledby="tableLbl">
+        <span class="grplbl" id="tableLbl">Table</span>
         <button class="btn joinpill" id="joinPill" type="button" data-act="devices" title="Devices: who is connected, the addresses and the QR code"></button>
         <button class="btn tvbtn" id="tvBtn" type="button" data-act="tvbar" title="What the TV shows" aria-expanded="false"><i class="jd"></i>TV</button>
-        <button class="btn atmobtn" id="atmoBtn" type="button" data-act="atmo" title="Atmosphere: theme, scene and background picture on the tablet">Atmosphere</button>
+        <button class="btn atmobtn" id="atmoBtn" type="button" data-act="atmo" title="Atmosphere on the tablet and TV: theme, scene, weather and picture">Atmosphere</button>
         <button class="btn" id="preview" type="button">Preview player screen</button>
         <button class="icon-btn lg previewic" type="button" data-act="previewic" title="Preview the player screen" aria-label="Preview the player screen"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
@@ -6743,8 +6753,10 @@ function renderDM(){
   pendingRender=false;renderParty();renderEnc();renderCall();renderField();renderHand();
   const tsec=$("#timerSecs");if(tsec&&document.activeElement!==tsec)tsec.value=state.timerSecs||30;
   {const ab=$("#atmoBtn"),sl=(SCENES.find(x=>x[0]===(state.scene||"none"))||["",""])[1];
-   if(ab){ab.innerHTML=`${ic("palette")}<span>${esc(atmoLabel(state))}</span>`;
-     ab.title=`Atmosphere: ${atmoLabel(state)} · ${sl}${state.bg?" · picture":""}. Theme, scene and picture on the tablet`}}
+   if(ab){const P=(PALS[lookOf(state).pal]||PALS.tavern)[1],now=`${atmoLabel(state)} · ${sl}${state.bg?" · picture":""}`;
+     ab.innerHTML=`${ic("palette")}<span>Atmosphere</span><i class="atsw" aria-hidden="true" style="--sw0:${P[0]}">${P.slice(1).map(c=>
+       `<b style="background:${c}"></b>`).join("")}</i>`;
+     ab.title=`Atmosphere on the tablet and TV, now ${now}`;ab.setAttribute("aria-label",`Atmosphere, now ${now}`)}}
   {const tb=$("#tvBtn");if(tb){const m=(TV_MODES.find(x=>x[0]===((state.tv||{}).mode||"auto"))||["",""])[1];
     tb.innerHTML=`<i class="jd"></i>TV${state.tvSeen&&m?` <small>· ${esc(m)}</small>`:""}`}}
   $("#lairBtn").setAttribute("aria-pressed",String(!!state.lair));
@@ -11113,8 +11125,9 @@ const phoneAgo=c=>{const p=joinInfo&&joinInfo.phones;return p&&p[c.id]!=null?p[c
 const devPcs=()=>sorted().filter(c=>c.kind==="pc");
 function devPill(){const jp=$("#joinPill");if(!jp)return;
   const pcs=devPcs(),on=pcs.filter(c=>{const a=phoneAgo(c);return a!=null&&a<8}).length;
-  jp.innerHTML=`<b>Devices</b><i class="jd${tabletOn()?" on":""}"></i><span>Tablet</span>${pcs.length?
-    `<i class="jd${on===pcs.length?" on":on?" some":""}"></i><span>${on}/${pcs.length} phones</span>`:""}`}
+  jp.innerHTML=`<i class="jd${tabletOn()?" on":""}"></i><span>Tablet</span>${pcs.length?
+    `<i class="jd${on===pcs.length?" on":on?" some":""}"></i><span>${on}/${pcs.length} phones</span>`:""}`;
+  jp.setAttribute("aria-label",`Devices: tablet ${tabletOn()?"connected":"not connected"}${pcs.length?`, ${on} of ${pcs.length} phones connected`:""}`)}
 const devBase=()=>String(chosenUrl()||"").replace(/\/players$/,"");
 const devAgo=a=>a==null?"not connected yet":a<8?"connected":a<90?`last seen ${Math.round(a)} s ago`:a<5400?`last seen ${Math.round(a/60)} min ago`:
   `last seen ${Math.round(a/3600)} h ago`;

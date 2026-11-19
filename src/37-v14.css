@@ -235,3 +235,12 @@ html:root[data-dmlook=tool] #roster .sbline .sbpip{width:14px;height:14px}
 html:root[data-dmlook=tool] #roster .cond .x,html:root[data-dmlook=tool] .side .pchip .x{min-width:24px;min-height:24px}
 html:root[data-dmlook=tool] #dm>.bar :is(.btn,.icon-btn){font-weight:500}
 html:root[data-dmlook=tool] #dm h1.brand{margin:0;font-size:var(--fs17);font-weight:600;line-height:1.2}
+
+/* ---- the header's Table group: devices, TV and the atmosphere, everything the players see ---- */
+html:root[data-dmlook=tool] .tablegrp .grplbl{padding:0 6px 0 10px;font-size:var(--fs12);font-weight:600;color:var(--muted)}
+html:root[data-dmlook=tool] .joinpill .jd.some{background:var(--boss);box-shadow:0 0 0 3px color-mix(in srgb,var(--boss) 25%,transparent)}
+html:root[data-dmlook=tool] .atmobtn{max-width:none}
+html:root[data-dmlook=tool] .atmobtn .atsw{display:inline-flex;align-items:center;padding:2px 3px;border-radius:999px;background:var(--sw0);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--fg) 18%,transparent)}
+html:root[data-dmlook=tool] .atmobtn .atsw b{width:8px;height:8px;border-radius:999px;margin-left:-2px;box-shadow:0 0 0 1px var(--sw0)}
+html:root[data-dmlook=tool] .atmobtn .atsw b:first-child{margin-left:0}

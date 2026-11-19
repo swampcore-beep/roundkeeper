@@ -54,7 +54,7 @@ async def main():
         st=await dm.evaluate("fetch('/state').then(r=>r.json())"); chk("state: theme + only the override",st.get('theme')=='marble' and st.get('look')=={'font':'uncial'} and st.get('scene')=='temple',(st.get('theme'),st.get('look'),st.get('scene')))
         pubst=await sf.evaluate("fetch('/state').then(r=>r.json())"); chk("players get the look",pubst.get('look')=={'font':'uncial'} and pubst.get('theme')=='marble')
         chk("Show disabled again",await dm.locator('[data-act=atmogo]').is_disabled())
-        lbl=await dm.locator('#atmoBtn').inner_text(); chk("header says changed",'Marble & gold (changed)' in lbl,lbl)
+        lbl=await dm.get_attribute('#atmoBtn','title'); chk("header says changed",'Marble & gold (changed)' in lbl,lbl)
         # save as my theme, then load it later
         await dm.fill('#aSaveName','Strahd'); await dm.press('#aSaveName','Enter'); await asyncio.sleep(.3)
         chk("saved theme listed",await dm.locator('[data-act=amine]').count()==1)

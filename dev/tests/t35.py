@@ -13,10 +13,13 @@ async def main():
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
         await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5)
         # ---- header
-        pill=await dm.inner_text('#joinPill'); chk("Devices pill has no TV dot",'Devices' in pill and 'TV' not in pill,pill)
+        pill=await dm.inner_text('#joinPill'); chk("Devices pill has no TV dot",'Tablet' in pill and 'TV' not in pill,pill)
+        chk("one Table group: devices, TV, atmosphere",await T(dm,"(()=>{const g=document.getElementById('tableLbl').parentElement;"
+            "return g.textContent.trim().startsWith('Table')&&!!g.querySelector('#joinPill')&&!!g.querySelector('#tvBtn')&&!!g.querySelector('#atmoBtn')})()"))
         chk("Rules without the shortcut label",await dm.locator('.qkbtn kbd').count()==0)
         at=await dm.locator('#atmoBtn').inner_text(); tt=await dm.get_attribute('#atmoBtn','title')
-        chk("Atmosphere shows only the theme",'Atmosphere' not in at and at.strip()!='',at); chk("…and says more in its title",'Atmosphere' in tt,tt)
+        chk("Atmosphere says what it is",at.strip()=='Atmosphere',at); chk("…the theme in its title",'Candlelit tavern' in tt,tt)
+        chk("…and as three colour dots",await dm.locator('#atmoBtn .atsw b').count()==3)
         await dm.click('#setBtn'); await asyncio.sleep(.5)
         chk("settings button opens Settings and files",await T(dm,"document.querySelector('.panel[data-k=more]').open"))
         chk("light screen switch lives there",await dm.locator('.panel[data-k=more] #dmLightBtn').count()==1)

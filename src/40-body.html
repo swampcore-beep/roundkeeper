@@ -12,10 +12,11 @@
       <button class="btn sidebtn" id="sideBtn" type="button" data-act="sidetoggle" aria-expanded="false" aria-controls="side">Panel</button>
       <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)" aria-label="Rules"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span class="qkl">Rules</span></button>
       <button class="btn tcardpill" id="tcardPill" type="button" data-act="tcardoff" hidden></button>
-      <div class="hgroup tablegrp">
+      <div class="hgroup tablegrp" role="group" aria-labelledby="tableLbl">
+        <span class="grplbl" id="tableLbl">Table</span>
         <button class="btn joinpill" id="joinPill" type="button" data-act="devices" title="Devices: who is connected, the addresses and the QR code"></button>
         <button class="btn tvbtn" id="tvBtn" type="button" data-act="tvbar" title="What the TV shows" aria-expanded="false"><i class="jd"></i>TV</button>
-        <button class="btn atmobtn" id="atmoBtn" type="button" data-act="atmo" title="Atmosphere: theme, scene and background picture on the tablet">Atmosphere</button>
+        <button class="btn atmobtn" id="atmoBtn" type="button" data-act="atmo" title="Atmosphere on the tablet and TV: theme, scene, weather and picture">Atmosphere</button>
         <button class="btn" id="preview" type="button">Preview player screen</button>
         <button class="icon-btn lg previewic" type="button" data-act="previewic" title="Preview the player screen" aria-label="Preview the player screen"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>

@@ -246,8 +246,10 @@ function renderDM(){
   pendingRender=false;renderParty();renderEnc();renderCall();renderField();renderHand();
   const tsec=$("#timerSecs");if(tsec&&document.activeElement!==tsec)tsec.value=state.timerSecs||30;
   {const ab=$("#atmoBtn"),sl=(SCENES.find(x=>x[0]===(state.scene||"none"))||["",""])[1];
-   if(ab){ab.innerHTML=`${ic("palette")}<span>${esc(atmoLabel(state))}</span>`;
-     ab.title=`Atmosphere: ${atmoLabel(state)} · ${sl}${state.bg?" · picture":""}. Theme, scene and picture on the tablet`}}
+   if(ab){const P=(PALS[lookOf(state).pal]||PALS.tavern)[1],now=`${atmoLabel(state)} · ${sl}${state.bg?" · picture":""}`;
+     ab.innerHTML=`${ic("palette")}<span>Atmosphere</span><i class="atsw" aria-hidden="true" style="--sw0:${P[0]}">${P.slice(1).map(c=>
+       `<b style="background:${c}"></b>`).join("")}</i>`;
+     ab.title=`Atmosphere on the tablet and TV, now ${now}`;ab.setAttribute("aria-label",`Atmosphere, now ${now}`)}}
   {const tb=$("#tvBtn");if(tb){const m=(TV_MODES.find(x=>x[0]===((state.tv||{}).mode||"auto"))||["",""])[1];
     tb.innerHTML=`<i class="jd"></i>TV${state.tvSeen&&m?` <small>· ${esc(m)}</small>`:""}`}}
   $("#lairBtn").setAttribute("aria-pressed",String(!!state.lair));
