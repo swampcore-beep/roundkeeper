@@ -220,7 +220,8 @@ document.addEventListener("click",e=>{
     case "tend": turnMenuOn=false;state.turn=null;commit();toast("Turn tracking stopped");break;
     case "turnmenu": turnMenuOn=!turnMenuOn;renderDM();break;
     case "footmore": footMenu(!$("#footMenu").hidden?false:true);break;
-    case "settingsopen":{if(sbViewId){sbViewId=null;renderDM()}const pn=document.querySelector('.panel[data-k="more"]');
+    case "sidetoggle":{const d=$("#dm"),on=!d.classList.contains("sideon");d.classList.toggle("sideon",on);t.setAttribute("aria-expanded",String(on));break}
+    case "settingsopen":{$("#dm").classList.add("sideon");if(sbViewId){sbViewId=null;renderDM()}const pn=document.querySelector('.panel[data-k="more"]');
       if(pn){if(pn.classList.contains("on")&&pn.open){pn.open=false;pn.classList.remove("on");break}
       pn.classList.add("on");pn.open=true;if(!pn.dataset.tw){pn.dataset.tw="1";pn.addEventListener("toggle",()=>{if(!pn.open)pn.classList.remove("on")})}
       pn.scrollIntoView({block:"nearest",behavior:"smooth"});pn.classList.remove("ping");void pn.offsetWidth;pn.classList.add("ping")}break}

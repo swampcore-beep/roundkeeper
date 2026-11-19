@@ -378,13 +378,13 @@ function renderDM(){
       <div class="tools">
         ${c.kind!=="pc"?hpBox(c):c.php?pcHpBox(c):`<span class="hpw hpnone" title="${esc(c.name)} keeps HP on paper, or doesn't share it from the phone"
           aria-label="HP not shared">—</span>`}
-        <span class="ac-wrap"><button type="button" class="tog" data-act="showac" aria-pressed="${!!c.showAc}" title="${c.showAc?
+        <span class="ac-wrap"><button type="button" class="tog" tabindex="-1" data-act="showac" aria-pressed="${!!c.showAc}" title="${c.showAc?
           "Players see the AC: click to hide it":"Only you see the AC: click to show it"}" aria-label="Show AC to players">${c.showAc?I.eye:
           I.eyeoff}</button><input id="ac-${c.id}" class="${c.ac==null||c.ac===""?"acempty":""}" type="number" value="${c.ac??
             ""}" placeholder="AC" data-act="ac" aria-label="AC"></span>
-        <span class="stat"><button type="button" class="tog blood" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${
+        <span class="stat"><button type="button" class="tog blood" tabindex="-1" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${
           I.drop}<span class="tl">Bloodied</span></button>
-        <button type="button" class="tog downt" data-act="down" aria-pressed="${!!c.down}" title="${c.kind==="pc"?"0 HP":
+        <button type="button" class="tog downt" tabindex="-1" data-act="down" aria-pressed="${!!c.down}" title="${c.kind==="pc"?"0 HP":
           "Down"} (D)">${SKULL}<span class="tl">${c.kind==="pc"?"0 HP":
           "Down"}</span></button>
         <button type="button" class="morebtn2" data-act="rowmenu" aria-haspopup="menu" aria-expanded="${menuId===

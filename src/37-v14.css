@@ -191,3 +191,44 @@ html:root[data-dmlook=tool] .btn:disabled,html:root[data-dmlook=tool] .btn.prima
   html:root[data-dmlook=tool] main.dmgrid{grid-template-columns:minmax(0,1fr) 340px}}
 @media (max-width:1500px){html:root[data-dmlook=tool]{--cols:44px minmax(200px,260px) minmax(0,1fr) 120px 88px 168px}
   html:root[data-dmlook=tool] #roster .hexw,html:root[data-dmlook=tool] #roster .row.k-lair .lair-init{width:44px}}
+
+/* the roll call: who hasn't answered says "waiting" with a clock, not "…"; Send never greys out, it says what's missing */
+html:root[data-dmlook=tool] .callres .cw{display:inline-flex;align-items:center;gap:6px}
+html:root[data-dmlook=tool] .callres .cw.wait b{font-weight:500;color:var(--muted)}
+html:root[data-dmlook=tool] .cwi{width:12px;height:12px;flex:none}
+html:root[data-dmlook=tool] .fixhint{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs13);color:color-mix(in srgb,var(--accent) 80%,var(--fg))}
+
+/* a narrow window (under 1100 px): the side panel becomes a drawer from the right, opened from Panel in the header */
+html:root[data-dmlook=tool] .sidebtn{display:none}
+@media (max-width:1100px){
+  html:root[data-dmlook=tool] .sidebtn{display:inline-flex}
+  html:root[data-dmlook=tool] main.dmgrid{grid-template-columns:minmax(0,1fr)}
+  html:root[data-dmlook=tool] .side{position:fixed;z-index:26;right:0;top:var(--barh,64px);bottom:var(--covered,0px);width:min(380px,92vw);padding:8px;
+    background:var(--bg);box-shadow:-14px 0 40px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .2s ease;visibility:hidden}
+  html:root[data-dmlook=tool] #dm.sideon .side{transform:none;visibility:visible}}
+
+/* ---- dialogs: one surface, plain labels (no spaced capitals), the same fields and buttons everywhere ---- */
+html:root[data-dmlook=tool] .sheet{background:#26262a;border:1px solid #34343a;border-radius:12px;padding:20px 24px;gap:14px}
+html:root[data-dmlook=tool][data-dm=light] .sheet{background:var(--panel);border-color:var(--line)}
+html:root[data-dmlook=tool] .sheet h2{font-family:var(--ui);font-size:var(--fs20);font-weight:600;letter-spacing:0;font-variant:normal}
+html:root[data-dmlook=tool] .sheet .psub{font-size:var(--fs13);color:var(--muted)}
+html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) :is(.eyebrow2,.strip-label,.splv,.qkt,.sethead,.quick label,.add label span,.ptable .ph span){
+  text-transform:none;letter-spacing:0;font-variant:normal;font-family:var(--ui);font-size:var(--fs13);font-weight:500;color:var(--muted)}
+html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) .field{min-height:36px;border:1px solid var(--fieldline);border-radius:var(--rad);background:var(--bg);
+  font-size:var(--fs15)}
+html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) .field:focus{outline:0;border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent)}
+html:root[data-dmlook=tool] :is(.sheet,.hppop) .btn{border-radius:var(--rad);font-weight:500}
+html:root[data-dmlook=tool] .hppop{border-color:#34343a;background:#26262a;border-radius:12px}
+html:root[data-dmlook=tool][data-dm=light] .hppop{border-color:var(--line);background:var(--panel)}
+html:root[data-dmlook=tool] .side .sbbtn{background:var(--panel2);border-radius:var(--rad)}
+html:root[data-dmlook=tool] .sheet.devsheet{max-height:calc(100dvh - var(--covered,0px) - 32px);overflow:auto}
+html:root[data-dmlook=tool] .fixhint.shake{animation:hpshake .3s}
+
+/* the statblock line under a monster (In lair, LR, LA, Recharge): targets of at least 24 px; weights from the scale */
+html:root[data-dmlook=tool] #roster .sbline :is(.sbc,.sbreset,.sbrech,.sbmore){min-height:26px;padding:0 9px;border-radius:999px;font-size:var(--fs12);
+  font-weight:500}
+html:root[data-dmlook=tool] #roster .sbline .sbpip{width:14px;height:14px}
+html:root[data-dmlook=tool] #roster .cond .x,html:root[data-dmlook=tool] .side .pchip .x{min-width:24px;min-height:24px}
+html:root[data-dmlook=tool] #dm>.bar :is(.btn,.icon-btn){font-weight:500}
+html:root[data-dmlook=tool] #dm h1.brand{margin:0;font-size:var(--fs17);font-weight:600;line-height:1.2}

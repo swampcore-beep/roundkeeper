@@ -1,6 +1,7 @@
 /* ---------- DM tools: roll calls, battlefield, knowledge, hourglass, passives, quick add, shortcuts, export ---------- */
 let callSkip=new Set();   // players left out of the next roll call (everyone is in by default)
 const callTargets=()=>state.list.filter(c=>c.kind==="pc"&&!c.hidden&&!callSkip.has(c.id));
+const CLOCK='<svg class="cwi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
 function renderCall(){
   const call=state.call,el=$("#callStrip");const _ae=document.activeElement;if(_ae&&el.contains(_ae)&&_ae.tagName==="INPUT")return;
   const pcs=state.list.filter(c=>c.kind==="pc"&&!c.hidden);
@@ -13,8 +14,9 @@ function renderCall(){
         "Initiative"].map(x=>`<option value="${x}">`).join("")}</datalist>
       ${pcs.length>1?`<div class="chipgrid callpick" role="group" aria-label="Who rolls">${pcs.map(c=>
         `<button type="button" data-act="callpick" data-id="${esc(c.id)}" aria-pressed="${!callSkip.has(c.id)}">${esc(c.name)}</button>`).join("")}</div>`:""}
-      ${(()=>{const n=callTargets().length;return `<button class="btn primary" type="submit" ${n?"":"disabled"}>${!n?"Pick at least one player":n===pcs.length?
-        "Send to all players":`Send to ${n} player${n>1?"s":""}`}</button>`})()}</form>
+      ${(()=>{const n=callTargets().length;return `<button class="btn${n?" primary":""}" type="submit">${!n?"Send":n===pcs.length?
+        "Send to all players":`Send to ${n} player${n>1?"s":""}`}</button>${n?"":
+          `<span class="fixhint" role="status">Pick at least one player above</span>`}`})()}</form>
       <span class="strip-empty">Phones buzz and ask for the total; you see every result here.</span>`;
     return;
   }
@@ -23,7 +25,7 @@ function renderCall(){
   el.innerHTML=`<span class="strip-label">Roll call</span><b class="calltxt">${esc(call.text)}</b><small class="callin">${nin===to.length?"all in":
     `${nin} of ${to.length} in`}</small>
     <span class="callres">${to.map(c=>{const v=ans[c.id];const st=v==null?"wait":call.dc!=null?(v>=call.dc?"pass":"fail"):"done";
-      return `<span class="cw ${st}">${esc(c.name)} <b>${v==null?"…":v}</b></span>`}).join("")}</span>
+      return `<span class="cw ${st}">${v==null?CLOCK:""}${esc(c.name)} <b>${v==null?"waiting":v}</b></span>`}).join("")}</span>
     <span class="spacer"></span><button class="btn" type="button" data-act="callclose">Close roll call</button>`;
 }
 /* E1 (1.3): handouts. The DM writes a note, a letter, a wanted poster or a page of lore, picks a style, and shows it on the tablet,
