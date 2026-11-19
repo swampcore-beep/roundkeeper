@@ -214,9 +214,10 @@ html:root[data-dmlook=tool] .sheet h2{font-family:var(--ui);font-size:var(--fs20
 html:root[data-dmlook=tool] .sheet .psub{font-size:var(--fs13);color:var(--muted)}
 html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) :is(.eyebrow2,.strip-label,.splv,.qkt,.sethead,.quick label,.add label span,.ptable .ph span){
   text-transform:none;letter-spacing:0;font-variant:normal;font-family:var(--ui);font-size:var(--fs13);font-weight:500;color:var(--muted)}
-html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) .field{min-height:36px;border:1px solid var(--fieldline);border-radius:var(--rad);background:var(--bg);
+html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) :is(input,select,textarea).field{min-height:36px;border:1px solid var(--fieldline);
+  border-radius:var(--rad);background:var(--bg);
   font-size:var(--fs15)}
-html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) .field:focus{outline:0;border-color:var(--accent);
+html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) :is(input,select,textarea).field:focus{outline:0;border-color:var(--accent);
   box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent)}
 html:root[data-dmlook=tool] :is(.sheet,.hppop) .btn{border-radius:var(--rad);font-weight:500}
 html:root[data-dmlook=tool] .hppop{border-color:#34343a;background:#26262a;border-radius:12px}
