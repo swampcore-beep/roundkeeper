@@ -2194,13 +2194,13 @@ body.tvcover #player{visibility:hidden}
   background:color-mix(in srgb,var(--bg) 78%,transparent);border:1.5px solid color-mix(in srgb,var(--fc,var(--accent)) 35%,var(--line))}
 .tvsp.B .card{flex:1;flex-direction:column;align-items:flex-start;gap:.6vw}.tvsp.B .card.n1{flex:1.35}
 .tvsp .card.n1{border-color:color-mix(in srgb,var(--fc,var(--accent)) 75%,transparent)}
-.tvsp .card .tag,.tvord .tag{position:absolute;top:-.75em;right:1em;font-size:clamp(11px,.95vw,18px);font-weight:900;letter-spacing:.2em;
+.tvsp .card .tag,.tvord .tag,.tvparty .tag{position:absolute;top:-.75em;right:1em;font-size:clamp(11px,.95vw,18px);font-weight:900;letter-spacing:.2em;
   background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:2px 10px}
 .tvsp .card .row1{display:flex;align-items:center;gap:.8vw}
 .tvsp .hex{position:relative;width:3.3vw;height:3.3vw;flex:none;display:grid;place-items:center}.tvsp .hex svg{position:absolute;inset:0;width:100%;height:100%;
   fill:none;stroke:color-mix(in srgb,var(--fc,var(--accent)) 70%,var(--fg));stroke-width:1.4}
 .tvsp .hex b{font-size:clamp(13px,1.35vw,26px);font-weight:800}
-.tvsp .card .ce,.tvord .ce{width:2.8vw;height:2.8vw;flex:none;background:var(--fc,var(--accent));-webkit-mask:var(--sig) center/contain no-repeat;
+.tvsp .card .ce,.tvord .ce,.tvparty .ce{width:2.8vw;height:2.8vw;flex:none;background:var(--fc,var(--accent));-webkit-mask:var(--sig) center/contain no-repeat;
   mask:var(--sig) center/contain no-repeat}
 .tvsp .card .cn{font-family:var(--display);font-size:clamp(20px,2.4vw,46px);font-weight:800;line-height:1}.tvsp .card.n1 .cn{font-size:clamp(22px,2.8vw,54px)}
 .tvsp .card .cs{font-size:clamp(12px,1.05vw,20px);color:var(--muted);font-weight:700;margin-top:.3em}
@@ -2446,6 +2446,55 @@ html[data-mfont=A] .mo-q,html[data-mfont=F] .mo-q{font-size:clamp(22px,3.6vw,56p
 .tvsp .spot.arrive>*{animation:tvArrive .5s cubic-bezier(.2,.7,.2,1) .34s both}
 @keyframes tvArrive{from{opacity:0;transform:translateY(.35em)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.tvsp .spot.arrive>*{animation:none}}body.tvlite .tvsp .spot.arrive>*{animation:none}
+/* 1.4.1 (1): the picture from Lore & picture in the spotlight, in place of the sigil */
+.tvsp .emb.pic{-webkit-mask:none;mask:none;background:center/cover no-repeat;width:15vw;height:20vw;max-height:40vh;max-width:30vh;border-radius:22px;
+  border:2px solid var(--fc,var(--accent));filter:none;box-shadow:0 30px 60px rgba(0,0,0,.45)}
+.tvsp.B .emb.pic{width:8vw;height:10.7vw;max-height:22vh;max-width:16.5vh;border-radius:16px}
+/* 1.4.1 (2): the party along the bottom */
+.tvsp.wp{bottom:calc(5vh + 17vh + 2vh)}
+.tvparty{position:fixed;left:5vw;right:5vw;bottom:5vh;height:17vh;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:1.2vw}
+.tvparty .pt{position:relative;min-width:0;box-sizing:border-box;display:flex;flex-direction:column;gap:.7vw;padding:1vw 1.2vw;border-radius:20px;
+  border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);background:color-mix(in srgb,var(--fg) 4%,transparent)}
+.tvparty .pt.on{border:2px solid var(--fc,var(--accent));background:color-mix(in srgb,var(--fc,var(--accent)) 13%,transparent)}
+.tvparty .pt.st-down .ph,.tvparty .pt.st-dead .ph{filter:grayscale(1);opacity:.7}
+.tvparty .ph{display:flex;align-items:center;gap:.8vw;min-width:0}.tvparty .ph>div{min-width:0}
+.tvparty .cn{font-family:var(--display);font-size:clamp(17px,2vw,40px);font-weight:800;line-height:1.1;white-space:nowrap;overflow:hidden}
+.tvparty .cs{font-size:clamp(11px,.95vw,19px);color:var(--muted);font-weight:700;margin-top:.2em}
+.tvparty .pst{display:flex;flex-wrap:wrap;align-content:flex-start;gap:.45vw;overflow:hidden;min-height:0;flex:1}
+.tvparty .ptg,#tvLayer .tvparty .tvst:not(.chip){display:inline-flex;align-items:center;gap:.35em;margin:0;padding:.18em .65em;border-radius:999px;
+  font-weight:800;
+  font-size:clamp(11px,1vw,20px);line-height:1.2;white-space:nowrap;--c:var(--muted);color:color-mix(in srgb,var(--c) 30%,var(--fg));
+  background:color-mix(in srgb,var(--c) 20%,transparent)}
+.tvparty .ptg.conc{--c:#bf94f5}.tvparty .ptg.eff{--c:#e8c06a}.tvparty .ptg.cond{--c:#e4a93a}.tvparty .ptg.insp{--c:var(--accent)}
+.tvparty .ptg.rx{--c:var(--muted);color:var(--muted)}
+.tvparty .dsp{display:inline-flex;align-items:center;gap:.25vw;padding:.18em .5em}.tvparty .dsp b{width:.35vw}
+.tvparty .dsp i{width:max(9px,.85vw);height:max(9px,.85vw);border-radius:50%;box-sizing:border-box;border:2px solid #7fc48f}
+.tvparty .dsp i.on{background:#7fc48f}.tvparty .dsp i.f{border-color:var(--blood)}.tvparty .dsp i.f.on{background:var(--blood)}
+/* 1.4.1 (3): this round, under On deck */
+.tvsp .deck.wf{justify-content:flex-start}
+.tvfeed{margin-top:auto;display:flex;flex-direction:column;gap:.75vw;padding:1.1vw 1.3vw;border-radius:20px;background:color-mix(in srgb,#000 22%,transparent);
+  border:1px solid color-mix(in srgb,var(--fg) 10%,transparent)}
+.tvfeed .fl{display:flex;align-items:center;gap:.8vw;font-size:clamp(13px,1.25vw,25px);font-weight:700;line-height:1.15;min-width:0}
+.tvfeed .fl>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tvfeed .fi{display:inline-flex;flex:none}.tvfeed .fi svg{width:1.3em;height:1.3em;fill:currentColor}.tvfeed .fi svg [stroke]{fill:none}
+.tvfeed .fi.sk{color:var(--muted)}.tvfeed .fi.bl{color:var(--blood)}
+.tvfeed .d20{flex:none;min-width:1.5em;height:1.5em;display:grid;place-items:center;font-size:.7em;font-weight:900;border:2px solid var(--muted);
+  border-radius:.4em;color:var(--muted)}
+.tvfeed .d20.n20{border-color:var(--accent);color:var(--accent)}
+.tvfeed .cring{flex:none;width:1.2em;height:1.2em;border-radius:50%;box-sizing:border-box;border:2px dashed #bf94f5}
+.tvfeed .dot{flex:none;width:.5em;height:.5em;border-radius:50%;background:var(--muted);margin:0 .35em}
+/* with the party and This round, everything keeps to its row: the deck gets compact cards and one-line names */
+.tvsp.wp{grid-template-rows:minmax(0,1fr)}.tvsp.wp.B{grid-template-rows:minmax(0,1fr) auto}.tvsp .deck{min-height:0}
+.tvsp .deck.wf{gap:.8vw}.tvsp .deck.wf .card{padding:.75vw 1.2vw}.tvsp .deck.wf .card .cn{white-space:nowrap;font-size:clamp(18px,2vw,40px)}
+.tvsp .deck.wf .card.n1 .cn{font-size:clamp(20px,2.3vw,46px)}.tvsp .deck.wf .hex{width:2.8vw;height:2.8vw}
+.tvfeed .fl.key{color:var(--fg)}.tvfeed .fl:not(.key){color:color-mix(in srgb,var(--fg) 80%,var(--muted))}
+.tvparty .tvst.st-bloodied{--c:var(--blood)!important}.tvparty .tvst.st-stable{--c:#7fc48f!important}
+#tvLayer .tvparty .tvst:not(.chip) svg{width:1.05em;height:1.05em}
+/* layout B with the party: the spotlight keeps its words in one row so nothing is cut */
+.tvsp.B.wp .spot{gap:.7vw;padding:1.4vw 3vw}.tvsp.B.wp .who{flex-direction:row;gap:2vw;text-align:left}
+.tvsp.B.wp .emb{width:5.5vw;height:5.5vw}.tvsp.B.wp .emb.pic{width:6.6vw;height:8.8vw;max-height:20vh}
+.tvsp.B.wp .big,.tvsp.B.wp .big.long{font-size:clamp(34px,5vw,100px)}.tvsp.B.wp .big.xl{font-size:clamp(30px,3.8vw,76px)}
+.tvsp.B.wp .card{padding:.7vw 1vw;gap:.35vw}.tvsp.B.wp .card .cn{white-space:nowrap;font-size:clamp(17px,1.8vw,36px)}
 /* ---------- DM screen, v1.1 layout: grouped header, quieter rows, grouped bottom bar ---------- */
 /* header: the fight on the left (Round · ← · Next turn · ⋯), then Rules, the table's screens, undo/redo and settings */
 html:root .brand{margin-right:10px}
@@ -6167,6 +6216,14 @@ function clogScan(){
     if(v.pc&&o.down&&!v.down)clogPush(`${v.name} is back on their feet`)});
   clogSeen=now;
 }
+/* 1.4.1: the TV's "This round": the last four public lines of the round (the round before while this one is empty). Only
+   what the table saw happen: no rolls or DCs, no lair text, nothing that names a hidden creature. */
+const RFEED_RX=/ is defeated$| drops to 0 HP$| dies$| is stable$| is back on their feet$|: natural (20|1)$| loses Concentration| is Bloodied$| appears$/;
+function rfeedSync(){const t=state.turn;if(!t||state.ended){state.rfeed=null;return}
+  const hid=state.list.filter(c=>c.hidden).map(c=>c.name.toLowerCase()),pick=r=>(state.clog||[]).filter(x=>x.r===r&&typeof x.t==="string"&&
+    RFEED_RX.test(x.t)&&!hid.some(n=>x.t.toLowerCase().includes(n))).map(x=>x.t.replace(/ loses Concentration.*$/," loses Concentration"));
+  let r=t.round,L=pick(r);if(!L.length&&r>1){r--;L=pick(r)}
+  state.rfeed=L.length?{r,lines:L.slice(-4)}:null}
 function callRecap(){const k=state.call;if(!k||k.logged)return;const a=k.answers||{};
   const to=(k.to&&k.to.length?k.to:state.list.filter(c=>c.kind==="pc"&&!c.hidden).map(c=>c.id)).map(byId).filter(Boolean);
   if(!to.length||to.some(c=>a[c.id]==null))return;k.logged=true;
@@ -6267,7 +6324,7 @@ function finish(){
     if(state.clogAt!==state.fightAt){state.clog=[];state.cstat={};state.tstat={};state.nstat={};state.clogAt=state.fightAt;clogSeen=null}
     lost.forEach(n=>clogPush(`${n} loses Concentration`));
     state.list.forEach(c=>{if(c.cdur)for(const n in c.cdur)if(!hasCond(c,n))delete c.cdur[n]});
-    clogScan();callRecap();
+    clogScan();callRecap();rfeedSync();
   }
   // effects disappear with their targets, with the caster, and when the caster loses Concentrating
   state.effects=(state.effects||[]).map(e=>Object.assign({},e,{targets:e.targets.filter(id=>byId(id))})).filter(e=>{const c=byId(e.by);
@@ -10851,6 +10908,28 @@ function tvKenBurns(on){const b=$("#bgimg");if(!b)return;on=on&&b.classList.cont
     b.style.scale=k?"1.14":"1";b.style.translate=k?"-2.5% -1.5%":"0 0"};
   setTimeout(go,50);tvKenBurns.t=setInterval(go,40000)}
 let tvTick=null;
+const picOk=c=>!!c.introImg&&/^[a-f0-9]{12}\.(jpg|png|webp)$/.test(c.introImg);
+/* 1.4.1 (2): the whole party along the bottom of the spotlight, with what is on each of them; never their HP */
+function tvPartyHtml(pcs,onId,stTag,stCls,fk){
+  const tag=(cls,t)=>`<span class="ptg ${cls}">${t}</span>`;
+  return `<div class="tvparty" style="--n:${pcs.length}">${pcs.map(p=>{const on=p.id===onId,cs=(p.conds||[]).map(x=>x.n||x),ds=p.ds||{};
+    const dsp=p.down&&!isStable(p)&&!isDead(p)?`<span class="dsp" aria-label="Death saves: ${ds.s||0} saved, ${ds.f||0} failed">${[0,1,2].map(k=>
+      `<i class="s${k<(ds.s||0)?" on":""}"></i>`).join("")}<b></b>${[0,1,2].map(k=>`<i class="f${k<(ds.f||0)?" on":""}"></i>`).join("")}</span>`:"";
+    const b=[stTag(p),dsp,cs.includes("Concentrating")?tag("conc","Concentrating"):"",
+      ...(state.effects||[]).filter(e=>(e.targets||[]).includes(p.id)).slice(0,2).map(e=>tag("eff","✦ "+esc(e.name))),
+      ...cs.filter(n=>n!=="Concentrating").slice(0,2).map(n=>tag("cond",esc(n))),p.insp?tag("insp","★ Inspiration"):"",
+      (p.tags||[]).includes("reaction")?tag("rx","Reaction used"):""].filter(Boolean).join("");
+    return `<div class="pt fr fr-${fk(p)}${on?" on":""}${stCls(p)}">${on?`<span class="tag">NOW</span>`:
+      ""}<div class="ph"><span class="ce"></span><div><div class="cn" title="${esc(p.name)}">${
+      esc(pcs.length>4&&p.name.length>12&&/\s/.test(p.name)?p.name.split(/\s+/)[0]:p.name)}</div><div class="cs">${esc(LABEL[p.cls]||
+        "Player")}</div></div></div><div class="pst">${b}</div></div>`}).join("")}</div>`}
+/* 1.4.1 (3): what happened this round (the DM's log, filtered to public lines in rfeedSync) */
+function tvFeedHtml(F){const ico=x=>/defeated|dies/.test(x)?`<span class="fi sk">${SKULL}</span>`:/drops to 0|Bloodied/.test(x)?
+  `<span class="fi bl">${I.drop}</span>`:/natural 20/.test(x)?`<span class="d20 n20">20</span>`:
+    /natural 1\b/.test(x)?`<span class="d20">1</span>`:/Concentration/.test(x)?`<span class="cring"></span>`:`<span class="dot"></span>`;
+  const say=x=>x.replace(/^(.+): natural (20|1)$/,"$1 rolls a natural $2");
+  return `<div class="tvfeed"><h4>${state.turn&&F.r===state.turn.round?"This round":"Last round"}</h4>${F.lines.map(x=>
+    `<div class="fl${/defeated|dies|drops to 0/.test(x)?" key":""}">${ico(x)}<span>${esc(say(x))}</span></div>`).join("")}</div>`}
 function tvRender(list,first){
   let el=$("#tvLayer");if(!el){el=document.createElement("div");el.id="tvLayer";document.body.appendChild(el)}
   const T=state.tv||{},mode=tvModeNow(list),hx=I.hex,fk=c=>c.kind==="lair"?"":frameKey(c);
@@ -10898,22 +10977,24 @@ function tvRender(list,first){
     if(away){const ti=state.turn.init??99,v=c=>c.kind==="lair"?20:initOf(c);i=list.findIndex(c=>v(c)<ti);if(i<0)i=0}
     const c=list[i]||list[0],arrive=!first&&pv.tvSpotId!==undefined&&pv.tvSpotId!==c.id;pv.tvSpotId=c.id;   // a new turn: the words wait for the glide
     const nx=[];for(let k=1;k<list.length&&nx.length<((T.layout||"A")==="B"?4:3);k++)nx.push(list[(i+k)%list.length]);
-    const nr=k=>i+k>=list.length;
-    h=`${top}<div class="tvsp ${T.layout==="B"?"B":"A"}"><section class="spot k-${c.kind}${fk(c)?" fr fr-"+fk(c):
+    const nr=k=>i+k>=list.length,pcs=list.filter(p=>p.kind==="pc"),wp=T.party!==false&&pcs.length>0,F=state.rfeed,
+      wf=T.feed!==false&&(T.layout||"A")==="A"&&F&&F.lines&&F.lines.length>0;
+    h=`${top}<div class="tvsp ${T.layout==="B"?"B":"A"}${wp?" wp":""}"><section class="spot k-${c.kind}${fk(c)?" fr fr-"+fk(c):
       ""}${stCls(c)}${arrive?" arrive":""}" data-tid="${esc(c.id)}"><div class="eyeb"><span>${away?"Up next":
         "On turn"}</span><span class="rnd">Round ${state.turn?state.turn.round:1}</span></div>
-      <div class="who"><span class="emb"></span><div><div class="big${c.name.length>18?" xl":c.name.length>11?" long":
+      <div class="who">${picOk(c)?`<span class="emb pic" style="background-image:url(/bg/${c.introImg})"></span>`:
+        `<span class="emb"></span>`}<div><div class="big${c.name.length>18?" xl":c.name.length>11?" long":
         ""}">${esc(c.name)}</div><div class="sub">${esc(who(c))}${c.kind==="pc"&&!away?" · <b>your move</b>":""}</div>${c.boss&&c.title?
         `<div class="plate">${esc(c.title)}</div>`:""}${phaseHtml(c)}</div></div><div class="chips">${stChip(c)}${conds(c)}</div></section>
-      <section class="deck"><h4>On deck</h4>${nx.map((d,k)=>`<div class="card k-${d.kind}${fk(d)?" fr fr-"+fk(d):""}${k===0&&!away?" n1":
+      <section class="deck${wf?" wf":""}"><h4>On deck</h4>${nx.map((d,k)=>`<div class="card k-${d.kind}${fk(d)?" fr fr-"+fk(d):""}${k===0&&!away?" n1":
         ""}${stCls(d)}" data-tid="${esc(d.id)}">${k===0&&!away?`<span class="tag">NEXT</span>`:""}<div class="row1"><span class="hex">${hx}<b>${d.kind==="lair"?
           20:initOf(d)>-999?
         initOf(d):"–"}</b></span><span class="ce"></span></div><div><div class="cn">${esc(d.name)}</div><div class="cs">${esc(who(d))}${nr(k+1)?" · next round":
-        ""}${stTag(d)}</div></div></div>`).join("")}</section></div>`}
+        ""}${stTag(d)}</div></div></div>`).join("")}${wf?tvFeedHtml(F):""}</section></div>${wp?tvPartyHtml(pcs,away?null:c.id,stTag,stCls,fk):""}`}
   pv.tvOld=new Map([...el.querySelectorAll("[data-tid]")].map(n=>[n.dataset.tid,{node:n,rect:n.getBoundingClientRect()}]));
   el.innerHTML=h+(document.fullscreenElement?"":`<button class="fsbtn tvfs" type="button" data-act="fs">${fsLabel()}</button>`);
   // a long name shrinks to fit its card instead of breaking mid-word (smaller TVs, 1280×720)
-  el.querySelectorAll(".tvsp .big,.tvsp .cn,.tvord .cn").forEach(n=>{let fs=parseFloat(getComputedStyle(n).fontSize);for(let k=0;
+  el.querySelectorAll(".tvsp .big,.tvsp .cn,.tvord .cn,.tvparty .cn").forEach(n=>{let fs=parseFloat(getComputedStyle(n).fontSize);for(let k=0;
     k<24&&n.scrollWidth>n.clientWidth+1&&fs>14;k++){fs*=.93;n.style.fontSize=fs+"px"}});
   // a new round: the big number and what happened (once per round)
   const r=state.turn&&state.turn.round;if(r&&pv.tvRound!==undefined&&r>pv.tvRound&&!first&&screenWants("round")&&mode!=="pause")tvRoundShow(r);pv.tvRound=r||0;
@@ -10945,7 +11026,7 @@ function tvBarRender(){
       k}">${l}</button>`).join("")}</div>
     <p class="psub">Auto: the scene when there's no fight, the order while initiative comes in, Spotlight during turns, the end screen after.</p>
     <div class="tvp-g"><div><div class="eyebrow2">Title card</div><form id="tvTitleForm" class="tvtf" autocomplete="off"><input class="field" id="tvT" maxlength="50" placeholder="The Misty Woods" value="${
-      esc(t.t||"")}"><input class="field" id="tvSub" maxlength="70" placeholder="Two days north of Daggerford" value="${esc(t.sub||
+      esc(t.t||"")}"><input class="field" id="tvSub" maxlength="70" placeholder="Two days north of the river" value="${esc(t.sub||
       "")}"><input class="field" id="tvEb" maxlength="40" placeholder="Session 12 · Exploring" value="${esc(t.eb||"")}">
         <div class="spacts"><button class="btn" type="button" data-act="tvtitleclr">Clear</button><button class="btn primary" type="submit">Show on the TV</button></div></form></div>
       <div><div class="eyebrow2">Pause</div><div class="spacts">${paused?
@@ -10953,6 +11034,8 @@ function tvBarRender(){
         `<button class="btn" type="button" data-act="tvpause" data-v="${m}">${m} min</button>`).join("")}</div>
         <div class="eyebrow2" style="margin-top:10px">In a fight</div><div class="seg2">${[["A","On deck at the side"],["B","On deck below"]].map(([k,l])=>
           `<button type="button" data-act="tvlayout" data-v="${k}" aria-pressed="${(T.layout||"A")===k}">${l}</button>`).join("")}</div>
+        <div class="seg2" style="margin-top:8px">${[["party","The party"],["feed","This round"]].map(([k,l])=>
+          `<button type="button" data-act="tvshow" data-k="${k}" aria-pressed="${T[k]!==false}">${l}</button>`).join("")}</div>
         <button type="button" class="btn" style="margin-top:10px" data-act="tvlook">The TV's look…</button></div></div>
     <div class="eyebrow2">Where each moment shows (while the TV is connected)</div><div class="tvev">${TV_EV.map(([k,l,def])=>
       `<span>${esc(l)}</span><span class="seg3">${[["surface","Tablet"],["tv","TV"],["both","Both"]].map(([v,lb])=>
@@ -11601,6 +11684,8 @@ document.addEventListener("click",e=>{
     case "atvsame": atmoD={same:true};atmoRefresh();break;
     case "amfont": atmoD.mfont=t.dataset.v;atmoRefresh();break;
     case "tvlayout": state.tv=Object.assign({},state.tv,{layout:t.dataset.v});commit();if($(".sheet.atmo2"))atmoRefresh();tvBarRender();break;
+    case "tvshow":{const k=t.dataset.k;if(k!=="party"&&k!=="feed")break;state.tv=Object.assign({},state.tv,{[k]:(state.tv||{})[k]===false});commit();
+      tvBarRender();break}
     case "dmdev": dmPair=null;dmDevLoad().then(dmDevSheet);break;
     case "dmpairnew": dmPairMake(dmPair&&dmPair.name||"");break;
     case "dmpaircancel": dmPair=null;dmDevLoad().then(dmDevSheet);break;

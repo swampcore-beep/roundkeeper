@@ -100,6 +100,8 @@ document.addEventListener("click",e=>{
     case "atvsame": atmoD={same:true};atmoRefresh();break;
     case "amfont": atmoD.mfont=t.dataset.v;atmoRefresh();break;
     case "tvlayout": state.tv=Object.assign({},state.tv,{layout:t.dataset.v});commit();if($(".sheet.atmo2"))atmoRefresh();tvBarRender();break;
+    case "tvshow":{const k=t.dataset.k;if(k!=="party"&&k!=="feed")break;state.tv=Object.assign({},state.tv,{[k]:(state.tv||{})[k]===false});commit();
+      tvBarRender();break}
     case "dmdev": dmPair=null;dmDevLoad().then(dmDevSheet);break;
     case "dmpairnew": dmPairMake(dmPair&&dmPair.name||"");break;
     case "dmpaircancel": dmPair=null;dmDevLoad().then(dmDevSheet);break;

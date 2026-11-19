@@ -17,6 +17,14 @@ function clogScan(){
     if(v.pc&&o.down&&!v.down)clogPush(`${v.name} is back on their feet`)});
   clogSeen=now;
 }
+/* 1.4.1: the TV's "This round": the last four public lines of the round (the round before while this one is empty). Only
+   what the table saw happen: no rolls or DCs, no lair text, nothing that names a hidden creature. */
+const RFEED_RX=/ is defeated$| drops to 0 HP$| dies$| is stable$| is back on their feet$|: natural (20|1)$| loses Concentration| is Bloodied$| appears$/;
+function rfeedSync(){const t=state.turn;if(!t||state.ended){state.rfeed=null;return}
+  const hid=state.list.filter(c=>c.hidden).map(c=>c.name.toLowerCase()),pick=r=>(state.clog||[]).filter(x=>x.r===r&&typeof x.t==="string"&&
+    RFEED_RX.test(x.t)&&!hid.some(n=>x.t.toLowerCase().includes(n))).map(x=>x.t.replace(/ loses Concentration.*$/," loses Concentration"));
+  let r=t.round,L=pick(r);if(!L.length&&r>1){r--;L=pick(r)}
+  state.rfeed=L.length?{r,lines:L.slice(-4)}:null}
 function callRecap(){const k=state.call;if(!k||k.logged)return;const a=k.answers||{};
   const to=(k.to&&k.to.length?k.to:state.list.filter(c=>c.kind==="pc"&&!c.hidden).map(c=>c.id)).map(byId).filter(Boolean);
   if(!to.length||to.some(c=>a[c.id]==null))return;k.logged=true;
@@ -117,7 +125,7 @@ function finish(){
     if(state.clogAt!==state.fightAt){state.clog=[];state.cstat={};state.tstat={};state.nstat={};state.clogAt=state.fightAt;clogSeen=null}
     lost.forEach(n=>clogPush(`${n} loses Concentration`));
     state.list.forEach(c=>{if(c.cdur)for(const n in c.cdur)if(!hasCond(c,n))delete c.cdur[n]});
-    clogScan();callRecap();
+    clogScan();callRecap();rfeedSync();
   }
   // effects disappear with their targets, with the caster, and when the caster loses Concentrating
   state.effects=(state.effects||[]).map(e=>Object.assign({},e,{targets:e.targets.filter(id=>byId(id))})).filter(e=>{const c=byId(e.by);

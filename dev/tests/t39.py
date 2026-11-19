@@ -1,5 +1,6 @@
 import sys as _sys,os as _os;_sys.path.insert(0,_os.path.dirname(_os.path.abspath(__file__)));_sys.path.insert(0,_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))));import rk  # dev/rk.py: paths and addresses
-# 1.4.1, the TV: Bloodied, Down, Stable and Dead on every card (a player's Bloodied never reached the TV); when the creature
+# 1.4.1, the TV: Bloodied, Down, Stable and Dead on every card (a player's Bloodied never reached the TV); the picture from
+# Lore & picture in the spotlight, the party along the bottom (never HP), This round (never a hidden creature); when the creature
 # whose turn it is isn't on the TV (hidden, or defeated before Next turn) the spotlight says "Up next" instead of naming
 # someone else "On turn"; a roll call nobody has answered doesn't say "0 of 0"; the end card has no minutes.
 import asyncio
@@ -48,14 +49,43 @@ async def main():
         chk("…without 'your move'",'your move' not in await tv.inner_text('.tvsp .spot .sub'))
         chk("…the hidden one is nowhere",'Lurking' not in await tv.inner_text('#tvLayer'))
         # a defeated enemy still holding the turn
-        await T(dm,"state.turn={id:'o',round:1,init:14};commit()"); await asyncio.sleep(1.8)
+        await T(dm,"byId('o').introImg='abcdef123456.png';state.turn={id:'o',round:1,init:14};commit()"); await asyncio.sleep(1.8)
         chk("the Orc's turn: Orc in the spotlight",'Orc' in await tv.inner_text('.tvsp .spot .big'))
+        st=await tv.get_attribute('.tvsp .spot .emb','style') or ''
+        chk("its picture from Lore & picture instead of the sigil",await tv.locator('.tvsp .spot .emb.pic').count()==1 and '/bg/abcdef123456.png' in st,st)
         await T(dm,"byId('o').hp=0;byId('o').down=true;commit()"); await asyncio.sleep(2.5)
         eb=await tv.inner_text('.tvsp .spot .eyeb'); big=await tv.inner_text('.tvsp .spot .big')
         chk("defeated before Next turn: Up next Gregori",'UP NEXT' in eb.upper() and 'Gregori' in big,(eb,big))
         chk("no NEXT tag on deck while the spotlight is the next one",await tv.locator('.tvsp .deck .tag').count()==0)
         await T(dm,"state.turn={id:'g',round:1,init:10};commit()"); await asyncio.sleep(1.8)
         chk("back to On turn",'ON TURN' in (await tv.inner_text('.tvsp .spot .eyeb')).upper())
+        # the party along the bottom: every player, what is on them, never a number
+        await T(dm,"byId('i').php=23;byId('g').insp=true;byId('g').tags=['reaction'];byId('g').conds=['Concentrating'];byId('s').ds={s:1,f:2};commit()")
+        await asyncio.sleep(1.5)
+        chk("three players in the party strip",await tv.locator('.tvparty .pt').count()==3)
+        pt=await tv.inner_text('.tvparty')
+        chk("the one on turn is marked NOW",await tv.locator('.tvparty .pt.on').count()==1 and 'Gregori' in await tv.inner_text('.tvparty .pt.on'))
+        chk("…Bloodied, Down, Concentrating, Inspiration, Reaction used",all(w in pt for w in ['Bloodied','Down','Concentrating','Inspiration','Reaction used']),pt)
+        chk("…death saves as dots",await tv.locator('.tvparty .dsp i.s.on').count()==1 and await tv.locator('.tvparty .dsp i.f.on').count()==2)
+        import re as _re
+        chk("…and no numbers (no HP)",not _re.search(r'\d',pt),pt)
+        # This round: what the table saw, never a hidden creature
+        await T(dm,"clogPush('Lurking Assassin loses Concentration');clogPush('Isandros: natural 20');clogPush('Isandros: Prone ends (save 14 vs DC 12)');commit()")
+        await asyncio.sleep(1.5)
+        fd=await tv.inner_text('.tvsp .tvfeed')
+        chk("This round under On deck",'THIS ROUND' in fd.upper() and 'Orc is defeated' in fd and 'Styx dies' in fd and await tv.locator('.tvfeed .fl').count()==4,fd)
+        chk("…a natural 20 reads as a sentence",'Isandros rolls a natural 20' in fd,fd)
+        chk("…no hidden creature, no rolls or DCs",'Lurking' not in fd and 'DC' not in fd,fd)
+        pub=await tv.evaluate("fetch('/state').then(r=>r.json())")
+        chk("the public state's rfeed never names the hidden one",'Lurking' not in str(pub.get('rfeed')) and pub.get('rfeed') is not None,pub.get('rfeed'))
+        chk("…and players never get HP",'php' not in str(pub.get('list')))
+        # both can be switched off from the DM's TV menu
+        await T(dm,"tvPopOn=true;tvBarRender()"); await asyncio.sleep(.3)
+        await dm.click('#tvPop [data-act=tvshow][data-k=party]'); await dm.click('#tvPop [data-act=tvshow][data-k=feed]'); await asyncio.sleep(1.4)
+        chk("party and This round switched off",await tv.locator('.tvparty').count()==0 and await tv.locator('.tvfeed').count()==0)
+        await dm.click('#tvPop [data-act=tvshow][data-k=party]'); await dm.click('#tvPop [data-act=tvshow][data-k=feed]'); await asyncio.sleep(1.4)
+        chk("…and back on",await tv.locator('.tvparty').count()==1 and await tv.locator('.tvfeed').count()==1)
+        await T(dm,"tvPopOn=false;tvBarRender()")
         # a roll call nobody has answered
         await T(dm,"state.call={id:'c1',text:'Wisdom save',dc:13,at:Date.now(),to:['i','g'],answers:{}};commit()"); await asyncio.sleep(1.4)
         s=await tv.inner_text('.tvcall .t2sum')
