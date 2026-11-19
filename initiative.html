@@ -2649,21 +2649,22 @@ body.sbopen #roster .chips:has(.cond:not(.addc)) .addc{position:absolute;right:0
   background:var(--panel2);box-shadow:-6px 0 8px var(--panel)}}
 /* ---------- DM screen, 1.3: the tool look (default; Settings → This laptop → Classic look brings back 1.1) ----------
    After Encounter+: a neutral app around the content. Near-black graphite in three steps (page, panels, rows), the system font,
-   one orange accent only for the turn and Next turn, blue only for what steps up and down. The statblock is the one bookish place. */
+   one neutral accent (white, black on the light screen) for the turn and the main buttons, so colour on this screen always means a state,
+   blue only for what steps up and down. The statblock is the one bookish place. */
 .cico{display:none}
 .dmpic{display:contents}
 .tiledock{display:none}
 :root[data-dmlook=tool]{
   --bg:#111113;--panel:#1b1b1e;--panel2:#2a2a2e;--line:#2e2e33;--fg:#f5f5f7;--muted:#a3a3aa;--faint:#7b7b82;
-  --accent:#f08a24;--accent-ink:#1a1005;--pc:#5eb8f0;--enemy:#ff6b62;--ally:#5ad36e;--blood:#e5484d;--arcane:#bf94f5;--boss:#e3a64e;
-  --save:#4cc46a;--fail:#ff5f57;--step:#3d9bff;--row:#222226;--rownow:#2d2a27;
+  --accent:#f5f5f7;--accent-ink:#111113;--pc:#5eb8f0;--enemy:#ff6b62;--ally:#5ad36e;--blood:#e5484d;--arcane:#bf94f5;--boss:#e3a64e;
+  --save:#4cc46a;--fail:#ff5f57;--step:#3d9bff;--row:#222226;--rownow:#303036;
   --ui:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",system-ui,"Helvetica Neue",Arial,sans-serif;
   --display:var(--ui);--body:var(--ui);
   --cg-out:#ff7a70;--cg-body:#e4a93a;--cg-mind:#c49cf7;--cg-sense:#6cc7ef;--cg-conc:#bf94f5}
 :root[data-dmlook=tool][data-dm=light]{
   --bg:#e9e9ee;--panel:#f7f7f9;--panel2:#e4e4ea;--line:#d6d6dd;--fg:#1c1c1e;--muted:#5d5d64;--faint:#7c7c83;
-  --accent:#b85c00;--accent-ink:#ffffff;--pc:#0a63c9;--enemy:#c4001a;--ally:#1f7a35;--blood:#c4001a;--arcane:#7c3aa0;--boss:#94600c;
-  --save:#1f7a35;--fail:#c4001a;--step:#0a63c9;--row:#ffffff;--rownow:#fff2e4;
+  --accent:#1c1c1e;--accent-ink:#ffffff;--pc:#0a63c9;--enemy:#c4001a;--ally:#1f7a35;--blood:#c4001a;--arcane:#7c3aa0;--boss:#94600c;
+  --save:#1f7a35;--fail:#c4001a;--step:#0a63c9;--row:#ffffff;--rownow:#e6e6ec;
   --cg-out:#c4001a;--cg-body:#9a6200;--cg-mind:#7c3aa0;--cg-sense:#0a6fa3;--cg-conc:#7c3aa0}
 :root[data-dmlook=tool] body{font-family:var(--ui);font-size:15px}
 
@@ -2677,7 +2678,7 @@ body.sbopen #roster .chips:has(.cond:not(.addc)) .addc{position:absolute;right:0
 :root[data-dmlook=tool] #dm>.bar .hgroup{gap:4px;padding:3px;border-radius:999px;background:color-mix(in srgb,var(--fg) 4%,transparent)}
 :root[data-dmlook=tool] #dm>.bar .btn.primary{background:var(--accent);color:var(--accent-ink)}
 
-/* the order: rows on their own step, no ledger lines; the turn is a lighter row with an orange edge */
+/* the order: rows on their own step, no ledger lines; the turn is a lighter row with an accent edge */
 :root[data-dmlook=tool] #roster.roster{background:transparent;border:0;padding:0;display:grid;gap:4px}
 :root[data-dmlook=tool] #roster .row{background:var(--row);border:0;border-radius:10px;box-shadow:none;margin:0;min-height:62px;
   padding:6px 12px 6px 8px;grid-template-columns:40px minmax(210px,290px) minmax(0,1fr) auto}
@@ -2985,7 +2986,7 @@ html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[dat
    The order scrolls on its own, so the tools above it and the turn below it never cover a row. */
 html:root[data-dmlook=tool]{--fs12:12px;--fs13:13px;--fs15:15px;--fs17:17px;--fs20:20px;--fs24:24px;--rad:6px;
   --blood-ink:#ff8a8d;--blood-bg:#4a1f24;--down-bg:#3a3a40;--fieldline:#6a6a72;--dock:#18181b;--quiet:#8e8e96}
-html:root[data-dmlook=tool][data-dm=light]{--accent:#9a4d00;--faint:#66666d;--save:#18652b;--boss:#7d5108;
+html:root[data-dmlook=tool][data-dm=light]{--faint:#66666d;--save:#18652b;--boss:#7d5108;
   --blood-ink:#a8001a;--blood-bg:#fde4e6;--down-bg:#dcdce2;--fieldline:#8a8a92;--dock:#dedee4;--quiet:#5d5d64}
 html:root[data-dmlook=tool] :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
@@ -3160,7 +3161,7 @@ html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=add]{order
 html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=party]{order:6}
 html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=enc]{order:7}
 
-/* buttons that can't be used yet look like plain buttons, not muddy orange */
+/* buttons that can't be used yet look like plain buttons, not faded accent ones */
 html:root[data-dmlook=tool] .btn:disabled,html:root[data-dmlook=tool] .btn.primary:disabled{background:var(--panel2)!important;
   color:color-mix(in srgb,var(--fg) 45%,transparent)!important;border-color:transparent!important;opacity:1;cursor:not-allowed}
 

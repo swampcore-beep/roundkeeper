@@ -3,7 +3,7 @@
    The order scrolls on its own, so the tools above it and the turn below it never cover a row. */
 html:root[data-dmlook=tool]{--fs12:12px;--fs13:13px;--fs15:15px;--fs17:17px;--fs20:20px;--fs24:24px;--rad:6px;
   --blood-ink:#ff8a8d;--blood-bg:#4a1f24;--down-bg:#3a3a40;--fieldline:#6a6a72;--dock:#18181b;--quiet:#8e8e96}
-html:root[data-dmlook=tool][data-dm=light]{--accent:#9a4d00;--faint:#66666d;--save:#18652b;--boss:#7d5108;
+html:root[data-dmlook=tool][data-dm=light]{--faint:#66666d;--save:#18652b;--boss:#7d5108;
   --blood-ink:#a8001a;--blood-bg:#fde4e6;--down-bg:#dcdce2;--fieldline:#8a8a92;--dock:#dedee4;--quiet:#5d5d64}
 html:root[data-dmlook=tool] :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
@@ -178,7 +178,7 @@ html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=add]{order
 html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=party]{order:6}
 html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=enc]{order:7}
 
-/* buttons that can't be used yet look like plain buttons, not muddy orange */
+/* buttons that can't be used yet look like plain buttons, not faded accent ones */
 html:root[data-dmlook=tool] .btn:disabled,html:root[data-dmlook=tool] .btn.primary:disabled{background:var(--panel2)!important;
   color:color-mix(in srgb,var(--fg) 45%,transparent)!important;border-color:transparent!important;opacity:1;cursor:not-allowed}
 
