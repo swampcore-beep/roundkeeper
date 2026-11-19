@@ -47,7 +47,7 @@ async def main():
         print('DM Gregori still prone?', await row('Gregori').locator('text=Prone').count())
         await ph.click('[data-act=pmore]'); await ph.wait_for_timeout(300); await ph.screenshot(path='/tmp/u_8more.png'); await ph.click('.psheet .sx')
         await ph.click('[data-act=pres]'); await ph.wait_for_timeout(300); await ph.screenshot(path='/tmp/u_9res.png'); await ph.click('.psheet .sx')
-        await ph.click('[data-act=peffs]'); await ph.wait_for_timeout(300); await ph.screenshot(path='/tmp/u_10effs.png'); await ph.click('.psheet .sx')
+        await ph.click('[data-act=pconds]'); await ph.wait_for_timeout(300); await ph.click('.psheet [data-act=peffs]'); await ph.wait_for_timeout(300); await ph.screenshot(path='/tmp/u_10effs.png'); await ph.click('.psheet .sx')
         await sf.screenshot(path='/tmp/u_sf.png')
         print('errors', errs); await b.close()
 asyncio.run(main())

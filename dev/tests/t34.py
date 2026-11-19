@@ -59,7 +59,7 @@ async def main():
         dm.on("pageerror",lambda e:errs.append(str(e)));dm.on("request",lambda r:asks.append(r.url) if '/update/check' in r.url else None)
         await dm.goto(rk.DM+'/');await asyncio.sleep(5.5)
         chk("no check at start unless it's turned on",asks==[],asks)
-        await dm.evaluate("document.querySelector('[data-k=more]').open=true");await asyncio.sleep(.3)
+        await dm.click('#setBtn');await asyncio.sleep(.3)   # 1.4: Settings and files open from the gear
         await dm.click('[data-act=updates]');await asyncio.sleep(.6)
         txt=await dm.inner_text('#updSheet')
         chk("opening the window doesn't go online",asks==[] and 'Check for updates' in txt and 'nothing else leaves this computer' in txt,txt[:200])

@@ -222,6 +222,8 @@ html:root[data-dmlook=tool] :is(.sheet,.hppop) .btn{border-radius:var(--rad);fon
 html:root[data-dmlook=tool] .hppop{border-color:#34343a;background:#26262a;border-radius:12px}
 html:root[data-dmlook=tool][data-dm=light] .hppop{border-color:var(--line);background:var(--panel)}
 html:root[data-dmlook=tool] .side .sbbtn{background:var(--panel2);border-radius:var(--rad)}
+html:root[data-dmlook=tool] .sbsheet .sbfoot{bottom:-20px;margin:0 -24px -20px;padding:12px 24px 16px;background:#26262a;border-top-color:#34343a}
+html:root[data-dmlook=tool][data-dm=light] .sbsheet .sbfoot{background:var(--panel);border-top-color:var(--line)}
 html:root[data-dmlook=tool] .sheet.devsheet{max-height:calc(100dvh - var(--covered,0px) - 32px);overflow:auto}
 html:root[data-dmlook=tool] .fixhint.shake{animation:hpshake .3s}
 
