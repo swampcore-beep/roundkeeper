@@ -2980,6 +2980,199 @@ html[data-skin=oldmap] .fxround,html[data-skin=marble] .fxround,html[data-skin=a
 html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[data-skin=amphora] .fxround>div{transform-origin:left center;
   animation:rkpage .9s cubic-bezier(.2,.7,.2,1) both}
 @media (prefers-reduced-motion:reduce){ol.plist li .nm,ol.plist li.st-stable .nmw::after,.fxround>div{animation:none!important}}
+/* ---------- DM screen, 1.4: one system (tokens), a full-height app, the order as a table, the turn in one row ----------
+   Type 12 · 13 · 15 · 17 · 20 · 24 px; weights 400 · 500 · 600; controls 28 · 36 · 44 px; corners 6 px or a full round; steps of 4 px.
+   The order scrolls on its own, so the tools above it and the turn below it never cover a row. */
+html:root[data-dmlook=tool]{--fs12:12px;--fs13:13px;--fs15:15px;--fs17:17px;--fs20:20px;--fs24:24px;--rad:6px;
+  --blood-ink:#ff8a8d;--blood-bg:#4a1f24;--down-bg:#3a3a40;--fieldline:#6a6a72;--dock:#18181b;--quiet:#8e8e96}
+html:root[data-dmlook=tool][data-dm=light]{--accent:#9a4d00;--faint:#66666d;--save:#18652b;--boss:#7d5108;
+  --blood-ink:#a8001a;--blood-bg:#fde4e6;--down-bg:#dcdce2;--fieldline:#8a8a92;--dock:#dedee4;--quiet:#5d5d64}
+html:root[data-dmlook=tool] :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---- the app: header, then the order and the side panel, each scrolling on its own ---- */
+html:root[data-dmlook=tool] body:has(#dm:not([hidden])){overflow:hidden}
+html:root[data-dmlook=tool] #dm:not([hidden]){height:100vh;height:100dvh;display:flex;flex-direction:column}
+html:root[data-dmlook=tool] #dm>.bar{flex:none;position:relative}
+html:root[data-dmlook=tool] #dm .bar-row,html:root[data-dmlook=tool] #dm .addr-row{max-width:none}
+html:root[data-dmlook=tool] #dm .brand{font-size:var(--fs17);font-weight:600}
+html:root[data-dmlook=tool] main.dmgrid{flex:1 1 auto;min-height:0;width:100%;max-width:none;margin:0;align-items:stretch;
+  grid-template-columns:minmax(0,1fr) 380px;gap:16px;padding:4px 16px calc(12px + var(--covered,0px))}
+html:root[data-dmlook=tool] body.sbopen main.dmgrid{grid-template-columns:minmax(0,1fr);padding-right:calc(min(480px,44vw) + 12px)}
+html:root[data-dmlook=tool] .dmmain{display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0}
+html:root[data-dmlook=tool] .dmmain>.note{flex:none;margin:0}
+html:root[data-dmlook=tool] .side{position:static;top:auto;max-height:none;min-height:0;overflow:auto;align-content:start;gap:8px}
+
+/* ---- the tools, above the order, in one row ---- */
+html:root[data-dmlook=tool] .dmtools{flex:none;display:flex;align-items:center;gap:4px;flex-wrap:nowrap;min-height:44px;padding:4px;
+  border-radius:10px;background:var(--panel);overflow:visible}
+html:root[data-dmlook=tool] .dmtools .fgrp{display:flex;align-items:center;gap:2px}
+html:root[data-dmlook=tool] .dmtools .fgrp+.fgrp{padding-left:6px;margin-left:4px;border-left:1px solid var(--line)}
+html:root[data-dmlook=tool] .dmtools .fgrp.fend{margin-left:auto;border-left:0;padding-left:0}
+html:root[data-dmlook=tool] .dmtools .btn{min-height:36px;height:36px;padding:0 12px;border:0;border-radius:var(--rad);background:transparent;
+  font-size:var(--fs15);font-weight:500;color:var(--fg);white-space:nowrap;box-shadow:none}
+html:root[data-dmlook=tool] .dmtools .btn:hover{background:var(--panel2)}
+html:root[data-dmlook=tool] .dmtools #lairBtn[aria-pressed=true]{background:color-mix(in srgb,var(--boss) 18%,transparent);color:var(--fg)}
+html:root[data-dmlook=tool] .dmtools #endBtn:not(.primary){color:var(--fail);background:transparent}
+html:root[data-dmlook=tool] .dmtools #endBtn.primary{background:var(--panel2);color:var(--fg)}
+html:root[data-dmlook=tool] .dmtools .btn.pebox{display:inline-flex;align-items:center;gap:8px}
+html:root[data-dmlook=tool] .dmtools .footmore .rmenu{top:calc(100% + 6px);bottom:auto;right:0}
+html:root[data-dmlook=tool] .dmtools .icon-btn{width:36px;height:36px;min-height:36px;border:0;border-radius:var(--rad);background:transparent}
+
+/* ---- the order as a table: one set of columns for the heads and every row ---- */
+html:root[data-dmlook=tool]{--cols:48px minmax(220px,300px) minmax(0,1fr) 132px 92px 176px}
+html:root[data-dmlook=tool] .colhead{flex:none;display:grid;grid-template-columns:var(--cols);gap:10px;align-items:center;height:24px;
+  padding:0 12px 0 8px;font-size:var(--fs12);font-weight:500;color:var(--muted);letter-spacing:.02em}
+html:root[data-dmlook=tool] .colhead span:first-child{text-align:center}
+html:root[data-dmlook=tool] .colhead span:nth-child(5){text-align:center}
+html:root[data-dmlook=tool] .colhead span:last-child{text-align:right}
+html:root[data-dmlook=tool] #roster.roster{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;align-content:start;padding:0 2px 8px 0}
+html:root[data-dmlook=tool] #roster:has(.empty){overflow:visible}
+html:root[data-dmlook=tool]:has(#mtBar) #roster.roster,html:root[data-dmlook=tool]:has(#concAsk) #roster.roster{padding-bottom:180px}
+html:root[data-dmlook=tool] #roster .row{grid-template-columns:var(--cols);gap:4px 10px;min-height:56px;padding:6px 12px 6px 8px;border-radius:8px}
+html:root[data-dmlook=tool] #roster .row .tools{display:contents}
+html:root[data-dmlook=tool] #roster .row .tools>.hpw{grid-column:4;width:100%;max-width:132px;justify-self:start}
+html:root[data-dmlook=tool] #roster .row .tools>.ac-wrap{grid-column:5;justify-self:center}
+html:root[data-dmlook=tool] #roster .row .tools>.stat{grid-column:6;display:flex;align-items:center;justify-content:flex-end;gap:4px}
+html:root[data-dmlook=tool] #roster .row .sbline{grid-column:2 / -1;padding-left:0}
+html:root[data-dmlook=tool] #roster .row .lairbox{grid-column:2 / -1}
+
+/* the initiative; with Hit several the tick takes its place, so nothing moves */
+html:root[data-dmlook=tool] #roster .hexw{width:48px;display:flex;justify-content:center}
+html:root[data-dmlook=tool] #roster .hexw .init-in{width:44px;height:36px;font-size:var(--fs17);font-weight:600;text-align:center}
+html:root[data-dmlook=tool] #roster .row.mtrow .hexw .init-in{display:none}
+html:root[data-dmlook=tool] #roster .mtcb{position:static;transform:none;width:24px;height:24px;border-radius:var(--rad);border:2px solid var(--fieldline);
+  display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
+html:root[data-dmlook=tool] #roster .mtcb[aria-pressed=true]{background:var(--fail);border-color:var(--fail);color:#1a0505}
+
+/* who: the picture square, the name, the grey second line; no class or type = a plain outline of a person, never an empty square */
+html:root[data-dmlook=tool] #roster .who{grid-template-columns:36px minmax(0,1fr);column-gap:12px}
+html:root[data-dmlook=tool] #roster .dmpic{width:36px;height:36px;border-radius:var(--rad);background:var(--panel2)}
+html:root[data-dmlook=tool] #roster .dmpic:has(.nosig){background:transparent;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fg) 28%,transparent)}
+html:root[data-dmlook=tool] #roster .dmsig{width:20px;height:20px}
+html:root[data-dmlook=tool] #roster .dmsig.nosig{background:var(--muted);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6'/%3E%3C/svg%3E") center/contain no-repeat}
+html:root[data-dmlook=tool] #roster .name-in{font-size:var(--fs15);font-weight:600}
+html:root[data-dmlook=tool] #roster .typeline{font-size:var(--fs13);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html:root[data-dmlook=tool] #roster .sblink{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border:0;border-radius:var(--rad);
+  background:var(--panel2);color:color-mix(in srgb,var(--arcane) 70%,var(--fg));font-size:var(--fs12);font-weight:500;vertical-align:middle}
+html:root[data-dmlook=tool] #roster .sblink svg{width:12px;height:12px}
+html:root[data-dmlook=tool] #roster .sblink.on{background:color-mix(in srgb,var(--arcane) 22%,var(--panel2))}
+html:root[data-dmlook=tool] .nowtag,html:root[data-dmlook=tool] .nexttag{font-size:var(--fs12);font-weight:600;border-radius:4px;padding:0 6px;line-height:18px}
+
+/* conditions: pills; "+ Condition" always there and says what it is when the row has nothing else */
+html:root[data-dmlook=tool] #roster .chips{gap:6px;align-items:center}
+html:root[data-dmlook=tool] #roster .chips .cond{min-height:28px;padding:0 10px;border-radius:999px;font-size:var(--fs13);font-weight:500}
+html:root[data-dmlook=tool] #roster .chips .addc,html:root[data-dmlook=tool] body.sbopen #roster .chips .addc{opacity:1;position:static;transform:none;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fg) 22%,transparent)!important;background:transparent!important;color:var(--muted)!important;
+  padding:0 9px;min-height:28px}
+html:root[data-dmlook=tool] #roster .chips .addc:hover{color:var(--fg)!important;box-shadow:inset 0 0 0 1px var(--muted)!important}
+
+/* HP: the number and a thin bar; no maximum yet = a real field that says "Set HP" */
+html:root[data-dmlook=tool] #roster .hpw .hpn{font-size:var(--fs17);font-weight:600}
+html:root[data-dmlook=tool] #roster .hpw.add{padding:0;border:0!important;background:none!important;box-shadow:none!important;outline:0}
+html:root[data-dmlook=tool] #roster .hpw.add input{width:104px;height:36px;padding:0 10px;border:1px solid var(--fieldline);border-radius:var(--rad);
+  background:var(--bg);color:var(--fg);font:500 var(--fs15)/1 var(--ui);text-align:left}
+html:root[data-dmlook=tool] #roster .hpw.add input::placeholder{color:color-mix(in srgb,var(--fg) 72%,transparent);font-size:var(--fs13);opacity:1}
+html:root[data-dmlook=tool] #roster .hpw.add input:focus{outline:0;border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent)}
+html:root[data-dmlook=tool] #roster .hpw.hpnone{color:transparent}
+
+/* AC on a shield; empty = a dashed shield that says AC */
+html:root[data-dmlook=tool] #roster .ac-wrap{display:inline-flex;align-items:center;gap:2px}
+html:root[data-dmlook=tool] #roster .ac-wrap input{width:40px;height:44px;font-size:var(--fs15)}
+html:root[data-dmlook=tool] #roster .ac-wrap input.acempty{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l8 3v5.5c0 5-3.3 9-8 10.5-4.7-1.5-8-5.5-8-10.5V5.5z' fill='none' stroke='%237b7b82' stroke-width='1.2' stroke-dasharray='2 2'/%3E%3C/svg%3E")}
+html:root[data-dmlook=tool] #roster .ac-wrap input::placeholder{color:var(--muted);font-size:var(--fs12);font-weight:500;opacity:1}
+html:root[data-dmlook=tool] #roster .ac-wrap .tog{width:28px;height:28px;padding:0;border:0;border-radius:999px;background:transparent!important;
+  color:var(--quiet)}
+html:root[data-dmlook=tool] #roster .ac-wrap .tog[aria-pressed=true]{color:var(--fg)}
+html:root[data-dmlook=tool] #roster .ac-wrap .tog svg{width:16px;height:16px}
+
+/* Bloodied and Down: quiet icons while off (B and D still work); on, they become a coloured pill with the word */
+html:root[data-dmlook=tool] #roster .stat .tog.blood,html:root[data-dmlook=tool] #roster .stat .tog.downt{display:inline-flex;align-items:center;
+  justify-content:center;gap:6px;min-width:32px;height:32px;padding:0;border:0!important;border-radius:999px;background:transparent!important;
+  color:var(--quiet);font-size:var(--fs13);font-weight:600;text-transform:none;letter-spacing:0}
+html:root[data-dmlook=tool] #roster .stat .tog svg{width:16px;height:16px;flex:none}
+html:root[data-dmlook=tool] #roster .stat .tog.blood svg{fill:none;stroke:currentColor;stroke-width:1.8}
+html:root[data-dmlook=tool] #roster .stat .tog .tl{display:none}
+html:root[data-dmlook=tool] #roster .stat .tog:hover{background:var(--panel2)!important;color:var(--fg)}
+html:root[data-dmlook=tool] #roster .stat .tog[aria-pressed=true]{padding:0 12px 0 10px}
+html:root[data-dmlook=tool] #roster .stat .tog[aria-pressed=true] .tl{display:inline}
+html:root[data-dmlook=tool] #roster .stat .tog.blood[aria-pressed=true]{background:var(--blood-bg)!important;color:var(--blood-ink)}
+html:root[data-dmlook=tool] #roster .stat .tog.blood[aria-pressed=true] svg{fill:currentColor}
+html:root[data-dmlook=tool] #roster .stat .tog.downt[aria-pressed=true]{background:var(--down-bg)!important;color:var(--fg)}
+html:root[data-dmlook=tool] #roster .stat .morebtn2{width:32px;height:32px;border-radius:999px;color:var(--quiet)}
+
+/* the lair action: one line across the order, its own shape */
+html:root[data-dmlook=tool] #roster .row.k-lair{grid-template-columns:48px minmax(0,1fr) auto auto;min-height:40px;background:var(--panel);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fg) 16%,transparent)}
+html:root[data-dmlook=tool] #roster .row.k-lair.turn{background:var(--rownow);box-shadow:inset 4px 0 0 var(--accent)}
+html:root[data-dmlook=tool] #roster .row.k-lair .lair-init{width:48px;text-align:center;font-size:var(--fs17);font-weight:600;color:var(--accent)}
+html:root[data-dmlook=tool] #roster .row.k-lair .who{display:block;min-width:0}
+html:root[data-dmlook=tool] #roster .row.k-lair .lair-name{display:flex;align-items:baseline;gap:10px;font-family:var(--ui);font-size:var(--fs15);
+  font-weight:600;font-style:normal;white-space:nowrap;overflow:hidden}
+html:root[data-dmlook=tool] #roster .row.k-lair .lair-name small{display:inline;font-size:var(--fs13);font-weight:400;color:var(--muted);
+  overflow:hidden;text-overflow:ellipsis}
+html:root[data-dmlook=tool] #roster .row.k-lair .tools{display:flex}
+
+/* ---- the turn, one row at the bottom ---- */
+html:root[data-dmlook=tool] .dmmain>.foot{flex:none;position:static;margin:0;padding:6px;border:0;border-radius:12px;background:var(--dock);display:block}
+html:root[data-dmlook=tool] .tiledock .turnbox{gap:8px;align-items:stretch}
+html:root[data-dmlook=tool] .ttile{min-height:52px;height:52px;padding:0 16px;border-radius:8px;background:var(--panel);min-width:0;align-items:center}
+html:root[data-dmlook=tool] .ttile b{font-size:var(--fs17);font-weight:600;max-width:none}
+html:root[data-dmlook=tool] .ttile small{font-size:var(--fs12);font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);max-width:none}
+html:root[data-dmlook=tool] .ttile.trnd{width:88px;flex:none}
+html:root[data-dmlook=tool] .ttile.twho{flex:1 1 0;min-width:0;align-items:flex-start}
+html:root[data-dmlook=tool] .ttile.twho b{display:flex;align-items:center;gap:10px;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+html:root[data-dmlook=tool] .ttile .tdot{width:8px;height:8px;border-radius:999px;background:var(--accent);flex:none}
+html:root[data-dmlook=tool] .ttile.tidle .tdot{display:none}
+html:root[data-dmlook=tool] .ttile .tini{font-size:var(--fs13);font-weight:500;color:var(--muted)}
+html:root[data-dmlook=tool] .ttile.tfight{width:120px;flex:none;align-items:flex-start}
+html:root[data-dmlook=tool] .tnav{min-height:52px;height:52px;min-width:52px;padding:0 14px;border-radius:8px;background:var(--panel)}
+html:root[data-dmlook=tool] .tnav.primary{padding:0 24px;border-radius:999px;font-size:var(--fs17);font-weight:600;gap:10px}
+html:root[data-dmlook=tool] .tnav kbd{font:500 var(--fs12)/18px var(--ui);padding:0 5px;border-radius:4px;
+  border:1px solid color-mix(in srgb,var(--accent-ink) 35%,transparent);color:color-mix(in srgb,var(--accent-ink) 75%,transparent);background:none}
+
+/* what floats: the Hit several bar and the Concentration cards sit above the turn row; a note under the header */
+html:root[data-dmlook=tool] .mtbar,html:root[data-dmlook=tool] .concask{bottom:calc(var(--covered,0px) + 96px)}
+html:root[data-dmlook=tool] .toast{top:calc(var(--barh,64px) + 6px);bottom:auto;border-radius:999px;font-size:var(--fs13);font-weight:500}
+
+/* ---- the side panel ---- */
+html:root[data-dmlook=tool] .side .panel{border-radius:10px}
+html:root[data-dmlook=tool] .side .panel>summary{font-size:var(--fs15);font-weight:600;padding:12px 16px}
+html:root[data-dmlook=tool] .side .panel>:not(summary){margin:0 16px 14px}
+/* Settings and files open from the gear in the header, on top of the panel; the panel puts first what this part of the fight needs */
+html:root[data-dmlook=tool] .side .panel[data-k=more]:not(.on){display:none}
+html:root[data-dmlook=tool] .side .panel[data-k=more].on{order:-1}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=add]{order:1}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=party]{order:2}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=enc]{order:3}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=call]{order:4}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=log]{order:5}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=field]{order:6}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=hand]{order:7}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=call]{order:1}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=field]{order:2}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=log]{order:3}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=hand]{order:4}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=add]{order:5}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=party]{order:6}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=enc]{order:7}
+
+/* buttons that can't be used yet look like plain buttons, not muddy orange */
+html:root[data-dmlook=tool] .btn:disabled,html:root[data-dmlook=tool] .btn.primary:disabled{background:var(--panel2)!important;
+  color:color-mix(in srgb,var(--fg) 45%,transparent)!important;border-color:transparent!important;opacity:1;cursor:not-allowed}
+
+/* a laptop with scaling (about 860 px high): denser rows */
+@media (max-height:900px){
+  html:root[data-dmlook=tool] #roster .row{min-height:50px;padding-top:4px;padding-bottom:4px}
+  html:root[data-dmlook=tool] #roster .dmpic{width:32px;height:32px}
+  html:root[data-dmlook=tool] #roster .who{grid-template-columns:32px minmax(0,1fr)}
+  html:root[data-dmlook=tool] .ttile,html:root[data-dmlook=tool] .tnav{min-height:48px;height:48px}
+  html:root[data-dmlook=tool] main.dmgrid{grid-template-columns:minmax(0,1fr) 340px}}
+@media (max-width:1500px){html:root[data-dmlook=tool]{--cols:44px minmax(200px,260px) minmax(0,1fr) 120px 88px 168px}
+  html:root[data-dmlook=tool] #roster .hexw,html:root[data-dmlook=tool] #roster .row.k-lair .lair-init{width:44px}}
 </style>
 </head>
 <body>
@@ -2989,8 +3182,7 @@ html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[dat
     <div class="bar-row">
       <div class="brand">Roundkeeper</div>
       <div class="sync" id="sync" data-s="off"><i></i><span>Connecting…</span></div>
-      <span id="turnHome" hidden></span><div class="turnbox" id="turnBox"></div>
-      <span class="barsp" aria-hidden="true"></span>
+            <span class="barsp" aria-hidden="true"></span>
       <div class="barright">
       <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)" aria-label="Rules"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span class="qkl">Rules</span></button>
       <button class="btn tcardpill" id="tcardPill" type="button" data-act="tcardoff" hidden></button>
@@ -3014,10 +3206,7 @@ html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[dat
    <div class="dmmain">
     <div class="note" id="fileNote" hidden>This file was opened directly, so the tablet can't see anything. Start it with <b>Roundkeeper.exe</b> (or the Roundkeeper program on a Mac or Linux) instead.</div>
     <div class="note ended" id="endedNote" hidden><span>Players are seeing the end-of-combat screen.</span><button class="btn" type="button" data-act="unend">Show the order again</button></div>
-    <section class="roster" id="roster" aria-label="Initiative order"></section>
-    <div class="foot">
-      <p class="hint">Players open the same address as the tablet on their phones and manage their own initiative, conditions and death saves. Ctrl+Z undoes the last change.</p>
-      <div class="acts">
+    <div class="dmtools acts" role="toolbar" aria-label="Combat tools">
         <span class="fgrp"><button class="btn" type="button" data-act="mtstart" title="Damage several at once, like a Fireball (or Shift+click the rows)">Hit several</button>
         <button class="btn" id="lairBtn" type="button" aria-pressed="false">Lair action</button>
         <button class="btn" type="button" data-act="clearreact" title="Clear every Reaction used (R)">Clear reactions</button></span>
@@ -3027,8 +3216,11 @@ html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[dat
         <button class="btn" id="endBtn" type="button">End combat</button>
         <span class="footmore"><button class="icon-btn lg" id="footMore" type="button" data-act="footmore" aria-haspopup="menu" aria-expanded="false" aria-label="More: new combat, clear all" title="More: New combat, Clear all"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
           <span class="rmenu footmenu" id="footMenu" role="menu" hidden><button type="button" id="newFight" role="menuitem">New combat <small>keeps the party</small></button><hr><button type="button" class="danger" id="wipe" role="menuitem">Clear all</button></span></span></span>
-      </div>
-      <div class="tiledock" id="tileDock"></div>
+    </div>
+    <div class="colhead" id="rosterHead" aria-hidden="true"><span>Init</span><span>Combatant</span><span>Conditions</span><span>HP</span><span>AC</span><span>Status</span></div>
+    <section class="roster" id="roster" aria-label="Initiative order"></section>
+    <div class="foot">
+      <div class="tiledock" id="tileDock"><div class="turnbox" id="turnBox"></div></div>
     </div>
    </div>
    <aside class="side" id="side" aria-label="Tools">
@@ -3066,7 +3258,7 @@ html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[dat
       <label class="setopt"><input type="checkbox" id="autoTimer"> Start the hourglass on every player's turn</label>
       <label class="setopt" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> Roll monsters' Concentration saves for me <small>otherwise the app asks</small></label>
       <div class="sethead">This laptop</div>
-      <div class="setrow"><button class="btn pebox" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button><button class="btn pebox" id="dmLookBtn" type="button" data-act="dmlook" title="The 1.1 look in the table's style" aria-label="Classic look"></button></div>
+      <div class="setrow"><button class="btn pebox" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button></div>
       <div class="acts">
         <button class="btn sm" type="button" data-act="dmdev">DM devices</button>
         <button class="btn sm" type="button" data-act="updates">Updates</button>
@@ -5507,13 +5699,8 @@ const FONTS=[["alegreya","Alegreya SC","'Alegreya SC'"],["cinzel","Cinzel","Cinz
 /* the DM screen in light or dark: only on this laptop, never on the tablet or phones */
 const SUN='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   MOON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill="currentColor"/></svg>';
-/* the DM screen's look (1.3): "tool" (neutral, the default) or "classic" (the table's language, 1.1); this laptop only */
-function dmLookApply(){if(MODE!=="dm"||PREVIEW)return;const tool=ls.get("dmLook","tool")!=="classic",d=document.documentElement.dataset;
-  if(tool)d.dmlook="tool";else delete d.dmlook;
-  const b=document.getElementById("dmLookBtn");if(b){b.textContent="Classic look";b.title=tool?"Switch to the 1.1 look in the table's style":
-    "Switch to the neutral tool look";b.setAttribute("aria-pressed",String(!tool))}
-  const tb=document.getElementById("turnBox"),dock=document.getElementById("tileDock"),home=document.getElementById("turnHome");
-  if(tb&&dock&&home){if(tool&&tb.parentElement!==dock)dock.prepend(tb);else if(!tool&&tb.parentElement!==home)home.after(tb)}}
+/* the DM screen's look: since 1.4 there is one (the "tool" look); the attribute stays because the CSS is keyed on it */
+function dmLookApply(){if(MODE!=="dm"||PREVIEW)return;document.documentElement.dataset.dmlook="tool"}
 function dmLightApply(){if(MODE!=="dm"||PREVIEW)return;const on=!!ls.get("dmLight",false),d=document.documentElement.dataset;if(on)d.dm="light";
   else delete d.dm;
   const b=document.getElementById("dmLightBtn");if(b){b.textContent="Light screen";
@@ -6005,7 +6192,7 @@ const hpFlash=new Map();   // id -> {d, at}: the "-5" that flashes after a chang
 let hpPopId=null,hpMod="",mtOn=false,mtSel=new Set(),mt={n:"",type:"",ab:"",dc:"",on:"half",modes:{},rolls:{}};
 function hpBox(c){
   if(c.hpMax==null)return `<span class="hpw add" title="Track HP: type the maximum"><span class="hpl">HP</span><input id="hp-${
-    c.id}" data-act="hp" placeholder="max" aria-label="Maximum HP for ${esc(c.name)}" inputmode="numeric"></span>`;
+    c.id}" data-act="hp" placeholder="Set HP" aria-label="Maximum HP for ${esc(c.name)}" inputmode="numeric"></span>`;
   const cur=c.hp??c.hpMax,t=c.thp||0,tot=Math.max(c.hpMax,cur)+t,cls=cur<=0?" zero":cur<=c.hpMax/2?" half":"";
   const f=hpFlash.get(c.id),age=f?Date.now()-f.at:1e9;
   return `<button type="button" class="hpw hpb${cls}${hpPopId===c.id?" open":""}${mtSel.has(c.id)?" mt":
@@ -6409,25 +6596,32 @@ function applyHp(c,raw,was){
   return true;
 }
 let menuId=null,turnMenuOn=false;
-const TFRAME='<span class="tframe" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></span>';
-/* 1.3, the tool look: the turn as tiles in the bottom bar (round, whose turn, how long, the nearest countdown, back and next) */
+const SKULL='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a8 8 0 0 0-8 8c0 2.6 1.2 4.5 3 5.7V19a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-2.8c1.8-1.2 3-3.1 3-5.7a8 8 0 0 0-8-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="11" r="1.7" fill="currentColor"/><circle cx="15" cy="11" r="1.7" fill="currentColor"/><path d="M10.5 20v-2.5M13.5 20v-2.5" stroke="currentColor" stroke-width="1.6"/></svg>';
+/* the turn, one row in the bottom bar (1.4): round, whose turn (and who's next), fight time, the nearest countdown, back and next */
 function turnTiles(){
-  const t=state.turn,who=t&&byId(t.id),f=state.fightAt&&!state.ended?Math.max(0,Math.round((Date.now()-state.fightAt)/60000)):null;
-  const tile=(v,l,cls)=>`<span class="ttile${cls?" "+cls:""}"><b>${v}</b><small>${l}</small></span>`;
+  const t=state.turn,who=t&&byId(t.id),f=t&&state.fightAt&&!state.ended?Math.max(0,Math.round((Date.now()-state.fightAt)/60000)):null;
   const k=(state.clocks||[]).filter(x=>x.n>0).sort((a,b)=>a.n-b.n)[0];
-  return (t?tile(t.round,"Round","trnd")+tile(esc(who?who.name:t.id==="__lair"?"Lair action":"–"),"Turn","twho"):"")
-    +(f!=null&&state.list.length?tile(f<1?"< 1 min":f+" min","Fight"):"")
-    +(k?`<span class="ttile tclk"><button type="button" class="tstep" data-act="clkm" data-id="${esc(k.id)}" aria-label="${esc(
-      k.name)}: one less">−</button><span><b>${
-      k.n}</b><small title="${esc(k.name)}">${esc(k.name)}${k.secret?" · secret":
-        ""}</small></span><button type="button" class="tstep" data-act="clkp" data-id="${
-      esc(k.id)}" aria-label="${esc(k.name)}: one more">+</button></span>`:"")
-    +(t?`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
-      "prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${
+  const ord=t?turnOrder():[],i=t?ord.findIndex(x=>x.id===t.id):-1,nx=i>=0&&ord.length>1?ord[(i+1)%ord.length]:null;
+  const nm=who?who.name:t&&t.id==="__lair"?"Lair action":"";
+  const clk=k?`<span class="ttile tclk"><button type="button" class="tstep" data-act="clkm" data-id="${esc(k.id)}" aria-label="${esc(
+      k.name)}: one less">−</button><span><b>${k.n}</b><small title="${esc(k.name)}">${esc(k.name)}${k.secret?" · secret":
+        ""}</small></span><button type="button" class="tstep" data-act="clkp" data-id="${esc(k.id)}" aria-label="${esc(
+          k.name)}: one more">+</button></span>`:"";
+  if(!t){const n=state.list.filter(c=>c.kind!=="lair").length,miss=state.list.filter(c=>typeof c.init!=="number"&&!c.owner).length;
+    return `<span class="ttile twho tidle"><b>${n?"Not started":"No fight yet"}</b><small>${n?`${n} in the order${miss?` · ${miss} without initiative`:
+      ""}`:"Add the party and some monsters"}</small></span>${
+        clk}<button class="tnav primary" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${
+      ic("next")}</button>`}
+  return `<span class="ttile trnd"><b>${t.round}</b><small>Round</small></span><span class="ttile twho"><b><i class="tdot" aria-hidden="true"></i>${esc(nm||
+    "–")}${who&&
+      typeof who.init==="number"?`<span class="tini">initiative ${who.init}</span>`:""}</b><small>${nx?`Next: ${esc(nx.kind==="lair"?"Lair action":nx.name)}`:
+      "&nbsp;"}</small></span>`
+    +(f!=null?`<span class="ttile tfight"><b>${f<1?"< 1 min":f+" min"}</b><small>Fight time</small></span>`:"")+clk
+    +`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
+      "prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn <kbd>N</kbd>${
       ic("next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
       turnMenuOn}" aria-label="Turn options" title="Turn options: stop tracking turns">${DOTS}</button>${turnMenuOn?
-      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`
-      :`<button class="tnav primary" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${ic("next")}</button>`)}
+      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`}
 function renderDM(){
   const ae=document.activeElement;
   if(ae&&$("#roster").contains(ae)&&ae.tagName==="INPUT"){pendingRender=true;return}
@@ -6446,6 +6640,8 @@ function renderDM(){
   {const eb=$("#endBtn");eb.textContent=state.ended?"New combat":"End combat";eb.classList.toggle("primary",!!state.ended);
     eb.title=state.ended?"Start the next fight: keeps the party, everyone rolls initiative":"End this fight: the end screen and the Recap"}
   $("#endedNote").hidden=!state.ended;
+  {const tb=$("#turnBox");if(tb)tb.innerHTML=turnTiles()}
+  {const d=$("#dm");if(d)d.dataset.phase=state.turn?"fight":"setup"}
   const base=sorted(),list=withLair(base);const R=$("#roster");
   if(!list.length){R.innerHTML=
     `<div class="empty"><strong>Nobody in the order yet</strong><span>Add the party and some enemies, or drop in a saved encounter.</span><div class="acts">${
@@ -6479,11 +6675,11 @@ function renderDM(){
     const isTurn=!!(state.turn&&state.turn.id===c.id);
     const typeline=[isTurn?`<b class="nowtag">now</b>`:c.id===nextId?`<span class="nexttag">next</span>`:"",
       c.sb&&c.sb.raw?`<button type="button" class="sblink${sbViewId===c.id?" on":""}" data-act="sbview" title="${c.sb.pc?
-      "Open the character sheet":"Open the statblock"}" aria-label="${c.sb.pc?"Sheet":"Statblock"}">${I.book||"📜"}</button>`:"",c.boss?
+      "Open the character sheet":"Open the statblock"}" >${I.book||""}<span>${c.sb.pc?"Sheet":"Statblock"}</span></button>`:"",c.boss?
       `<span class="crown">${I.crown}Boss${c.rim?` · ${esc((RIMS.find(r=>r[0]===c.rim)||["",""])[1])}`:""}</span>`:"",typ?esc(typ):"",c.boss&&c.title?
       `<i>${esc(c.title)}</i>`:"",c.kind==="pc"?passivesLine(c):"",c.kind==="pc"&&c.psimple?
       `<span class="simpletag" title="${esc(c.name)} uses the simple phone: just HP and what you send">simple phone</span>`:""].filter(Boolean).join(" · ");
-    const chips=(c.hidden?`<button type="button" class="cond hidchip" data-act="hidden" title="Reveal to players (H)">${I.eyeoff}Hidden · reveal</button>`:"")+
+    const chips0=(c.hidden?`<button type="button" class="cond hidchip" data-act="hidden" title="Reveal to players (H)">${I.eyeoff}Hidden · reveal</button>`:"")+
       dsHtml+conds
       +(c.insp?`<button type="button" class="cond inspchip" data-act="insp" title="Remove Heroic Inspiration">${I.star}Inspiration</button>`:"")
       +(c.cover?`<button type="button" class="cond add on" data-act="covercycle" title="Click to change">${COVER_CHIP[c.cover]}</button>`:"")
@@ -6491,7 +6687,8 @@ function renderDM(){
         t])[1]}</button>`).join("")
       +(c.know||[]).map((k,i)=>`<button type="button" class="cond knowdm" data-act="knowrm" data-id="${esc(c.id)}" data-i="${i}" title="Remove">${esc(
         k)}</button>`).join("")
-      +`<button type="button" class="cond add addc" data-act="conds" title="Add a condition (C)" aria-label="Add a condition">+</button>`;
+      ;const chipsAll=chips0+`<button type="button" class="cond add addc" data-act="conds" title="Add a condition (C)" aria-label="Add a condition">+${chips0?
+      "":"<span> Condition</span>"}</button>`;
     const K=(k)=>`<kbd>${k}</kbd>`;
     const sb=c.sb,pips=(k,o,j)=>Array.from({length:o.max},(_,q)=>`<button type="button" class="sbpip${q>=o.max-o.used?" used":
       ""}" data-act="sbuse" data-k="${k}"${j!=null?` data-j="${j}"`:""} data-q="${q}" aria-label="${q>=o.max-o.used?"Get one back":
@@ -6547,9 +6744,9 @@ function renderDM(){
         <hr><button type="button" class="danger" data-act="del">Remove ${K("Del")}</button></div>`:"";
     return `<div class="row k-${c.kind}${state.turn&&state.turn.id===c.id?" turn":""}${shownToPlayers(c)?"":" out"}${c.hidden?" hid":""}${c.boss?" isboss":
       ""}${mtSel.has(c.id)?" mtsel":""}${mtOn&&mtOk(c)?" mtrow":""}" data-id="${c.id}">
-      ${mtOn&&mtOk(c)?`<button type="button" class="mtcb" data-act="mttoggle" aria-pressed="${mtSel.has(c.id)}" aria-label="Hit ${esc(c.name)}">${mtSel.has(
-        c.id)?"✓":""}</button>`:""}
-      <span class="hexw">${c.owner?`<span class="init-in own" title="Acts right after ${esc((ownerOf(c)||{}).name||"its owner")}">↳${initOf(c)>-999?
+      <span class="hexw">${mtOn&&mtOk(c)?`<button type="button" class="mtcb" data-act="mttoggle" aria-pressed="${mtSel.has(c.id)}" aria-label="Hit ${esc(
+        c.name)}">${mtSel.has(
+        c.id)?"✓":""}</button>`:""}${c.owner?`<span class="init-in own" title="Acts right after ${esc((ownerOf(c)||{}).name||"its owner")}">↳${initOf(c)>-999?
         initOf(c):""}</span>`:""}<input${c.owner?" hidden":""} class="init-in${typeof c.init!=="number"&&!c.owner?" missing":""}${freshIds.has(c.id)?" fresh":
         ""}" id="init-${c.id}" type="number" inputmode="numeric" value="${typeof c.init==="number"?c.init:""}" placeholder="${typeof c.ib==="number"?(c.ib>=0?
         "+":"")+c.ib:"?"}" data-act="init" aria-label="Initiative"${typeof c.ib==="number"?` title="Initiative bonus ${c.ib>=0?"+":
@@ -6559,29 +6756,23 @@ function renderDM(){
           c.id}" value="${esc(
         c.name)}" data-act="name" aria-label="Name"></span>${typeline?
         `<div class="typeline">${typeline}</div>`:""}</div>
-      <div class="chips">${chips}</div>
+      <div class="chips">${chipsAll}</div>
       <div class="tools">
         ${c.kind!=="pc"?hpBox(c):c.php?pcHpBox(c):`<span class="hpw hpnone" title="${esc(c.name)} keeps HP on paper, or doesn't share it from the phone"
           aria-label="HP not shared">—</span>`}
         <span class="ac-wrap"><button type="button" class="tog" data-act="showac" aria-pressed="${!!c.showAc}" title="${c.showAc?
           "Players see the AC: click to hide it":"Only you see the AC: click to show it"}" aria-label="Show AC to players">${c.showAc?I.eye:
-          I.eyeoff}</button><input id="ac-${c.id}" type="number" value="${c.ac??""}" placeholder="—" data-act="ac" aria-label="AC"></span>
-        <button type="button" class="tog blood" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${I.drop}Bloodied</button>
-        <button type="button" class="tog" data-act="down" aria-pressed="${!!c.down}" title="${c.kind==="pc"?"0 HP":"Down"} (D)">${c.kind==="pc"?"0 HP":
-          "Down"}</button>
+          I.eyeoff}</button><input id="ac-${c.id}" class="${c.ac==null||c.ac===""?"acempty":""}" type="number" value="${c.ac??
+            ""}" placeholder="AC" data-act="ac" aria-label="AC"></span>
+        <span class="stat"><button type="button" class="tog blood" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${
+          I.drop}<span class="tl">Bloodied</span></button>
+        <button type="button" class="tog downt" data-act="down" aria-pressed="${!!c.down}" title="${c.kind==="pc"?"0 HP":
+          "Down"} (D)">${SKULL}<span class="tl">${c.kind==="pc"?"0 HP":
+          "Down"}</span></button>
         <button type="button" class="morebtn2" data-act="rowmenu" aria-haspopup="menu" aria-expanded="${menuId===
-          c.id}" aria-label="More for ${esc(c.name)}">${DOTS}</button>
-      </div>${sbHtml}${menu}${isTurn?TFRAME:""}</div>`}).join("");
+          c.id}" aria-label="More for ${esc(c.name)}">${DOTS}</button></span>
+      </div>${sbHtml}${menu}</div>`}).join("");
   freshIds.clear();markSel();renderSbDrawer();
-  const tb=$("#turnBox");if(tb&&document.documentElement.dataset.dmlook==="tool")tb.innerHTML=turnTiles();
-  else if(tb){const t=state.turn;
-    tb.innerHTML=t?`<span class="rnd">Round <b>${
-      t.round}</b></span><button class="icon-btn" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
-      "prev")}</button><button class="btn primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${ic(
-      "next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
-      turnMenuOn}" aria-label="Turn options" title="Turn options: stop tracking turns">${DOTS}</button>${turnMenuOn?
-      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`
-      :`<button class="btn" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${ic("next")}</button>`}
   const at=$("#autoTimer");if(at&&document.activeElement!==at)at.checked=!!state.autoTimer;
   {const ca=$("#concAuto");if(ca)ca.checked=!!ls.get("concAuto",false)}
 }
@@ -11182,7 +11373,6 @@ document.addEventListener("click",e=>{
       toast("Removed: that device is a player again")});break;
     case "dmforget": fetch("/dm-forget",{method:"POST",body:"{}"}).then(()=>{location.href="/players"});break;
     case "dmlight": ls.set("dmLight",!ls.get("dmLight",false));dmLightApply();break;
-    case "dmlook": ls.set("dmLook",ls.get("dmLook","tool")==="classic"?"tool":"classic");dmLookApply();render();break;
     case "atmodiscard": atmoD=atmoFromState();atmoRefresh();break;
     case "atmoclose": if(atmoChanged().length){toast("Not sent: the tablet keeps what it had");}atmoD=null;closeSheet();break;
     case "bgdel":{const f=t.dataset.f;fetch("/bg-delete",{method:"POST",body:JSON.stringify({file:f})}).then(()=>{if(state.bg===f){state.bg="";
@@ -11296,7 +11486,9 @@ document.addEventListener("click",e=>{
     case "tend": turnMenuOn=false;state.turn=null;commit();toast("Turn tracking stopped");break;
     case "turnmenu": turnMenuOn=!turnMenuOn;renderDM();break;
     case "footmore": footMenu(!$("#footMenu").hidden?false:true);break;
-    case "settingsopen":{if(sbViewId){sbViewId=null;renderDM()}const pn=document.querySelector('.panel[data-k="more"]');if(pn){pn.open=true;
+    case "settingsopen":{if(sbViewId){sbViewId=null;renderDM()}const pn=document.querySelector('.panel[data-k="more"]');
+      if(pn){if(pn.classList.contains("on")&&pn.open){pn.open=false;pn.classList.remove("on");break}
+      pn.classList.add("on");pn.open=true;if(!pn.dataset.tw){pn.dataset.tw="1";pn.addEventListener("toggle",()=>{if(!pn.open)pn.classList.remove("on")})}
       pn.scrollIntoView({block:"nearest",behavior:"smooth"});pn.classList.remove("ping");void pn.offsetWidth;pn.classList.add("ping")}break}
     case "sbopen": sbItems=[];libQ="";libArmed=null;sbSheet();setTimeout(()=>{const q=$("#fetQ")||$("#libQ");q&&q.focus()},0);
       fetRefresh().then(fetRedraw);break;

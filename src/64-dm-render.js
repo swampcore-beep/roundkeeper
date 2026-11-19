@@ -38,7 +38,7 @@ const hpFlash=new Map();   // id -> {d, at}: the "-5" that flashes after a chang
 let hpPopId=null,hpMod="",mtOn=false,mtSel=new Set(),mt={n:"",type:"",ab:"",dc:"",on:"half",modes:{},rolls:{}};
 function hpBox(c){
   if(c.hpMax==null)return `<span class="hpw add" title="Track HP: type the maximum"><span class="hpl">HP</span><input id="hp-${
-    c.id}" data-act="hp" placeholder="max" aria-label="Maximum HP for ${esc(c.name)}" inputmode="numeric"></span>`;
+    c.id}" data-act="hp" placeholder="Set HP" aria-label="Maximum HP for ${esc(c.name)}" inputmode="numeric"></span>`;
   const cur=c.hp??c.hpMax,t=c.thp||0,tot=Math.max(c.hpMax,cur)+t,cls=cur<=0?" zero":cur<=c.hpMax/2?" half":"";
   const f=hpFlash.get(c.id),age=f?Date.now()-f.at:1e9;
   return `<button type="button" class="hpw hpb${cls}${hpPopId===c.id?" open":""}${mtSel.has(c.id)?" mt":

@@ -116,13 +116,8 @@ const FONTS=[["alegreya","Alegreya SC","'Alegreya SC'"],["cinzel","Cinzel","Cinz
 /* the DM screen in light or dark: only on this laptop, never on the tablet or phones */
 const SUN='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   MOON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill="currentColor"/></svg>';
-/* the DM screen's look (1.3): "tool" (neutral, the default) or "classic" (the table's language, 1.1); this laptop only */
-function dmLookApply(){if(MODE!=="dm"||PREVIEW)return;const tool=ls.get("dmLook","tool")!=="classic",d=document.documentElement.dataset;
-  if(tool)d.dmlook="tool";else delete d.dmlook;
-  const b=document.getElementById("dmLookBtn");if(b){b.textContent="Classic look";b.title=tool?"Switch to the 1.1 look in the table's style":
-    "Switch to the neutral tool look";b.setAttribute("aria-pressed",String(!tool))}
-  const tb=document.getElementById("turnBox"),dock=document.getElementById("tileDock"),home=document.getElementById("turnHome");
-  if(tb&&dock&&home){if(tool&&tb.parentElement!==dock)dock.prepend(tb);else if(!tool&&tb.parentElement!==home)home.after(tb)}}
+/* the DM screen's look: since 1.4 there is one (the "tool" look); the attribute stays because the CSS is keyed on it */
+function dmLookApply(){if(MODE!=="dm"||PREVIEW)return;document.documentElement.dataset.dmlook="tool"}
 function dmLightApply(){if(MODE!=="dm"||PREVIEW)return;const on=!!ls.get("dmLight",false),d=document.documentElement.dataset;if(on)d.dm="light";
   else delete d.dm;
   const b=document.getElementById("dmLightBtn");if(b){b.textContent="Light screen";
