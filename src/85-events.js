@@ -107,7 +107,6 @@ document.addEventListener("click",e=>{
       toast("Removed: that device is a player again")});break;
     case "dmforget": fetch("/dm-forget",{method:"POST",body:"{}"}).then(()=>{location.href="/players"});break;
     case "dmlight": ls.set("dmLight",!ls.get("dmLight",false));dmLightApply();break;
-    case "dmlook": ls.set("dmLook",ls.get("dmLook","tool")==="classic"?"tool":"classic");dmLookApply();render();break;
     case "atmodiscard": atmoD=atmoFromState();atmoRefresh();break;
     case "atmoclose": if(atmoChanged().length){toast("Not sent: the tablet keeps what it had");}atmoD=null;closeSheet();break;
     case "bgdel":{const f=t.dataset.f;fetch("/bg-delete",{method:"POST",body:JSON.stringify({file:f})}).then(()=>{if(state.bg===f){state.bg="";
@@ -221,7 +220,11 @@ document.addEventListener("click",e=>{
     case "tend": turnMenuOn=false;state.turn=null;commit();toast("Turn tracking stopped");break;
     case "turnmenu": turnMenuOn=!turnMenuOn;renderDM();break;
     case "footmore": footMenu(!$("#footMenu").hidden?false:true);break;
-    case "settingsopen":{if(sbViewId){sbViewId=null;renderDM()}const pn=document.querySelector('.panel[data-k="more"]');if(pn){pn.open=true;
+    case "sidetoggle":{const d=$("#dm"),on=!d.classList.contains("sideon");d.classList.toggle("sideon",on);t.setAttribute("aria-expanded",String(on));break}
+    case "settingsopen":{if(matchMedia("(max-width:1100px)").matches)$("#dm").classList.add("sideon");if(sbViewId){sbViewId=null;
+      renderDM()}const pn=document.querySelector('.panel[data-k="more"]');
+      if(pn){if(pn.classList.contains("on")&&pn.open){pn.open=false;pn.classList.remove("on");break}
+      pn.classList.add("on");pn.open=true;if(!pn.dataset.tw){pn.dataset.tw="1";pn.addEventListener("toggle",()=>{if(!pn.open)pn.classList.remove("on")})}
       pn.scrollIntoView({block:"nearest",behavior:"smooth"});pn.classList.remove("ping");void pn.offsetWidth;pn.classList.add("ping")}break}
     case "sbopen": sbItems=[];libQ="";libArmed=null;sbSheet();setTimeout(()=>{const q=$("#fetQ")||$("#libQ");q&&q.focus()},0);
       fetRefresh().then(fetRedraw);break;
@@ -318,6 +321,7 @@ document.addEventListener("click",e=>{
     case "fs": fsToggle();break;
     case "pwho": pSheet="who";renderPSheet();break;
     case "pmore": pSheet="more";renderPSheet();break;
+    case "pturncard": ls.set("pTurnCard",!pTurnCard());renderPSheet();break;
     case "plight": ls.set("pLight",!ls.get("pLight",false));renderPlayer();renderPSheet();break;
     case "psimple": ls.set("pSimple",!pSimple());pmodeSync(true);renderPlayer();renderPSheet();
       toast(pSimple()?"Simple mode: just your HP":"Everything is back");break;
@@ -720,6 +724,7 @@ document.addEventListener("submit",async e=>{
     const to=callTargets().map(c=>c.id);if(!to.length){toast("Pick at least one player");return}
     const all=to.length===state.list.filter(c=>c.kind==="pc"&&!c.hidden).length;
     state.call={id:uid(),text,dc:m?Number(m[1]):null,at:Date.now(),to,answers:{}};callSkip=new Set();
+    {const au=/\bsave\b/i.test(text)?callAuras():[];if(au.length)state.call.aura=au}
     $("#callText").value="";commit();toast(all?"Roll call sent":`Roll call sent to ${to.length} player${to.length>1?"s":""}`)}
   if(f.id==="fieldForm"){e.preventDefault();
     const name=$("#fieldName").value.trim();if(!name)return;state.effects.push({id:uid(),name,by:"dm",targets:[],conc:false,area:true});

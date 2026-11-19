@@ -101,8 +101,11 @@ function sbSheet(){
     <textarea class="field sbpaste" id="sbPaste" rows="${sbItems.length?2:6}" placeholder="Paste a statblock here"></textarea>
     <div class="sbfoot"><label class="btn"><input type="file" id="sbFile" accept=".md,.txt,text/markdown,text/plain" multiple hidden>Choose .md files</label>
       
-      <button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="button" data-act="sbadd" ${sbItems.length?"":
-        "disabled"}>Add to combat${sbItems.length?` (${sbItems.reduce((a,x)=>a+Math.max(1,Math.min(12,x.count||1)),0)})`:""}</button></div></div></div>`;
+      <button class="btn" type="button" data-act="close">Cancel</button>${sbItems.length?"":
+        `<span class="fixhint" id="sbNone" hidden role="status">Pick a monster first, or paste a statblock</span>`}<button class="btn${
+        sbItems.length?" primary":
+        ""}" type="button" data-act="sbadd">Add to combat${sbItems.length?` (${sbItems.reduce((a,x)=>a+Math.max(1,Math.min(12,x.count||1)),0)})`:
+          ""}</button></div></div></div>`;
   const sh=$(".sbsheet");if(!sh)return;sh.scrollTop=top;
   if(sbItems.length>prevN){const cards=sh.querySelectorAll(".sbcard"),c=cards[cards.length-
     1];   // a monster just picked: show its card if it's out of sight, and light it up
@@ -119,6 +122,8 @@ function sbTake(texts){
   return got;
 }
 function sbAdd(){
+  if(!sbItems.length){const h=$("#sbNone");if(h){h.hidden=false;h.classList.remove("shake");void h.offsetWidth;h.classList.add("shake")}
+    const q=$("#fetQ")||$("#libQ");if(q)q.focus();return}
   const done=[];
   sbItems.forEach(x=>{
     const name=x.name.trim()||"Monster",n=Math.max(1,Math.min(12,x.count||1)),existing=state.list.filter(c=>c.base===name).length;

@@ -1,0 +1,70 @@
+/* ---------- phones, 1.4: a dock in the class colour and four tabs where the thumb is; nothing on a phone under 12 px ----------
+   The dock: HP (tap to change), AC and initiative, then what's on you. The tabs: Roll, Conditions, Spells (or Resources), More. */
+.pbar.v14{gap:8px;padding:10px max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
+  background:color-mix(in srgb,var(--fc,var(--accent)) 10%,var(--bg));border-top:1.5px solid color-mix(in srgb,var(--fc,var(--accent)) 70%,transparent)}
+.pbar.v14 .pmeline{min-height:28px}
+.pbar.v14 .pme{font-size:1.15rem}
+.pbar.v14 .ptop{height:36px;border-radius:10px;font-size:.88rem;padding:0 12px}
+.pdock{display:flex;gap:8px;align-items:stretch}
+.dbox{min-width:56px;height:56px;border:0;border-radius:12px;background:color-mix(in srgb,#000 30%,var(--panel));color:var(--fg);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:1px;font-family:var(--body);position:relative;overflow:hidden;padding:0 8px}
+.dbox small{font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;color:color-mix(in srgb,var(--fc,var(--accent)) 55%,var(--fg))}
+.dbox b{font-family:var(--body);font-size:1.25rem;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
+.dbox.want{box-shadow:inset 0 0 0 2px var(--fc,var(--accent))}.dbox.want b{color:var(--fc,var(--accent))}
+.dbox.dbhp{flex:1 1 auto;flex-direction:row;justify-content:flex-start;gap:12px;padding:0 14px}
+.dbox.dbhp .dhp{display:flex;flex-direction:column;align-items:flex-start}
+.dbox.dbhp .of{font-size:.75em;font-weight:500;color:var(--muted)}
+.dbox.dbhp b i{font-style:normal;font-size:.7em;color:#8ec5ff}
+.dbox.dbhp .hpbar{position:static;flex:1 1 auto;height:6px;border:0;border-radius:999px;background:color-mix(in srgb,var(--fg) 14%,transparent)}
+.dbox.dbhp .hpbar i{display:block;height:100%;border-radius:999px;background:var(--save)}
+.dbox.dbhp.low .hpbar i{background:var(--blood)}
+.dbox.dbhp.zero{background:color-mix(in srgb,var(--blood) 30%,var(--panel))}
+.dbox.dbhp .ti{width:22px;height:22px;color:var(--fc,var(--accent))}
+.dbox.dbhp .dset{font-weight:700}
+.dbox:active{box-shadow:inset 0 0 0 2px var(--fc,var(--accent))}
+.pbar.v14 .ptabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:0;margin:0 calc(-1 * max(12px,env(safe-area-inset-left,0px)));
+  border-top:1px solid color-mix(in srgb,var(--fc,var(--accent)) 25%,var(--line));padding-bottom:env(safe-area-inset-bottom,0px)}
+.pbar.v14 .ptabs .tab,.pbar.v14.many .ptabs .tab{min-height:56px;border:0;border-radius:0;background:none;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;padding:6px 2px;font-size:12px;font-weight:600;color:color-mix(in srgb,var(--fg) 82%,transparent);grid-auto-flow:row}
+.pbar.v14 .ptabs .tab svg{width:22px;height:22px;color:var(--fc,var(--accent));fill:none}
+.pbar.v14 .ptabs .tab[data-act=pmore] svg{fill:currentColor;color:color-mix(in srgb,var(--fg) 82%,transparent)}
+.pbar.v14 .ptabs .tab:active{background:color-mix(in srgb,var(--fc,var(--accent)) 14%,transparent)}
+.pbar.v14 .mystat{gap:6px}
+.pbar.v14 .mychip{padding:6px 12px;font-size:.9rem;min-height:36px}
+
+/* the order on a phone: nothing smaller than 12 px; on the tablet, nothing smaller than 14 px */
+html body:not(.shared) #player :is(.lt,.effn,.badge.you,.t,.eyebrow2,li small,.shield,.shield *){font-size:max(12px,.75rem)!important}
+html body:not(.shared) #player ol.plist .nm small{color:color-mix(in srgb,currentColor 55%,var(--fg))}
+html body:not(.shared) #player ol.plist .cond .lt{color:color-mix(in srgb,currentColor 55%,var(--fg))}
+body:not(.shared) #player ol.plist .effn{font-size:12px;padding:0 5px}
+body.shared #player :is(.eyebrow2,.fieldchip small,li small){font-size:max(14px,.85rem)}
+
+/* "On you": effects on top, then the round, cover, conditions; what's on you is ticked, not only coloured */
+.peffl{display:grid;gap:6px;margin-bottom:8px}
+.peffi{display:flex;flex-direction:column;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,#000 22%,var(--panel))}
+.peffi b{font-weight:700}.peffi small{font-size:12px;color:var(--muted)}
+.psheet .chipgrid [aria-pressed=true]::before{content:"✓";margin-right:6px;font-weight:800}
+
+/* the HP sheet: where Damage or Heal would leave you, before you press it */
+.hpprev{display:flex;justify-content:space-between;gap:8px;min-height:20px;font-size:13px;color:var(--muted)}
+.hpprev b{color:var(--fg);font-size:15px}.hpprev .hpvd b{color:var(--blood)}.hpprev .hpvh b{color:var(--save)}
+
+/* "Your turn": what matters this turn, one card each */
+.ytcs{display:grid;gap:8px}
+.ytc{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,#000 22%,var(--panel))}
+.ytc b{font-weight:700}.ytc p{margin:2px 0 0;font-size:13px;color:var(--muted);line-height:1.35}
+.ytc .btn{margin-top:8px}
+.tci{width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--fg) 8%,transparent)}
+svg.tci{display:block;padding:5px;fill:none;stroke:var(--cc,currentColor);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tce{color:var(--fc,var(--accent));font-size:15px}
+
+/* E18: the table's rolls under the dice */
+.tlog{display:grid}
+.tlr{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
+.tlr:first-child{border-top:0}
+.tlr b{font-weight:700}.tlr span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tlr em{margin-left:auto;font-style:normal;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
+.tld{width:8px;height:8px;border-radius:999px;flex:none;background:var(--fc,var(--muted))}
+
+/* E19: an aura reminder in the roll call */
+.aurahint{display:block;font-size:13px;color:color-mix(in srgb,var(--accent) 70%,var(--fg));padding:2px 0}

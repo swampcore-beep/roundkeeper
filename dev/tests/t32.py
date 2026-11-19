@@ -29,7 +29,7 @@ async def main():
         chk("a phone doesn't learn who else is connected",info(rk.PL).get('phones') is None)
         await asyncio.sleep(2.2)
         pill=await dm.inner_text('#joinPill')
-        chk("header sums it up",'Devices' in pill and '1/2 phones' in pill,pill)
+        pal=await dm.get_attribute('#joinPill','aria-label'); chk("header sums it up",'Tablet' in pill and '1/2 phones' in pill and 'Devices' in pal,(pill,pal))
         await dm.click('#joinPill'); await asyncio.sleep(1)
         links=await dm.evaluate("()=>[...document.querySelectorAll('#devSheet .devlink code')].map(c=>c.textContent)")
         chk("full link for the tablet",any(l.startswith('http://') and l.endswith('/players?shared=1') for l in links),links)

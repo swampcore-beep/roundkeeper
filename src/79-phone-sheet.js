@@ -98,8 +98,16 @@ function shPull(){   // a sheet the DM sent, or this character's sheet on a new 
       renderPSheet()}).catch(()=>{shPullV=null})}
 /* rolling from the sheet */
 let shLast=null,shAll=false,shDraft=null,shStep=0,shPaste=null;
+/* 1.4: Bless (+1d4) and Bane (−1d4) on you go onto attack rolls and saving throws by themselves */
+function blessAdd(){const me=meChar();if(!me)return {n:0,t:""};const on=n=>state.effects.some(e=>(e.targets||[]).includes(me.id)&&
+  String(e.name).toLowerCase()===n);
+  let n=0,t="";if(on("bless")){const r=1+Math.floor(Math.random()*4);n+=r;t+=` +${r} Bless`}if(on("bane")){const r=1+Math.floor(Math.random()*4);n-=r;
+    t+=` −${r} Bane`}
+  return {n,t}}
+const blessFor=label=>/\bsave\b|to hit|attack/i.test(label);
 function shRoll(label,bonus){
-  const d=1+Math.floor(Math.random()*20),ex=myExh(),tot=d+bonus-2*ex,text=`${label}: d20 (${d}) ${shS(bonus)}${ex?` −${2*ex} exhaustion`:""}`;
+  const bl=blessFor(label)?blessAdd():{n:0,t:""};
+  const d=1+Math.floor(Math.random()*20),ex=myExh(),tot=d+bonus-2*ex+bl.n,text=`${label}: d20 (${d}) ${shS(bonus)}${bl.t}${ex?` −${2*ex} exhaustion`:""}`;
   shLast={label,tot,how:text,n:d===20?"n20":d===1?"n1":""};if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
   try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1?[300]:[60])}catch(e){}return {d,tot,text}}
 function shDmg(label,expr){const r=sbDice(String(expr).split(" ")[0],false);if(!r)return;
@@ -220,6 +228,34 @@ function pcBuild(){   // new numbers, but what you've already spent stays spent
   resSet(next.concat(keep));profSet(prof);pcDraft=null;return next.length;
 }
 let effDraft={name:"",conc:false,area:false,targets:new Set(),custom:false},resDraft={name:"",max:"",reset:"long",custom:false},resEditI=-1;
+/* E18 (1.4): the rolls people showed to the table, newest first, on every phone */
+function tableLogHtml(){const L=(state.rollLog||[]).slice(0,6);if(!L.length)return "";
+  const col=n=>{const c=state.list.find(x=>x.kind==="pc"&&x.name===n),k=c&&frameKey(c);return k?` fr-${k}`:""};
+  return `<div class="psec"><div class="eyebrow2">At the table</div><div class="tlog">${L.map(r=>
+    `<div class="tlr"><i class="tld${col(r.by)}" aria-hidden="true"></i><b>${esc(
+    r.by)}</b><span>${esc(String(r.text||"").replace(/:.*$/,"")||"roll")}</span><em>${esc(String(r.total))}</em></div>`).join("")}</div></div>`}
+/* 1.4: the "Your turn" screen. What matters this turn, in plain words: conditions (from RULES), effects and how long they last,
+   your Concentration, dice someone gave you, and whether your reaction is spent. It can be turned off in More. */
+const pTurnCard=()=>ls.get("pTurnCard",true)!==false;
+function turnCardHtml(me){
+  const conds=(me.conds||[]).map(x=>x.n||x),out=[],tags=new Set(me.tags||[]),ed=canEdit();
+  const card=(ico,t,lines,btn)=>out.push(`<div class="ytc">${ico}<div><b>${t}</b>${lines.map(l=>`<p>${l}</p>`).join("")}${btn||""}</div></div>`);
+  conds.filter(n=>n!=="Concentrating").forEach(n=>{const r=RULES[n.toLowerCase()];if(!r)return;
+    card(condIco(n,"tci"),n==="Exhaustion"?`Exhaustion ${exhOf(me)}`:esc(r.t),r.d.slice(0,2).map(esc),
+      n==="Prone"&&ed?`<button class="btn sm" type="button" data-act="pcond" data-n="Prone" aria-pressed="true">I stand up</button>`:"")});
+  state.effects.filter(e=>(e.targets||[]).includes(me.id)).forEach(e=>{const by=byId(e.by),n=effLeft(e);
+    card('<span class="tci tce" aria-hidden="true">✦</span>',esc(e.name)+(n!=null?` · ${n} round${n===1?"":"s"} left`:""),
+      [by&&by.id!==me.id?`From ${esc(by.name)}.`:"Your own effect."].concat(e.name==="Bless"?["Your phone adds 1d4 to your attack rolls and saving throws."]:
+        e.name==="Bane"?["Your phone takes 1d4 off your attack rolls and saving throws."]:[]))});
+  const mine=state.effects.filter(e=>e.by===me.id&&e.conc);
+  if(conds.includes("Concentrating"))card(condIco("Concentrating","tci"),"Concentrating"+(mine.length?` on ${esc(mine.map(e=>e.name).join(", "))}`:""),
+    ["Damage means a Constitution save: DC 10 or half the damage."]);
+  (me.gifts||[]).forEach(g=>card('<span class="tci tce" aria-hidden="true">◆</span>',`${esc(g.n)} · ${esc(g.die)}`,
+    [`From ${esc(g.from)}: add it to a roll when you want.`]));
+  card('<span class="tci tce" aria-hidden="true">↺</span>',tags.has("reaction")?"Reaction used":"Reaction ready",[tags.has("reaction")?
+    "It comes back at the start of your turn.":"You can still use it before your next turn."]);
+  return `<div class="ytcs">${out.join("")}</div>`;
+}
 /* the phone's own number pad: the system keyboard would cover the buttons under the field */
 let padVal="",padFor=null,spellQ="",spellScope=null,resAll=false;
 const padHtml=(ph,neg)=>`<div class="padshow" id="padShow" data-ph="${esc(ph)}" aria-live="polite">${esc(padVal)}</div>
@@ -229,8 +265,14 @@ const padHtml=(ph,neg)=>`<div class="padshow" id="padShow" data-ph="${esc(ph)}" 
 function padKey(k){
   if(k==="back")padVal=padVal.slice(0,-1);else if(k==="clr")padVal="";else if(k==="neg")padVal=padVal.startsWith("-")?padVal.slice(1):"-"+padVal;
   else if(padVal.replace("-","").length<3||(padVal.length<4&&!padVal.startsWith("-")))padVal=(padVal==="0"?"":padVal==="-0"?"-":padVal)+k;
-  const el=$("#padShow");if(el)el.textContent=padVal;
+  const el=$("#padShow");if(el)el.textContent=padVal;hpPrevSync();
 }
+/* 1.4: before you press Damage or Heal, the phone shows where each would leave you */
+function hpPrevSync(){const el=$("#hpPrev");if(!el)return;const hp=hpGet(),n=Number(padVal);
+  if(!padVal||!(n>0)||!hp.max){el.innerHTML="";return}
+  const a=Math.min(hp.temp||0,n),dmg=Math.max(0,hp.cur-(n-a)),heal=Math.min(hp.max,hp.cur+n),half=Math.floor(hp.max/2);
+  el.innerHTML=`<span class="hpvd">Damage: ${hp.cur} → <b>${dmg}</b>${dmg===0?" · 0 HP":dmg<=half&&hp.cur>half?" · Bloodied":
+    ""}</span><span class="hpvh">Heal: ${hp.cur} → <b>${heal}</b></span>`}
 /* the app's own keyboard for every other field on the phone: docked at the bottom, it never covers the sheet's buttons */
 let kbShift=null;   // null = automatic capitals (start of the field, after a space)
 function kbField(){const a=document.activeElement;return a&&a.matches&&a.matches("input[data-kb]")?a:null}
@@ -327,7 +369,8 @@ function renderPSheet(){
     const me=meChar();if(me&&!me.down&&pSheet!=="dsave")dsLast=null;
     const padKeyNow=pSheet+(hpEditMax?":max":"");if(padFor!==padKeyNow){padFor=padKeyNow;padVal=""}
     const free=pSheet==="res"||pSheet==="resedit"||pSheet==="pcset"||pSheet==="pcfeat"||pSheet==="give"||pSheet==="comphp"||pSheet==="compsb"||pSheet==="hp"||
-      pSheet==="dice"||pSheet==="more"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||(pSheet==="spell"&&(!spView||spView.from!=="effs"));
+      pSheet==="dice"||pSheet==="more"||pSheet==="turn"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||(pSheet==="spell"&&(!spView||
+        spView.from!=="effs"));
     if(!me||(!canEdit()&&!free&&pSheet!=="call")){pSheet=null;return renderPSheet()}
     if(pSheet==="dsave"){
       const ds=dsOf(me),done=isDead(me)||isStable(me);
@@ -361,6 +404,9 @@ function renderPSheet(){
         <div class="hpbtns"><button class="btn primary" type="button" data-act="pconroll">Roll it</button><button class="btn" type="button" data-act="pconroll" data-adv="1">Roll with advantage</button></div>
         <div class="psec"><div class="eyebrow2">Rolled real dice?</div><div class="hpbtns"><button class="btn heal" type="button" data-act="pconres" data-ok="1">I made it</button><button class="btn dmg" type="button" data-act="pconres" data-ok="0">I lost it</button></div></div>`}
         ${!still&&!r?`<p class="psub">You're no longer Concentrating.</p>`:""}`;
+    }else if(pSheet==="turn"){
+      body=`<h2>Your turn, ${esc(me.name)}</h2>${turnCardHtml(me)}
+        <div style="display:flex;justify-content:flex-end"><button class="btn primary" type="button" data-act="pclose">Got it</button></div>`;
     }else if(pSheet==="more"){
       body=`<h2>${esc(me.name)}</h2><div class="morelist">
         <button class="pcline" type="button" data-act="psheet">${shLocal()?`<b>My character sheet</b><small>${esc(shLocal().cls||
@@ -370,6 +416,8 @@ function renderPSheet(){
         <button class="btn" type="button" data-act="fs">${fsLabel()}</button>
         <button class="btn" type="button" data-act="plight" aria-pressed="${!!ls.get("pLight",false)}">${ls.get("pLight",false)?MOON+" Dark screen":SUN+
           " Light screen"}</button>
+        <button class="btn" type="button" data-act="pturncard" aria-pressed="${pTurnCard()}">${pTurnCard()?"Your turn screen: on":
+          "Your turn screen: off"}</button>
         <button class="btn" type="button" data-act="psimple" aria-pressed="${pSimple()}">${pSimple()?"Show everything again":
           "Simple: just my HP"}<br><small style="font-weight:600;color:var(--muted)">${pSimple()?"Resources, spells, dice, conditions and the rest come back.":
           "Only your HP, and whatever the DM sends you. For players who keep the rest on paper."}</small></button></div>
@@ -385,6 +433,7 @@ function renderPSheet(){
       const call=state.call;if(!call||(call.answers||{})[me.id]!=null){pSheet=null;return renderPSheet()}
       const ask=shAsk(call.text);
       body=`<div class="callhead">${D20}<div><div class="eyebrow2">The DM calls for a roll</div><h2>${esc(call.text)}</h2></div></div>
+        ${(call.aura||[]).filter(a=>a.id!==me.id).map(a=>`<div class="aurahint">${esc(a.t)}</div>`).join("")}
         ${ask?`<button class="shrollbig" type="button" data-act="pcallroll"><b>Roll ${esc(ask.label)} ${shS(
           ask.b)}</b><small>from your sheet</small></button><div class="eyebrow2">Rolled real dice?</div>`:""}
         <div class="psec padsec">${padHtml("Your total",true)}<button class="btn primary e-send" type="button" data-act="pcallsend">Send result</button></div>
@@ -404,7 +453,7 @@ function renderPSheet(){
         body=`<h2>HP · ${esc(me.name)}</h2>
           <div class="hpbig${hp.cur===0?" zero":""}"><b>${hp.cur}</b><span>/ ${hp.max}</span>${hp.temp?`<i>+${hp.temp} temp</i>`:""}</div>
           <div class="hpbar"><span style="width:${Math.round(100*hp.cur/hp.max)}%"></span></div>
-          <div class="psec padsec">${padHtml("How much?")}
+          <div class="psec padsec">${padHtml("How much?")}<div class="hpprev" id="hpPrev" aria-live="polite"></div>
             <div class="hpbtns"><button class="btn dmg" type="button" data-act="phpdo" data-hp="dmg">Damage</button><button class="btn heal" type="button" data-act="phpdo" data-hp="heal">Heal</button><button class="btn" type="button" data-act="phpdo" data-hp="temp">Temp HP</button></div>
           </div>
           <button class="linkbtn hpmaxlink" type="button" data-act="phpmax">Change max HP (${hp.max})</button>
@@ -429,6 +478,8 @@ function renderPSheet(){
         <button class="btn primary e-send" type="button" data-act="proll">Roll ${dice.count}d${dice.die}${dice.mod?(dice.mod>0?"+":"")+dice.mod:""}</button>
         ${L?`<div class="dresult${L.nat===20?" n20":L.nat===1?" n1":""}"><b>${L.total}</b><small>${esc(L.text)}</small></div>`:""}
         <div class="psec"><div class="eyebrow2">Rolled real dice?</div><div class="hpbtns"><button class="btn n20b" type="button" data-act="pnat" data-k="nat20">Nat 20!</button><button class="btn n1b" type="button" data-act="pnat" data-k="nat1">Nat 1</button></div></div>
+        ${shLocal()?`<button class="btn" type="button" data-act="psheet">Roll from my sheet (saves, skills, attacks)</button>`:""}
+        ${tableLogHtml()}
         <div style="display:flex;justify-content:flex-end"><button class="btn" type="button" data-act="pclose">Close</button></div>`;
     }else if(pSheet==="effs"){
       const mine=state.effects.filter(e=>e.by===me.id);const names=id=>{const c=byId(id);return c?esc(c.name):"?"};
@@ -614,7 +665,12 @@ function renderPSheet(){
           ${isDead(me)||isStable(me)?"":`<button class="btn primary e-send" type="button" data-act="pdsroll">Roll death save</button>`}
           ${dsLast?`<div class="dresult${dsLast.d===20?" n20":dsLast.d===1?" n1":
             ""}"><b>${dsLast.tot}</b><small>d20 (${dsLast.d}) · ${esc(dsLast.msg)}</small></div>`:""}</div>`:"";
-      body=`<h2>My conditions · ${esc(me.name)}</h2>${dsHtml}
+      const onMe=state.effects.filter(e=>(e.targets||[]).includes(me.id));   // 1.4: effects live here too (one tab, "On you")
+      const effHtml=`<div class="psec"><div class="eyebrow2">Effects on you</div>${onMe.length?`<div class="peffl">${onMe.map(e=>{const by=byId(e.by);
+        return `<span class="peffi"><b>✦ ${esc(e.name)}</b><small>${by&&by.id!==me.id?"from "+esc(by.name):"yours"}${effN(e)?" · "+
+          effN(e).replace(/<[^>]+>/g,"")+
+          " rounds":""}</small></span>`}).join("")}</div>`:""}<button class="btn" type="button" data-act="peffs">Effects…</button></div>`;
+      body=`<h2>On you · ${esc(me.name)}</h2>${dsHtml}${effHtml}
         <div class="psec"><div class="eyebrow2">This round</div><div class="chipgrid">${TAGS.map(([k,l])=>
           `<button type="button" data-act="ptag" data-t="${k}" aria-pressed="${tags.has(k)}">${l}</button>`).join("")}</div></div>
         <div class="psec"><div class="eyebrow2">Cover</div><div class="seg2">${COVERS.map(([k,l])=>

@@ -62,7 +62,7 @@ async def main():
         chk("players can't read monsters",get(rk.PL+'/5et/index')[0]==403)
         # 86: Import JSON
         await T(dm,"closeSheet()"); await asyncio.sleep(.2)
-        await dm.click('details.panel[data-k=more] summary') ; await asyncio.sleep(.3)
+        await dm.click('#setBtn') ; await asyncio.sleep(.3)   # 1.4: Settings and files open from the gear
         await dm.click('[data-act=gdata]'); await asyncio.sleep(1)
         g=await dm.locator('.gdsheet').inner_text()
         chk("Game data: SRD built in, nothing imported",'331 monsters' in g and 'Nothing imported yet' in g,g[:300])

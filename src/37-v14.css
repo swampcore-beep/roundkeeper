@@ -1,0 +1,246 @@
+/* ---------- DM screen, 1.4: one system (tokens), a full-height app, the order as a table, the turn in one row ----------
+   Type 12 · 13 · 15 · 17 · 20 · 24 px; weights 400 · 500 · 600; controls 28 · 36 · 44 px; corners 6 px or a full round; steps of 4 px.
+   The order scrolls on its own, so the tools above it and the turn below it never cover a row. */
+html:root[data-dmlook=tool]{--fs12:12px;--fs13:13px;--fs15:15px;--fs17:17px;--fs20:20px;--fs24:24px;--rad:6px;
+  --blood-ink:#ff8a8d;--blood-bg:#4a1f24;--down-bg:#3a3a40;--fieldline:#6a6a72;--dock:#18181b;--quiet:#8e8e96}
+html:root[data-dmlook=tool][data-dm=light]{--faint:#66666d;--save:#18652b;--boss:#7d5108;
+  --blood-ink:#a8001a;--blood-bg:#fde4e6;--down-bg:#dcdce2;--fieldline:#8a8a92;--dock:#dedee4;--quiet:#5d5d64}
+html:root[data-dmlook=tool] :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---- the app: header, then the order and the side panel, each scrolling on its own ---- */
+html:root[data-dmlook=tool] body:has(#dm:not([hidden])){overflow:hidden}
+html:root[data-dmlook=tool] #dm:not([hidden]){height:100vh;height:100dvh;display:flex;flex-direction:column}
+html:root[data-dmlook=tool] #dm>.bar{flex:none;position:relative}
+html:root[data-dmlook=tool] #dm .bar-row,html:root[data-dmlook=tool] #dm .addr-row{max-width:none}
+html:root[data-dmlook=tool] #dm .brand{font-size:var(--fs17);font-weight:600}
+html:root[data-dmlook=tool] main.dmgrid{flex:1 1 auto;min-height:0;width:100%;max-width:none;margin:0;align-items:stretch;
+  grid-template-columns:minmax(0,1fr) 380px;gap:16px;padding:4px 16px calc(12px + var(--covered,0px))}
+html:root[data-dmlook=tool] body.sbopen main.dmgrid{grid-template-columns:minmax(0,1fr);padding-right:calc(min(480px,44vw) + 12px)}
+html:root[data-dmlook=tool] .dmmain{display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0}
+html:root[data-dmlook=tool] .dmmain>.note{flex:none;margin:0}
+html:root[data-dmlook=tool] .side{position:static;top:auto;max-height:none;min-height:0;overflow:auto;align-content:start;gap:8px}
+
+/* ---- the tools, above the order, in one row ---- */
+html:root[data-dmlook=tool] .dmtools{flex:none;display:flex;align-items:center;gap:4px;flex-wrap:nowrap;min-height:44px;padding:4px;
+  border-radius:10px;background:var(--panel);overflow:visible}
+html:root[data-dmlook=tool] .dmtools .fgrp{display:flex;align-items:center;gap:2px}
+html:root[data-dmlook=tool] .dmtools .fgrp+.fgrp{padding-left:6px;margin-left:4px;border-left:1px solid var(--line)}
+html:root[data-dmlook=tool] .dmtools .fgrp.fend{margin-left:auto;border-left:0;padding-left:0}
+html:root[data-dmlook=tool] .dmtools .btn{min-height:36px;height:36px;padding:0 12px;border:0;border-radius:var(--rad);background:transparent;
+  font-size:var(--fs15);font-weight:500;color:var(--fg);white-space:nowrap;box-shadow:none}
+html:root[data-dmlook=tool] .dmtools .btn:hover{background:var(--panel2)}
+html:root[data-dmlook=tool] .dmtools #lairBtn[aria-pressed=true]{background:color-mix(in srgb,var(--boss) 18%,transparent);color:var(--fg)}
+html:root[data-dmlook=tool] .dmtools #endBtn:not(.primary){color:var(--fail);background:transparent}
+html:root[data-dmlook=tool] .dmtools #endBtn.primary{background:var(--panel2);color:var(--fg)}
+html:root[data-dmlook=tool] .dmtools .btn.pebox{display:inline-flex;align-items:center;gap:8px}
+html:root[data-dmlook=tool] .dmtools .footmore .rmenu{top:calc(100% + 6px);bottom:auto;right:0}
+html:root[data-dmlook=tool] .dmtools .icon-btn{width:36px;height:36px;min-height:36px;border:0;border-radius:var(--rad);background:transparent}
+
+/* ---- the order as a table: one set of columns for the heads and every row ---- */
+html:root[data-dmlook=tool]{--cols:48px minmax(220px,300px) minmax(0,1fr) 132px 92px 176px}
+html:root[data-dmlook=tool] .colhead{flex:none;display:grid;grid-template-columns:var(--cols);gap:10px;align-items:center;height:24px;
+  padding:0 12px 0 8px;font-size:var(--fs12);font-weight:500;color:var(--muted);letter-spacing:.02em}
+html:root[data-dmlook=tool] .colhead span:first-child{text-align:center}
+html:root[data-dmlook=tool] .colhead span:nth-child(5){text-align:center}
+html:root[data-dmlook=tool] .colhead span:last-child{text-align:right}
+html:root[data-dmlook=tool] #roster.roster{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;align-content:start;padding:0 2px 8px 0}
+html:root[data-dmlook=tool] #roster:has(.empty){overflow:visible}
+html:root[data-dmlook=tool]:has(#mtBar) #roster.roster,html:root[data-dmlook=tool]:has(#concAsk) #roster.roster{padding-bottom:180px}
+html:root[data-dmlook=tool] #roster .row{grid-template-columns:var(--cols);gap:4px 10px;min-height:56px;padding:6px 12px 6px 8px;border-radius:8px}
+html:root[data-dmlook=tool] #roster .row .tools{display:contents}
+html:root[data-dmlook=tool] #roster .row .tools>.hpw{grid-column:4;width:100%;max-width:132px;justify-self:start}
+html:root[data-dmlook=tool] #roster .row .tools>.ac-wrap{grid-column:5;justify-self:center}
+html:root[data-dmlook=tool] #roster .row .tools>.stat{grid-column:6;display:flex;align-items:center;justify-content:flex-end;gap:4px}
+html:root[data-dmlook=tool] #roster .row .sbline{grid-column:2 / -1;padding-left:0}
+html:root[data-dmlook=tool] #roster .row .lairbox{grid-column:2 / -1}
+
+/* the initiative; with Hit several the tick takes its place, so nothing moves */
+html:root[data-dmlook=tool] #roster .hexw{width:48px;display:flex;justify-content:center}
+html:root[data-dmlook=tool] #roster .hexw .init-in{width:44px;height:36px;font-size:var(--fs17);font-weight:600;text-align:center}
+html:root[data-dmlook=tool] #roster .row.mtrow .hexw .init-in{display:none}
+html:root[data-dmlook=tool] #roster .mtcb{position:static;transform:none;width:24px;height:24px;border-radius:var(--rad);border:2px solid var(--fieldline);
+  display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
+html:root[data-dmlook=tool] #roster .mtcb[aria-pressed=true]{background:var(--fail);border-color:var(--fail);color:#1a0505}
+
+/* who: the picture square, the name, the grey second line; no class or type = a plain outline of a person, never an empty square */
+html:root[data-dmlook=tool] #roster .who{grid-template-columns:36px minmax(0,1fr);column-gap:12px}
+html:root[data-dmlook=tool] #roster .dmpic{width:36px;height:36px;border-radius:var(--rad);background:var(--panel2)}
+html:root[data-dmlook=tool] #roster .dmpic:has(.nosig){background:transparent;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fg) 28%,transparent)}
+html:root[data-dmlook=tool] #roster .dmsig{width:20px;height:20px}
+html:root[data-dmlook=tool] #roster .dmsig.nosig{background:var(--muted);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6'/%3E%3C/svg%3E") center/contain no-repeat}
+html:root[data-dmlook=tool] #roster .name-in{font-size:var(--fs15);font-weight:600}
+html:root[data-dmlook=tool] #roster .typeline{font-size:var(--fs13);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html:root[data-dmlook=tool] #roster .sblink{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border:0;border-radius:var(--rad);
+  background:var(--panel2);color:color-mix(in srgb,var(--arcane) 70%,var(--fg));font-size:var(--fs12);font-weight:500;vertical-align:middle}
+html:root[data-dmlook=tool] #roster .sblink svg{width:12px;height:12px}
+html:root[data-dmlook=tool] #roster .sblink.on{background:color-mix(in srgb,var(--arcane) 22%,var(--panel2))}
+html:root[data-dmlook=tool] .nowtag,html:root[data-dmlook=tool] .nexttag{font-size:var(--fs12);font-weight:600;border-radius:4px;padding:0 6px;line-height:18px}
+
+/* conditions: pills; "+ Condition" always there and says what it is when the row has nothing else */
+html:root[data-dmlook=tool] #roster .chips{gap:6px;align-items:center}
+html:root[data-dmlook=tool] #roster .chips .cond{min-height:28px;padding:0 10px;border-radius:999px;font-size:var(--fs13);font-weight:500}
+html:root[data-dmlook=tool] #roster .chips .addc,html:root[data-dmlook=tool] body.sbopen #roster .chips .addc{opacity:1;position:static;transform:none;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fg) 22%,transparent)!important;background:transparent!important;color:var(--muted)!important;
+  padding:0 9px;min-height:28px}
+html:root[data-dmlook=tool] #roster .chips .addc:hover{color:var(--fg)!important;box-shadow:inset 0 0 0 1px var(--muted)!important}
+
+/* HP: the number and a thin bar; no maximum yet = a real field that says "Set HP" */
+html:root[data-dmlook=tool] #roster .hpw .hpn{font-size:var(--fs17);font-weight:600}
+html:root[data-dmlook=tool] #roster .hpw.add{padding:0;border:0!important;background:none!important;box-shadow:none!important;outline:0}
+html:root[data-dmlook=tool] #roster .hpw.add input{width:104px;height:36px;padding:0 10px;border:1px solid var(--fieldline);border-radius:var(--rad);
+  background:var(--bg);color:var(--fg);font:500 var(--fs15)/1 var(--ui);text-align:left}
+html:root[data-dmlook=tool] #roster .hpw.add input::placeholder{color:color-mix(in srgb,var(--fg) 72%,transparent);font-size:var(--fs13);opacity:1}
+html:root[data-dmlook=tool] #roster .hpw.add input:focus{outline:0;border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent)}
+html:root[data-dmlook=tool] #roster .hpw.hpnone{color:transparent}
+
+/* AC on a shield; empty = a dashed shield that says AC */
+html:root[data-dmlook=tool] #roster .ac-wrap{display:inline-flex;align-items:center;gap:2px}
+html:root[data-dmlook=tool] #roster .ac-wrap input{width:40px;height:44px;font-size:var(--fs15)}
+html:root[data-dmlook=tool] #roster .ac-wrap input.acempty{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l8 3v5.5c0 5-3.3 9-8 10.5-4.7-1.5-8-5.5-8-10.5V5.5z' fill='none' stroke='%237b7b82' stroke-width='1.2' stroke-dasharray='2 2'/%3E%3C/svg%3E")}
+html:root[data-dmlook=tool] #roster .ac-wrap input::placeholder{color:var(--muted);font-size:var(--fs12);font-weight:500;opacity:1}
+html:root[data-dmlook=tool] #roster .ac-wrap .tog{width:28px;height:28px;padding:0;border:0;border-radius:999px;background:transparent!important;
+  color:var(--quiet)}
+html:root[data-dmlook=tool] #roster .ac-wrap .tog[aria-pressed=true]{color:var(--fg)}
+html:root[data-dmlook=tool] #roster .ac-wrap .tog svg{width:16px;height:16px}
+
+/* Bloodied and Down: quiet icons while off (B and D still work); on, they become a coloured pill with the word */
+html:root[data-dmlook=tool] #roster .stat .tog.blood,html:root[data-dmlook=tool] #roster .stat .tog.downt{display:inline-flex;align-items:center;
+  justify-content:center;gap:6px;min-width:32px;height:32px;padding:0;border:0!important;border-radius:999px;background:transparent!important;
+  color:var(--quiet);font-size:var(--fs13);font-weight:600;text-transform:none;letter-spacing:0}
+html:root[data-dmlook=tool] #roster .stat .tog svg{width:16px;height:16px;flex:none}
+html:root[data-dmlook=tool] #roster .stat .tog.blood svg{fill:none;stroke:currentColor;stroke-width:1.8}
+html:root[data-dmlook=tool] #roster .stat .tog .tl{display:none}
+html:root[data-dmlook=tool] #roster .stat .tog:hover{background:var(--panel2)!important;color:var(--fg)}
+html:root[data-dmlook=tool] #roster .stat .tog[aria-pressed=true]{padding:0 12px 0 10px}
+html:root[data-dmlook=tool] #roster .stat .tog[aria-pressed=true] .tl{display:inline}
+html:root[data-dmlook=tool] #roster .stat .tog.blood[aria-pressed=true]{background:var(--blood-bg)!important;color:var(--blood-ink)}
+html:root[data-dmlook=tool] #roster .stat .tog.blood[aria-pressed=true] svg{fill:currentColor}
+html:root[data-dmlook=tool] #roster .stat .tog.downt[aria-pressed=true]{background:var(--down-bg)!important;color:var(--fg)}
+html:root[data-dmlook=tool] #roster .stat .morebtn2{width:32px;height:32px;border-radius:999px;color:var(--quiet)}
+
+/* the lair action: one line across the order, its own shape */
+html:root[data-dmlook=tool] #roster .row.k-lair{grid-template-columns:48px minmax(0,1fr) auto auto;min-height:40px;background:var(--panel);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fg) 16%,transparent)}
+html:root[data-dmlook=tool] #roster .row.k-lair.turn{background:var(--rownow);box-shadow:inset 4px 0 0 var(--accent)}
+html:root[data-dmlook=tool] #roster .row.k-lair .lair-init{width:48px;text-align:center;font-size:var(--fs17);font-weight:600;color:var(--accent)}
+html:root[data-dmlook=tool] #roster .row.k-lair .who{display:block;min-width:0}
+html:root[data-dmlook=tool] #roster .row.k-lair .lair-name{display:flex;align-items:baseline;gap:10px;font-family:var(--ui);font-size:var(--fs15);
+  font-weight:600;font-style:normal;white-space:nowrap;overflow:hidden}
+html:root[data-dmlook=tool] #roster .row.k-lair .lair-name small{display:inline;font-size:var(--fs13);font-weight:400;color:var(--muted);
+  overflow:hidden;text-overflow:ellipsis}
+html:root[data-dmlook=tool] #roster .row.k-lair .tools{display:flex}
+
+/* ---- the turn, one row at the bottom ---- */
+html:root[data-dmlook=tool] .dmmain>.foot{flex:none;position:static;margin:0;padding:6px;border:0;border-radius:12px;background:var(--dock);display:block}
+html:root[data-dmlook=tool] .tiledock .turnbox{gap:8px;align-items:stretch}
+html:root[data-dmlook=tool] .ttile{min-height:52px;height:52px;padding:0 16px;border-radius:8px;background:var(--panel);min-width:0;align-items:center}
+html:root[data-dmlook=tool] .ttile b{font-size:var(--fs17);font-weight:600;max-width:none}
+html:root[data-dmlook=tool] .ttile small{font-size:var(--fs12);font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);max-width:none}
+html:root[data-dmlook=tool] .ttile.trnd{width:88px;flex:none}
+html:root[data-dmlook=tool] .ttile.twho{flex:1 1 0;min-width:0;align-items:flex-start}
+html:root[data-dmlook=tool] .ttile.twho b{display:flex;align-items:center;gap:10px;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+html:root[data-dmlook=tool] .ttile .tdot{width:8px;height:8px;border-radius:999px;background:var(--accent);flex:none}
+html:root[data-dmlook=tool] .ttile.tidle .tdot{display:none}
+html:root[data-dmlook=tool] .ttile .tini{font-size:var(--fs13);font-weight:500;color:var(--muted)}
+html:root[data-dmlook=tool] .ttile.tfight{width:120px;flex:none;align-items:flex-start}
+html:root[data-dmlook=tool] .tnav{min-height:52px;height:52px;min-width:52px;padding:0 14px;border-radius:8px;background:var(--panel)}
+html:root[data-dmlook=tool] .tnav.primary{padding:0 24px;border-radius:999px;font-size:var(--fs17);font-weight:600;gap:10px}
+html:root[data-dmlook=tool] .tnav kbd{font:500 var(--fs12)/18px var(--ui);padding:0 5px;border-radius:4px;
+  border:1px solid color-mix(in srgb,var(--accent-ink) 35%,transparent);color:color-mix(in srgb,var(--accent-ink) 75%,transparent);background:none}
+
+/* what floats: the Hit several bar and the Concentration cards sit above the turn row; a note under the header */
+html:root[data-dmlook=tool] .mtbar,html:root[data-dmlook=tool] .concask{bottom:calc(var(--covered,0px) + 96px)}
+html:root[data-dmlook=tool] .toast{top:calc(var(--barh,64px) + 6px);bottom:auto;border-radius:999px;font-size:var(--fs13);font-weight:500}
+
+/* ---- the side panel ---- */
+html:root[data-dmlook=tool] .side .panel{border-radius:10px}
+html:root[data-dmlook=tool] .side .panel>summary{font-size:var(--fs15);font-weight:600;padding:12px 16px}
+html:root[data-dmlook=tool] .side .panel>:not(summary){margin:0 16px 14px}
+/* Settings and files open from the gear in the header, on top of the panel; the panel puts first what this part of the fight needs */
+html:root[data-dmlook=tool] .side .panel[data-k=more]:not(.on){display:none}
+html:root[data-dmlook=tool] .side .panel[data-k=more].on{order:-1}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=add]{order:1}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=party]{order:2}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=enc]{order:3}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=call]{order:4}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=log]{order:5}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=field]{order:6}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=hand]{order:7}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=call]{order:1}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=field]{order:2}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=log]{order:3}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=hand]{order:4}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=add]{order:5}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=party]{order:6}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=enc]{order:7}
+
+/* buttons that can't be used yet look like plain buttons, not faded accent ones */
+html:root[data-dmlook=tool] .btn:disabled,html:root[data-dmlook=tool] .btn.primary:disabled{background:var(--panel2)!important;
+  color:color-mix(in srgb,var(--fg) 45%,transparent)!important;border-color:transparent!important;opacity:1;cursor:not-allowed}
+
+/* a laptop with scaling (about 860 px high): denser rows */
+@media (max-height:900px){
+  html:root[data-dmlook=tool] #roster .row{min-height:50px;padding-top:4px;padding-bottom:4px}
+  html:root[data-dmlook=tool] #roster .dmpic{width:32px;height:32px}
+  html:root[data-dmlook=tool] #roster .who{grid-template-columns:32px minmax(0,1fr)}
+  html:root[data-dmlook=tool] .ttile,html:root[data-dmlook=tool] .tnav{min-height:48px;height:48px}
+  html:root[data-dmlook=tool] main.dmgrid{grid-template-columns:minmax(0,1fr) 340px}}
+@media (max-width:1500px){html:root[data-dmlook=tool]{--cols:44px minmax(200px,260px) minmax(0,1fr) 120px 88px 168px}
+  html:root[data-dmlook=tool] #roster .hexw,html:root[data-dmlook=tool] #roster .row.k-lair .lair-init{width:44px}}
+
+/* the roll call: who hasn't answered says "waiting" with a clock, not "…"; Send never greys out, it says what's missing */
+html:root[data-dmlook=tool] .callres .cw{display:inline-flex;align-items:center;gap:6px}
+html:root[data-dmlook=tool] .callres .cw.wait b{font-weight:500;color:var(--muted)}
+html:root[data-dmlook=tool] .cwi{width:12px;height:12px;flex:none}
+html:root[data-dmlook=tool] .fixhint{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs13);color:color-mix(in srgb,var(--accent) 80%,var(--fg))}
+
+/* a narrow window (under 1100 px): the side panel becomes a drawer from the right, opened from Panel in the header */
+html:root[data-dmlook=tool] .sidebtn{display:none}
+@media (max-width:1100px){
+  html:root[data-dmlook=tool] .sidebtn{display:inline-flex}
+  html:root[data-dmlook=tool] main.dmgrid{grid-template-columns:minmax(0,1fr)}
+  html:root[data-dmlook=tool] .side{position:fixed;z-index:26;right:0;top:var(--barh,64px);bottom:var(--covered,0px);width:min(380px,92vw);padding:8px;
+    background:var(--bg);box-shadow:-14px 0 40px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .2s ease;visibility:hidden}
+  html:root[data-dmlook=tool] #dm.sideon .side{transform:none;visibility:visible}}
+
+/* ---- dialogs: one surface, plain labels (no spaced capitals), the same fields and buttons everywhere ---- */
+html:root[data-dmlook=tool] .sheet{background:#26262a;border:1px solid #34343a;border-radius:12px;padding:20px 24px;gap:14px}
+html:root[data-dmlook=tool][data-dm=light] .sheet{background:var(--panel);border-color:var(--line)}
+html:root[data-dmlook=tool] .sheet h2{font-family:var(--ui);font-size:var(--fs20);font-weight:600;letter-spacing:0;font-variant:normal}
+html:root[data-dmlook=tool] .sheet .psub{font-size:var(--fs13);color:var(--muted)}
+html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) :is(.eyebrow2,.strip-label,.splv,.qkt,.sethead,.quick label,.add label span,.ptable .ph span){
+  text-transform:none;letter-spacing:0;font-variant:normal;font-family:var(--ui);font-size:var(--fs13);font-weight:500;color:var(--muted)}
+html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) :is(input,select,textarea).field{min-height:36px;border:1px solid var(--fieldline);
+  border-radius:var(--rad);background:var(--bg);
+  font-size:var(--fs15)}
+html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) :is(input,select,textarea).field:focus{outline:0;border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent)}
+html:root[data-dmlook=tool] :is(.sheet,.hppop) .btn{border-radius:var(--rad);font-weight:500}
+html:root[data-dmlook=tool] .hppop{border-color:#34343a;background:#26262a;border-radius:12px}
+html:root[data-dmlook=tool][data-dm=light] .hppop{border-color:var(--line);background:var(--panel)}
+html:root[data-dmlook=tool] .side .sbbtn{background:var(--panel2);border-radius:var(--rad)}
+html:root[data-dmlook=tool] .sbsheet .sbfoot{bottom:-20px;margin:0 -24px -20px;padding:12px 24px 16px;background:#26262a;border-top-color:#34343a}
+html:root[data-dmlook=tool][data-dm=light] .sbsheet .sbfoot{background:var(--panel);border-top-color:var(--line)}
+html:root[data-dmlook=tool] .sheet.devsheet{max-height:calc(100dvh - var(--covered,0px) - 32px);overflow:auto}
+html:root[data-dmlook=tool] .fixhint.shake{animation:hpshake .3s}
+
+/* the statblock line under a monster (In lair, LR, LA, Recharge): targets of at least 24 px; weights from the scale */
+html:root[data-dmlook=tool] #roster .sbline :is(.sbc,.sbreset,.sbrech,.sbmore){min-height:26px;padding:0 9px;border-radius:999px;font-size:var(--fs12);
+  font-weight:500}
+html:root[data-dmlook=tool] #roster .sbline .sbpip{width:14px;height:14px}
+html:root[data-dmlook=tool] #roster .cond .x,html:root[data-dmlook=tool] .side .pchip .x{min-width:24px;min-height:24px}
+html:root[data-dmlook=tool] #dm>.bar :is(.btn,.icon-btn){font-weight:500}
+html:root[data-dmlook=tool] #dm h1.brand{margin:0;font-size:var(--fs17);font-weight:600;line-height:1.2}
+
+/* ---- the header's Table group: devices, TV and the atmosphere, everything the players see ---- */
+html:root[data-dmlook=tool] .tablegrp .grplbl{padding:0 6px 0 10px;font-size:var(--fs12);font-weight:600;color:var(--muted)}
+html:root[data-dmlook=tool] .joinpill .jd.some{background:var(--boss);box-shadow:0 0 0 3px color-mix(in srgb,var(--boss) 25%,transparent)}
+html:root[data-dmlook=tool] .atmobtn{max-width:none}
+html:root[data-dmlook=tool] .atmobtn .atsw{display:inline-flex;align-items:center;padding:2px 3px;border-radius:999px;background:var(--sw0);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--fg) 18%,transparent)}
+html:root[data-dmlook=tool] .atmobtn .atsw b{width:8px;height:8px;border-radius:999px;margin-left:-2px;box-shadow:0 0 0 1px var(--sw0)}
+html:root[data-dmlook=tool] .atmobtn .atsw b:first-child{margin-left:0}

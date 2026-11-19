@@ -69,18 +69,24 @@ function playerBar(){
       ${chips?`<div class="mystat" aria-label="Your status">${myStatus(me).map(x=>`<span class="mychip ${x.cls||""}">${esc(x.t)}${x.x||
         ""}</span>`).join("")}</div>`:""}
       ${giftsHtml(me)}<div class="ptiles">${T.join("")}</div></div>`}
-  if(ed)T.push(tile("pinit",`<small>Init</small><b>${typeof me.init==="number"?me.init:"?"}</b>`,typeof me.init==="number"?"":"want","Initiative"));
-  T.push(tile("php",hp.max?`<small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?`<i>+${hp.temp}</i>`:
-    ""}</b><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span>Set HP</span>`,"hp"+hpCls,"Hit points"));
-  T.push(tile("pdice",`${D20}<span>Roll</span>`,"","Dice"));
-  if(ed){T.push(tile("pconds",`${TI.cond}<span>Conditions</span>`));T.push(tile("peffs",`${TI.spark}<span>Effects</span>`))}
-  T.push(book?tile("pbook",`${TI.book}<span>Spells</span>`):tile("pres",`${TI.pips}<span>Resources</span>`));
+  /* 1.4: a dock in the class colour (HP, AC, initiative, what's on me) and four tabs where the thumb is: Roll, Conditions, Spells, More */
+  const box=(act,inner,cls,label)=>act?`<button class="dbox${cls?" "+cls:""}" type="button" data-act="${act}"${label?` aria-label="${esc(label)}"`:
+    ""}>${inner}</button>`:
+    `<span class="dbox${cls?" "+cls:""}"${label?` aria-label="${esc(label)}"`:""}>${inner}</span>`;
+  const hpIn=hp.max?`<span class="dhp"><small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?` <i>+${hp.temp}</i>`:
+    ""}</b></span><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span class="dset">Set HP</span>`;
+  const dock=box("php",hpIn,"dbhp"+hpCls,hp.max?`HP ${hp.cur} of ${hp.max}, change it`:"Set your HP")
+    +(typeof me.ac==="number"||(me.ac!=null&&me.ac!=="")?box("",`<small>AC</small><b>${esc(me.ac)}</b>`,"dbsq","AC "+me.ac):"")
+    +(ed?box("pinit",`<small>Init</small><b>${typeof me.init==="number"?me.init:"?"}</b>`,"dbsq"+(typeof me.init==="number"?"":" want"),"Initiative"):"");
+  const tab=(act,ico,label)=>`<button class="tile tab" type="button" data-act="${act}">${ico}<span>${label}</span></button>`;
+  const tabs=[tab("pdice",D20,"Roll"),ed?tab("pconds",TI.cond,"Conditions"):"",book?tab("pbook",TI.book,"Spells"):tab("pres",TI.pips,"Resources"),
+    `<button class="tile tab" type="button" data-act="pmore" aria-label="More">${DOTS}<span>More</span></button>`].join("");
   const acc=me.kind==="pc"&&frameKey(me)?` acc fr-${frameKey(me)}`:"";   // 1.3: the player's own part of the phone in their class colour
-  return `<div class="pbar${many?" many":""}${acc}"><div class="pmeline"><span class="pme">${esc(me.name)}</span>
-      <span class="pmeright">${book?`<button class="ptop" type="button" data-act="pres">${TI.pips}Resources</button>`:
-        ""}<button class="ptop sq" type="button" data-act="pmore" aria-label="More">${DOTS}</button></span></div>
+  return `<div class="pbar v14${many?" many":""}${acc}"><div class="pmeline"><span class="pme">${esc(me.name)}</span>
+      <span class="pmeright">${book?`<button class="ptop" type="button" data-act="pres">${TI.pips}Resources</button>`:""}</span></div>
+    <div class="pdock">${dock}</div>
     ${chips?`<div class="mystat" aria-label="Your status">${chips}</div>`:""}${ed?"":`<div class="pnote">The DM has locked changes</div>`}
-    ${giftsHtml(me)}<div class="ptiles">${T.join("")}</div>${compHtml(me)}</div>`;
+    ${giftsHtml(me)}${compHtml(me)}<nav class="ptiles ptabs" aria-label="Your tools">${tabs}</nav></div>`;
 }
 /* 45: dice someone gave you (Bardic Inspiration…), to use when you want */
 function giftsHtml(me){const G=me.gifts||[];if(!G.length)return "";

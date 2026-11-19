@@ -1,5 +1,5 @@
 import sys as _sys,os as _os;_sys.path.insert(0,_os.path.dirname(_os.path.abspath(__file__)));_sys.path.insert(0,_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))));import rk  # dev/rk.py:
-# 1.3: the DM screen's tool look (turn tiles, Classic look, condition icons), boss phases on the TV and tablet,
+# 1.3: the DM screen's tool look (turn tiles, condition icons; the Classic look went in 1.4), boss phases on the TV and tablet,
 # the tablet's side-shaped frames, the phone's class colour, and handouts (who gets them, what the players never see).
 import asyncio,json
 from playwright.async_api import async_playwright
@@ -28,14 +28,9 @@ async def main():
         await T(dm,"state.list.find(c=>c.kind==='enemy').conds=['Prone'];commit()"); await asyncio.sleep(.3)
         chk("a condition gets its icon",await dm.locator('#roster .cond .cico.cg-body').count()>=1)
         chk("…and keeps its word",'Prone' in await dm.locator('#roster .cond:has(.cico)').first.inner_text())
-        # ---- Classic look brings back the 1.1 header
-        await T(dm,"document.querySelector('.panel[data-k=more]').open=true"); await asyncio.sleep(.2)
-        await dm.click('#dmLookBtn'); await asyncio.sleep(.3)
-        chk("Classic: no tool look",await T(dm,"document.documentElement.dataset.dmlook||''")=="")
-        chk("Classic: the turn box is back in the header",await dm.locator('#dm>.bar #turnBox').count()==1)
-        chk("Classic: icons hidden",await dm.evaluate("()=>getComputedStyle(document.querySelector('#roster .cond .cico')).display")=="none")
-        await dm.click('#dmLookBtn'); await asyncio.sleep(.3)
-        chk("and back to the tool look",await dm.locator('#tileDock #turnBox').count()==1)
+        # ---- 1.4: one look; the Classic look and its switch are gone
+        chk("no Classic look switch",await dm.locator('#dmLookBtn').count()==0)
+        chk("the turn box stays in the bottom bar",await dm.locator('#tileDock #turnBox').count()==1 and await dm.locator('#dm>.bar #turnBox').count()==0)
         # ---- boss phases: set in the row's ⋯, then the next one
         bid=await T(dm,"(()=>{const c=state.list.find(c=>c.kind==='enemy');c.boss=true;c.hidden=false;commit();return c.id})()"); await asyncio.sleep(.3)
         await dm.click(f'#roster .row[data-id="{bid}"] [data-act=rowmenu]'); await asyncio.sleep(.2)

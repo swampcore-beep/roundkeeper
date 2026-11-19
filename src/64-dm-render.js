@@ -38,20 +38,20 @@ const hpFlash=new Map();   // id -> {d, at}: the "-5" that flashes after a chang
 let hpPopId=null,hpMod="",mtOn=false,mtSel=new Set(),mt={n:"",type:"",ab:"",dc:"",on:"half",modes:{},rolls:{}};
 function hpBox(c){
   if(c.hpMax==null)return `<span class="hpw add" title="Track HP: type the maximum"><span class="hpl">HP</span><input id="hp-${
-    c.id}" data-act="hp" placeholder="max" aria-label="Maximum HP for ${esc(c.name)}" inputmode="numeric"></span>`;
+    c.id}" data-act="hp" placeholder="Set HP" aria-label="Maximum HP for ${esc(c.name)}" inputmode="numeric"></span>`;
   const cur=c.hp??c.hpMax,t=c.thp||0,tot=Math.max(c.hpMax,cur)+t,cls=cur<=0?" zero":cur<=c.hpMax/2?" half":"";
   const f=hpFlash.get(c.id),age=f?Date.now()-f.at:1e9;
   return `<button type="button" class="hpw hpb${cls}${hpPopId===c.id?" open":""}${mtSel.has(c.id)?" mt":
-    ""}" id="hp-${c.id}" data-act="hppop" data-hid="${esc(c.id)}" aria-label="HP ${cur} of ${c.hpMax}${t?`, ${t} temporary`:
-    ""} for ${esc(c.name)}: change it" title="Click to change HP · Shift+click the row to hit several at once">
+    ""}" id="hp-${c.id}" data-act="hppop" data-hid="${esc(c.id)}" aria-label="${cur}/${c.hpMax}${t?` +${t}`:
+    ""} HP, ${esc(c.name)}: change it" title="Click to change HP · Shift+click the row to hit several at once">
     <span class="hprow"><span class="hpl">HP</span><b class="hpn">${cur}/${c.hpMax}</b>${t?`<span class="hpt">+${t}</span>`:""}</span>
     <span class="hpbar3"><i class="hpv" style="width:${Math.max(0,100*cur/tot)}%"></i>${t?`<i class="hptv" style="width:${100*t/tot}%"></i>`:""}</span>
     ${age<1800?`<span class="hpdelta${f.d>0?" up":""}" style="animation-delay:-${age}ms">${f.d>0?"+":"−"}${Math.abs(f.d)}</span>`:""}</button>`;
 }
 /* 80: a player's HP as their phone has it; the DM reads it, the player changes it */
 function pcHpBox(c){const p=c.php,cur=p.cur,t=p.temp||0,tot=Math.max(p.max,cur)+t,cls=cur<=0?" zero":cur<=p.max/2?" half":"";
-  return `<span class="hpw hpb pchp${cls}" title="${esc(c.name)}'s HP from their phone. Only you see it." aria-label="HP ${cur} of ${p.max}${t?
-    `, ${t} temporary`:""} for ${esc(c.name)}, from their phone">
+  return `<span class="hpw hpb pchp${cls}" title="${esc(c.name)}'s HP from their phone. Only you see it." aria-label="${cur}/${p.max}${t?
+    ` +${t}`:""} HP, ${esc(c.name)}, from their phone">
     <span class="hprow"><span class="hpl">HP</span><b class="hpn">${cur}/${p.max}</b>${t?`<span class="hpt">+${t}</span>`:""}</span>
     <span class="hpbar3"><i class="hpv" style="width:${Math.max(0,100*cur/tot)}%"></i>${t?`<i class="hptv" style="width:${100*t/tot}%"></i>`:
       ""}</span><small>phone</small></span>`}

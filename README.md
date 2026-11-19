@@ -33,7 +33,7 @@ https://github.com/user-attachments/assets/f7578be1-2bc0-4fc1-84af-e42ae995edd6
 
 **Three short tours, under a minute each:** [the DM's laptop](#the-dms-laptop) · [the tablet and the TV](#the-tablet-and-the-tv) · [the players' phones](#on-players-phones)
 
-> **New in 1.3: a new look for the DM screen, and handouts.** The laptop now looks like a tool: calm greys, the system font, one orange accent for the turn, and the turn itself as tiles at the bottom (round, whose turn, fight time, a countdown, back and next). Classic look in Settings brings back the old one. Show notes, sealed letters, wanted posters and pages of lore on the table. On the TV: condition icons, a boss's phases and title cards set like a chapter. [What changed](../../releases/tag/v1.3.0)
+> **New in 1.4: the whole app reworked to be calmer and clearer.** On the laptop, the order is a table with column heads, the tools sit above it and the turn sits below it in one row, so nothing covers a row; empty cells say what they want ("Set HP"), and Bloodied and Down stay quiet until they're on. The side panel puts first what this part of the fight needs. On the phones, a dock in the class colour and four tabs where the thumb is, a **Your turn** screen with what matters this turn, the table's rolls under the dice, aura reminders in roll calls, and Bless added to rolls by itself. [What changed](../../releases/tag/v1.4.0)
 
 ---
 
@@ -53,7 +53,7 @@ https://github.com/user-attachments/assets/dca33bcd-6d6c-4f08-8144-5024e681f508
 
 <img src="media/dm.jpg" width="100%" alt="The DM screen: the turn order with the Adult Red Dragon's turn, HP, AC and conditions in each row, and its statblock open on the right">
 
-One row per creature, in turn order: initiative, picture, name, conditions (each with its icon), HP and AC, and Bloodied and Down one click away. The row whose turn it is is lighter with an orange edge, and the one after it is marked *next*. The turn sits at the bottom as tiles: round, whose turn, how long the fight has run, the nearest countdown with − and +, and back and Next turn. The statblock opens beside the list as a cream page, so the order stays in view. Prefer the old look in the table's style? **Settings → Classic look**.
+The order is a table, one row per creature: initiative, picture, name, conditions (each with its icon), HP, AC, and Bloodied and Down, quiet icons until they're on. The row whose turn it is is lighter with a white edge (black on the light screen), and the one after it is marked *next*. The combat tools sit above the order, and the turn sits below it in one row: round, whose turn and who's next, how long the fight has run, the nearest countdown with − and +, and back and Next turn. The order scrolls on its own, so nothing covers a row, and on a laptop with scaling (1536×864) a whole fight still fits. The statblock opens beside the list as a cream page, so the order stays in view.
 
 - **Initiative and turns:** add players and monsters, roll or type initiative, step through turns and rounds. Undo is always there.
 - **Statblocks you click:** an attack bonus rolls the attack, a damage number rolls damage, a save sends a roll call to the players it targets. Recharge, X/Day and Legendary actions are tracked as you use them. With **Follow the turn** on, the statblock switches to each monster as its turn comes up.
@@ -62,7 +62,7 @@ One row per creature, in turn order: initiative, picture, name, conditions (each
 - **Hit several:** one Fireball or breath weapon on several targets, with saves rolled from each statblock, resistances applied, and players asked on their phones.
 - **Conditions and spells with their 2024 durations**, ending by themselves at the right turn; Concentration saves worked out for you.
 - **Devices:** one window with the QR code, every screen and phone, whether it's connected, and its full address.
-- **A quiet screen:** the buttons you need every round are always there; **New combat**, **Clear all** and stopping turn tracking wait in small ⋯ menus, and settings sit behind the gear, with a **Light screen** for a bright room.
+- **A quiet screen:** the buttons you need every round are always there; **New combat**, **Clear all** and stopping turn tracking wait in small ⋯ menus, and settings sit behind the gear, with a **Light screen** for a bright room. The side panel shows Add to combat, Party and Encounters first before the fight, and Roll call, Battlefield and Player activity first during it; in a narrow window it becomes a drawer.
 
 <details>
 <summary><b>More for the DM</b></summary>
@@ -170,11 +170,14 @@ https://github.com/user-attachments/assets/74e67b4d-6e6c-4e54-afd7-6e985122e99a
 <td valign="top">
 
 - Join by scanning a QR code. Nothing to install.
-- **Their own HP**, temp HP and death saves, with big buttons and the app's own keypad.
+- **A dock in their class colour** with their HP, AC and initiative and what's on them, and four tabs where the thumb is: Roll, Conditions, Spells and More.
+- **Their own HP**, temp HP and death saves, with big buttons and the app's own keypad; before they press Damage or Heal, the phone shows where it would leave them.
+- **Your turn:** when their turn comes, a screen with what matters: their conditions in plain words (and *I stand up* when they're Prone), effects and who cast them, Concentration, dice a friend gave them, and their reaction. It can be turned off in More.
 - **Character sheet (optional):** fill it in step by step or paste the text of an existing sheet. Checks, saves, skills and attacks roll with the real bonuses, and a roll call offers "Roll Dex save +2".
 - **Spellbook** with full spell cards and prepared spells, including the ones a subclass always prepares. "Show it on the table" plays a spell in the tablet's scene.
 - **Spell slots and class resources** (Rage, Focus, Channel Divinity…) as circles: tap a full one to use it, an empty one to get it back. Short and long rests reset them.
-- They answer your **roll calls** and **Concentration saves**, give Bardic Inspiration to a friend, and run their familiar or summon.
+- They answer your **roll calls** and **Concentration saves**, give Bardic Inspiration to a friend, and run their familiar or summon. A saving throw roll call reminds them of a Paladin's Aura of Protection, and Bless and Bane go onto their saves and attacks by themselves.
+- **The table's rolls:** the rolls people show the table appear under the dice on every phone.
 - **Simple mode** for players who keep the rest on paper: just their HP, plus whatever you send them.
 
 </td>

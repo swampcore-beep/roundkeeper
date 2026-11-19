@@ -1,6 +1,13 @@
 /* ---------- DM tools: roll calls, battlefield, knowledge, hourglass, passives, quick add, shortcuts, export ---------- */
 let callSkip=new Set();   // players left out of the next roll call (everyone is in by default)
 const callTargets=()=>state.list.filter(c=>c.kind==="pc"&&!c.hidden&&!callSkip.has(c.id));
+const CLOCK='<svg class="cwi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+/* E19 (1.4): a saving throw roll call reminds everyone of a Paladin's Aura of Protection (level 6+: + Charisma modifier, at least +1,
+   within 10 ft). Level and Charisma come from the sheet the DM keeps; no sheet, no reminder. */
+function callAuras(){const out=[];state.list.filter(c=>c.kind==="pc"&&!c.hidden&&!c.down).forEach(c=>{
+  const sh=(state.sheets||{})[c.name.toLowerCase()];if(!sh)return;const m=String(sh.cls||"").match(/paladin\s*(\d+)/i);
+  const lvl=m?Number(m[1]):c.cls==="paladin"?Number(sh.lvl)||0:0;if(lvl<6)return;const cha=shMod((sh.ab||{}).cha);
+  out.push({id:c.id,t:`${c.name}'s aura: +${Math.max(1,cha)} to the save if you're within 10 ft`})});return out}
 function renderCall(){
   const call=state.call,el=$("#callStrip");const _ae=document.activeElement;if(_ae&&el.contains(_ae)&&_ae.tagName==="INPUT")return;
   const pcs=state.list.filter(c=>c.kind==="pc"&&!c.hidden);
@@ -13,17 +20,19 @@ function renderCall(){
         "Initiative"].map(x=>`<option value="${x}">`).join("")}</datalist>
       ${pcs.length>1?`<div class="chipgrid callpick" role="group" aria-label="Who rolls">${pcs.map(c=>
         `<button type="button" data-act="callpick" data-id="${esc(c.id)}" aria-pressed="${!callSkip.has(c.id)}">${esc(c.name)}</button>`).join("")}</div>`:""}
-      ${(()=>{const n=callTargets().length;return `<button class="btn primary" type="submit" ${n?"":"disabled"}>${!n?"Pick at least one player":n===pcs.length?
-        "Send to all players":`Send to ${n} player${n>1?"s":""}`}</button>`})()}</form>
+      ${(()=>{const n=callTargets().length;return `<button class="btn${n?" primary":""}" type="submit">${!n?"Send":n===pcs.length?
+        "Send to all players":`Send to ${n} player${n>1?"s":""}`}</button>${n?"":
+          `<span class="fixhint" role="status">Pick at least one player above</span>`}`})()}</form>
       <span class="strip-empty">Phones buzz and ask for the total; you see every result here.</span>`;
     return;
   }
   const to=(call.to&&call.to.length?call.to:pcs.map(c=>c.id)).map(byId).filter(Boolean),ans=call.answers||{};
   const nin=to.filter(c=>ans[c.id]!=null).length;
-  el.innerHTML=`<span class="strip-label">Roll call</span><b class="calltxt">${esc(call.text)}</b><small class="callin">${nin===to.length?"all in":
+  el.innerHTML=`<span class="strip-label">Roll call</span><b class="calltxt">${esc(call.text)}</b>${(call.aura||[]).map(a=>
+    `<small class="aurahint">${esc(a.t)}</small>`).join("")}<small class="callin">${nin===to.length?"all in":
     `${nin} of ${to.length} in`}</small>
     <span class="callres">${to.map(c=>{const v=ans[c.id];const st=v==null?"wait":call.dc!=null?(v>=call.dc?"pass":"fail"):"done";
-      return `<span class="cw ${st}">${esc(c.name)} <b>${v==null?"…":v}</b></span>`}).join("")}</span>
+      return `<span class="cw ${st}">${v==null?CLOCK:""}${esc(c.name)} <b>${v==null?"waiting":v}</b></span>`}).join("")}</span>
     <span class="spacer"></span><button class="btn" type="button" data-act="callclose">Close roll call</button>`;
 }
 /* E1 (1.3): handouts. The DM writes a note, a letter, a wanted poster or a page of lore, picks a style, and shows it on the tablet,

@@ -77,8 +77,9 @@ const phoneAgo=c=>{const p=joinInfo&&joinInfo.phones;return p&&p[c.id]!=null?p[c
 const devPcs=()=>sorted().filter(c=>c.kind==="pc");
 function devPill(){const jp=$("#joinPill");if(!jp)return;
   const pcs=devPcs(),on=pcs.filter(c=>{const a=phoneAgo(c);return a!=null&&a<8}).length;
-  jp.innerHTML=`<b>Devices</b><i class="jd${tabletOn()?" on":""}"></i><span>Tablet</span>${pcs.length?
-    `<i class="jd${on===pcs.length?" on":on?" some":""}"></i><span>${on}/${pcs.length} phones</span>`:""}`}
+  jp.innerHTML=`<i class="jd${tabletOn()?" on":""}"></i><span>Tablet</span>${pcs.length?
+    `<i class="jd${on===pcs.length?" on":on?" some":""}"></i><span>${on}/${pcs.length} phones</span>`:""}`;
+  jp.setAttribute("aria-label",`Devices: tablet ${tabletOn()?"connected":"not connected"}${pcs.length?`, ${on} of ${pcs.length} phones connected`:""}`)}
 const devBase=()=>String(chosenUrl()||"").replace(/\/players$/,"");
 const devAgo=a=>a==null?"not connected yet":a<8?"connected":a<90?`last seen ${Math.round(a)} s ago`:a<5400?`last seen ${Math.round(a/60)} min ago`:
   `last seen ${Math.round(a/3600)} h ago`;
@@ -127,7 +128,8 @@ function devSheet(){
 }
 let rollSeen=null,timerSeen=null,dsAskSeen=null,wasDown=null,fightSeen=null,turnSeen=null;
 function yourTurn(me){
-  if(!reduced){const el=document.createElement("div");el.className="yourturn";
+  if(pTurnCard()&&!pSimple()&&!me.down&&(!pSheet||pSheet==="turn")){pSheet="turn";renderPSheet()}
+  else if(!reduced){const el=document.createElement("div");el.className="yourturn";
     el.innerHTML=`<div><small>Round ${state.turn.round}</small>Your turn, ${esc(me.name)}!</div>`;document.body.appendChild(el);
     setTimeout(()=>el.remove(),2600)}
   try{navigator.vibrate&&navigator.vibrate([200,100,200,100,400])}catch(e){}

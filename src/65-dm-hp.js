@@ -214,33 +214,42 @@ function applyHp(c,raw,was){
   return true;
 }
 let menuId=null,turnMenuOn=false;
-const TFRAME='<span class="tframe" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></span>';
-/* 1.3, the tool look: the turn as tiles in the bottom bar (round, whose turn, how long, the nearest countdown, back and next) */
+const SKULL='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a8 8 0 0 0-8 8c0 2.6 1.2 4.5 3 5.7V19a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-2.8c1.8-1.2 3-3.1 3-5.7a8 8 0 0 0-8-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="11" r="1.7" fill="currentColor"/><circle cx="15" cy="11" r="1.7" fill="currentColor"/><path d="M10.5 20v-2.5M13.5 20v-2.5" stroke="currentColor" stroke-width="1.6"/></svg>';
+/* the turn, one row in the bottom bar (1.4): round, whose turn (and who's next), fight time, the nearest countdown, back and next */
 function turnTiles(){
-  const t=state.turn,who=t&&byId(t.id),f=state.fightAt&&!state.ended?Math.max(0,Math.round((Date.now()-state.fightAt)/60000)):null;
-  const tile=(v,l,cls)=>`<span class="ttile${cls?" "+cls:""}"><b>${v}</b><small>${l}</small></span>`;
+  const t=state.turn,who=t&&byId(t.id),f=t&&state.fightAt&&!state.ended?Math.max(0,Math.round((Date.now()-state.fightAt)/60000)):null;
   const k=(state.clocks||[]).filter(x=>x.n>0).sort((a,b)=>a.n-b.n)[0];
-  return (t?tile(t.round,"Round","trnd")+tile(esc(who?who.name:t.id==="__lair"?"Lair action":"–"),"Turn","twho"):"")
-    +(f!=null&&state.list.length?tile(f<1?"< 1 min":f+" min","Fight"):"")
-    +(k?`<span class="ttile tclk"><button type="button" class="tstep" data-act="clkm" data-id="${esc(k.id)}" aria-label="${esc(
-      k.name)}: one less">−</button><span><b>${
-      k.n}</b><small title="${esc(k.name)}">${esc(k.name)}${k.secret?" · secret":
-        ""}</small></span><button type="button" class="tstep" data-act="clkp" data-id="${
-      esc(k.id)}" aria-label="${esc(k.name)}: one more">+</button></span>`:"")
-    +(t?`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
-      "prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${
+  const ord=t?turnOrder():[],i=t?ord.findIndex(x=>x.id===t.id):-1,nx=i>=0&&ord.length>1?ord[(i+1)%ord.length]:null;
+  const nm=who?who.name:t&&t.id==="__lair"?"Lair action":"";
+  const clk=k?`<span class="ttile tclk"><button type="button" class="tstep" data-act="clkm" data-id="${esc(k.id)}" aria-label="${esc(
+      k.name)}: one less">−</button><span><b>${k.n}</b><small title="${esc(k.name)}">${esc(k.name)}${k.secret?" · secret":
+        ""}</small></span><button type="button" class="tstep" data-act="clkp" data-id="${esc(k.id)}" aria-label="${esc(
+          k.name)}: one more">+</button></span>`:"";
+  if(!t){const n=state.list.filter(c=>c.kind!=="lair").length,miss=state.list.filter(c=>typeof c.init!=="number"&&!c.owner).length;
+    return `<span class="ttile twho tidle"><b>${n?"Not started":"No fight yet"}</b><small>${n?`${n} in the order${miss?` · ${miss} without initiative`:
+      ""}`:"Add the party and some monsters"}</small></span>${
+        clk}<button class="tnav primary" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${
+      ic("next")}</button>`}
+  return `<span class="ttile trnd"><b>${t.round}</b><small>Round</small></span><span class="ttile twho"><b><i class="tdot" aria-hidden="true"></i>${esc(nm||
+    "–")}${who&&
+      typeof who.init==="number"?`<span class="tini">initiative ${who.init}</span>`:""}</b><small>${nx?`Next: ${esc(nx.kind==="lair"?"Lair action":nx.name)}`:
+      "&nbsp;"}</small></span>`
+    +(f!=null?`<span class="ttile tfight"><b>${f<1?"< 1 min":f+" min"}</b><small>Fight time</small></span>`:"")+clk
+    +`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
+      "prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn <kbd>N</kbd>${
       ic("next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
       turnMenuOn}" aria-label="Turn options" title="Turn options: stop tracking turns">${DOTS}</button>${turnMenuOn?
-      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`
-      :`<button class="tnav primary" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${ic("next")}</button>`)}
+      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`}
 function renderDM(){
   const ae=document.activeElement;
   if(ae&&$("#roster").contains(ae)&&ae.tagName==="INPUT"){pendingRender=true;return}
   pendingRender=false;renderParty();renderEnc();renderCall();renderField();renderHand();
   const tsec=$("#timerSecs");if(tsec&&document.activeElement!==tsec)tsec.value=state.timerSecs||30;
   {const ab=$("#atmoBtn"),sl=(SCENES.find(x=>x[0]===(state.scene||"none"))||["",""])[1];
-   if(ab){ab.innerHTML=`${ic("palette")}<span>${esc(atmoLabel(state))}</span>`;
-     ab.title=`Atmosphere: ${atmoLabel(state)} · ${sl}${state.bg?" · picture":""}. Theme, scene and picture on the tablet`}}
+   if(ab){const P=(PALS[lookOf(state).pal]||PALS.tavern)[1],now=`${atmoLabel(state)} · ${sl}${state.bg?" · picture":""}`;
+     ab.innerHTML=`${ic("palette")}<span>Atmosphere</span><i class="atsw" aria-hidden="true" style="--sw0:${P[0]}">${P.slice(1).map(c=>
+       `<b style="background:${c}"></b>`).join("")}</i>`;
+     ab.title=`Atmosphere on the tablet and TV, now ${now}`;ab.setAttribute("aria-label",`Atmosphere, now ${now}`)}}
   {const tb=$("#tvBtn");if(tb){const m=(TV_MODES.find(x=>x[0]===((state.tv||{}).mode||"auto"))||["",""])[1];
     tb.innerHTML=`<i class="jd"></i>TV${state.tvSeen&&m?` <small>· ${esc(m)}</small>`:""}`}}
   $("#lairBtn").setAttribute("aria-pressed",String(!!state.lair));
@@ -251,6 +260,8 @@ function renderDM(){
   {const eb=$("#endBtn");eb.textContent=state.ended?"New combat":"End combat";eb.classList.toggle("primary",!!state.ended);
     eb.title=state.ended?"Start the next fight: keeps the party, everyone rolls initiative":"End this fight: the end screen and the Recap"}
   $("#endedNote").hidden=!state.ended;
+  {const tb=$("#turnBox");if(tb)tb.innerHTML=turnTiles()}
+  {const d=$("#dm");if(d)d.dataset.phase=state.turn?"fight":"setup"}
   const base=sorted(),list=withLair(base);const R=$("#roster");
   if(!list.length){R.innerHTML=
     `<div class="empty"><strong>Nobody in the order yet</strong><span>Add the party and some enemies, or drop in a saved encounter.</span><div class="acts">${
@@ -284,11 +295,11 @@ function renderDM(){
     const isTurn=!!(state.turn&&state.turn.id===c.id);
     const typeline=[isTurn?`<b class="nowtag">now</b>`:c.id===nextId?`<span class="nexttag">next</span>`:"",
       c.sb&&c.sb.raw?`<button type="button" class="sblink${sbViewId===c.id?" on":""}" data-act="sbview" title="${c.sb.pc?
-      "Open the character sheet":"Open the statblock"}" aria-label="${c.sb.pc?"Sheet":"Statblock"}">${I.book||"📜"}</button>`:"",c.boss?
+      "Open the character sheet":"Open the statblock"}" >${I.book||""}<span>${c.sb.pc?"Sheet":"Statblock"}</span></button>`:"",c.boss?
       `<span class="crown">${I.crown}Boss${c.rim?` · ${esc((RIMS.find(r=>r[0]===c.rim)||["",""])[1])}`:""}</span>`:"",typ?esc(typ):"",c.boss&&c.title?
       `<i>${esc(c.title)}</i>`:"",c.kind==="pc"?passivesLine(c):"",c.kind==="pc"&&c.psimple?
       `<span class="simpletag" title="${esc(c.name)} uses the simple phone: just HP and what you send">simple phone</span>`:""].filter(Boolean).join(" · ");
-    const chips=(c.hidden?`<button type="button" class="cond hidchip" data-act="hidden" title="Reveal to players (H)">${I.eyeoff}Hidden · reveal</button>`:"")+
+    const chips0=(c.hidden?`<button type="button" class="cond hidchip" data-act="hidden" title="Reveal to players (H)">${I.eyeoff}Hidden · reveal</button>`:"")+
       dsHtml+conds
       +(c.insp?`<button type="button" class="cond inspchip" data-act="insp" title="Remove Heroic Inspiration">${I.star}Inspiration</button>`:"")
       +(c.cover?`<button type="button" class="cond add on" data-act="covercycle" title="Click to change">${COVER_CHIP[c.cover]}</button>`:"")
@@ -296,7 +307,8 @@ function renderDM(){
         t])[1]}</button>`).join("")
       +(c.know||[]).map((k,i)=>`<button type="button" class="cond knowdm" data-act="knowrm" data-id="${esc(c.id)}" data-i="${i}" title="Remove">${esc(
         k)}</button>`).join("")
-      +`<button type="button" class="cond add addc" data-act="conds" title="Add a condition (C)" aria-label="Add a condition">+</button>`;
+      ;const chipsAll=chips0+`<button type="button" class="cond add addc" data-act="conds" title="Add a condition (C)" aria-label="Add a condition">+${chips0?
+      "":"<span> Condition</span>"}</button>`;
     const K=(k)=>`<kbd>${k}</kbd>`;
     const sb=c.sb,pips=(k,o,j)=>Array.from({length:o.max},(_,q)=>`<button type="button" class="sbpip${q>=o.max-o.used?" used":
       ""}" data-act="sbuse" data-k="${k}"${j!=null?` data-j="${j}"`:""} data-q="${q}" aria-label="${q>=o.max-o.used?"Get one back":
@@ -352,9 +364,9 @@ function renderDM(){
         <hr><button type="button" class="danger" data-act="del">Remove ${K("Del")}</button></div>`:"";
     return `<div class="row k-${c.kind}${state.turn&&state.turn.id===c.id?" turn":""}${shownToPlayers(c)?"":" out"}${c.hidden?" hid":""}${c.boss?" isboss":
       ""}${mtSel.has(c.id)?" mtsel":""}${mtOn&&mtOk(c)?" mtrow":""}" data-id="${c.id}">
-      ${mtOn&&mtOk(c)?`<button type="button" class="mtcb" data-act="mttoggle" aria-pressed="${mtSel.has(c.id)}" aria-label="Hit ${esc(c.name)}">${mtSel.has(
-        c.id)?"✓":""}</button>`:""}
-      <span class="hexw">${c.owner?`<span class="init-in own" title="Acts right after ${esc((ownerOf(c)||{}).name||"its owner")}">↳${initOf(c)>-999?
+      <span class="hexw">${mtOn&&mtOk(c)?`<button type="button" class="mtcb" data-act="mttoggle" aria-pressed="${mtSel.has(c.id)}" aria-label="Hit ${esc(
+        c.name)}">${mtSel.has(
+        c.id)?"✓":""}</button>`:""}${c.owner?`<span class="init-in own" title="Acts right after ${esc((ownerOf(c)||{}).name||"its owner")}">↳${initOf(c)>-999?
         initOf(c):""}</span>`:""}<input${c.owner?" hidden":""} class="init-in${typeof c.init!=="number"&&!c.owner?" missing":""}${freshIds.has(c.id)?" fresh":
         ""}" id="init-${c.id}" type="number" inputmode="numeric" value="${typeof c.init==="number"?c.init:""}" placeholder="${typeof c.ib==="number"?(c.ib>=0?
         "+":"")+c.ib:"?"}" data-act="init" aria-label="Initiative"${typeof c.ib==="number"?` title="Initiative bonus ${c.ib>=0?"+":
@@ -364,29 +376,23 @@ function renderDM(){
           c.id}" value="${esc(
         c.name)}" data-act="name" aria-label="Name"></span>${typeline?
         `<div class="typeline">${typeline}</div>`:""}</div>
-      <div class="chips">${chips}</div>
+      <div class="chips">${chipsAll}</div>
       <div class="tools">
         ${c.kind!=="pc"?hpBox(c):c.php?pcHpBox(c):`<span class="hpw hpnone" title="${esc(c.name)} keeps HP on paper, or doesn't share it from the phone"
           aria-label="HP not shared">—</span>`}
-        <span class="ac-wrap"><button type="button" class="tog" data-act="showac" aria-pressed="${!!c.showAc}" title="${c.showAc?
+        <span class="ac-wrap"><button type="button" class="tog" tabindex="-1" data-act="showac" aria-pressed="${!!c.showAc}" title="${c.showAc?
           "Players see the AC: click to hide it":"Only you see the AC: click to show it"}" aria-label="Show AC to players">${c.showAc?I.eye:
-          I.eyeoff}</button><input id="ac-${c.id}" type="number" value="${c.ac??""}" placeholder="—" data-act="ac" aria-label="AC"></span>
-        <button type="button" class="tog blood" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${I.drop}Bloodied</button>
-        <button type="button" class="tog" data-act="down" aria-pressed="${!!c.down}" title="${c.kind==="pc"?"0 HP":"Down"} (D)">${c.kind==="pc"?"0 HP":
-          "Down"}</button>
+          I.eyeoff}</button><input id="ac-${c.id}" class="${c.ac==null||c.ac===""?"acempty":""}" type="number" value="${c.ac??
+            ""}" placeholder="AC" data-act="ac" aria-label="AC"></span>
+        <span class="stat"><button type="button" class="tog blood" tabindex="-1" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${
+          I.drop}<span class="tl">Bloodied</span></button>
+        <button type="button" class="tog downt" tabindex="-1" data-act="down" aria-pressed="${!!c.down}" title="${c.kind==="pc"?"0 HP":
+          "Down"} (D)">${SKULL}<span class="tl">${c.kind==="pc"?"0 HP":
+          "Down"}</span></button>
         <button type="button" class="morebtn2" data-act="rowmenu" aria-haspopup="menu" aria-expanded="${menuId===
-          c.id}" aria-label="More for ${esc(c.name)}">${DOTS}</button>
-      </div>${sbHtml}${menu}${isTurn?TFRAME:""}</div>`}).join("");
+          c.id}" aria-label="More for ${esc(c.name)}">${DOTS}</button></span>
+      </div>${sbHtml}${menu}</div>`}).join("");
   freshIds.clear();markSel();renderSbDrawer();
-  const tb=$("#turnBox");if(tb&&document.documentElement.dataset.dmlook==="tool")tb.innerHTML=turnTiles();
-  else if(tb){const t=state.turn;
-    tb.innerHTML=t?`<span class="rnd">Round <b>${
-      t.round}</b></span><button class="icon-btn" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
-      "prev")}</button><button class="btn primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${ic(
-      "next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
-      turnMenuOn}" aria-label="Turn options" title="Turn options: stop tracking turns">${DOTS}</button>${turnMenuOn?
-      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`
-      :`<button class="btn" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${ic("next")}</button>`}
   const at=$("#autoTimer");if(at&&document.activeElement!==at)at.checked=!!state.autoTimer;
   {const ca=$("#concAuto");if(ca)ca.checked=!!ls.get("concAuto",false)}
 }

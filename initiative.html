@@ -2649,21 +2649,22 @@ body.sbopen #roster .chips:has(.cond:not(.addc)) .addc{position:absolute;right:0
   background:var(--panel2);box-shadow:-6px 0 8px var(--panel)}}
 /* ---------- DM screen, 1.3: the tool look (default; Settings → This laptop → Classic look brings back 1.1) ----------
    After Encounter+: a neutral app around the content. Near-black graphite in three steps (page, panels, rows), the system font,
-   one orange accent only for the turn and Next turn, blue only for what steps up and down. The statblock is the one bookish place. */
+   one neutral accent (white, black on the light screen) for the turn and the main buttons, so colour on this screen always means a state,
+   blue only for what steps up and down. The statblock is the one bookish place. */
 .cico{display:none}
 .dmpic{display:contents}
 .tiledock{display:none}
 :root[data-dmlook=tool]{
   --bg:#111113;--panel:#1b1b1e;--panel2:#2a2a2e;--line:#2e2e33;--fg:#f5f5f7;--muted:#a3a3aa;--faint:#7b7b82;
-  --accent:#f08a24;--accent-ink:#1a1005;--pc:#5eb8f0;--enemy:#ff6b62;--ally:#5ad36e;--blood:#e5484d;--arcane:#bf94f5;--boss:#e3a64e;
-  --save:#4cc46a;--fail:#ff5f57;--step:#3d9bff;--row:#222226;--rownow:#2d2a27;
+  --accent:#f5f5f7;--accent-ink:#111113;--pc:#5eb8f0;--enemy:#ff6b62;--ally:#5ad36e;--blood:#e5484d;--arcane:#bf94f5;--boss:#e3a64e;
+  --save:#4cc46a;--fail:#ff5f57;--step:#3d9bff;--row:#222226;--rownow:#303036;
   --ui:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",system-ui,"Helvetica Neue",Arial,sans-serif;
   --display:var(--ui);--body:var(--ui);
   --cg-out:#ff7a70;--cg-body:#e4a93a;--cg-mind:#c49cf7;--cg-sense:#6cc7ef;--cg-conc:#bf94f5}
 :root[data-dmlook=tool][data-dm=light]{
   --bg:#e9e9ee;--panel:#f7f7f9;--panel2:#e4e4ea;--line:#d6d6dd;--fg:#1c1c1e;--muted:#5d5d64;--faint:#7c7c83;
-  --accent:#b85c00;--accent-ink:#ffffff;--pc:#0a63c9;--enemy:#c4001a;--ally:#1f7a35;--blood:#c4001a;--arcane:#7c3aa0;--boss:#94600c;
-  --save:#1f7a35;--fail:#c4001a;--step:#0a63c9;--row:#ffffff;--rownow:#fff2e4;
+  --accent:#1c1c1e;--accent-ink:#ffffff;--pc:#0a63c9;--enemy:#c4001a;--ally:#1f7a35;--blood:#c4001a;--arcane:#7c3aa0;--boss:#94600c;
+  --save:#1f7a35;--fail:#c4001a;--step:#0a63c9;--row:#ffffff;--rownow:#e6e6ec;
   --cg-out:#c4001a;--cg-body:#9a6200;--cg-mind:#7c3aa0;--cg-sense:#0a6fa3;--cg-conc:#7c3aa0}
 :root[data-dmlook=tool] body{font-family:var(--ui);font-size:15px}
 
@@ -2677,7 +2678,7 @@ body.sbopen #roster .chips:has(.cond:not(.addc)) .addc{position:absolute;right:0
 :root[data-dmlook=tool] #dm>.bar .hgroup{gap:4px;padding:3px;border-radius:999px;background:color-mix(in srgb,var(--fg) 4%,transparent)}
 :root[data-dmlook=tool] #dm>.bar .btn.primary{background:var(--accent);color:var(--accent-ink)}
 
-/* the order: rows on their own step, no ledger lines; the turn is a lighter row with an orange edge */
+/* the order: rows on their own step, no ledger lines; the turn is a lighter row with an accent edge */
 :root[data-dmlook=tool] #roster.roster{background:transparent;border:0;padding:0;display:grid;gap:4px}
 :root[data-dmlook=tool] #roster .row{background:var(--row);border:0;border-radius:10px;box-shadow:none;margin:0;min-height:62px;
   padding:6px 12px 6px 8px;grid-template-columns:40px minmax(210px,290px) minmax(0,1fr) auto}
@@ -2980,6 +2981,322 @@ html[data-skin=oldmap] .fxround,html[data-skin=marble] .fxround,html[data-skin=a
 html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[data-skin=amphora] .fxround>div{transform-origin:left center;
   animation:rkpage .9s cubic-bezier(.2,.7,.2,1) both}
 @media (prefers-reduced-motion:reduce){ol.plist li .nm,ol.plist li.st-stable .nmw::after,.fxround>div{animation:none!important}}
+/* ---------- DM screen, 1.4: one system (tokens), a full-height app, the order as a table, the turn in one row ----------
+   Type 12 · 13 · 15 · 17 · 20 · 24 px; weights 400 · 500 · 600; controls 28 · 36 · 44 px; corners 6 px or a full round; steps of 4 px.
+   The order scrolls on its own, so the tools above it and the turn below it never cover a row. */
+html:root[data-dmlook=tool]{--fs12:12px;--fs13:13px;--fs15:15px;--fs17:17px;--fs20:20px;--fs24:24px;--rad:6px;
+  --blood-ink:#ff8a8d;--blood-bg:#4a1f24;--down-bg:#3a3a40;--fieldline:#6a6a72;--dock:#18181b;--quiet:#8e8e96}
+html:root[data-dmlook=tool][data-dm=light]{--faint:#66666d;--save:#18652b;--boss:#7d5108;
+  --blood-ink:#a8001a;--blood-bg:#fde4e6;--down-bg:#dcdce2;--fieldline:#8a8a92;--dock:#dedee4;--quiet:#5d5d64}
+html:root[data-dmlook=tool] :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---- the app: header, then the order and the side panel, each scrolling on its own ---- */
+html:root[data-dmlook=tool] body:has(#dm:not([hidden])){overflow:hidden}
+html:root[data-dmlook=tool] #dm:not([hidden]){height:100vh;height:100dvh;display:flex;flex-direction:column}
+html:root[data-dmlook=tool] #dm>.bar{flex:none;position:relative}
+html:root[data-dmlook=tool] #dm .bar-row,html:root[data-dmlook=tool] #dm .addr-row{max-width:none}
+html:root[data-dmlook=tool] #dm .brand{font-size:var(--fs17);font-weight:600}
+html:root[data-dmlook=tool] main.dmgrid{flex:1 1 auto;min-height:0;width:100%;max-width:none;margin:0;align-items:stretch;
+  grid-template-columns:minmax(0,1fr) 380px;gap:16px;padding:4px 16px calc(12px + var(--covered,0px))}
+html:root[data-dmlook=tool] body.sbopen main.dmgrid{grid-template-columns:minmax(0,1fr);padding-right:calc(min(480px,44vw) + 12px)}
+html:root[data-dmlook=tool] .dmmain{display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0}
+html:root[data-dmlook=tool] .dmmain>.note{flex:none;margin:0}
+html:root[data-dmlook=tool] .side{position:static;top:auto;max-height:none;min-height:0;overflow:auto;align-content:start;gap:8px}
+
+/* ---- the tools, above the order, in one row ---- */
+html:root[data-dmlook=tool] .dmtools{flex:none;display:flex;align-items:center;gap:4px;flex-wrap:nowrap;min-height:44px;padding:4px;
+  border-radius:10px;background:var(--panel);overflow:visible}
+html:root[data-dmlook=tool] .dmtools .fgrp{display:flex;align-items:center;gap:2px}
+html:root[data-dmlook=tool] .dmtools .fgrp+.fgrp{padding-left:6px;margin-left:4px;border-left:1px solid var(--line)}
+html:root[data-dmlook=tool] .dmtools .fgrp.fend{margin-left:auto;border-left:0;padding-left:0}
+html:root[data-dmlook=tool] .dmtools .btn{min-height:36px;height:36px;padding:0 12px;border:0;border-radius:var(--rad);background:transparent;
+  font-size:var(--fs15);font-weight:500;color:var(--fg);white-space:nowrap;box-shadow:none}
+html:root[data-dmlook=tool] .dmtools .btn:hover{background:var(--panel2)}
+html:root[data-dmlook=tool] .dmtools #lairBtn[aria-pressed=true]{background:color-mix(in srgb,var(--boss) 18%,transparent);color:var(--fg)}
+html:root[data-dmlook=tool] .dmtools #endBtn:not(.primary){color:var(--fail);background:transparent}
+html:root[data-dmlook=tool] .dmtools #endBtn.primary{background:var(--panel2);color:var(--fg)}
+html:root[data-dmlook=tool] .dmtools .btn.pebox{display:inline-flex;align-items:center;gap:8px}
+html:root[data-dmlook=tool] .dmtools .footmore .rmenu{top:calc(100% + 6px);bottom:auto;right:0}
+html:root[data-dmlook=tool] .dmtools .icon-btn{width:36px;height:36px;min-height:36px;border:0;border-radius:var(--rad);background:transparent}
+
+/* ---- the order as a table: one set of columns for the heads and every row ---- */
+html:root[data-dmlook=tool]{--cols:48px minmax(220px,300px) minmax(0,1fr) 132px 92px 176px}
+html:root[data-dmlook=tool] .colhead{flex:none;display:grid;grid-template-columns:var(--cols);gap:10px;align-items:center;height:24px;
+  padding:0 12px 0 8px;font-size:var(--fs12);font-weight:500;color:var(--muted);letter-spacing:.02em}
+html:root[data-dmlook=tool] .colhead span:first-child{text-align:center}
+html:root[data-dmlook=tool] .colhead span:nth-child(5){text-align:center}
+html:root[data-dmlook=tool] .colhead span:last-child{text-align:right}
+html:root[data-dmlook=tool] #roster.roster{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;align-content:start;padding:0 2px 8px 0}
+html:root[data-dmlook=tool] #roster:has(.empty){overflow:visible}
+html:root[data-dmlook=tool]:has(#mtBar) #roster.roster,html:root[data-dmlook=tool]:has(#concAsk) #roster.roster{padding-bottom:180px}
+html:root[data-dmlook=tool] #roster .row{grid-template-columns:var(--cols);gap:4px 10px;min-height:56px;padding:6px 12px 6px 8px;border-radius:8px}
+html:root[data-dmlook=tool] #roster .row .tools{display:contents}
+html:root[data-dmlook=tool] #roster .row .tools>.hpw{grid-column:4;width:100%;max-width:132px;justify-self:start}
+html:root[data-dmlook=tool] #roster .row .tools>.ac-wrap{grid-column:5;justify-self:center}
+html:root[data-dmlook=tool] #roster .row .tools>.stat{grid-column:6;display:flex;align-items:center;justify-content:flex-end;gap:4px}
+html:root[data-dmlook=tool] #roster .row .sbline{grid-column:2 / -1;padding-left:0}
+html:root[data-dmlook=tool] #roster .row .lairbox{grid-column:2 / -1}
+
+/* the initiative; with Hit several the tick takes its place, so nothing moves */
+html:root[data-dmlook=tool] #roster .hexw{width:48px;display:flex;justify-content:center}
+html:root[data-dmlook=tool] #roster .hexw .init-in{width:44px;height:36px;font-size:var(--fs17);font-weight:600;text-align:center}
+html:root[data-dmlook=tool] #roster .row.mtrow .hexw .init-in{display:none}
+html:root[data-dmlook=tool] #roster .mtcb{position:static;transform:none;width:24px;height:24px;border-radius:var(--rad);border:2px solid var(--fieldline);
+  display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
+html:root[data-dmlook=tool] #roster .mtcb[aria-pressed=true]{background:var(--fail);border-color:var(--fail);color:#1a0505}
+
+/* who: the picture square, the name, the grey second line; no class or type = a plain outline of a person, never an empty square */
+html:root[data-dmlook=tool] #roster .who{grid-template-columns:36px minmax(0,1fr);column-gap:12px}
+html:root[data-dmlook=tool] #roster .dmpic{width:36px;height:36px;border-radius:var(--rad);background:var(--panel2)}
+html:root[data-dmlook=tool] #roster .dmpic:has(.nosig){background:transparent;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fg) 28%,transparent)}
+html:root[data-dmlook=tool] #roster .dmsig{width:20px;height:20px}
+html:root[data-dmlook=tool] #roster .dmsig.nosig{background:var(--muted);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6'/%3E%3C/svg%3E") center/contain no-repeat}
+html:root[data-dmlook=tool] #roster .name-in{font-size:var(--fs15);font-weight:600}
+html:root[data-dmlook=tool] #roster .typeline{font-size:var(--fs13);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html:root[data-dmlook=tool] #roster .sblink{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border:0;border-radius:var(--rad);
+  background:var(--panel2);color:color-mix(in srgb,var(--arcane) 70%,var(--fg));font-size:var(--fs12);font-weight:500;vertical-align:middle}
+html:root[data-dmlook=tool] #roster .sblink svg{width:12px;height:12px}
+html:root[data-dmlook=tool] #roster .sblink.on{background:color-mix(in srgb,var(--arcane) 22%,var(--panel2))}
+html:root[data-dmlook=tool] .nowtag,html:root[data-dmlook=tool] .nexttag{font-size:var(--fs12);font-weight:600;border-radius:4px;padding:0 6px;line-height:18px}
+
+/* conditions: pills; "+ Condition" always there and says what it is when the row has nothing else */
+html:root[data-dmlook=tool] #roster .chips{gap:6px;align-items:center}
+html:root[data-dmlook=tool] #roster .chips .cond{min-height:28px;padding:0 10px;border-radius:999px;font-size:var(--fs13);font-weight:500}
+html:root[data-dmlook=tool] #roster .chips .addc,html:root[data-dmlook=tool] body.sbopen #roster .chips .addc{opacity:1;position:static;transform:none;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fg) 22%,transparent)!important;background:transparent!important;color:var(--muted)!important;
+  padding:0 9px;min-height:28px}
+html:root[data-dmlook=tool] #roster .chips .addc:hover{color:var(--fg)!important;box-shadow:inset 0 0 0 1px var(--muted)!important}
+
+/* HP: the number and a thin bar; no maximum yet = a real field that says "Set HP" */
+html:root[data-dmlook=tool] #roster .hpw .hpn{font-size:var(--fs17);font-weight:600}
+html:root[data-dmlook=tool] #roster .hpw.add{padding:0;border:0!important;background:none!important;box-shadow:none!important;outline:0}
+html:root[data-dmlook=tool] #roster .hpw.add input{width:104px;height:36px;padding:0 10px;border:1px solid var(--fieldline);border-radius:var(--rad);
+  background:var(--bg);color:var(--fg);font:500 var(--fs15)/1 var(--ui);text-align:left}
+html:root[data-dmlook=tool] #roster .hpw.add input::placeholder{color:color-mix(in srgb,var(--fg) 72%,transparent);font-size:var(--fs13);opacity:1}
+html:root[data-dmlook=tool] #roster .hpw.add input:focus{outline:0;border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent)}
+html:root[data-dmlook=tool] #roster .hpw.hpnone{color:transparent}
+
+/* AC on a shield; empty = a dashed shield that says AC */
+html:root[data-dmlook=tool] #roster .ac-wrap{display:inline-flex;align-items:center;gap:2px}
+html:root[data-dmlook=tool] #roster .ac-wrap input{width:40px;height:44px;font-size:var(--fs15)}
+html:root[data-dmlook=tool] #roster .ac-wrap input.acempty{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l8 3v5.5c0 5-3.3 9-8 10.5-4.7-1.5-8-5.5-8-10.5V5.5z' fill='none' stroke='%237b7b82' stroke-width='1.2' stroke-dasharray='2 2'/%3E%3C/svg%3E")}
+html:root[data-dmlook=tool] #roster .ac-wrap input::placeholder{color:var(--muted);font-size:var(--fs12);font-weight:500;opacity:1}
+html:root[data-dmlook=tool] #roster .ac-wrap .tog{width:28px;height:28px;padding:0;border:0;border-radius:999px;background:transparent!important;
+  color:var(--quiet)}
+html:root[data-dmlook=tool] #roster .ac-wrap .tog[aria-pressed=true]{color:var(--fg)}
+html:root[data-dmlook=tool] #roster .ac-wrap .tog svg{width:16px;height:16px}
+
+/* Bloodied and Down: quiet icons while off (B and D still work); on, they become a coloured pill with the word */
+html:root[data-dmlook=tool] #roster .stat .tog.blood,html:root[data-dmlook=tool] #roster .stat .tog.downt{display:inline-flex;align-items:center;
+  justify-content:center;gap:6px;min-width:32px;height:32px;padding:0;border:0!important;border-radius:999px;background:transparent!important;
+  color:var(--quiet);font-size:var(--fs13);font-weight:600;text-transform:none;letter-spacing:0}
+html:root[data-dmlook=tool] #roster .stat .tog svg{width:16px;height:16px;flex:none}
+html:root[data-dmlook=tool] #roster .stat .tog.blood svg{fill:none;stroke:currentColor;stroke-width:1.8}
+html:root[data-dmlook=tool] #roster .stat .tog .tl{display:none}
+html:root[data-dmlook=tool] #roster .stat .tog:hover{background:var(--panel2)!important;color:var(--fg)}
+html:root[data-dmlook=tool] #roster .stat .tog[aria-pressed=true]{padding:0 12px 0 10px}
+html:root[data-dmlook=tool] #roster .stat .tog[aria-pressed=true] .tl{display:inline}
+html:root[data-dmlook=tool] #roster .stat .tog.blood[aria-pressed=true]{background:var(--blood-bg)!important;color:var(--blood-ink)}
+html:root[data-dmlook=tool] #roster .stat .tog.blood[aria-pressed=true] svg{fill:currentColor}
+html:root[data-dmlook=tool] #roster .stat .tog.downt[aria-pressed=true]{background:var(--down-bg)!important;color:var(--fg)}
+html:root[data-dmlook=tool] #roster .stat .morebtn2{width:32px;height:32px;border-radius:999px;color:var(--quiet)}
+
+/* the lair action: one line across the order, its own shape */
+html:root[data-dmlook=tool] #roster .row.k-lair{grid-template-columns:48px minmax(0,1fr) auto auto;min-height:40px;background:var(--panel);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fg) 16%,transparent)}
+html:root[data-dmlook=tool] #roster .row.k-lair.turn{background:var(--rownow);box-shadow:inset 4px 0 0 var(--accent)}
+html:root[data-dmlook=tool] #roster .row.k-lair .lair-init{width:48px;text-align:center;font-size:var(--fs17);font-weight:600;color:var(--accent)}
+html:root[data-dmlook=tool] #roster .row.k-lair .who{display:block;min-width:0}
+html:root[data-dmlook=tool] #roster .row.k-lair .lair-name{display:flex;align-items:baseline;gap:10px;font-family:var(--ui);font-size:var(--fs15);
+  font-weight:600;font-style:normal;white-space:nowrap;overflow:hidden}
+html:root[data-dmlook=tool] #roster .row.k-lair .lair-name small{display:inline;font-size:var(--fs13);font-weight:400;color:var(--muted);
+  overflow:hidden;text-overflow:ellipsis}
+html:root[data-dmlook=tool] #roster .row.k-lair .tools{display:flex}
+
+/* ---- the turn, one row at the bottom ---- */
+html:root[data-dmlook=tool] .dmmain>.foot{flex:none;position:static;margin:0;padding:6px;border:0;border-radius:12px;background:var(--dock);display:block}
+html:root[data-dmlook=tool] .tiledock .turnbox{gap:8px;align-items:stretch}
+html:root[data-dmlook=tool] .ttile{min-height:52px;height:52px;padding:0 16px;border-radius:8px;background:var(--panel);min-width:0;align-items:center}
+html:root[data-dmlook=tool] .ttile b{font-size:var(--fs17);font-weight:600;max-width:none}
+html:root[data-dmlook=tool] .ttile small{font-size:var(--fs12);font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);max-width:none}
+html:root[data-dmlook=tool] .ttile.trnd{width:88px;flex:none}
+html:root[data-dmlook=tool] .ttile.twho{flex:1 1 0;min-width:0;align-items:flex-start}
+html:root[data-dmlook=tool] .ttile.twho b{display:flex;align-items:center;gap:10px;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+html:root[data-dmlook=tool] .ttile .tdot{width:8px;height:8px;border-radius:999px;background:var(--accent);flex:none}
+html:root[data-dmlook=tool] .ttile.tidle .tdot{display:none}
+html:root[data-dmlook=tool] .ttile .tini{font-size:var(--fs13);font-weight:500;color:var(--muted)}
+html:root[data-dmlook=tool] .ttile.tfight{width:120px;flex:none;align-items:flex-start}
+html:root[data-dmlook=tool] .tnav{min-height:52px;height:52px;min-width:52px;padding:0 14px;border-radius:8px;background:var(--panel)}
+html:root[data-dmlook=tool] .tnav.primary{padding:0 24px;border-radius:999px;font-size:var(--fs17);font-weight:600;gap:10px}
+html:root[data-dmlook=tool] .tnav kbd{font:500 var(--fs12)/18px var(--ui);padding:0 5px;border-radius:4px;
+  border:1px solid color-mix(in srgb,var(--accent-ink) 35%,transparent);color:color-mix(in srgb,var(--accent-ink) 75%,transparent);background:none}
+
+/* what floats: the Hit several bar and the Concentration cards sit above the turn row; a note under the header */
+html:root[data-dmlook=tool] .mtbar,html:root[data-dmlook=tool] .concask{bottom:calc(var(--covered,0px) + 96px)}
+html:root[data-dmlook=tool] .toast{top:calc(var(--barh,64px) + 6px);bottom:auto;border-radius:999px;font-size:var(--fs13);font-weight:500}
+
+/* ---- the side panel ---- */
+html:root[data-dmlook=tool] .side .panel{border-radius:10px}
+html:root[data-dmlook=tool] .side .panel>summary{font-size:var(--fs15);font-weight:600;padding:12px 16px}
+html:root[data-dmlook=tool] .side .panel>:not(summary){margin:0 16px 14px}
+/* Settings and files open from the gear in the header, on top of the panel; the panel puts first what this part of the fight needs */
+html:root[data-dmlook=tool] .side .panel[data-k=more]:not(.on){display:none}
+html:root[data-dmlook=tool] .side .panel[data-k=more].on{order:-1}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=add]{order:1}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=party]{order:2}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=enc]{order:3}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=call]{order:4}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=log]{order:5}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=field]{order:6}
+html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=hand]{order:7}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=call]{order:1}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=field]{order:2}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=log]{order:3}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=hand]{order:4}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=add]{order:5}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=party]{order:6}
+html:root[data-dmlook=tool] #dm[data-phase=fight] .side .panel[data-k=enc]{order:7}
+
+/* buttons that can't be used yet look like plain buttons, not faded accent ones */
+html:root[data-dmlook=tool] .btn:disabled,html:root[data-dmlook=tool] .btn.primary:disabled{background:var(--panel2)!important;
+  color:color-mix(in srgb,var(--fg) 45%,transparent)!important;border-color:transparent!important;opacity:1;cursor:not-allowed}
+
+/* a laptop with scaling (about 860 px high): denser rows */
+@media (max-height:900px){
+  html:root[data-dmlook=tool] #roster .row{min-height:50px;padding-top:4px;padding-bottom:4px}
+  html:root[data-dmlook=tool] #roster .dmpic{width:32px;height:32px}
+  html:root[data-dmlook=tool] #roster .who{grid-template-columns:32px minmax(0,1fr)}
+  html:root[data-dmlook=tool] .ttile,html:root[data-dmlook=tool] .tnav{min-height:48px;height:48px}
+  html:root[data-dmlook=tool] main.dmgrid{grid-template-columns:minmax(0,1fr) 340px}}
+@media (max-width:1500px){html:root[data-dmlook=tool]{--cols:44px minmax(200px,260px) minmax(0,1fr) 120px 88px 168px}
+  html:root[data-dmlook=tool] #roster .hexw,html:root[data-dmlook=tool] #roster .row.k-lair .lair-init{width:44px}}
+
+/* the roll call: who hasn't answered says "waiting" with a clock, not "…"; Send never greys out, it says what's missing */
+html:root[data-dmlook=tool] .callres .cw{display:inline-flex;align-items:center;gap:6px}
+html:root[data-dmlook=tool] .callres .cw.wait b{font-weight:500;color:var(--muted)}
+html:root[data-dmlook=tool] .cwi{width:12px;height:12px;flex:none}
+html:root[data-dmlook=tool] .fixhint{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs13);color:color-mix(in srgb,var(--accent) 80%,var(--fg))}
+
+/* a narrow window (under 1100 px): the side panel becomes a drawer from the right, opened from Panel in the header */
+html:root[data-dmlook=tool] .sidebtn{display:none}
+@media (max-width:1100px){
+  html:root[data-dmlook=tool] .sidebtn{display:inline-flex}
+  html:root[data-dmlook=tool] main.dmgrid{grid-template-columns:minmax(0,1fr)}
+  html:root[data-dmlook=tool] .side{position:fixed;z-index:26;right:0;top:var(--barh,64px);bottom:var(--covered,0px);width:min(380px,92vw);padding:8px;
+    background:var(--bg);box-shadow:-14px 0 40px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .2s ease;visibility:hidden}
+  html:root[data-dmlook=tool] #dm.sideon .side{transform:none;visibility:visible}}
+
+/* ---- dialogs: one surface, plain labels (no spaced capitals), the same fields and buttons everywhere ---- */
+html:root[data-dmlook=tool] .sheet{background:#26262a;border:1px solid #34343a;border-radius:12px;padding:20px 24px;gap:14px}
+html:root[data-dmlook=tool][data-dm=light] .sheet{background:var(--panel);border-color:var(--line)}
+html:root[data-dmlook=tool] .sheet h2{font-family:var(--ui);font-size:var(--fs20);font-weight:600;letter-spacing:0;font-variant:normal}
+html:root[data-dmlook=tool] .sheet .psub{font-size:var(--fs13);color:var(--muted)}
+html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) :is(.eyebrow2,.strip-label,.splv,.qkt,.sethead,.quick label,.add label span,.ptable .ph span){
+  text-transform:none;letter-spacing:0;font-variant:normal;font-family:var(--ui);font-size:var(--fs13);font-weight:500;color:var(--muted)}
+html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) :is(input,select,textarea).field{min-height:36px;border:1px solid var(--fieldline);
+  border-radius:var(--rad);background:var(--bg);
+  font-size:var(--fs15)}
+html:root[data-dmlook=tool] :is(.sheet,.side,.hppop) :is(input,select,textarea).field:focus{outline:0;border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent)}
+html:root[data-dmlook=tool] :is(.sheet,.hppop) .btn{border-radius:var(--rad);font-weight:500}
+html:root[data-dmlook=tool] .hppop{border-color:#34343a;background:#26262a;border-radius:12px}
+html:root[data-dmlook=tool][data-dm=light] .hppop{border-color:var(--line);background:var(--panel)}
+html:root[data-dmlook=tool] .side .sbbtn{background:var(--panel2);border-radius:var(--rad)}
+html:root[data-dmlook=tool] .sbsheet .sbfoot{bottom:-20px;margin:0 -24px -20px;padding:12px 24px 16px;background:#26262a;border-top-color:#34343a}
+html:root[data-dmlook=tool][data-dm=light] .sbsheet .sbfoot{background:var(--panel);border-top-color:var(--line)}
+html:root[data-dmlook=tool] .sheet.devsheet{max-height:calc(100dvh - var(--covered,0px) - 32px);overflow:auto}
+html:root[data-dmlook=tool] .fixhint.shake{animation:hpshake .3s}
+
+/* the statblock line under a monster (In lair, LR, LA, Recharge): targets of at least 24 px; weights from the scale */
+html:root[data-dmlook=tool] #roster .sbline :is(.sbc,.sbreset,.sbrech,.sbmore){min-height:26px;padding:0 9px;border-radius:999px;font-size:var(--fs12);
+  font-weight:500}
+html:root[data-dmlook=tool] #roster .sbline .sbpip{width:14px;height:14px}
+html:root[data-dmlook=tool] #roster .cond .x,html:root[data-dmlook=tool] .side .pchip .x{min-width:24px;min-height:24px}
+html:root[data-dmlook=tool] #dm>.bar :is(.btn,.icon-btn){font-weight:500}
+html:root[data-dmlook=tool] #dm h1.brand{margin:0;font-size:var(--fs17);font-weight:600;line-height:1.2}
+
+/* ---- the header's Table group: devices, TV and the atmosphere, everything the players see ---- */
+html:root[data-dmlook=tool] .tablegrp .grplbl{padding:0 6px 0 10px;font-size:var(--fs12);font-weight:600;color:var(--muted)}
+html:root[data-dmlook=tool] .joinpill .jd.some{background:var(--boss);box-shadow:0 0 0 3px color-mix(in srgb,var(--boss) 25%,transparent)}
+html:root[data-dmlook=tool] .atmobtn{max-width:none}
+html:root[data-dmlook=tool] .atmobtn .atsw{display:inline-flex;align-items:center;padding:2px 3px;border-radius:999px;background:var(--sw0);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--fg) 18%,transparent)}
+html:root[data-dmlook=tool] .atmobtn .atsw b{width:8px;height:8px;border-radius:999px;margin-left:-2px;box-shadow:0 0 0 1px var(--sw0)}
+html:root[data-dmlook=tool] .atmobtn .atsw b:first-child{margin-left:0}
+/* ---------- phones, 1.4: a dock in the class colour and four tabs where the thumb is; nothing on a phone under 12 px ----------
+   The dock: HP (tap to change), AC and initiative, then what's on you. The tabs: Roll, Conditions, Spells (or Resources), More. */
+.pbar.v14{gap:8px;padding:10px max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
+  background:color-mix(in srgb,var(--fc,var(--accent)) 10%,var(--bg));border-top:1.5px solid color-mix(in srgb,var(--fc,var(--accent)) 70%,transparent)}
+.pbar.v14 .pmeline{min-height:28px}
+.pbar.v14 .pme{font-size:1.15rem}
+.pbar.v14 .ptop{height:36px;border-radius:10px;font-size:.88rem;padding:0 12px}
+.pdock{display:flex;gap:8px;align-items:stretch}
+.dbox{min-width:56px;height:56px;border:0;border-radius:12px;background:color-mix(in srgb,#000 30%,var(--panel));color:var(--fg);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:1px;font-family:var(--body);position:relative;overflow:hidden;padding:0 8px}
+.dbox small{font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;color:color-mix(in srgb,var(--fc,var(--accent)) 55%,var(--fg))}
+.dbox b{font-family:var(--body);font-size:1.25rem;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
+.dbox.want{box-shadow:inset 0 0 0 2px var(--fc,var(--accent))}.dbox.want b{color:var(--fc,var(--accent))}
+.dbox.dbhp{flex:1 1 auto;flex-direction:row;justify-content:flex-start;gap:12px;padding:0 14px}
+.dbox.dbhp .dhp{display:flex;flex-direction:column;align-items:flex-start}
+.dbox.dbhp .of{font-size:.75em;font-weight:500;color:var(--muted)}
+.dbox.dbhp b i{font-style:normal;font-size:.7em;color:#8ec5ff}
+.dbox.dbhp .hpbar{position:static;flex:1 1 auto;height:6px;border:0;border-radius:999px;background:color-mix(in srgb,var(--fg) 14%,transparent)}
+.dbox.dbhp .hpbar i{display:block;height:100%;border-radius:999px;background:var(--save)}
+.dbox.dbhp.low .hpbar i{background:var(--blood)}
+.dbox.dbhp.zero{background:color-mix(in srgb,var(--blood) 30%,var(--panel))}
+.dbox.dbhp .ti{width:22px;height:22px;color:var(--fc,var(--accent))}
+.dbox.dbhp .dset{font-weight:700}
+.dbox:active{box-shadow:inset 0 0 0 2px var(--fc,var(--accent))}
+.pbar.v14 .ptabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:0;margin:0 calc(-1 * max(12px,env(safe-area-inset-left,0px)));
+  border-top:1px solid color-mix(in srgb,var(--fc,var(--accent)) 25%,var(--line));padding-bottom:env(safe-area-inset-bottom,0px)}
+.pbar.v14 .ptabs .tab,.pbar.v14.many .ptabs .tab{min-height:56px;border:0;border-radius:0;background:none;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;padding:6px 2px;font-size:12px;font-weight:600;color:color-mix(in srgb,var(--fg) 82%,transparent);grid-auto-flow:row}
+.pbar.v14 .ptabs .tab svg{width:22px;height:22px;color:var(--fc,var(--accent));fill:none}
+.pbar.v14 .ptabs .tab[data-act=pmore] svg{fill:currentColor;color:color-mix(in srgb,var(--fg) 82%,transparent)}
+.pbar.v14 .ptabs .tab:active{background:color-mix(in srgb,var(--fc,var(--accent)) 14%,transparent)}
+.pbar.v14 .mystat{gap:6px}
+.pbar.v14 .mychip{padding:6px 12px;font-size:.9rem;min-height:36px}
+
+/* the order on a phone: nothing smaller than 12 px; on the tablet, nothing smaller than 14 px */
+html body:not(.shared) #player :is(.lt,.effn,.badge.you,.t,.eyebrow2,li small,.shield,.shield *){font-size:max(12px,.75rem)!important}
+html body:not(.shared) #player ol.plist .nm small{color:color-mix(in srgb,currentColor 55%,var(--fg))}
+html body:not(.shared) #player ol.plist .cond .lt{color:color-mix(in srgb,currentColor 55%,var(--fg))}
+body:not(.shared) #player ol.plist .effn{font-size:12px;padding:0 5px}
+body.shared #player :is(.eyebrow2,.fieldchip small,li small){font-size:max(14px,.85rem)}
+
+/* "On you": effects on top, then the round, cover, conditions; what's on you is ticked, not only coloured */
+.peffl{display:grid;gap:6px;margin-bottom:8px}
+.peffi{display:flex;flex-direction:column;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,#000 22%,var(--panel))}
+.peffi b{font-weight:700}.peffi small{font-size:12px;color:var(--muted)}
+.psheet .chipgrid [aria-pressed=true]::before{content:"✓";margin-right:6px;font-weight:800}
+
+/* the HP sheet: where Damage or Heal would leave you, before you press it */
+.hpprev{display:flex;justify-content:space-between;gap:8px;min-height:20px;font-size:13px;color:var(--muted)}
+.hpprev b{color:var(--fg);font-size:15px}.hpprev .hpvd b{color:var(--blood)}.hpprev .hpvh b{color:var(--save)}
+
+/* "Your turn": what matters this turn, one card each */
+.ytcs{display:grid;gap:8px}
+.ytc{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,#000 22%,var(--panel))}
+.ytc b{font-weight:700}.ytc p{margin:2px 0 0;font-size:13px;color:var(--muted);line-height:1.35}
+.ytc .btn{margin-top:8px}
+.tci{width:28px;height:28px;flex:none;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--fg) 8%,transparent)}
+svg.tci{display:block;padding:5px;fill:none;stroke:var(--cc,currentColor);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tce{color:var(--fc,var(--accent));font-size:15px}
+
+/* E18: the table's rolls under the dice */
+.tlog{display:grid}
+.tlr{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
+.tlr:first-child{border-top:0}
+.tlr b{font-weight:700}.tlr span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tlr em{margin-left:auto;font-style:normal;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
+.tld{width:8px;height:8px;border-radius:999px;flex:none;background:var(--fc,var(--muted))}
+
+/* E19: an aura reminder in the roll call */
+.aurahint{display:block;font-size:13px;color:color-mix(in srgb,var(--accent) 70%,var(--fg));padding:2px 0}
 </style>
 </head>
 <body>
@@ -2987,17 +3304,18 @@ html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[dat
 <div id="dm" hidden>
   <header class="bar">
     <div class="bar-row">
-      <div class="brand">Roundkeeper</div>
+      <h1 class="brand">Roundkeeper</h1>
       <div class="sync" id="sync" data-s="off"><i></i><span>Connecting…</span></div>
-      <span id="turnHome" hidden></span><div class="turnbox" id="turnBox"></div>
-      <span class="barsp" aria-hidden="true"></span>
+            <span class="barsp" aria-hidden="true"></span>
       <div class="barright">
+      <button class="btn sidebtn" id="sideBtn" type="button" data-act="sidetoggle" aria-expanded="false" aria-controls="side">Panel</button>
       <button class="btn qkbtn" type="button" data-act="qk" title="Search spells, items, conditions, rules and feats (Ctrl+K)" aria-label="Rules"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span class="qkl">Rules</span></button>
       <button class="btn tcardpill" id="tcardPill" type="button" data-act="tcardoff" hidden></button>
-      <div class="hgroup tablegrp">
+      <div class="hgroup tablegrp" role="group" aria-labelledby="tableLbl">
+        <span class="grplbl" id="tableLbl">Table</span>
         <button class="btn joinpill" id="joinPill" type="button" data-act="devices" title="Devices: who is connected, the addresses and the QR code"></button>
         <button class="btn tvbtn" id="tvBtn" type="button" data-act="tvbar" title="What the TV shows" aria-expanded="false"><i class="jd"></i>TV</button>
-        <button class="btn atmobtn" id="atmoBtn" type="button" data-act="atmo" title="Atmosphere: theme, scene and background picture on the tablet">Atmosphere</button>
+        <button class="btn atmobtn" id="atmoBtn" type="button" data-act="atmo" title="Atmosphere on the tablet and TV: theme, scene, weather and picture">Atmosphere</button>
         <button class="btn" id="preview" type="button">Preview player screen</button>
         <button class="icon-btn lg previewic" type="button" data-act="previewic" title="Preview the player screen" aria-label="Preview the player screen"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
@@ -3014,10 +3332,7 @@ html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[dat
    <div class="dmmain">
     <div class="note" id="fileNote" hidden>This file was opened directly, so the tablet can't see anything. Start it with <b>Roundkeeper.exe</b> (or the Roundkeeper program on a Mac or Linux) instead.</div>
     <div class="note ended" id="endedNote" hidden><span>Players are seeing the end-of-combat screen.</span><button class="btn" type="button" data-act="unend">Show the order again</button></div>
-    <section class="roster" id="roster" aria-label="Initiative order"></section>
-    <div class="foot">
-      <p class="hint">Players open the same address as the tablet on their phones and manage their own initiative, conditions and death saves. Ctrl+Z undoes the last change.</p>
-      <div class="acts">
+    <div class="dmtools acts" role="toolbar" aria-label="Combat tools">
         <span class="fgrp"><button class="btn" type="button" data-act="mtstart" title="Damage several at once, like a Fireball (or Shift+click the rows)">Hit several</button>
         <button class="btn" id="lairBtn" type="button" aria-pressed="false">Lair action</button>
         <button class="btn" type="button" data-act="clearreact" title="Clear every Reaction used (R)">Clear reactions</button></span>
@@ -3027,8 +3342,11 @@ html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[dat
         <button class="btn" id="endBtn" type="button">End combat</button>
         <span class="footmore"><button class="icon-btn lg" id="footMore" type="button" data-act="footmore" aria-haspopup="menu" aria-expanded="false" aria-label="More: new combat, clear all" title="More: New combat, Clear all"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
           <span class="rmenu footmenu" id="footMenu" role="menu" hidden><button type="button" id="newFight" role="menuitem">New combat <small>keeps the party</small></button><hr><button type="button" class="danger" id="wipe" role="menuitem">Clear all</button></span></span></span>
-      </div>
-      <div class="tiledock" id="tileDock"></div>
+    </div>
+    <div class="colhead" id="rosterHead" aria-hidden="true"><span>Init</span><span>Combatant</span><span>Conditions</span><span>HP</span><span>AC</span><span>Status</span></div>
+    <section class="roster" id="roster" aria-label="Initiative order"></section>
+    <div class="foot">
+      <div class="tiledock" id="tileDock"><div class="turnbox" id="turnBox"></div></div>
     </div>
    </div>
    <aside class="side" id="side" aria-label="Tools">
@@ -3066,7 +3384,7 @@ html[data-skin=oldmap] .fxround>div,html[data-skin=marble] .fxround>div,html[dat
       <label class="setopt"><input type="checkbox" id="autoTimer"> Start the hourglass on every player's turn</label>
       <label class="setopt" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> Roll monsters' Concentration saves for me <small>otherwise the app asks</small></label>
       <div class="sethead">This laptop</div>
-      <div class="setrow"><button class="btn pebox" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button><button class="btn pebox" id="dmLookBtn" type="button" data-act="dmlook" title="The 1.1 look in the table's style" aria-label="Classic look"></button></div>
+      <div class="setrow"><button class="btn pebox" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button></div>
       <div class="acts">
         <button class="btn sm" type="button" data-act="dmdev">DM devices</button>
         <button class="btn sm" type="button" data-act="updates">Updates</button>
@@ -5507,13 +5825,8 @@ const FONTS=[["alegreya","Alegreya SC","'Alegreya SC'"],["cinzel","Cinzel","Cinz
 /* the DM screen in light or dark: only on this laptop, never on the tablet or phones */
 const SUN='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   MOON='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill="currentColor"/></svg>';
-/* the DM screen's look (1.3): "tool" (neutral, the default) or "classic" (the table's language, 1.1); this laptop only */
-function dmLookApply(){if(MODE!=="dm"||PREVIEW)return;const tool=ls.get("dmLook","tool")!=="classic",d=document.documentElement.dataset;
-  if(tool)d.dmlook="tool";else delete d.dmlook;
-  const b=document.getElementById("dmLookBtn");if(b){b.textContent="Classic look";b.title=tool?"Switch to the 1.1 look in the table's style":
-    "Switch to the neutral tool look";b.setAttribute("aria-pressed",String(!tool))}
-  const tb=document.getElementById("turnBox"),dock=document.getElementById("tileDock"),home=document.getElementById("turnHome");
-  if(tb&&dock&&home){if(tool&&tb.parentElement!==dock)dock.prepend(tb);else if(!tool&&tb.parentElement!==home)home.after(tb)}}
+/* the DM screen's look: since 1.4 there is one (the "tool" look); the attribute stays because the CSS is keyed on it */
+function dmLookApply(){if(MODE!=="dm"||PREVIEW)return;document.documentElement.dataset.dmlook="tool"}
 function dmLightApply(){if(MODE!=="dm"||PREVIEW)return;const on=!!ls.get("dmLight",false),d=document.documentElement.dataset;if(on)d.dm="light";
   else delete d.dm;
   const b=document.getElementById("dmLightBtn");if(b){b.textContent="Light screen";
@@ -5787,8 +6100,7 @@ function lairRowHtml(){
     " · ":""}Lair action<small>${b?`${sb.lair.length} to pick from${last&&last.r===R-1?` · not “${esc(lairShort(sb.lair[last.i]||""))}” again`:""}`:
     "On initiative 20, loses ties"}</small></div></div><div class="chips">${b&&!turn?
     `<button type="button" class="cond add" data-act="lairshow" aria-expanded="${lairShow}">${lairShow?"Hide":"Show"} actions</button>`:
-    ""}</div><div class="tools"><button type="button" class="icon-btn" data-act="lairoff" aria-label="Remove lair action">${I.x}</button></div>${acts}${turn?
-      TFRAME:""}</div>`;
+    ""}</div><div class="tools"><button type="button" class="icon-btn" data-act="lairoff" aria-label="Remove lair action">${I.x}</button></div>${acts}</div>`;
 }
 function withLair(arr){if(!state.lair)return arr;const a=[...arr];const i=a.findIndex(c=>initOf(c)<20);a.splice(i<0?a.length:i,0,LAIR);return a}
 const dsOf=c=>c.ds||{s:0,f:0};
@@ -6005,20 +6317,20 @@ const hpFlash=new Map();   // id -> {d, at}: the "-5" that flashes after a chang
 let hpPopId=null,hpMod="",mtOn=false,mtSel=new Set(),mt={n:"",type:"",ab:"",dc:"",on:"half",modes:{},rolls:{}};
 function hpBox(c){
   if(c.hpMax==null)return `<span class="hpw add" title="Track HP: type the maximum"><span class="hpl">HP</span><input id="hp-${
-    c.id}" data-act="hp" placeholder="max" aria-label="Maximum HP for ${esc(c.name)}" inputmode="numeric"></span>`;
+    c.id}" data-act="hp" placeholder="Set HP" aria-label="Maximum HP for ${esc(c.name)}" inputmode="numeric"></span>`;
   const cur=c.hp??c.hpMax,t=c.thp||0,tot=Math.max(c.hpMax,cur)+t,cls=cur<=0?" zero":cur<=c.hpMax/2?" half":"";
   const f=hpFlash.get(c.id),age=f?Date.now()-f.at:1e9;
   return `<button type="button" class="hpw hpb${cls}${hpPopId===c.id?" open":""}${mtSel.has(c.id)?" mt":
-    ""}" id="hp-${c.id}" data-act="hppop" data-hid="${esc(c.id)}" aria-label="HP ${cur} of ${c.hpMax}${t?`, ${t} temporary`:
-    ""} for ${esc(c.name)}: change it" title="Click to change HP · Shift+click the row to hit several at once">
+    ""}" id="hp-${c.id}" data-act="hppop" data-hid="${esc(c.id)}" aria-label="${cur}/${c.hpMax}${t?` +${t}`:
+    ""} HP, ${esc(c.name)}: change it" title="Click to change HP · Shift+click the row to hit several at once">
     <span class="hprow"><span class="hpl">HP</span><b class="hpn">${cur}/${c.hpMax}</b>${t?`<span class="hpt">+${t}</span>`:""}</span>
     <span class="hpbar3"><i class="hpv" style="width:${Math.max(0,100*cur/tot)}%"></i>${t?`<i class="hptv" style="width:${100*t/tot}%"></i>`:""}</span>
     ${age<1800?`<span class="hpdelta${f.d>0?" up":""}" style="animation-delay:-${age}ms">${f.d>0?"+":"−"}${Math.abs(f.d)}</span>`:""}</button>`;
 }
 /* 80: a player's HP as their phone has it; the DM reads it, the player changes it */
 function pcHpBox(c){const p=c.php,cur=p.cur,t=p.temp||0,tot=Math.max(p.max,cur)+t,cls=cur<=0?" zero":cur<=p.max/2?" half":"";
-  return `<span class="hpw hpb pchp${cls}" title="${esc(c.name)}'s HP from their phone. Only you see it." aria-label="HP ${cur} of ${p.max}${t?
-    `, ${t} temporary`:""} for ${esc(c.name)}, from their phone">
+  return `<span class="hpw hpb pchp${cls}" title="${esc(c.name)}'s HP from their phone. Only you see it." aria-label="${cur}/${p.max}${t?
+    ` +${t}`:""} HP, ${esc(c.name)}, from their phone">
     <span class="hprow"><span class="hpl">HP</span><b class="hpn">${cur}/${p.max}</b>${t?`<span class="hpt">+${t}</span>`:""}</span>
     <span class="hpbar3"><i class="hpv" style="width:${Math.max(0,100*cur/tot)}%"></i>${t?`<i class="hptv" style="width:${100*t/tot}%"></i>`:
       ""}</span><small>phone</small></span>`}
@@ -6409,33 +6721,42 @@ function applyHp(c,raw,was){
   return true;
 }
 let menuId=null,turnMenuOn=false;
-const TFRAME='<span class="tframe" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></span>';
-/* 1.3, the tool look: the turn as tiles in the bottom bar (round, whose turn, how long, the nearest countdown, back and next) */
+const SKULL='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a8 8 0 0 0-8 8c0 2.6 1.2 4.5 3 5.7V19a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-2.8c1.8-1.2 3-3.1 3-5.7a8 8 0 0 0-8-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9" cy="11" r="1.7" fill="currentColor"/><circle cx="15" cy="11" r="1.7" fill="currentColor"/><path d="M10.5 20v-2.5M13.5 20v-2.5" stroke="currentColor" stroke-width="1.6"/></svg>';
+/* the turn, one row in the bottom bar (1.4): round, whose turn (and who's next), fight time, the nearest countdown, back and next */
 function turnTiles(){
-  const t=state.turn,who=t&&byId(t.id),f=state.fightAt&&!state.ended?Math.max(0,Math.round((Date.now()-state.fightAt)/60000)):null;
-  const tile=(v,l,cls)=>`<span class="ttile${cls?" "+cls:""}"><b>${v}</b><small>${l}</small></span>`;
+  const t=state.turn,who=t&&byId(t.id),f=t&&state.fightAt&&!state.ended?Math.max(0,Math.round((Date.now()-state.fightAt)/60000)):null;
   const k=(state.clocks||[]).filter(x=>x.n>0).sort((a,b)=>a.n-b.n)[0];
-  return (t?tile(t.round,"Round","trnd")+tile(esc(who?who.name:t.id==="__lair"?"Lair action":"–"),"Turn","twho"):"")
-    +(f!=null&&state.list.length?tile(f<1?"< 1 min":f+" min","Fight"):"")
-    +(k?`<span class="ttile tclk"><button type="button" class="tstep" data-act="clkm" data-id="${esc(k.id)}" aria-label="${esc(
-      k.name)}: one less">−</button><span><b>${
-      k.n}</b><small title="${esc(k.name)}">${esc(k.name)}${k.secret?" · secret":
-        ""}</small></span><button type="button" class="tstep" data-act="clkp" data-id="${
-      esc(k.id)}" aria-label="${esc(k.name)}: one more">+</button></span>`:"")
-    +(t?`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
-      "prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${
+  const ord=t?turnOrder():[],i=t?ord.findIndex(x=>x.id===t.id):-1,nx=i>=0&&ord.length>1?ord[(i+1)%ord.length]:null;
+  const nm=who?who.name:t&&t.id==="__lair"?"Lair action":"";
+  const clk=k?`<span class="ttile tclk"><button type="button" class="tstep" data-act="clkm" data-id="${esc(k.id)}" aria-label="${esc(
+      k.name)}: one less">−</button><span><b>${k.n}</b><small title="${esc(k.name)}">${esc(k.name)}${k.secret?" · secret":
+        ""}</small></span><button type="button" class="tstep" data-act="clkp" data-id="${esc(k.id)}" aria-label="${esc(
+          k.name)}: one more">+</button></span>`:"";
+  if(!t){const n=state.list.filter(c=>c.kind!=="lair").length,miss=state.list.filter(c=>typeof c.init!=="number"&&!c.owner).length;
+    return `<span class="ttile twho tidle"><b>${n?"Not started":"No fight yet"}</b><small>${n?`${n} in the order${miss?` · ${miss} without initiative`:
+      ""}`:"Add the party and some monsters"}</small></span>${
+        clk}<button class="tnav primary" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${
+      ic("next")}</button>`}
+  return `<span class="ttile trnd"><b>${t.round}</b><small>Round</small></span><span class="ttile twho"><b><i class="tdot" aria-hidden="true"></i>${esc(nm||
+    "–")}${who&&
+      typeof who.init==="number"?`<span class="tini">initiative ${who.init}</span>`:""}</b><small>${nx?`Next: ${esc(nx.kind==="lair"?"Lair action":nx.name)}`:
+      "&nbsp;"}</small></span>`
+    +(f!=null?`<span class="ttile tfight"><b>${f<1?"< 1 min":f+" min"}</b><small>Fight time</small></span>`:"")+clk
+    +`<button class="tnav" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
+      "prev")}</button><button class="tnav primary" type="button" data-act="tnext" title="Next turn (N)">Next turn <kbd>N</kbd>${
       ic("next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
       turnMenuOn}" aria-label="Turn options" title="Turn options: stop tracking turns">${DOTS}</button>${turnMenuOn?
-      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`
-      :`<button class="tnav primary" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${ic("next")}</button>`)}
+      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`}
 function renderDM(){
   const ae=document.activeElement;
   if(ae&&$("#roster").contains(ae)&&ae.tagName==="INPUT"){pendingRender=true;return}
   pendingRender=false;renderParty();renderEnc();renderCall();renderField();renderHand();
   const tsec=$("#timerSecs");if(tsec&&document.activeElement!==tsec)tsec.value=state.timerSecs||30;
   {const ab=$("#atmoBtn"),sl=(SCENES.find(x=>x[0]===(state.scene||"none"))||["",""])[1];
-   if(ab){ab.innerHTML=`${ic("palette")}<span>${esc(atmoLabel(state))}</span>`;
-     ab.title=`Atmosphere: ${atmoLabel(state)} · ${sl}${state.bg?" · picture":""}. Theme, scene and picture on the tablet`}}
+   if(ab){const P=(PALS[lookOf(state).pal]||PALS.tavern)[1],now=`${atmoLabel(state)} · ${sl}${state.bg?" · picture":""}`;
+     ab.innerHTML=`${ic("palette")}<span>Atmosphere</span><i class="atsw" aria-hidden="true" style="--sw0:${P[0]}">${P.slice(1).map(c=>
+       `<b style="background:${c}"></b>`).join("")}</i>`;
+     ab.title=`Atmosphere on the tablet and TV, now ${now}`;ab.setAttribute("aria-label",`Atmosphere, now ${now}`)}}
   {const tb=$("#tvBtn");if(tb){const m=(TV_MODES.find(x=>x[0]===((state.tv||{}).mode||"auto"))||["",""])[1];
     tb.innerHTML=`<i class="jd"></i>TV${state.tvSeen&&m?` <small>· ${esc(m)}</small>`:""}`}}
   $("#lairBtn").setAttribute("aria-pressed",String(!!state.lair));
@@ -6446,6 +6767,8 @@ function renderDM(){
   {const eb=$("#endBtn");eb.textContent=state.ended?"New combat":"End combat";eb.classList.toggle("primary",!!state.ended);
     eb.title=state.ended?"Start the next fight: keeps the party, everyone rolls initiative":"End this fight: the end screen and the Recap"}
   $("#endedNote").hidden=!state.ended;
+  {const tb=$("#turnBox");if(tb)tb.innerHTML=turnTiles()}
+  {const d=$("#dm");if(d)d.dataset.phase=state.turn?"fight":"setup"}
   const base=sorted(),list=withLair(base);const R=$("#roster");
   if(!list.length){R.innerHTML=
     `<div class="empty"><strong>Nobody in the order yet</strong><span>Add the party and some enemies, or drop in a saved encounter.</span><div class="acts">${
@@ -6479,11 +6802,11 @@ function renderDM(){
     const isTurn=!!(state.turn&&state.turn.id===c.id);
     const typeline=[isTurn?`<b class="nowtag">now</b>`:c.id===nextId?`<span class="nexttag">next</span>`:"",
       c.sb&&c.sb.raw?`<button type="button" class="sblink${sbViewId===c.id?" on":""}" data-act="sbview" title="${c.sb.pc?
-      "Open the character sheet":"Open the statblock"}" aria-label="${c.sb.pc?"Sheet":"Statblock"}">${I.book||"📜"}</button>`:"",c.boss?
+      "Open the character sheet":"Open the statblock"}" >${I.book||""}<span>${c.sb.pc?"Sheet":"Statblock"}</span></button>`:"",c.boss?
       `<span class="crown">${I.crown}Boss${c.rim?` · ${esc((RIMS.find(r=>r[0]===c.rim)||["",""])[1])}`:""}</span>`:"",typ?esc(typ):"",c.boss&&c.title?
       `<i>${esc(c.title)}</i>`:"",c.kind==="pc"?passivesLine(c):"",c.kind==="pc"&&c.psimple?
       `<span class="simpletag" title="${esc(c.name)} uses the simple phone: just HP and what you send">simple phone</span>`:""].filter(Boolean).join(" · ");
-    const chips=(c.hidden?`<button type="button" class="cond hidchip" data-act="hidden" title="Reveal to players (H)">${I.eyeoff}Hidden · reveal</button>`:"")+
+    const chips0=(c.hidden?`<button type="button" class="cond hidchip" data-act="hidden" title="Reveal to players (H)">${I.eyeoff}Hidden · reveal</button>`:"")+
       dsHtml+conds
       +(c.insp?`<button type="button" class="cond inspchip" data-act="insp" title="Remove Heroic Inspiration">${I.star}Inspiration</button>`:"")
       +(c.cover?`<button type="button" class="cond add on" data-act="covercycle" title="Click to change">${COVER_CHIP[c.cover]}</button>`:"")
@@ -6491,7 +6814,8 @@ function renderDM(){
         t])[1]}</button>`).join("")
       +(c.know||[]).map((k,i)=>`<button type="button" class="cond knowdm" data-act="knowrm" data-id="${esc(c.id)}" data-i="${i}" title="Remove">${esc(
         k)}</button>`).join("")
-      +`<button type="button" class="cond add addc" data-act="conds" title="Add a condition (C)" aria-label="Add a condition">+</button>`;
+      ;const chipsAll=chips0+`<button type="button" class="cond add addc" data-act="conds" title="Add a condition (C)" aria-label="Add a condition">+${chips0?
+      "":"<span> Condition</span>"}</button>`;
     const K=(k)=>`<kbd>${k}</kbd>`;
     const sb=c.sb,pips=(k,o,j)=>Array.from({length:o.max},(_,q)=>`<button type="button" class="sbpip${q>=o.max-o.used?" used":
       ""}" data-act="sbuse" data-k="${k}"${j!=null?` data-j="${j}"`:""} data-q="${q}" aria-label="${q>=o.max-o.used?"Get one back":
@@ -6547,9 +6871,9 @@ function renderDM(){
         <hr><button type="button" class="danger" data-act="del">Remove ${K("Del")}</button></div>`:"";
     return `<div class="row k-${c.kind}${state.turn&&state.turn.id===c.id?" turn":""}${shownToPlayers(c)?"":" out"}${c.hidden?" hid":""}${c.boss?" isboss":
       ""}${mtSel.has(c.id)?" mtsel":""}${mtOn&&mtOk(c)?" mtrow":""}" data-id="${c.id}">
-      ${mtOn&&mtOk(c)?`<button type="button" class="mtcb" data-act="mttoggle" aria-pressed="${mtSel.has(c.id)}" aria-label="Hit ${esc(c.name)}">${mtSel.has(
-        c.id)?"✓":""}</button>`:""}
-      <span class="hexw">${c.owner?`<span class="init-in own" title="Acts right after ${esc((ownerOf(c)||{}).name||"its owner")}">↳${initOf(c)>-999?
+      <span class="hexw">${mtOn&&mtOk(c)?`<button type="button" class="mtcb" data-act="mttoggle" aria-pressed="${mtSel.has(c.id)}" aria-label="Hit ${esc(
+        c.name)}">${mtSel.has(
+        c.id)?"✓":""}</button>`:""}${c.owner?`<span class="init-in own" title="Acts right after ${esc((ownerOf(c)||{}).name||"its owner")}">↳${initOf(c)>-999?
         initOf(c):""}</span>`:""}<input${c.owner?" hidden":""} class="init-in${typeof c.init!=="number"&&!c.owner?" missing":""}${freshIds.has(c.id)?" fresh":
         ""}" id="init-${c.id}" type="number" inputmode="numeric" value="${typeof c.init==="number"?c.init:""}" placeholder="${typeof c.ib==="number"?(c.ib>=0?
         "+":"")+c.ib:"?"}" data-act="init" aria-label="Initiative"${typeof c.ib==="number"?` title="Initiative bonus ${c.ib>=0?"+":
@@ -6559,35 +6883,36 @@ function renderDM(){
           c.id}" value="${esc(
         c.name)}" data-act="name" aria-label="Name"></span>${typeline?
         `<div class="typeline">${typeline}</div>`:""}</div>
-      <div class="chips">${chips}</div>
+      <div class="chips">${chipsAll}</div>
       <div class="tools">
         ${c.kind!=="pc"?hpBox(c):c.php?pcHpBox(c):`<span class="hpw hpnone" title="${esc(c.name)} keeps HP on paper, or doesn't share it from the phone"
           aria-label="HP not shared">—</span>`}
-        <span class="ac-wrap"><button type="button" class="tog" data-act="showac" aria-pressed="${!!c.showAc}" title="${c.showAc?
+        <span class="ac-wrap"><button type="button" class="tog" tabindex="-1" data-act="showac" aria-pressed="${!!c.showAc}" title="${c.showAc?
           "Players see the AC: click to hide it":"Only you see the AC: click to show it"}" aria-label="Show AC to players">${c.showAc?I.eye:
-          I.eyeoff}</button><input id="ac-${c.id}" type="number" value="${c.ac??""}" placeholder="—" data-act="ac" aria-label="AC"></span>
-        <button type="button" class="tog blood" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${I.drop}Bloodied</button>
-        <button type="button" class="tog" data-act="down" aria-pressed="${!!c.down}" title="${c.kind==="pc"?"0 HP":"Down"} (D)">${c.kind==="pc"?"0 HP":
-          "Down"}</button>
+          I.eyeoff}</button><input id="ac-${c.id}" class="${c.ac==null||c.ac===""?"acempty":""}" type="number" value="${c.ac??
+            ""}" placeholder="AC" data-act="ac" aria-label="AC"></span>
+        <span class="stat"><button type="button" class="tog blood" tabindex="-1" data-act="bloodied" aria-pressed="${!!c.bloodied}" title="Bloodied (B)">${
+          I.drop}<span class="tl">Bloodied</span></button>
+        <button type="button" class="tog downt" tabindex="-1" data-act="down" aria-pressed="${!!c.down}" title="${c.kind==="pc"?"0 HP":
+          "Down"} (D)">${SKULL}<span class="tl">${c.kind==="pc"?"0 HP":
+          "Down"}</span></button>
         <button type="button" class="morebtn2" data-act="rowmenu" aria-haspopup="menu" aria-expanded="${menuId===
-          c.id}" aria-label="More for ${esc(c.name)}">${DOTS}</button>
-      </div>${sbHtml}${menu}${isTurn?TFRAME:""}</div>`}).join("");
+          c.id}" aria-label="More for ${esc(c.name)}">${DOTS}</button></span>
+      </div>${sbHtml}${menu}</div>`}).join("");
   freshIds.clear();markSel();renderSbDrawer();
-  const tb=$("#turnBox");if(tb&&document.documentElement.dataset.dmlook==="tool")tb.innerHTML=turnTiles();
-  else if(tb){const t=state.turn;
-    tb.innerHTML=t?`<span class="rnd">Round <b>${
-      t.round}</b></span><button class="icon-btn" type="button" data-act="tprev" title="Previous turn (P)" aria-label="Previous turn">${ic(
-      "prev")}</button><button class="btn primary" type="button" data-act="tnext" title="Next turn (N)">Next turn ${ic(
-      "next")}</button><span class="turnmore"><button class="icon-btn" type="button" data-act="turnmenu" aria-haspopup="menu" aria-expanded="${
-      turnMenuOn}" aria-label="Turn options" title="Turn options: stop tracking turns">${DOTS}</button>${turnMenuOn?
-      `<span class="rmenu turnmenu" role="menu"><button type="button" data-act="tend" role="menuitem">Stop tracking turns</button></span>`:""}</span>`
-      :`<button class="btn" type="button" data-act="tnext" title="Start tracking turns from the top (N)">Start turns ${ic("next")}</button>`}
   const at=$("#autoTimer");if(at&&document.activeElement!==at)at.checked=!!state.autoTimer;
   {const ca=$("#concAuto");if(ca)ca.checked=!!ls.get("concAuto",false)}
 }
 /* ---------- DM tools: roll calls, battlefield, knowledge, hourglass, passives, quick add, shortcuts, export ---------- */
 let callSkip=new Set();   // players left out of the next roll call (everyone is in by default)
 const callTargets=()=>state.list.filter(c=>c.kind==="pc"&&!c.hidden&&!callSkip.has(c.id));
+const CLOCK='<svg class="cwi" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+/* E19 (1.4): a saving throw roll call reminds everyone of a Paladin's Aura of Protection (level 6+: + Charisma modifier, at least +1,
+   within 10 ft). Level and Charisma come from the sheet the DM keeps; no sheet, no reminder. */
+function callAuras(){const out=[];state.list.filter(c=>c.kind==="pc"&&!c.hidden&&!c.down).forEach(c=>{
+  const sh=(state.sheets||{})[c.name.toLowerCase()];if(!sh)return;const m=String(sh.cls||"").match(/paladin\s*(\d+)/i);
+  const lvl=m?Number(m[1]):c.cls==="paladin"?Number(sh.lvl)||0:0;if(lvl<6)return;const cha=shMod((sh.ab||{}).cha);
+  out.push({id:c.id,t:`${c.name}'s aura: +${Math.max(1,cha)} to the save if you're within 10 ft`})});return out}
 function renderCall(){
   const call=state.call,el=$("#callStrip");const _ae=document.activeElement;if(_ae&&el.contains(_ae)&&_ae.tagName==="INPUT")return;
   const pcs=state.list.filter(c=>c.kind==="pc"&&!c.hidden);
@@ -6600,17 +6925,19 @@ function renderCall(){
         "Initiative"].map(x=>`<option value="${x}">`).join("")}</datalist>
       ${pcs.length>1?`<div class="chipgrid callpick" role="group" aria-label="Who rolls">${pcs.map(c=>
         `<button type="button" data-act="callpick" data-id="${esc(c.id)}" aria-pressed="${!callSkip.has(c.id)}">${esc(c.name)}</button>`).join("")}</div>`:""}
-      ${(()=>{const n=callTargets().length;return `<button class="btn primary" type="submit" ${n?"":"disabled"}>${!n?"Pick at least one player":n===pcs.length?
-        "Send to all players":`Send to ${n} player${n>1?"s":""}`}</button>`})()}</form>
+      ${(()=>{const n=callTargets().length;return `<button class="btn${n?" primary":""}" type="submit">${!n?"Send":n===pcs.length?
+        "Send to all players":`Send to ${n} player${n>1?"s":""}`}</button>${n?"":
+          `<span class="fixhint" role="status">Pick at least one player above</span>`}`})()}</form>
       <span class="strip-empty">Phones buzz and ask for the total; you see every result here.</span>`;
     return;
   }
   const to=(call.to&&call.to.length?call.to:pcs.map(c=>c.id)).map(byId).filter(Boolean),ans=call.answers||{};
   const nin=to.filter(c=>ans[c.id]!=null).length;
-  el.innerHTML=`<span class="strip-label">Roll call</span><b class="calltxt">${esc(call.text)}</b><small class="callin">${nin===to.length?"all in":
+  el.innerHTML=`<span class="strip-label">Roll call</span><b class="calltxt">${esc(call.text)}</b>${(call.aura||[]).map(a=>
+    `<small class="aurahint">${esc(a.t)}</small>`).join("")}<small class="callin">${nin===to.length?"all in":
     `${nin} of ${to.length} in`}</small>
     <span class="callres">${to.map(c=>{const v=ans[c.id];const st=v==null?"wait":call.dc!=null?(v>=call.dc?"pass":"fail"):"done";
-      return `<span class="cw ${st}">${esc(c.name)} <b>${v==null?"…":v}</b></span>`}).join("")}</span>
+      return `<span class="cw ${st}">${v==null?CLOCK:""}${esc(c.name)} <b>${v==null?"waiting":v}</b></span>`}).join("")}</span>
     <span class="spacer"></span><button class="btn" type="button" data-act="callclose">Close roll call</button>`;
 }
 /* E1 (1.3): handouts. The DM writes a note, a letter, a wanted poster or a page of lore, picks a style, and shows it on the tablet,
@@ -7024,8 +7351,11 @@ function sbSheet(){
     <textarea class="field sbpaste" id="sbPaste" rows="${sbItems.length?2:6}" placeholder="Paste a statblock here"></textarea>
     <div class="sbfoot"><label class="btn"><input type="file" id="sbFile" accept=".md,.txt,text/markdown,text/plain" multiple hidden>Choose .md files</label>
       
-      <button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="button" data-act="sbadd" ${sbItems.length?"":
-        "disabled"}>Add to combat${sbItems.length?` (${sbItems.reduce((a,x)=>a+Math.max(1,Math.min(12,x.count||1)),0)})`:""}</button></div></div></div>`;
+      <button class="btn" type="button" data-act="close">Cancel</button>${sbItems.length?"":
+        `<span class="fixhint" id="sbNone" hidden role="status">Pick a monster first, or paste a statblock</span>`}<button class="btn${
+        sbItems.length?" primary":
+        ""}" type="button" data-act="sbadd">Add to combat${sbItems.length?` (${sbItems.reduce((a,x)=>a+Math.max(1,Math.min(12,x.count||1)),0)})`:
+          ""}</button></div></div></div>`;
   const sh=$(".sbsheet");if(!sh)return;sh.scrollTop=top;
   if(sbItems.length>prevN){const cards=sh.querySelectorAll(".sbcard"),c=cards[cards.length-
     1];   // a monster just picked: show its card if it's out of sight, and light it up
@@ -7042,6 +7372,8 @@ function sbTake(texts){
   return got;
 }
 function sbAdd(){
+  if(!sbItems.length){const h=$("#sbNone");if(h){h.hidden=false;h.classList.remove("shake");void h.offsetWidth;h.classList.add("shake")}
+    const q=$("#fetQ")||$("#libQ");if(q)q.focus();return}
   const done=[];
   sbItems.forEach(x=>{
     const name=x.name.trim()||"Monster",n=Math.max(1,Math.min(12,x.count||1)),existing=state.list.filter(c=>c.base===name).length;
@@ -8073,7 +8405,7 @@ function renderPlayer(){
     nextId=tIdx>=0&&list.length>1?list[(tIdx+1)%list.length].id:null;
   const body=list.length?`<div class="p-head"><div class="p-title">Initiative${state.turn?` <span class="p-round">Round <b>${state.turn.round}</b></span>`:
     ""}</div>${legend}</div>${callHtml()}${battlefieldHtml()}${clocksHtml()}
-    <ol class="plist" id="plist">${list.map(c=>{
+    <ol class="plist" id="plist" tabindex="0" aria-label="Initiative order">${list.map(c=>{
       const st=pv.seen.get(c.id);
       const cls=[`k-${c.kind}`,...[...st].map(k=>"st-"+k)];
       if(dealing)cls.push("deal");else if(!first&&!prev.has(c.id))cls.push(c.revealedAt&&dmNow()-c.revealedAt<20000?"reveal":"enter");
@@ -9301,18 +9633,24 @@ function playerBar(){
       ${chips?`<div class="mystat" aria-label="Your status">${myStatus(me).map(x=>`<span class="mychip ${x.cls||""}">${esc(x.t)}${x.x||
         ""}</span>`).join("")}</div>`:""}
       ${giftsHtml(me)}<div class="ptiles">${T.join("")}</div></div>`}
-  if(ed)T.push(tile("pinit",`<small>Init</small><b>${typeof me.init==="number"?me.init:"?"}</b>`,typeof me.init==="number"?"":"want","Initiative"));
-  T.push(tile("php",hp.max?`<small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?`<i>+${hp.temp}</i>`:
-    ""}</b><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span>Set HP</span>`,"hp"+hpCls,"Hit points"));
-  T.push(tile("pdice",`${D20}<span>Roll</span>`,"","Dice"));
-  if(ed){T.push(tile("pconds",`${TI.cond}<span>Conditions</span>`));T.push(tile("peffs",`${TI.spark}<span>Effects</span>`))}
-  T.push(book?tile("pbook",`${TI.book}<span>Spells</span>`):tile("pres",`${TI.pips}<span>Resources</span>`));
+  /* 1.4: a dock in the class colour (HP, AC, initiative, what's on me) and four tabs where the thumb is: Roll, Conditions, Spells, More */
+  const box=(act,inner,cls,label)=>act?`<button class="dbox${cls?" "+cls:""}" type="button" data-act="${act}"${label?` aria-label="${esc(label)}"`:
+    ""}>${inner}</button>`:
+    `<span class="dbox${cls?" "+cls:""}"${label?` aria-label="${esc(label)}"`:""}>${inner}</span>`;
+  const hpIn=hp.max?`<span class="dhp"><small>HP</small><b>${hp.cur}<span class="of"> / ${hp.max}</span>${hp.temp?` <i>+${hp.temp}</i>`:
+    ""}</b></span><span class="hpbar"><i style="width:${pct}%"></i></span>`:`${TI.heart}<span class="dset">Set HP</span>`;
+  const dock=box("php",hpIn,"dbhp"+hpCls,hp.max?`HP ${hp.cur} of ${hp.max}, change it`:"Set your HP")
+    +(typeof me.ac==="number"||(me.ac!=null&&me.ac!=="")?box("",`<small>AC</small><b>${esc(me.ac)}</b>`,"dbsq","AC "+me.ac):"")
+    +(ed?box("pinit",`<small>Init</small><b>${typeof me.init==="number"?me.init:"?"}</b>`,"dbsq"+(typeof me.init==="number"?"":" want"),"Initiative"):"");
+  const tab=(act,ico,label)=>`<button class="tile tab" type="button" data-act="${act}">${ico}<span>${label}</span></button>`;
+  const tabs=[tab("pdice",D20,"Roll"),ed?tab("pconds",TI.cond,"Conditions"):"",book?tab("pbook",TI.book,"Spells"):tab("pres",TI.pips,"Resources"),
+    `<button class="tile tab" type="button" data-act="pmore" aria-label="More">${DOTS}<span>More</span></button>`].join("");
   const acc=me.kind==="pc"&&frameKey(me)?` acc fr-${frameKey(me)}`:"";   // 1.3: the player's own part of the phone in their class colour
-  return `<div class="pbar${many?" many":""}${acc}"><div class="pmeline"><span class="pme">${esc(me.name)}</span>
-      <span class="pmeright">${book?`<button class="ptop" type="button" data-act="pres">${TI.pips}Resources</button>`:
-        ""}<button class="ptop sq" type="button" data-act="pmore" aria-label="More">${DOTS}</button></span></div>
+  return `<div class="pbar v14${many?" many":""}${acc}"><div class="pmeline"><span class="pme">${esc(me.name)}</span>
+      <span class="pmeright">${book?`<button class="ptop" type="button" data-act="pres">${TI.pips}Resources</button>`:""}</span></div>
+    <div class="pdock">${dock}</div>
     ${chips?`<div class="mystat" aria-label="Your status">${chips}</div>`:""}${ed?"":`<div class="pnote">The DM has locked changes</div>`}
-    ${giftsHtml(me)}<div class="ptiles">${T.join("")}</div>${compHtml(me)}</div>`;
+    ${giftsHtml(me)}${compHtml(me)}<nav class="ptiles ptabs" aria-label="Your tools">${tabs}</nav></div>`;
 }
 /* 45: dice someone gave you (Bardic Inspiration…), to use when you want */
 function giftsHtml(me){const G=me.gifts||[];if(!G.length)return "";
@@ -9649,8 +9987,16 @@ function shPull(){   // a sheet the DM sent, or this character's sheet on a new 
       renderPSheet()}).catch(()=>{shPullV=null})}
 /* rolling from the sheet */
 let shLast=null,shAll=false,shDraft=null,shStep=0,shPaste=null;
+/* 1.4: Bless (+1d4) and Bane (−1d4) on you go onto attack rolls and saving throws by themselves */
+function blessAdd(){const me=meChar();if(!me)return {n:0,t:""};const on=n=>state.effects.some(e=>(e.targets||[]).includes(me.id)&&
+  String(e.name).toLowerCase()===n);
+  let n=0,t="";if(on("bless")){const r=1+Math.floor(Math.random()*4);n+=r;t+=` +${r} Bless`}if(on("bane")){const r=1+Math.floor(Math.random()*4);n-=r;
+    t+=` −${r} Bane`}
+  return {n,t}}
+const blessFor=label=>/\bsave\b|to hit|attack/i.test(label);
 function shRoll(label,bonus){
-  const d=1+Math.floor(Math.random()*20),ex=myExh(),tot=d+bonus-2*ex,text=`${label}: d20 (${d}) ${shS(bonus)}${ex?` −${2*ex} exhaustion`:""}`;
+  const bl=blessFor(label)?blessAdd():{n:0,t:""};
+  const d=1+Math.floor(Math.random()*20),ex=myExh(),tot=d+bonus-2*ex+bl.n,text=`${label}: d20 (${d}) ${shS(bonus)}${bl.t}${ex?` −${2*ex} exhaustion`:""}`;
   shLast={label,tot,how:text,n:d===20?"n20":d===1?"n1":""};if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
   try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1?[300]:[60])}catch(e){}return {d,tot,text}}
 function shDmg(label,expr){const r=sbDice(String(expr).split(" ")[0],false);if(!r)return;
@@ -9771,6 +10117,34 @@ function pcBuild(){   // new numbers, but what you've already spent stays spent
   resSet(next.concat(keep));profSet(prof);pcDraft=null;return next.length;
 }
 let effDraft={name:"",conc:false,area:false,targets:new Set(),custom:false},resDraft={name:"",max:"",reset:"long",custom:false},resEditI=-1;
+/* E18 (1.4): the rolls people showed to the table, newest first, on every phone */
+function tableLogHtml(){const L=(state.rollLog||[]).slice(0,6);if(!L.length)return "";
+  const col=n=>{const c=state.list.find(x=>x.kind==="pc"&&x.name===n),k=c&&frameKey(c);return k?` fr-${k}`:""};
+  return `<div class="psec"><div class="eyebrow2">At the table</div><div class="tlog">${L.map(r=>
+    `<div class="tlr"><i class="tld${col(r.by)}" aria-hidden="true"></i><b>${esc(
+    r.by)}</b><span>${esc(String(r.text||"").replace(/:.*$/,"")||"roll")}</span><em>${esc(String(r.total))}</em></div>`).join("")}</div></div>`}
+/* 1.4: the "Your turn" screen. What matters this turn, in plain words: conditions (from RULES), effects and how long they last,
+   your Concentration, dice someone gave you, and whether your reaction is spent. It can be turned off in More. */
+const pTurnCard=()=>ls.get("pTurnCard",true)!==false;
+function turnCardHtml(me){
+  const conds=(me.conds||[]).map(x=>x.n||x),out=[],tags=new Set(me.tags||[]),ed=canEdit();
+  const card=(ico,t,lines,btn)=>out.push(`<div class="ytc">${ico}<div><b>${t}</b>${lines.map(l=>`<p>${l}</p>`).join("")}${btn||""}</div></div>`);
+  conds.filter(n=>n!=="Concentrating").forEach(n=>{const r=RULES[n.toLowerCase()];if(!r)return;
+    card(condIco(n,"tci"),n==="Exhaustion"?`Exhaustion ${exhOf(me)}`:esc(r.t),r.d.slice(0,2).map(esc),
+      n==="Prone"&&ed?`<button class="btn sm" type="button" data-act="pcond" data-n="Prone" aria-pressed="true">I stand up</button>`:"")});
+  state.effects.filter(e=>(e.targets||[]).includes(me.id)).forEach(e=>{const by=byId(e.by),n=effLeft(e);
+    card('<span class="tci tce" aria-hidden="true">✦</span>',esc(e.name)+(n!=null?` · ${n} round${n===1?"":"s"} left`:""),
+      [by&&by.id!==me.id?`From ${esc(by.name)}.`:"Your own effect."].concat(e.name==="Bless"?["Your phone adds 1d4 to your attack rolls and saving throws."]:
+        e.name==="Bane"?["Your phone takes 1d4 off your attack rolls and saving throws."]:[]))});
+  const mine=state.effects.filter(e=>e.by===me.id&&e.conc);
+  if(conds.includes("Concentrating"))card(condIco("Concentrating","tci"),"Concentrating"+(mine.length?` on ${esc(mine.map(e=>e.name).join(", "))}`:""),
+    ["Damage means a Constitution save: DC 10 or half the damage."]);
+  (me.gifts||[]).forEach(g=>card('<span class="tci tce" aria-hidden="true">◆</span>',`${esc(g.n)} · ${esc(g.die)}`,
+    [`From ${esc(g.from)}: add it to a roll when you want.`]));
+  card('<span class="tci tce" aria-hidden="true">↺</span>',tags.has("reaction")?"Reaction used":"Reaction ready",[tags.has("reaction")?
+    "It comes back at the start of your turn.":"You can still use it before your next turn."]);
+  return `<div class="ytcs">${out.join("")}</div>`;
+}
 /* the phone's own number pad: the system keyboard would cover the buttons under the field */
 let padVal="",padFor=null,spellQ="",spellScope=null,resAll=false;
 const padHtml=(ph,neg)=>`<div class="padshow" id="padShow" data-ph="${esc(ph)}" aria-live="polite">${esc(padVal)}</div>
@@ -9780,8 +10154,14 @@ const padHtml=(ph,neg)=>`<div class="padshow" id="padShow" data-ph="${esc(ph)}" 
 function padKey(k){
   if(k==="back")padVal=padVal.slice(0,-1);else if(k==="clr")padVal="";else if(k==="neg")padVal=padVal.startsWith("-")?padVal.slice(1):"-"+padVal;
   else if(padVal.replace("-","").length<3||(padVal.length<4&&!padVal.startsWith("-")))padVal=(padVal==="0"?"":padVal==="-0"?"-":padVal)+k;
-  const el=$("#padShow");if(el)el.textContent=padVal;
+  const el=$("#padShow");if(el)el.textContent=padVal;hpPrevSync();
 }
+/* 1.4: before you press Damage or Heal, the phone shows where each would leave you */
+function hpPrevSync(){const el=$("#hpPrev");if(!el)return;const hp=hpGet(),n=Number(padVal);
+  if(!padVal||!(n>0)||!hp.max){el.innerHTML="";return}
+  const a=Math.min(hp.temp||0,n),dmg=Math.max(0,hp.cur-(n-a)),heal=Math.min(hp.max,hp.cur+n),half=Math.floor(hp.max/2);
+  el.innerHTML=`<span class="hpvd">Damage: ${hp.cur} → <b>${dmg}</b>${dmg===0?" · 0 HP":dmg<=half&&hp.cur>half?" · Bloodied":
+    ""}</span><span class="hpvh">Heal: ${hp.cur} → <b>${heal}</b></span>`}
 /* the app's own keyboard for every other field on the phone: docked at the bottom, it never covers the sheet's buttons */
 let kbShift=null;   // null = automatic capitals (start of the field, after a space)
 function kbField(){const a=document.activeElement;return a&&a.matches&&a.matches("input[data-kb]")?a:null}
@@ -9878,7 +10258,8 @@ function renderPSheet(){
     const me=meChar();if(me&&!me.down&&pSheet!=="dsave")dsLast=null;
     const padKeyNow=pSheet+(hpEditMax?":max":"");if(padFor!==padKeyNow){padFor=padKeyNow;padVal=""}
     const free=pSheet==="res"||pSheet==="resedit"||pSheet==="pcset"||pSheet==="pcfeat"||pSheet==="give"||pSheet==="comphp"||pSheet==="compsb"||pSheet==="hp"||
-      pSheet==="dice"||pSheet==="more"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||(pSheet==="spell"&&(!spView||spView.from!=="effs"));
+      pSheet==="dice"||pSheet==="more"||pSheet==="turn"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||(pSheet==="spell"&&(!spView||
+        spView.from!=="effs"));
     if(!me||(!canEdit()&&!free&&pSheet!=="call")){pSheet=null;return renderPSheet()}
     if(pSheet==="dsave"){
       const ds=dsOf(me),done=isDead(me)||isStable(me);
@@ -9912,6 +10293,9 @@ function renderPSheet(){
         <div class="hpbtns"><button class="btn primary" type="button" data-act="pconroll">Roll it</button><button class="btn" type="button" data-act="pconroll" data-adv="1">Roll with advantage</button></div>
         <div class="psec"><div class="eyebrow2">Rolled real dice?</div><div class="hpbtns"><button class="btn heal" type="button" data-act="pconres" data-ok="1">I made it</button><button class="btn dmg" type="button" data-act="pconres" data-ok="0">I lost it</button></div></div>`}
         ${!still&&!r?`<p class="psub">You're no longer Concentrating.</p>`:""}`;
+    }else if(pSheet==="turn"){
+      body=`<h2>Your turn, ${esc(me.name)}</h2>${turnCardHtml(me)}
+        <div style="display:flex;justify-content:flex-end"><button class="btn primary" type="button" data-act="pclose">Got it</button></div>`;
     }else if(pSheet==="more"){
       body=`<h2>${esc(me.name)}</h2><div class="morelist">
         <button class="pcline" type="button" data-act="psheet">${shLocal()?`<b>My character sheet</b><small>${esc(shLocal().cls||
@@ -9921,6 +10305,8 @@ function renderPSheet(){
         <button class="btn" type="button" data-act="fs">${fsLabel()}</button>
         <button class="btn" type="button" data-act="plight" aria-pressed="${!!ls.get("pLight",false)}">${ls.get("pLight",false)?MOON+" Dark screen":SUN+
           " Light screen"}</button>
+        <button class="btn" type="button" data-act="pturncard" aria-pressed="${pTurnCard()}">${pTurnCard()?"Your turn screen: on":
+          "Your turn screen: off"}</button>
         <button class="btn" type="button" data-act="psimple" aria-pressed="${pSimple()}">${pSimple()?"Show everything again":
           "Simple: just my HP"}<br><small style="font-weight:600;color:var(--muted)">${pSimple()?"Resources, spells, dice, conditions and the rest come back.":
           "Only your HP, and whatever the DM sends you. For players who keep the rest on paper."}</small></button></div>
@@ -9936,6 +10322,7 @@ function renderPSheet(){
       const call=state.call;if(!call||(call.answers||{})[me.id]!=null){pSheet=null;return renderPSheet()}
       const ask=shAsk(call.text);
       body=`<div class="callhead">${D20}<div><div class="eyebrow2">The DM calls for a roll</div><h2>${esc(call.text)}</h2></div></div>
+        ${(call.aura||[]).filter(a=>a.id!==me.id).map(a=>`<div class="aurahint">${esc(a.t)}</div>`).join("")}
         ${ask?`<button class="shrollbig" type="button" data-act="pcallroll"><b>Roll ${esc(ask.label)} ${shS(
           ask.b)}</b><small>from your sheet</small></button><div class="eyebrow2">Rolled real dice?</div>`:""}
         <div class="psec padsec">${padHtml("Your total",true)}<button class="btn primary e-send" type="button" data-act="pcallsend">Send result</button></div>
@@ -9955,7 +10342,7 @@ function renderPSheet(){
         body=`<h2>HP · ${esc(me.name)}</h2>
           <div class="hpbig${hp.cur===0?" zero":""}"><b>${hp.cur}</b><span>/ ${hp.max}</span>${hp.temp?`<i>+${hp.temp} temp</i>`:""}</div>
           <div class="hpbar"><span style="width:${Math.round(100*hp.cur/hp.max)}%"></span></div>
-          <div class="psec padsec">${padHtml("How much?")}
+          <div class="psec padsec">${padHtml("How much?")}<div class="hpprev" id="hpPrev" aria-live="polite"></div>
             <div class="hpbtns"><button class="btn dmg" type="button" data-act="phpdo" data-hp="dmg">Damage</button><button class="btn heal" type="button" data-act="phpdo" data-hp="heal">Heal</button><button class="btn" type="button" data-act="phpdo" data-hp="temp">Temp HP</button></div>
           </div>
           <button class="linkbtn hpmaxlink" type="button" data-act="phpmax">Change max HP (${hp.max})</button>
@@ -9980,6 +10367,8 @@ function renderPSheet(){
         <button class="btn primary e-send" type="button" data-act="proll">Roll ${dice.count}d${dice.die}${dice.mod?(dice.mod>0?"+":"")+dice.mod:""}</button>
         ${L?`<div class="dresult${L.nat===20?" n20":L.nat===1?" n1":""}"><b>${L.total}</b><small>${esc(L.text)}</small></div>`:""}
         <div class="psec"><div class="eyebrow2">Rolled real dice?</div><div class="hpbtns"><button class="btn n20b" type="button" data-act="pnat" data-k="nat20">Nat 20!</button><button class="btn n1b" type="button" data-act="pnat" data-k="nat1">Nat 1</button></div></div>
+        ${shLocal()?`<button class="btn" type="button" data-act="psheet">Roll from my sheet (saves, skills, attacks)</button>`:""}
+        ${tableLogHtml()}
         <div style="display:flex;justify-content:flex-end"><button class="btn" type="button" data-act="pclose">Close</button></div>`;
     }else if(pSheet==="effs"){
       const mine=state.effects.filter(e=>e.by===me.id);const names=id=>{const c=byId(id);return c?esc(c.name):"?"};
@@ -10165,7 +10554,12 @@ function renderPSheet(){
           ${isDead(me)||isStable(me)?"":`<button class="btn primary e-send" type="button" data-act="pdsroll">Roll death save</button>`}
           ${dsLast?`<div class="dresult${dsLast.d===20?" n20":dsLast.d===1?" n1":
             ""}"><b>${dsLast.tot}</b><small>d20 (${dsLast.d}) · ${esc(dsLast.msg)}</small></div>`:""}</div>`:"";
-      body=`<h2>My conditions · ${esc(me.name)}</h2>${dsHtml}
+      const onMe=state.effects.filter(e=>(e.targets||[]).includes(me.id));   // 1.4: effects live here too (one tab, "On you")
+      const effHtml=`<div class="psec"><div class="eyebrow2">Effects on you</div>${onMe.length?`<div class="peffl">${onMe.map(e=>{const by=byId(e.by);
+        return `<span class="peffi"><b>✦ ${esc(e.name)}</b><small>${by&&by.id!==me.id?"from "+esc(by.name):"yours"}${effN(e)?" · "+
+          effN(e).replace(/<[^>]+>/g,"")+
+          " rounds":""}</small></span>`}).join("")}</div>`:""}<button class="btn" type="button" data-act="peffs">Effects…</button></div>`;
+      body=`<h2>On you · ${esc(me.name)}</h2>${dsHtml}${effHtml}
         <div class="psec"><div class="eyebrow2">This round</div><div class="chipgrid">${TAGS.map(([k,l])=>
           `<button type="button" data-act="ptag" data-t="${k}" aria-pressed="${tags.has(k)}">${l}</button>`).join("")}</div></div>
         <div class="psec"><div class="eyebrow2">Cover</div><div class="seg2">${COVERS.map(([k,l])=>
@@ -10211,12 +10605,13 @@ function hpReport(){
 const myExh=()=>{const me=meChar();return me&&(me.conds||[]).some(x=>(x.n||x)==="Exhaustion")?exhOf(me):0};
 /* ---- death saves rolled on the phone: 10+ success, 1 counts twice, 20 brings you back with 1 HP ---- */
 function rollDeathSave(face){
-  const me=meChar();if(!me||!me.down||isDead(me)||isStable(me))return;const real=face>=1&&face<=20,d=real?face:1+Math.floor(Math.random()*20),ex=myExh(),tot=d-
-    2*ex,ds=Object.assign({s:0,f:0},me.ds);let msg;
+  const me=meChar();if(!me||!me.down||isDead(me)||isStable(me))return;const real=face>=1&&face<=20,d=real?face:1+Math.floor(Math.random()*20),ex=myExh(),
+    bl=real?{n:0,t:""}:blessAdd(),tot=d-
+    2*ex+bl.n,ds=Object.assign({s:0,f:0},me.ds);let msg;
   if(d===20){const hp=hpGet();if(hp.max){hp.cur=1;hpSet(hp)}pSend({action:"hpstate",bloodied:true,down:false});msg="Natural 20! You're back up with 1 HP"}
   else{if(d===1)ds.f=Math.min(3,ds.f+2);else if(tot>=10)ds.s=Math.min(3,ds.s+1);else ds.f=Math.min(3,ds.f+1);pSend({action:"ds",s:ds.s,f:ds.f});
     msg=d===1?"Natural 1: two failures":tot>=10?"Success":"Failure";if(ds.f>=3)msg+=" — you die";else if(ds.s>=3)msg+=" — you're stable"}
-  const text=`Death save ${real?"real ":""}d20 (${d})${ex?` −${2*ex} exhaustion`:""}`;
+  const text=`Death save ${real?"real ":""}d20 (${d})${bl.t}${ex?` −${2*ex} exhaustion`:""}`;
   if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
   dsLast={d,tot,msg};try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1||tot<10?[300]:[80])}catch(e){}
   renderPSheet();
@@ -10232,8 +10627,8 @@ function askConcentration(dmg){
 function rollConcentration(adv){
   if(!pConc)return;const me=meChar(),typed=ls.get("conmod:"+(meName||"").toLowerCase(),""),sh=shLocal();
     const mod=(String(typed).trim()===""&&sh?shCalc(sh).sv.con:Number(typed)||0),ex=myExh();
-  const a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20),d=adv?Math.max(a,b):a,tot=d+mod-2*ex,ok=tot>=pConc.dc;
-  pConc.res={d,tot,ok,text:`d20${adv?` advantage (${a}, ${b})`:` (${d})`}${mod?(mod>0?" +":" ")+mod:""}${ex?` −${2*ex} exhaustion`:""}`};
+  const bl=blessAdd(),a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20),d=adv?Math.max(a,b):a,tot=d+mod-2*ex+bl.n,ok=tot>=pConc.dc;
+  pConc.res={d,tot,ok,text:`d20${adv?` advantage (${a}, ${b})`:` (${d})`}${mod?(mod>0?" +":" ")+mod:""}${bl.t}${ex?` −${2*ex} exhaustion`:""}`};
   if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text:"Concentration "+pConc.res.text,total:tot});
   if(pConc.ask)pSend({action:"concans",ask:pConc.ask,ok,total:tot});
   else if(!ok&&me)pSend({action:"cond",cond:"Concentrating",on:false});
@@ -10730,8 +11125,9 @@ const phoneAgo=c=>{const p=joinInfo&&joinInfo.phones;return p&&p[c.id]!=null?p[c
 const devPcs=()=>sorted().filter(c=>c.kind==="pc");
 function devPill(){const jp=$("#joinPill");if(!jp)return;
   const pcs=devPcs(),on=pcs.filter(c=>{const a=phoneAgo(c);return a!=null&&a<8}).length;
-  jp.innerHTML=`<b>Devices</b><i class="jd${tabletOn()?" on":""}"></i><span>Tablet</span>${pcs.length?
-    `<i class="jd${on===pcs.length?" on":on?" some":""}"></i><span>${on}/${pcs.length} phones</span>`:""}`}
+  jp.innerHTML=`<i class="jd${tabletOn()?" on":""}"></i><span>Tablet</span>${pcs.length?
+    `<i class="jd${on===pcs.length?" on":on?" some":""}"></i><span>${on}/${pcs.length} phones</span>`:""}`;
+  jp.setAttribute("aria-label",`Devices: tablet ${tabletOn()?"connected":"not connected"}${pcs.length?`, ${on} of ${pcs.length} phones connected`:""}`)}
 const devBase=()=>String(chosenUrl()||"").replace(/\/players$/,"");
 const devAgo=a=>a==null?"not connected yet":a<8?"connected":a<90?`last seen ${Math.round(a)} s ago`:a<5400?`last seen ${Math.round(a/60)} min ago`:
   `last seen ${Math.round(a/3600)} h ago`;
@@ -10780,7 +11176,8 @@ function devSheet(){
 }
 let rollSeen=null,timerSeen=null,dsAskSeen=null,wasDown=null,fightSeen=null,turnSeen=null;
 function yourTurn(me){
-  if(!reduced){const el=document.createElement("div");el.className="yourturn";
+  if(pTurnCard()&&!pSimple()&&!me.down&&(!pSheet||pSheet==="turn")){pSheet="turn";renderPSheet()}
+  else if(!reduced){const el=document.createElement("div");el.className="yourturn";
     el.innerHTML=`<div><small>Round ${state.turn.round}</small>Your turn, ${esc(me.name)}!</div>`;document.body.appendChild(el);
     setTimeout(()=>el.remove(),2600)}
   try{navigator.vibrate&&navigator.vibrate([200,100,200,100,400])}catch(e){}
@@ -11182,7 +11579,6 @@ document.addEventListener("click",e=>{
       toast("Removed: that device is a player again")});break;
     case "dmforget": fetch("/dm-forget",{method:"POST",body:"{}"}).then(()=>{location.href="/players"});break;
     case "dmlight": ls.set("dmLight",!ls.get("dmLight",false));dmLightApply();break;
-    case "dmlook": ls.set("dmLook",ls.get("dmLook","tool")==="classic"?"tool":"classic");dmLookApply();render();break;
     case "atmodiscard": atmoD=atmoFromState();atmoRefresh();break;
     case "atmoclose": if(atmoChanged().length){toast("Not sent: the tablet keeps what it had");}atmoD=null;closeSheet();break;
     case "bgdel":{const f=t.dataset.f;fetch("/bg-delete",{method:"POST",body:JSON.stringify({file:f})}).then(()=>{if(state.bg===f){state.bg="";
@@ -11296,7 +11692,11 @@ document.addEventListener("click",e=>{
     case "tend": turnMenuOn=false;state.turn=null;commit();toast("Turn tracking stopped");break;
     case "turnmenu": turnMenuOn=!turnMenuOn;renderDM();break;
     case "footmore": footMenu(!$("#footMenu").hidden?false:true);break;
-    case "settingsopen":{if(sbViewId){sbViewId=null;renderDM()}const pn=document.querySelector('.panel[data-k="more"]');if(pn){pn.open=true;
+    case "sidetoggle":{const d=$("#dm"),on=!d.classList.contains("sideon");d.classList.toggle("sideon",on);t.setAttribute("aria-expanded",String(on));break}
+    case "settingsopen":{if(matchMedia("(max-width:1100px)").matches)$("#dm").classList.add("sideon");if(sbViewId){sbViewId=null;
+      renderDM()}const pn=document.querySelector('.panel[data-k="more"]');
+      if(pn){if(pn.classList.contains("on")&&pn.open){pn.open=false;pn.classList.remove("on");break}
+      pn.classList.add("on");pn.open=true;if(!pn.dataset.tw){pn.dataset.tw="1";pn.addEventListener("toggle",()=>{if(!pn.open)pn.classList.remove("on")})}
       pn.scrollIntoView({block:"nearest",behavior:"smooth"});pn.classList.remove("ping");void pn.offsetWidth;pn.classList.add("ping")}break}
     case "sbopen": sbItems=[];libQ="";libArmed=null;sbSheet();setTimeout(()=>{const q=$("#fetQ")||$("#libQ");q&&q.focus()},0);
       fetRefresh().then(fetRedraw);break;
@@ -11393,6 +11793,7 @@ document.addEventListener("click",e=>{
     case "fs": fsToggle();break;
     case "pwho": pSheet="who";renderPSheet();break;
     case "pmore": pSheet="more";renderPSheet();break;
+    case "pturncard": ls.set("pTurnCard",!pTurnCard());renderPSheet();break;
     case "plight": ls.set("pLight",!ls.get("pLight",false));renderPlayer();renderPSheet();break;
     case "psimple": ls.set("pSimple",!pSimple());pmodeSync(true);renderPlayer();renderPSheet();
       toast(pSimple()?"Simple mode: just your HP":"Everything is back");break;
@@ -11795,6 +12196,7 @@ document.addEventListener("submit",async e=>{
     const to=callTargets().map(c=>c.id);if(!to.length){toast("Pick at least one player");return}
     const all=to.length===state.list.filter(c=>c.kind==="pc"&&!c.hidden).length;
     state.call={id:uid(),text,dc:m?Number(m[1]):null,at:Date.now(),to,answers:{}};callSkip=new Set();
+    {const au=/\bsave\b/i.test(text)?callAuras():[];if(au.length)state.call.aura=au}
     $("#callText").value="";commit();toast(all?"Roll call sent":`Roll call sent to ${to.length} player${to.length>1?"s":""}`)}
   if(f.id==="fieldForm"){e.preventDefault();
     const name=$("#fieldName").value.trim();if(!name)return;state.effects.push({id:uid(),name,by:"dm",targets:[],conc:false,area:true});
@@ -11959,6 +12361,8 @@ if(MODE==="player"){
           else if(a.action==="hpstate"){const inv={t:"hp",bloodied:!!c.bloodied,down:!!c.down,ds:Object.assign({s:0,f:0},c.ds)};
             c.bloodied=a.bloodied;if(a.down!==!!c.down){c.down=a.down;c.ds={s:0,f:0}}L(`${c.name}: ${a.down?"0 HP":a.bloodied?"Bloodied":"healthy"}`,inv)}
           else if(a.action==="roll"){state.roll={id:uid(),by:c.name,kind:a.kind,text:a.text,total:a.total,at:Date.now()};
+            (state.rollLog=state.rollLog||[]).unshift({id:state.roll.id,by:c.name,text:a.text,total:a.total,at:state.roll.at});   // E18 (1.4)
+            if(state.rollLog.length>8)state.rollLog.length=8;
             if(!a.nat&&(a.kind==="nat20"||a.kind==="nat1"))natAdd(c.id,a.kind==="nat20"?20:1);
             if(a.kind==="nat20"||a.kind==="nat1")clogPush(`${c.name}: natural ${a.kind==="nat20"?"20":"1"}`);
             L(`${c.name}: ${a.kind==="nat20"?"NAT 20!":a.kind==="nat1"?"nat 1":a.text+" = "+a.total}`)}
