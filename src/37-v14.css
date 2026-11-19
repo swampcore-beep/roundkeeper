@@ -146,7 +146,6 @@ html:root[data-dmlook=tool] .ttile.twho b{display:flex;align-items:center;gap:10
 html:root[data-dmlook=tool] .ttile .tdot{width:8px;height:8px;border-radius:999px;background:var(--accent);flex:none}
 html:root[data-dmlook=tool] .ttile.tidle .tdot{display:none}
 html:root[data-dmlook=tool] .ttile .tini{font-size:var(--fs13);font-weight:500;color:var(--muted)}
-html:root[data-dmlook=tool] .ttile.tfight{width:120px;flex:none;align-items:flex-start}
 html:root[data-dmlook=tool] .tnav{min-height:52px;height:52px;min-width:52px;padding:0 14px;border-radius:8px;background:var(--panel)}
 html:root[data-dmlook=tool] .tnav.primary{padding:0 24px;border-radius:999px;font-size:var(--fs17);font-weight:600;gap:10px}
 html:root[data-dmlook=tool] .tnav kbd{font:500 var(--fs12)/18px var(--ui);padding:0 5px;border-radius:4px;

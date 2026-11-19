@@ -34,8 +34,8 @@ function recapStats(){
 }
 function recapText(){
   const out=[],f=state.fightAt,e=state.ended,end=e?e.at:Date.now(),d=new Date(f||end),log=state.clog||[];
-  const dur=f?Math.max(1,Math.round((end-f)/60000)):null,rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
-  out.push(`Combat · ${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}${dur?` · ${dur} min`:""}${rounds?
+  const rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
+  out.push(`Combat · ${d.toLocaleDateString()} ${d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}${rounds?
     ` · ${rounds} round${rounds>1?"s":""}`:""}`);
   const pcs=sorted().filter(c=>c.kind==="pc"),foes=sorted().filter(c=>c.kind!=="pc"&&c.kind!=="lair");
   if(pcs.length)out.push("","Party: "+pcs.map(c=>`${c.name}${typeof c.init==="number"?` (init ${c.init})`:""}${c.down?(isDead(c)?" · dead":isStable(c)?
@@ -57,7 +57,7 @@ function recapText(){
 /* 18: the recap as a page to keep, print or send (no DM secrets beyond what the recap already says) */
 function recapDoc(){
   const f=state.fightAt,e=state.ended,end=e?e.at:Date.now(),d=new Date(f||end),log=state.clog||[];
-  const dur=f?Math.max(1,Math.round((end-f)/60000)):null,rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
+  const rounds=Math.max((e&&e.rounds)||0,(state.turn&&state.turn.round)||0,...log.map(x=>x.r||0))||null;
   const pcs=sorted().filter(c=>c.kind==="pc"),foes=sorted().filter(c=>c.kind!=="pc"&&c.kind!=="lair"&&!c.hidden);
   const S=Object.entries(state.cstat||{}).filter(([,x])=>x.d>0).sort((a,b)=>b[1].d-a[1].d),{turns,dice}=recapStats(),top=S[0];
   const sec=(t,h)=>h?`<section><h2>${t}</h2>${h}</section>`:"";
@@ -73,7 +73,7 @@ h2{font-size:1.15rem;text-transform:uppercase;letter-spacing:.14em;color:var(--a
 h3{font-size:1rem;margin:16px 0 4px}table{border-collapse:collapse;width:100%;font-family:system-ui,sans-serif;font-size:.92rem}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}
 ul{margin:0;padding-left:1.2em}li{margin:2px 0}.hl{background:#fbedc6;border:1px solid #e3c27a;border-radius:10px;padding:12px 14px;font-family:system-ui,sans-serif}@media print{body{background:#fff}main{padding:0}}</style></head><body><main>
 <h1>Combat${foes.length?" · "+esc(foes.filter(c=>c.boss).map(c=>c.name)[0]||foes[0].name):""}</h1>
-<p class="meta">${esc(d.toLocaleDateString())} ${esc(d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}))}${dur?` · ${dur} min`:""}${rounds?
+<p class="meta">${esc(d.toLocaleDateString())} ${esc(d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}))}${rounds?
   ` · ${rounds} round${rounds>1?"s":""}`:""}</p>
 ${top?`<p class="hl"><b>Most damage:</b> ${esc(top[0])} with ${top[1].d}${top[1].top?` · biggest hit ${top[1].top.n} on ${esc(top[1].top.t)}`:""}</p>`:""}
 ${sec("Party",pcs.length?rows(["Character","Initiative","At the end"],pcs.map(c=>[esc(c.name),typeof c.init==="number"?c.init:"",c.down?(isDead(c)?"dead":
