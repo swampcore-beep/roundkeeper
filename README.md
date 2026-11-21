@@ -8,7 +8,7 @@
   <a href="LICENSE"><img alt="License: AGPL-3.0" src="https://img.shields.io/badge/license-AGPL--3.0-d66a5b"></a>
 </p>
 
-**A free, offline combat tracker for in-person 5e games (2024 rules).** The DM runs the fight from a laptop, the turn order lies on a tablet in the middle of the table, the TV across the room shows whose turn it is, and players follow along on their phones.
+**A free, offline combat tracker for in-person 5e games (2024 rules).** The DM runs the fight from a laptop, the turn order sits on a tablet in the middle of the table, the TV across the room shows whose turn it is, and players follow along on their phones.
 
 It comes with the **SRD 5.2.1** built in: 331 monsters with clickable statblocks, 339 spells, magic items, conditions and rules. No account, no subscription, no internet: it runs on your own computer, and everyone at the table connects over your Wi-Fi with a browser.
 
@@ -33,7 +33,7 @@ https://github.com/user-attachments/assets/6a9f7b1f-0586-4f68-b038-b5e7c5fdd433
 
 **Three short tours, under a minute each:** [the DM's laptop](#the-dms-laptop) · [the tablet and the TV](#the-tablet-and-the-tv) · [the players' phones](#on-players-phones)
 
-> **New in 1.4: the whole app reworked to be calmer and clearer.** On the laptop, the order is a table with column heads, the tools sit above it and the turn sits below it in one row, so nothing covers a row; empty cells say what they want ("Set HP"), and Bloodied and Down stay quiet until they're on. The side panel puts first what this part of the fight needs. On the phones, a dock in the class colour and four tabs where the thumb is, a **Your turn** screen with what matters this turn, the table's rolls under the dice, aura reminders in roll calls, and Bless added to rolls by itself. [What changed](../../releases/tag/v1.4.0)
+> **New in 1.4:** a calmer, clearer DM screen and phones, and more on the TV. [What's changed](../../releases)
 
 ---
 
@@ -211,7 +211,7 @@ Windows may say *"Windows protected your PC"* because the app isn't signed. Clic
 2. Double-click `Roundkeeper`. A Terminal window opens and keeps the server running, and your browser opens the DM screen.
 3. The first time, the Mac says it can't check the developer, because the app isn't signed with an Apple account. Click **Done**, open **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to Roundkeeper. When the Mac asks whether to accept incoming network connections, choose **Allow**.
 
-The Mac version is new. If it doesn't start, please [open an issue](../../issues).
+I haven't been able to test the Mac version on many Macs yet. If it doesn't start, please [open an issue](../../issues).
 
 ### Linux
 Download `Roundkeeper-linux.zip`, unzip it, and run `./roundkeeper` (on a Raspberry Pi or another ARM computer, `./roundkeeper-arm64`). Nothing else to install. Then open the address it prints.
@@ -279,7 +279,7 @@ I designed this for my own table, decided how every part should work, and tested
 
 ## Feedback
 
-Found a bug or have an idea? [Open an issue](../../issues). It helps to say how your table is set up: which screens you use, and whether your players use phones or paper.
+I made this for my own table, so there's no roadmap. Bug reports are very welcome: [open an issue](../../issues). Ideas might happen if they fit how we play. For a bug, it helps to say how your table is set up: which screens you use, and whether your players use phones or paper.
 
 Pull requests are welcome. The app is edited in [`src/`](src) and put together into `initiative.html` with `python3 tools/build.py`; [`dev/README.md`](dev/README.md) has the test servers and suites. By opening one, you agree that your contribution is licensed under the AGPL-3.0 (or later) like the rest of the code, and that the maintainer may also license it under other terms.
 
