@@ -12,7 +12,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server'])
         dsf=1.25 if TGT=='dm' else 1
-        dmc=await b.new_context(viewport={'width':1440,'height':900},device_scale_factor=dsf);dm=await dmc.new_page()
+        dmc=await b.new_context(viewport={'width':1536,'height':864},device_scale_factor=dsf);dm=await dmc.new_page()
         await dm.goto(rk.DM+'/');await asyncio.sleep(1.5);await T(dm,START);await asyncio.sleep(.8)
         tb=ph=None
         if TGT=='tablet':
@@ -47,6 +47,8 @@ async def main():
         await go('#sbDrawer .sbbody button:has-text("+14")');await asyncio.sleep(.8)
         await go('#sbDrawer .sbbody button:has-text("1d10 + 8")');await asyncio.sleep(1.1)
         mark("A save in the statblock becomes a roll call on the phones")
+        # the mouse crosses spell names on its way: their hover cards would cover the roll call box in the video
+        await dm.add_style_tag(content=".refcard{display:none!important}")
         await go('#sbDrawer [data-act=sbsave]');await asyncio.sleep(.6)
         await go('#sbDrawer [data-act=sbasksend]');await asyncio.sleep(.8)
         if ph:
@@ -58,6 +60,7 @@ async def main():
         await asyncio.sleep(1.3)
         await go('#sbDrawer .sbheadb [data-act=sbclose]',dur=.35);await asyncio.sleep(.2)
         await S("delete state.call;state.turn=Object.assign({},state.turn,{id:'gr',init:8});commit()");await asyncio.sleep(.6)
+        await dm.evaluate("()=>{for(const s of document.querySelectorAll('style'))if(s.textContent.includes('.refcard{display:none'))s.remove()}")
         mark("Hit several: one Fireball, every save and HP worked out")
         await go('[data-act=mtstart]',dur=.4);await asyncio.sleep(.35)
         for g in 'ABC':
