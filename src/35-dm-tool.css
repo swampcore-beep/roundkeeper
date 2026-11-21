@@ -146,7 +146,8 @@
 :root[data-dmlook=tool] #sbDrawer{background:var(--panel);border-left:0;box-shadow:-14px 0 40px rgba(0,0,0,.45)}
 :root[data-dmlook=tool] #sbDrawer .sbhead h3{font-family:"Alegreya SC","Palatino Linotype",Georgia,serif}
 :root[data-dmlook=tool] #sbDrawer .sbbody{margin:10px 12px 12px;padding:12px 16px 20px;border:2px solid #c0682a;border-radius:6px;background:#fbf6ec;
-  color:#1f1b16;font-family:Alegreya,"Palatino Linotype",Georgia,serif;font-size:.98rem;--fg:#1f1b16;--muted:#5c5246;--panel2:#f1e4cc;--line:#e0cfae;
+  color:#1f1b16;font-family:Alegreya,"Palatino Linotype",Georgia,serif;font-size:.98rem;--fg:#1f1b16;--muted:#5c5246;--panel:#fff9ef;--panel2:#f1e4cc;
+    --line:#e0cfae;
   --accent:#9a3b12;--arcane:#5b3a9a}
 :root[data-dmlook=tool] #sbDrawer .sbbody h4{font-family:"Alegreya SC","Palatino Linotype",Georgia,serif;color:#7a200d;border-bottom-color:#c0682a}
 :root[data-dmlook=tool] #sbDrawer .sbbody b,:root[data-dmlook=tool] #sbDrawer .sbbody strong{color:inherit}
