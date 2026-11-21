@@ -15,8 +15,8 @@ def save(im,name,w=None,crop=None):
     im.save(os.path.join(D,name),quality=88,optimize=True,progressive=True);print('media/'+name,im.size)
 for dst,(src,w) in JPG.items():
     if os.path.exists(S+src+'.png'): save(Image.open(S+src+'.png'),dst+'.jpg',w)
-if os.path.exists(S+'g_party.png'): save(Image.open(S+'g_party.png'),'party.jpg',900,(850,450,2030,1340))  # the party sheet only
-if os.path.exists(S+'g_devices.png'): save(Image.open(S+'g_devices.png'),'devices.jpg',1000,(700,90,2180,1700))  # the Devices window only
+if os.path.exists(S+'g_party.png'): save(Image.open(S+'g_party.png'),'party.jpg',900)  # the party sheet only (an element shot)
+if os.path.exists(S+'g_devices.png'): save(Image.open(S+'g_devices.png'),'devices.jpg',1000)  # the Devices window only (an element shot)
 if os.path.exists(rk.MEDIA+'/four.png'): save(Image.open(rk.MEDIA+'/four.png'),'four-screens.jpg',1600)
 if os.path.exists(rk.MEDIA+'/social-preview.png'): shutil.copy(rk.MEDIA+'/social-preview.png',os.path.join(D,'social-preview.png'));print('media/social-preview.png')
 for g in ['boss']:   # the tablet, TV and phone GIFs gave way to the three videos
