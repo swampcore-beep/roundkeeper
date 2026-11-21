@@ -39,7 +39,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -1353,16 +1352,7 @@ func parseAction(r *http.Request) (act map[string]any, ok bool) {
 
 // ---------- start ----------
 
-func openBrowser(url string) {
-	switch runtime.GOOS {
-	case "windows":
-		exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
-	case "darwin":
-		exec.Command("open", url).Start()
-	default:
-		exec.Command("xdg-open", url).Start()
-	}
-}
+// openBrowser is in open_windows.go and open_other.go.
 
 func waitAndExit() {
 	fmt.Println("Press Enter to close this window...")

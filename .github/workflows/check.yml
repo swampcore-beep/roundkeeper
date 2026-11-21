@@ -1,5 +1,5 @@
 name: Check
-# On every pull request: initiative.html must be the file tools/build.py puts together from src/.
+# On every pull request: initiative.html must be the file tools/build.py puts together from src/, and the Windows program must build.
 on:
   pull_request:
   push:
@@ -13,3 +13,22 @@ jobs:
       - uses: actions/checkout@v4
       - name: initiative.html is built from src/
         run: python3 tools/build.py --check
+  windows:
+    # The release's Windows steps, so a change to them fails here and not on release day
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - name: Put the app into the program
+        run: |
+          mkdir -p go/assets
+          cp initiative.html icon-192.png icon-512.png srd/srd-5.2.1.json go/assets/
+          cp -r fonts go/assets/fonts
+      - name: Icon, version and publisher
+        working-directory: go
+        run: go run github.com/tc-hib/go-winres@v0.3.3 make --in winres/winres.json --arch amd64 --product-version 0.0.0 --file-version 0.0.0
+      - name: Build Roundkeeper.exe
+        working-directory: go
+        run: GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-X main.version=check" -o Roundkeeper.exe .
