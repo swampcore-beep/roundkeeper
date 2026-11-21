@@ -28,6 +28,7 @@ html:root .setpanel{gap:8px}
 .setpanel .setopt small{color:var(--muted);font-size:.8rem;flex-basis:100%;padding-left:24px;margin-top:-2px}
 .setpanel .setopt input[type=checkbox]{width:16px;height:16px;margin:0;accent-color:var(--accent);flex:0 0 auto}
 .setpanel .setopt .field{padding:5px 8px}
+.setpanel .setopt>span{flex:1 1 180px;min-width:0}
 html:root .setpanel .btn.pebox,html:root .setpanel .btn.pebox[aria-pressed=true]{background:none;border:0;padding:0;min-height:0;font-size:.9rem;
   font-weight:400;color:var(--fg);box-shadow:none}
 .setpanel .acts{display:flex;flex-wrap:wrap;gap:6px}

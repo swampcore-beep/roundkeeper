@@ -99,6 +99,13 @@ async def main():
         e=await tv.inner_text('#tvLayer .tvend')
         chk("end card without minutes",'minute' not in e and 'round' in e,e)
         await T(dm,"state.ended=null;commit()"); await asyncio.sleep(.5)
+        # a player dropping to 0 HP on their own turn: the death save screen, no strip over its sentence
+        await T(dm,"byId('s').down=false;byId('s').ds={s:0,f:0};state.turn={id:'s',round:2,init:15};commit()"); await asyncio.sleep(1.5)
+        await T(dm,"byId('s').down=true;commit()"); await asyncio.sleep(1.2)
+        chk("the death save screen is up",await tv.locator('#tvLayer .tvds').count()==1)
+        chk("…without a 'drops to 0 HP' strip on top",'drops to 0 HP' not in (await tv.inner_text('#tvStrips') if await tv.locator('#tvStrips').count() else ''))
+        await T(tv,"tvStrip('i','is Bloodied')"); await asyncio.sleep(.3)
+        chk("…and other strips go to the top of the screen",await tv.evaluate("document.getElementById('tvStrips').classList.contains('top')"))
         chk("no errors",not errs,errs)
         await b.close()
 asyncio.run(main()); print("ALL OK" if ok else "SOME FAILED")
