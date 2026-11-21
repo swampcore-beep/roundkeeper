@@ -8,6 +8,7 @@ const fxRow=(P,id)=>tvCover()?document.querySelector(`#tvLayer [data-tid="${CSS.
 function tvStrip(id,text){
   if(!tvCover()||!text||$("#tvLayer.m-pause"))return;const c=byId(id);if(!c||!shownToPlayers(c))return;
   let box=$("#tvStrips");if(!box){box=document.createElement("div");box.id="tvStrips";document.body.appendChild(box)}
+  box.classList.toggle("top",!!$("#tvLayer .tvds"));
   const el=document.createElement("div");el.className="tvstrip";el.innerHTML=`<b>${esc(c.name)}</b><span>${esc(text)}</span>`;box.appendChild(el);
   while(box.children.length>3)box.firstChild.remove();
   setTimeout(()=>{el.classList.add("out");setTimeout(()=>el.remove(),500)},2800);

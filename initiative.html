@@ -2495,6 +2495,7 @@ html[data-mfont=A] .mo-q,html[data-mfont=F] .mo-q{font-size:clamp(22px,3.6vw,56p
 .tvsp.B.wp .emb{width:5.5vw;height:5.5vw}.tvsp.B.wp .emb.pic{width:6.6vw;height:8.8vw;max-height:20vh}
 .tvsp.B.wp .big,.tvsp.B.wp .big.long{font-size:clamp(34px,5vw,100px)}.tvsp.B.wp .big.xl{font-size:clamp(30px,3.8vw,76px)}
 .tvsp.B.wp .card{padding:.7vw 1vw;gap:.35vw}.tvsp.B.wp .card .cn{white-space:nowrap;font-size:clamp(17px,1.8vw,36px)}
+#tvStrips.top{bottom:auto;top:4vh}
 /* ---------- DM screen, v1.1 layout: grouped header, quieter rows, grouped bottom bar ---------- */
 /* header: the fight on the left (Round · ← · Next turn · ⋯), then Rules, the table's screens, undo/redo and settings */
 html:root .brand{margin-right:10px}
@@ -2703,6 +2704,7 @@ html:root .setpanel{gap:8px}
 .setpanel .setopt small{color:var(--muted);font-size:.8rem;flex-basis:100%;padding-left:24px;margin-top:-2px}
 .setpanel .setopt input[type=checkbox]{width:16px;height:16px;margin:0;accent-color:var(--accent);flex:0 0 auto}
 .setpanel .setopt .field{padding:5px 8px}
+.setpanel .setopt>span{flex:1 1 180px;min-width:0}
 html:root .setpanel .btn.pebox,html:root .setpanel .btn.pebox[aria-pressed=true]{background:none;border:0;padding:0;min-height:0;font-size:.9rem;
   font-weight:400;color:var(--fg);box-shadow:none}
 .setpanel .acts{display:flex;flex-wrap:wrap;gap:6px}
@@ -3447,8 +3449,8 @@ svg.tci{display:block;padding:5px;fill:none;stroke:var(--cc,currentColor);stroke
     <div class="foot tools2 side-tools setpanel">
       <div class="sethead">During combat</div>
       <label class="setopt" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="30" style="width:5em"> seconds</label>
-      <label class="setopt"><input type="checkbox" id="autoTimer"> Start the hourglass on every player's turn</label>
-      <label class="setopt" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> Roll monsters' Concentration saves for me <small>otherwise the app asks</small></label>
+      <label class="setopt"><input type="checkbox" id="autoTimer"> <span>Start the hourglass on every player's turn</span></label>
+      <label class="setopt" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> <span>Roll monsters' Concentration saves for me</span> <small>otherwise the app asks</small></label>
       <div class="sethead">This laptop</div>
       <div class="setrow"><button class="btn pebox" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button></div>
       <div class="acts">
@@ -5989,6 +5991,7 @@ const fxRow=(P,id)=>tvCover()?document.querySelector(`#tvLayer [data-tid="${CSS.
 function tvStrip(id,text){
   if(!tvCover()||!text||$("#tvLayer.m-pause"))return;const c=byId(id);if(!c||!shownToPlayers(c))return;
   let box=$("#tvStrips");if(!box){box=document.createElement("div");box.id="tvStrips";document.body.appendChild(box)}
+  box.classList.toggle("top",!!$("#tvLayer .tvds"));
   const el=document.createElement("div");el.className="tvstrip";el.innerHTML=`<b>${esc(c.name)}</b><span>${esc(text)}</span>`;box.appendChild(el);
   while(box.children.length>3)box.firstChild.remove();
   setTimeout(()=>{el.classList.add("out");setTimeout(()=>el.remove(),500)},2800);
@@ -8685,7 +8688,7 @@ function queueMoments(list,prev){
     add.filter(k=>k.startsWith("eff")).forEach(k=>{const e=state.effects.find(x=>"eff"+x.id===k);if(!e)return;const m=MO_SPELL.find(([re])=>re.test(e.name));
       play("sp",m?m[1]:"gen",d,e.name);d+=200});
     const dsN=s=>{const k=[...s].find(x=>/^ds\d\d$/.test(x));return k?{s:+k[2],f:+k[3]}:null},a=dsN(was),b=dsN(now);
-    if(TV&&c.kind==="pc"&&add.includes("down")&&!add.includes("dead"))setTimeout(()=>tvStrip(c.id,"drops to 0 HP"),300);
+    if(TV&&c.kind==="pc"&&add.includes("down")&&!add.includes("dead")&&!(state.turn&&state.turn.id===c.id))setTimeout(()=>tvStrip(c.id,"drops to 0 HP"),300);
     if(add.includes("dead"))play("death");
     else if(add.includes("stable"))play("stable");
     else if(a&&b&&b.f>a.f)play("dsfail");
