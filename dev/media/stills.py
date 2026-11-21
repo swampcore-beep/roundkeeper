@@ -12,7 +12,7 @@ async def main():
     want=lambda k: not only or k in only
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server'])
-        dm=await (await b.new_context(viewport={'width':1440,'height':900},device_scale_factor=2)).new_page()
+        dm=await (await b.new_context(viewport={'width':1536,'height':864},device_scale_factor=2)).new_page()   # a 1920x1080 laptop at 125 %
         await dm.goto('http://127.0.0.1:8765/');await asyncio.sleep(1.5)
         async def S(js,w=0): await T(dm,js);await asyncio.sleep(w)
         await S(setup(TH,SC,False,"d")+BASE,.6)
@@ -43,7 +43,7 @@ async def main():
             await dm.screenshot(path=O+'g_ctrlk.png');await dm.keyboard.press('Escape');await asyncio.sleep(.3)
         if want('party'):
             await S("byId('i').pst={ac:18,pp:11,pi:13,pv:9,dc:14,at:Date.now()};byId('s').pst={ac:14,pp:12,pi:14,pv:11,dc:15,at:Date.now()};byId('a').pst={ac:15,pp:15,pi:15,pv:10,dc:14,at:Date.now()};byId('gr').pst={ac:12,pp:11,pi:11,pv:14,dc:15,at:Date.now()};commit();partySheet()",1)
-            await dm.screenshot(path=O+'g_party.png');await S("closeSheet()",.3)
+            await dm.locator('.sheet:visible').last.screenshot(path=O+'g_party.png');await S("closeSheet()",.3)
         if want('cond'):
             await S("byId('g1').conds.push('Restrained');byId('s').conds.push('Frightened');byId('i').conds.push('Prone');commit()",2.2)
             await tb.screenshot(path=O+'g_cond.png')
@@ -68,7 +68,7 @@ async def main():
             await S("state.ended=null;delete state.hdywt;state.cstat={};state.nstat={};for(const k of ['d','g1','g2','g3']){const g=byId(k);g.hp=g.hpMax;g.down=false};commit()",2)
         if want('devices'):
             import vrec;vrec.present();await asyncio.sleep(2.5)
-            await S("devSheet()",2.5);await dm.screenshot(path=O+'g_devices.png');await S("closeSheet()",.3)
+            await S("devSheet()",2.5);bb=await dm.locator('.sheet:visible').last.bounding_box();await dm.screenshot(path=O+'g_devices.png',clip=bb)   # (it redraws as phones check in);await S("closeSheet()",.3)
         if want('spells'):
             await T(ph,"pSheet='book';spellScope='all';bookQ='';renderPSheet()");await asyncio.sleep(2.5);await ph.screenshot(path=O+'g_spells.png')
             await T(ph,"spView={n:'Fireball',s:'SRD52',from:'book'};pSheet='spell';renderPSheet();refGet('spell','Fireball','SRD52',true).then(d=>{spView.d=d;renderPSheet()})");await asyncio.sleep(1.5);await ph.screenshot(path=O+'g_spell.png')

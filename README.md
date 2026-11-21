@@ -27,7 +27,7 @@ It comes with the **SRD 5.2.1** built in: 331 monsters with clickable statblocks
 >
 > *Not a virtual tabletop:* there are no maps or tokens, and it isn't for online play. It's made for a group sitting around a real table.
 
-https://github.com/user-attachments/assets/f7578be1-2bc0-4fc1-84af-e42ae995edd6
+https://github.com/user-attachments/assets/6a9f7b1f-0586-4f68-b038-b5e7c5fdd433
 
 <p align="center"><sub>One fight on all four screens at once: the DM's laptop, the tablet, the TV and a phone (50 seconds, no sound).</sub></p>
 
@@ -47,7 +47,7 @@ Each screen shows what its people need, and only that. Monster HP, statblocks, h
 
 ## The DM's laptop
 
-https://github.com/user-attachments/assets/dca33bcd-6d6c-4f08-8144-5024e681f508
+https://github.com/user-attachments/assets/ad0e8f23-1c19-4388-82c5-350a6e711e61
 
 <p align="center"><sub>From the DM's seat: monsters from the built-in SRD, the statblock, a roll call, Hit several, conditions, Ctrl+K, Devices and Atmosphere (under a minute, no sound).</sub></p>
 
@@ -95,7 +95,7 @@ The order is a table, one row per creature: initiative, picture, name, condition
 
 ## The tablet and the TV
 
-https://github.com/user-attachments/assets/8679f0ea-d8c8-46c8-9abf-72066ab79cb9
+https://github.com/user-attachments/assets/9c7fc2f0-5240-4582-a20d-53a0d9a02c87
 
 <p align="center"><sub>What the players see: the tablet on the table and the TV across the room, side by side through one fight (under a minute, no sound).</sub></p>
 
@@ -160,7 +160,7 @@ Pick a theme, then change any part of it: colours, fonts, row style, an animated
 
 ## On players' phones
 
-https://github.com/user-attachments/assets/74e67b4d-6e6c-4e54-afd7-6e985122e99a
+https://github.com/user-attachments/assets/7b8dfa4b-25bb-4b2c-9c3a-590fa657dc16
 
 <p align="center"><sub>A player's phone with the tablet beside it: joining, initiative, a spell on the table, resources, the sheet, a roll call, Concentration and death saves (under a minute, no sound).</sub></p>
 
