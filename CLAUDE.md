@@ -8,12 +8,13 @@ A free, offline combat tracker for in-person 5e (2024 rules). The DM runs it on 
 |---|---|
 | `src/` | The app's source in parts (`NN-name.css`, `.js`, `.html`): **edit these** |
 | `initiative.html` | The whole app in one file, put together from `src/` by `tools/build.py`; never edit it by hand (the programs embed it) |
-| `go/main.go`, `go/fivetools.go` | The server, built into `Roundkeeper.exe` and the Mac and Linux programs (the Python server was removed in 1.2) |
+| `go/main.go`, `go/fivetools.go` | The server, built into `Roundkeeper.exe` and the Mac and Linux programs (the Python server was removed in 1.2); `go/open_windows.go` / `go/open_other.go` open the browser |
+| `go/winres/winres.json` | Icon, version, publisher and manifest of `Roundkeeper.exe`; the release makes `go/rsrc_windows_amd64.syso` from it with go-winres (the committed one says 0.0.0) |
 | `srd/srd-5.2.1.json` | The built-in SRD (made by `tools/srd_from_open5e.py`) |
 | `media/` | README pictures and GIFs (regenerate with `dev/media/`) |
 | `dev/` | Test servers, test suites, media scripts: see `dev/README.md` |
 | `.github/workflows/release.yml` | A `v*` tag builds the Windows exe, the Mac program (universal, joined by `tools/makefat.py`), and the Linux programs, and attaches them to the release |
-| `.github/workflows/check.yml` | Every pull request: `initiative.html` must match `src/` |
+| `.github/workflows/check.yml` | Every pull request: `initiative.html` must match `src/`, and the Windows program must build with its resources |
 
 ### Inside the app (`src/`)
 

@@ -11222,7 +11222,7 @@ function qrSheet(){
     <ul class="qrhelp"><li>Phones must be on the <b>same Wi-Fi</b> as this computer, not a guest network.</li>
       <li><b>Android + Chrome</b> (ERR_TOO_MANY_RETRIES or nothing loads): Settings → Apps → Chrome → Permissions → <b>Nearby devices</b> → Allow, then force-stop Chrome. Samsung Internet and Firefox also work.</li>
       <li><b>iPhone</b>: tap Allow when Safari asks about the Local Network.</li>
-      <li>Still nothing on any phone: run <b>allow-network.bat</b> once on this computer.</li></ul>
+      <li>Still nothing on any phone: the firewall is blocking it. On <b>Windows</b>: Windows Security → Firewall &amp; network protection → Allow an app through firewall → tick <b>Roundkeeper</b> under Private, and set this Wi-Fi to <b>Private</b> in its network settings.</li></ul>
     <div style="display:flex;justify-content:flex-end"><button class="btn primary" type="button" data-act="close">Done</button></div></div></div>`;
 }
 /* ---- Devices: who is connected, with the full link for each kind of screen ---- */
@@ -11281,7 +11281,7 @@ function devSheet(){
       ""}><summary>Can't connect?</summary><ul class="qrhelp"><li>Phones must be on the <b>same Wi-Fi</b> as this computer, not a guest network.</li>
       <li><b>Android + Chrome</b> (ERR_TOO_MANY_RETRIES or nothing loads): Settings → Apps → Chrome → Permissions → <b>Nearby devices</b> → Allow, then force-stop Chrome. Samsung Internet and Firefox also work.</li>
       <li><b>iPhone</b>: tap Allow when Safari asks about the Local Network.</li>
-      <li>Still nothing on any phone: run <b>allow-network.bat</b> once on this computer (as administrator).</li>
+      <li>Still nothing on any phone: the firewall is blocking it. On <b>Windows</b>: Windows Security → Firewall &amp; network protection → Allow an app through firewall → tick <b>Roundkeeper</b> under Private, and set this Wi-Fi to <b>Private</b> in its network settings.</li>
       <li>A VPN or a second network card can give the wrong address: pick another one above.</li></ul></details>
     <div style="display:flex;justify-content:flex-end"><button class="btn primary" type="button" data-act="close">Done</button></div></div></div>`;
   const sh=$("#devSheet");if(sh)sh.scrollTop=top;
