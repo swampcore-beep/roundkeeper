@@ -67,12 +67,12 @@ def setup(theme="hoard",scene="fire",dragon_hidden=False,turn="i"):
 const SBD=(raw,name)=>{{const sb=parseStatblock(raw);sb.raw=raw;return sb}};
 state.list=[
  Object.assign(newCombatant({{id:'d',name:'Adult Red Dragon',kind:'enemy',ctype:'dragon',init:22}}),{{hp:256,hpMax:256,ac:19,boss:true,title:'Scourge of the Ashen Peaks',hidden:{str(dragon_hidden).lower()},sb:SBD({json.dumps(DRAGON)})}}),
- newCombatant({{id:'i',name:'Isandros',kind:'pc',cls:'paladin',init:19}}),
+ Object.assign(newCombatant({{id:'i',name:'Isandros',kind:'pc',cls:'paladin',init:19}}),{{ac:20}}),
  Object.assign(newCombatant({{id:'g1',name:'Goblin A',base:'Goblin Warrior',kind:'enemy',ctype:'fey',init:16}}),{{hp:10,hpMax:10,ac:15,sb:SBD({json.dumps(GOBLIN)})}}),
- newCombatant({{id:'s',name:'Styx',kind:'pc',cls:'bard',init:15}}),
+ Object.assign(newCombatant({{id:'s',name:'Styx',kind:'pc',cls:'bard',init:15}}),{{ac:14}}),
  Object.assign(newCombatant({{id:'g2',name:'Goblin B',base:'Goblin Warrior',kind:'enemy',ctype:'fey',init:12}}),{{hp:10,hpMax:10,ac:15,sb:SBD({json.dumps(GOBLIN)})}}),
- newCombatant({{id:'a',name:'Astrea',kind:'pc',cls:'druid',init:11,conds:['Concentrating']}}),
- newCombatant({{id:'gr',name:'Gregori',kind:'pc',cls:'wizard',init:8}}),
+ Object.assign(newCombatant({{id:'a',name:'Astrea',kind:'pc',cls:'druid',init:11,conds:['Concentrating']}}),{{ac:16}}),
+ Object.assign(newCombatant({{id:'gr',name:'Gregori',kind:'pc',cls:'wizard',init:8}}),{{ac:13}}),
  Object.assign(newCombatant({{id:'g3',name:'Goblin C',base:'Goblin Warrior',kind:'enemy',ctype:'fey',init:6}}),{{hp:10,hpMax:10,ac:15,sb:SBD({json.dumps(GOBLIN)})}})];
 state.effects=[{{id:'e1',name:'Bless',by:'s',targets:['i','s','gr'],conc:false,area:false,r0:1}},{{id:'e2',name:'Spike Growth',by:'a',targets:[],conc:true,area:true,r0:1}}];
 state.turn={{round:2,id:'{turn}',init:19}};state.theme={json.dumps(theme)};state.scene={json.dumps(scene)};state.look={{}};state.showQr=false;commit()"""

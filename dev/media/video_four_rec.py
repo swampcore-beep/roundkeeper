@@ -26,7 +26,7 @@ def mark(cap): marks.append((time.time(),cap));print(round(time.time()-marks[0][
 async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server'])
-        dmc=await b.new_context(viewport={'width':1440,'height':900});dm=await dmc.new_page()
+        dmc=await b.new_context(viewport={'width':1536,'height':864});dm=await dmc.new_page()
         await dm.goto(rk.DM+'/');await asyncio.sleep(1.5)
         async def S(js,w=0): await T(dm,js);await asyncio.sleep(w)
         st=setup(TH,SC,True,"i")+BASE
@@ -74,7 +74,7 @@ async def main():
         await S("delete state.call;commit()",.4)
         mark("Players keep their own HP")
         if ph:
-            await ph.click('.tile[data-act=php]');await asyncio.sleep(.8)
+            await ph.click('.pdock [data-act=php]');await asyncio.sleep(.8)
             for k in "30":
                 q=f'#overlay [data-k="{k}"]'
                 if await ph.query_selector(q): await ph.click(q)

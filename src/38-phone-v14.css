@@ -68,3 +68,6 @@ svg.tci{display:block;padding:5px;fill:none;stroke:var(--cc,currentColor);stroke
 
 /* E19: an aura reminder in the roll call */
 .aurahint{display:block;font-size:13px;color:color-mix(in srgb,var(--accent) 70%,var(--fg));padding:2px 0}
+/* the phone's toast sits at the top: at the bottom it covered the tabs and swallowed a tap on them */
+body:not(.shared) #player:not([hidden]) ~ .toast{top:calc(env(safe-area-inset-top,0px) + 10px);bottom:auto;max-width:calc(100vw - 32px)}
+.rollbanner{pointer-events:none}

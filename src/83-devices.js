@@ -140,8 +140,9 @@ function surfaceEvents(first){
   const r=state.roll;
   if(first)rollSeen=r?r.id:null;
   else if(r&&r.id!==rollSeen){rollSeen=r.id;
-    // your own ordinary roll: the sheet you rolled from already shows it, so no second popup over it (nat 20 / nat 1 still celebrate)
-    const own=meName!=="*"&&pSheet&&r.kind==="roll"&&meChar()&&r.by===meChar().name;
+    // your own ordinary roll: the sheet or the toast you rolled from already shows it, so no second popup over what you do next
+    // (it lingered six seconds over the next sheet and took its taps); nat 20 / nat 1 still celebrate
+    const own=meName!=="*"&&r.kind==="roll"&&meChar()&&r.by===meChar().name;
     if(!own&&Math.abs(dmNow()-r.at)<15000&&screenWants("dice")){if(!reduced&&meName==="*"&&!TV)fxDie(r,()=>showRoll(r));
       else showRoll(r)}}   // the TV has its own die (TV6)
   // a roll call: phones of the called players get a prompt and a buzz

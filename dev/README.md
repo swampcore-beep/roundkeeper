@@ -85,7 +85,7 @@ python3 dev/media/phones.py        # four phones side by side (Reddit gallery)
 python3 dev/media/publish.py       # copy into media/ with the README's names and sizes
 ```
 
-The README's four videos are uploaded to GitHub, not kept in the repo. Each stays under a minute:
+The README's four videos are uploaded to GitHub, not kept in the repo. Each stays under a minute. Their look is in `look.py` (since 1.4): a matte, warm table surface with grain, plain device bodies with contact shadows, plain captions in Atkinson Hyperlegible, real keycaps, one clay accent for clicks and taps, and left-aligned cards with the name in Alegreya SC. No gradients, glows, vignettes or centred gold titles; keep it that way so the videos don't look generated.
 
 ```bash
 # one fight on all four screens, at the top

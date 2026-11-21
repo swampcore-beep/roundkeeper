@@ -50,8 +50,8 @@ async def main():
         rb=await sfs['portrait'].locator('.rollbanner').bounding_box()
         chk("Surface roll banner is big",rb and rb['height']>90,rb)
         await sfs['portrait'].screenshot(path='roll_portrait.png'); await sfs['landscape'].screenshot(path='roll_landscape.png')
-        pb=await ph.locator('.rollbanner').bounding_box()
-        chk("phone banner stays phone-sized",pb is None or pb['height']<80,pb)
+        # the phone that rolled doesn't repeat its own roll in a banner (1.4.3: it lingered over the next sheet); others' rolls stay small
+        chk("no banner of my own roll on my phone",await ph.locator('.rollbanner').count()==0)
         chk("no errors",not errs,errs)
         await b.close()
 asyncio.run(main()); print("ALL OK" if ok else "SOME FAILED")
