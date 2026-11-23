@@ -114,7 +114,7 @@ async def main():
         n=await dm.evaluate("()=>[...document.querySelectorAll('.barright>*:not([hidden])')].map(e=>{const r=e.getBoundingClientRect();return Math.round(r.top+r.height/2)})")
         chk("narrower: the right side wraps as one block",max(n)-min(n)<6,n)
         await dm.set_viewport_size({'width':1440,'height':900}); await asyncio.sleep(.3)
-        heads=await dm.locator('.setpanel .sethead').all_inner_texts(); chk("Settings in three groups",len(heads)==3,heads)
+        heads=await dm.locator('.setpanel .sethead').all_inner_texts(); chk("Settings in four groups (1.6: Dice on the screens)",len(heads)==4,heads)
         chk("no errors",not errs,errs)
         await b.close()
 asyncio.run(main()); print("ALL OK" if ok else "SOME FAILED")

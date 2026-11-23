@@ -2008,6 +2008,23 @@ body.shared:has(.intro,#moment,.celebrate,.rfi,.endscr) #player ol.plist{opacity
 body.shared:has(.fxround) #player ol.plist{opacity:.12;filter:blur(4px)}
 /* a roll notice gives way to a boss intro or another big moment */
 body.shared:has(.intro,#moment,.celebrate,.endscr) .rollbanner{visibility:hidden}
+/* 1.6: 3D dice. One box per screen, hidden until a roll; the TV's sits where the flat d20 was in the roll card */
+#dice3d{position:fixed;opacity:0;pointer-events:none;transition:opacity .4s;z-index:38}
+#dice3d.on{opacity:1}
+#dice3d canvas{display:block}
+#dice3d.tv{width:64vw;height:48vh;left:18vw;top:16vh;z-index:41}
+#dice3d.tab{width:64vw;height:50vh;left:18vw;top:20vh}
+#dice3d.ph{width:100vw;height:62vh;left:0;top:14vh;z-index:90;border-radius:24px;
+  background:radial-gradient(ellipse at 50% 55%,rgba(12,10,16,.62),rgba(12,10,16,0) 70%)}
+#dice3d.ph.on{pointer-events:auto}
+#tvDice .t2dice{width:64vw;height:48vh}
+#tvDice.d3 .t2head,#tvDice.d3 .t2line,#tvDice.d3 .t2rays{transition:opacity .45s}
+#tvDice.rolling .t2head,#tvDice.rolling .t2line,#tvDice.rolling .t2rays{opacity:0}
+#tvDice.nodie .t2mid{margin-top:0}
+body:has(#moment:not(.out),.intro,.celebrate) #dice3d.tv{opacity:0}
+.diceset{margin:2px 0 6px}.diceset-n{grid-column:1/-1;color:var(--muted);font-size:.78rem;line-height:1.35}
+.pdiceset{display:grid;gap:8px;padding:10px 0 4px}.pdiceset .seg2 button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);
+  border-color:var(--accent)}
 /* ---------- Atmosphere sheet: parts on the left, a live preview of the tablet on the right ---------- */
 .sheet.atmo2{width:min(1320px,96vw);max-height:calc(94vh - var(--covered,0px));overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 360px;
   grid-template-rows:auto minmax(0,1fr);gap:14px 22px;padding:20px 22px}
@@ -3619,6 +3636,8 @@ body:not(.shared) #player:not([hidden]) ~ .toast{top:calc(env(safe-area-inset-to
       <label class="setopt" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="30" style="width:5em"> seconds</label>
       <label class="setopt"><input type="checkbox" id="autoTimer"> <span>Start the hourglass on every player's turn</span></label>
       <label class="setopt" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> <span>Roll monsters' Concentration saves for me</span> <small>otherwise the app asks</small></label>
+      <div class="sethead">Dice on the screens</div>
+      <div class="tvev diceset" id="diceSet"></div>
       <div class="sethead">This laptop</div>
       <div class="setrow"><button class="btn pebox" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button></div>
       <div class="acts">
@@ -6287,6 +6306,54 @@ function fxDie(r,then){
       duration:380,easing:"ease-out"});
       setTimeout(()=>{el.animate([{opacity:1},{opacity:0}],{duration:300,fill:"forwards"}).onfinish=()=>el.remove();then()},520)};
 }
+/* 1.6: how dice show on each screen: "3d" (3D dice that land on the rolled faces), "light" (the flat d20) or "off" (the result only).
+   The DM picks for the TV, the tablet and the phones (state.diceView); a player can pick for their own phone (ls "diceView"), and that wins there.
+   3D falls back to light without WebGL, in the TV's Light mode or when the library can't load; reduced motion means off. */
+const DICE_DEF={tv:"3d",tab:"light",ph:"light"},DICE_MODES=[["3d","3D"],["light","Light"],["off","Off"]];
+const diceViewAll=()=>Object.assign({},DICE_DEF,state.diceView||{});
+function diceSet(){const v=diceViewAll();if(TV)return v.tv;if(meName==="*")return v.tab;const o=ls.get("diceView","dm");return o==="dm"?v.ph:o}
+function diceMode(){let m=diceSet();if(!["3d","light","off"].includes(m))m="light";if(reduced)return "off";
+  if(m==="3d"&&((TV&&document.body.classList.contains("tvlite"))||!Dice3D.ok()))m="light";return m}
+/* the dice of a shared roll as [sides, face]; real dice at the table only send a nat 20 or nat 1, shown as one d20 */
+function diceOf(r){const d=Array.isArray(r.dice)?r.dice.filter(x=>Array.isArray(x)&&x.length===2):[];
+  if(d.length)return d;if(r.kind==="nat20")return [[20,20]];if(r.kind==="nat1")return [[20,1]];return null}
+const dice3dFits=d=>!!d&&d.length>0&&d.length<=20&&d.every(([s])=>[4,6,8,10,12,20].includes(s));
+/* the dice in the roller's class colour (a player), else the table's accent; the numbers stay light on a dark body */
+function diceColors(who){const c=who?state.list.find(x=>x.name===who):null,fk=c&&c.kind==="pc"?frameKey(c):"";let col="";
+  if(fk){const t=document.createElement("i");t.className="fr-"+fk;t.hidden=true;document.body.appendChild(t);
+    col=getComputedStyle(t).getPropertyValue("--fc").trim();t.remove()}
+  if(!col)col=getComputedStyle(document.body).getPropertyValue("--accent").trim()||"#e3a54a";
+  const x=document.createElement("canvas").getContext("2d");x.fillStyle="#e3a54a";x.fillStyle=col;const h=String(x.fillStyle);
+  const rgb=/^#[0-9a-f]{6}$/i.test(h)?[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)):[227,165,74],
+    mix=(a,b,k)=>"#"+a.map((v,i)=>Math.round(v*k+b[i]*(1-k)).toString(16).padStart(2,"0")).join("");
+  return {name:"rk",background:mix(rgb,[26,22,32],.42),foreground:mix(rgb,[255,246,228],.18),outline:mix(rgb,[255,240,210],.7),texture:"none",
+    material:"plastic"}}
+const Dice3D={box:null,boxP:null,libP:null,el:null,cs:"",cur:null,t:0,_ok:null,
+  ok(){if(this._ok==null){try{const c=document.createElement("canvas");this._ok=!!(window.WebGLRenderingContext&&(c.getContext("webgl")||
+    c.getContext("experimental-webgl")))}catch(e){this._ok=false}}return this._ok},
+  load(){return this.libP||(this.libP=new Promise((res,rej)=>{const s=document.createElement("script");s.src="/dice/dice-box.js";
+    s.onload=()=>{const L=window["dice-box-threejs"];L?res(L):rej(new Error("dice"))};s.onerror=()=>rej(new Error("dice"));document.head.appendChild(s)}))},
+  get(){if(this.boxP)return this.boxP;
+    if(!this.el){this.el=document.createElement("div");this.el.id="dice3d";this.el.className=TV?"tv":meName==="*"?"tab":"ph";
+      this.el.setAttribute("aria-hidden","true");this.el.dataset.act="dice3dskip";document.body.appendChild(this.el)}
+    this.boxP=this.load().then(async L=>{const B=new L("#dice3d",{assetPath:"/dice/",sounds:false,shadows:true,light_intensity:.9,strength:1,
+      gravity_multiplier:TV?400:650,baseScale:TV?170:meName==="*"?140:130,theme_customColorset:diceColors("")});await B.initialize();this.box=B;return B});
+    this.boxP.catch(()=>{this._ok=false;this.boxP=null;this.libP=null});return this.boxP},
+  /* roll [sides, face] dice that land on those faces; resolves when they settle (or after 4.5 s) */
+  play(dice,who,place){const p=(async()=>{const B=await this.get(),col=diceColors(who),cs=JSON.stringify(col);
+      if(cs!==this.cs){this.cs=cs;await B.updateConfig({theme_customColorset:col})}
+      if(place){const r=place.getBoundingClientRect();this.el.style.left=r.left+"px";this.el.style.top=r.top+"px"}
+      const g=[];dice.forEach(([s,f])=>{let x=g.find(y=>y.s===s);if(!x)g.push(x={s,f:[]});x.f.push(f)});
+      clearTimeout(this.t);this.el.classList.add("on");
+      await Promise.race([B.roll(g.map(x=>x.f.length+"d"+x.s).join("+")+"@"+g.flatMap(x=>x.f).join(",")),new Promise(r=>setTimeout(r,4500))])})();
+    this.cur=p.catch(()=>{});return p},
+  hide(ms){clearTimeout(this.t);this.t=setTimeout(()=>{if(!this.el)return;this.el.classList.remove("on");
+    this.t=setTimeout(()=>{try{this.box&&this.box.clearDice()}catch(e){}},450)},ms||0)},
+  idle(){return this.cur||Promise.resolve()}};
+/* a phone's own roll, on this phone: 3D dice (tap to skip), the flat d20, or nothing; the result is already on screen under it */
+function myDice(dice,total,kind){const m=diceMode();if(m==="off"||MODE!=="player")return;
+  if(m==="3d"&&dice3dFits(dice)){Dice3D.play(dice,meName).then(()=>Dice3D.hide(900),()=>fxDie({kind,total},()=>{}));return}
+  fxDie({kind,total},()=>{})}
 
 const served=location.protocol.indexOf("http")===0;
 const path=location.pathname.replace(/\/+$/,"");
@@ -7154,7 +7221,14 @@ function renderDM(){
   freshIds.clear();markSel();renderSbDrawer();
   const at=$("#autoTimer");if(at&&document.activeElement!==at)at.checked=!!state.autoTimer;
   {const ca=$("#concAuto");if(ca)ca.checked=!!ls.get("concAuto",false)}
+  {const ds=$("#diceSet");if(ds)ds.innerHTML=diceSetHtml()}
 }
+/* 1.6: how rolls show on each screen; a player can still choose for their own phone */
+function diceSetHtml(){const v=diceViewAll();
+  return [["tv","TV"],["tab","Tablet"],["ph","Phones"]].map(([k,l])=>`<span>${l}</span><span class="seg3" role="group" aria-label="Dice on the ${
+    l.toLowerCase()}">${DICE_MODES.map(([m,ml])=>`<button type="button" data-act="diceview" data-k="${k}" data-v="${m}" aria-pressed="${v[k]===m}">${
+    ml}</button>`).join("")}</span>`).join("")+
+      `<small class="diceset-n">3D needs a browser with WebGL; without it the screen shows Light. Players can change it for their own phone.</small>`}
 /* ---------- DM tools: roll calls, battlefield, knowledge, hourglass, passives, quick add, shortcuts, export ---------- */
 let callSkip=new Set();   // players left out of the next roll call (everyone is in by default)
 const callTargets=()=>state.list.filter(c=>c.kind==="pc"&&!c.hidden&&!callSkip.has(c.id));
@@ -10326,23 +10400,25 @@ let shLast=null,shAll=false,shDraft=null,shStep=0,shPaste=null,shAdv="",shCrit=f
 const shAdvHtml=()=>`<div class="seg2 shadv" role="group" aria-label="Next roll">${[["dis","Disadvantage"],["","Normal"],["adv","Advantage"]].map(([k,l])=>
   `<button type="button" data-act="shadv" data-v="${k}" aria-pressed="${shAdv===k}">${l}</button>`).join("")}</div>`;
 /* 1.4: Bless (+1d4) and Bane (−1d4) on you go onto attack rolls and saving throws by themselves */
-function blessAdd(){const me=meChar();if(!me)return {n:0,t:""};const on=n=>state.effects.some(e=>(e.targets||[]).includes(me.id)&&
+function blessAdd(){const me=meChar();if(!me)return {n:0,t:"",d:[]};const on=n=>state.effects.some(e=>(e.targets||[]).includes(me.id)&&
   String(e.name).toLowerCase()===n);
-  let n=0,t="";if(on("bless")){const r=1+Math.floor(Math.random()*4);n+=r;t+=` +${r} Bless`}if(on("bane")){const r=1+Math.floor(Math.random()*4);n-=r;
-    t+=` −${r} Bane`}
-  return {n,t}}
+  let n=0,t="";const d=[];if(on("bless")){const r=1+Math.floor(Math.random()*4);n+=r;t+=` +${r} Bless`;d.push([4,r])}
+  if(on("bane")){const r=1+Math.floor(Math.random()*4);n-=r;t+=` −${r} Bane`;d.push([4,r])}
+  return {n,t,d}}   // d: the d4s, for the dice on the screens (1.6)
 const blessFor=label=>/\bsave\b|to hit|attack/i.test(label);
 function shRoll(label,bonus){
-  const bl=blessFor(label)?blessAdd():{n:0,t:""},adv=shAdv;shAdv="";
+  const bl=blessFor(label)?blessAdd():{n:0,t:"",d:[]},adv=shAdv;shAdv="";
   const a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20),d=adv==="adv"?Math.max(a,b):adv==="dis"?Math.min(a,b):a,ex=myExh(),
     tot=d+bonus-2*ex+bl.n,text=`${label}: d20 ${adv?`${adv==="adv"?"advantage":"disadvantage"} (${a}, ${b})`:`(${d})`} ${shS(bonus)}${bl.t}${ex?
       ` −${2*ex} exhaustion`:""}`;
   if(/to hit|attack/i.test(label))shCrit=d===20;   // a natural 20 on an attack: the next damage is a critical hit
-  shLast={label,tot,how:text,n:d===20?"n20":d===1?"n1":""};if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
+  const dd=(adv?[[20,a],[20,b]]:[[20,d]]).concat(bl.d),kind=d===20?"nat20":d===1?"nat1":"roll";
+  shLast={label,tot,how:text,n:d===20?"n20":d===1?"n1":""};if(dice.share)pSend({action:"roll",kind,text,total:tot,dice:dd});myDice(dd,tot,kind);
   try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1?[300]:[60])}catch(e){}return {d,tot,text}}
 function shDmg(label,expr){const crit=shCrit,r=sbDice(String(expr).split(" ")[0],crit);if(!r)return;shCrit=false;
   const text=`${label}${crit?" (critical)":""}: ${r.n}d${r.d} [${r.rolls.join(", ")}]${r.add?(r.add>0?" + ":" − ")+Math.abs(r.add):""}`;
-  shLast={label,tot:r.tot,how:text,n:""};if(dice.share)pSend({action:"roll",kind:"roll",text,total:r.tot})}
+  const dd=r.rolls.map(v=>[r.d,v]);shLast={label,tot:r.tot,how:text,n:""};if(dice.share)pSend({action:"roll",kind:"roll",text,total:r.tot,dice:dd});
+  myDice(dd,r.tot,"roll")}
 /* what a roll call asks for, in the sheet's terms: "Dexterity save DC 15" → Dex save +2 */
 function shAsk(text){const sh=shLocal();if(!sh)return null;const C=shCalc(sh),t=String(text||"").toLowerCase();
   const sk=SH_SK.find(([k])=>t.includes(k));if(sk)return {label:sk[1],b:C.sk[sk[0]]};
@@ -10824,6 +10900,9 @@ function renderPSheet(){
           " Light screen"}</button>
         <button class="btn" type="button" data-act="pturncard" aria-pressed="${pTurnCard()}">${pTurnCard()?"Your turn screen: on":
           "Your turn screen: off"}</button>
+        <div class="pdiceset"><b>Dice on this phone</b><div class="seg2" role="group" aria-label="Dice on this phone">${[["dm",
+          `As the DM set (${(DICE_MODES.find(x=>x[0]===diceViewAll().ph)||DICE_MODES[1])[1]})`]].concat(DICE_MODES).map(([k,l])=>
+          `<button type="button" data-act="pdiceview" data-v="${k}" aria-pressed="${ls.get("diceView","dm")===k}">${esc(l)}</button>`).join("")}</div></div>
         <button class="btn" type="button" data-act="psimple" aria-pressed="${pSimple()}">${pSimple()?"Show everything again":
           "Simple: just my HP"}<br><small style="font-weight:600;color:var(--muted)">${pSimple()?"Resources, spells, dice, conditions and the rest come back.":
           "Only your HP, and whatever the DM sends you. For players who keep the rest on paper."}</small></button></div>
@@ -11132,13 +11211,14 @@ const myExh=()=>{const me=meChar();return me&&(me.conds||[]).some(x=>(x.n||x)===
 function rollDeathSave(face){
   const me=meChar();if(!me||!me.down||isDead(me)||isStable(me))return;const real=face>=1&&face<=20,s0=shLocal(),adv=!real&&s0&&shCalc(s0).dsAdv,
     r1=1+Math.floor(Math.random()*20),r2=adv?1+Math.floor(Math.random()*20):r1,d=real?face:Math.max(r1,r2),ex=myExh(),
-    bl=real?{n:0,t:""}:blessAdd(),tot=d-
+    bl=real?{n:0,t:"",d:[]}:blessAdd(),tot=d-
     2*ex+bl.n,ds=Object.assign({s:0,f:0},me.ds);let msg;
   if(d===20){const hp=hpGet();if(hp.max){hp.cur=1;hpSet(hp)}pSend({action:"hpstate",bloodied:true,down:false});msg="Natural 20! You're back up with 1 HP"}
   else{if(d===1)ds.f=Math.min(3,ds.f+2);else if(tot>=10)ds.s=Math.min(3,ds.s+1);else ds.f=Math.min(3,ds.f+1);pSend({action:"ds",s:ds.s,f:ds.f});
     msg=d===1?"Natural 1: two failures":tot>=10?"Success":"Failure";if(ds.f>=3)msg+=" — you die";else if(ds.s>=3)msg+=" — you're stable"}
   const text=`Death save ${real?"real ":""}d20 ${adv?`advantage (${r1}, ${r2}) · Durable`:`(${d})`}${bl.t}${ex?` −${2*ex} exhaustion`:""}`;
-  if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
+  const dd=real?null:(adv?[[20,r1],[20,r2]]:[[20,d]]).concat(bl.d),kind=d===20?"nat20":d===1?"nat1":"roll";
+  if(dice.share)pSend(Object.assign({action:"roll",kind,text,total:tot},dd?{dice:dd}:{}));if(dd)myDice(dd,tot,kind);
   dsLast={d,tot,msg};try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1||tot<10?[300]:[80])}catch(e){}
   renderPSheet();
 }
@@ -11155,7 +11235,8 @@ function rollConcentration(adv){
     const mod=(String(typed).trim()===""&&sh?shCalc(sh).sv.con:Number(typed)||0),ex=myExh();
   const bl=blessAdd(),a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20),d=adv?Math.max(a,b):a,tot=d+mod-2*ex+bl.n,ok=tot>=pConc.dc;
   pConc.res={d,tot,ok,text:`d20${adv?` advantage (${a}, ${b})`:` (${d})`}${mod?(mod>0?" +":" ")+mod:""}${bl.t}${ex?` −${2*ex} exhaustion`:""}`};
-  if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text:"Concentration "+pConc.res.text,total:tot});
+  const dd=(adv?[[20,a],[20,b]]:[[20,d]]).concat(bl.d),kind=d===20?"nat20":d===1?"nat1":"roll";
+  if(dice.share)pSend({action:"roll",kind,text:"Concentration "+pConc.res.text,total:tot,dice:dd});myDice(dd,tot,kind);
   if(pConc.ask)pSend({action:"concans",ask:pConc.ask,ok,total:tot});
   else if(!ok&&me)pSend({action:"cond",cond:"Concentrating",on:false});
   try{navigator.vibrate&&navigator.vibrate(ok?[80]:[300])}catch(e){}renderPSheet();
@@ -11169,7 +11250,8 @@ function rollDice(){
     text=`${dice.count}d${dice.die}${rolls.length>1?" ("+rolls.join(", ")+")":""}${dice.mod?(dice.mod>0?" +":" ")+dice.mod:""}`}
   const ex=dice.die===20&&dice.count===1?myExh():0;if(ex)text+=` −${2*ex} exhaustion`;
   const total=kept+dice.mod-2*ex;dice.last={total,text,nat};
-  if(dice.share)pSend({action:"roll",kind:nat===20?"nat20":nat===1?"nat1":"roll",text,total});
+  const dd=rolls.map(v=>[dice.die,v]),kind=nat===20?"nat20":nat===1?"nat1":"roll";
+  if(dice.share)pSend({action:"roll",kind,text,total,dice:dd});myDice(dd,total,kind);
   if(nat&&navigator.vibrate)try{navigator.vibrate(nat===20?[60,40,60,40,200]:[300])}catch(e){}
   renderPSheet();
 }
@@ -11329,21 +11411,23 @@ function tvClockShow(k,zero){const L=(state.clocks||[]).filter(x=>!x.secret&&x.i
   momentShow("tvclk"+(zero?" zero":""),`<div class="mo-eb">⏳ Countdown</div><div class="mo-big">${esc(k.name)}</div>${tvRingSvg(k)}${L.length?
     `<div class="t2more">Also: ${L.map(x=>`${esc(x.name)} · ${x.n}`).join(" · ")}</div>`:""}`,zero?8000:5000)}
 // TV6: a shared roll on the TV: the die lands, the result is big, the round's other rolls on the side
-function tvDice(r){const old=$("#tvDice");if(old)old.remove();
+function tvDice(r,force){const old=$("#tvDice");if(old)old.remove();
+  const mode=force||diceMode(),dd=diceOf(r),d3=mode==="3d"&&dice3dFits(dd);   // 1.6: 3D dice, the flat d20 (light), or the result alone (off)
   const m=String(r.text||"").match(/d20\s*\((\d+)\)/),nat=r.kind==="nat20"?20:r.kind==="nat1"?1:m?+m[1]:null,face=nat!=null?nat:r.total!=null?r.total:"";
   const n20=nat===20,n1=nat===1,rd=state.turn?state.turn.round:0;
   pv.tvRolls=(pv.tvRolls||[]).filter(x=>x.rd===rd);
   const what=String(r.text||"").split(":")[0]||(n20||n1?"Natural "+nat:"Roll");
-  const el=document.createElement("div");el.id="tvDice";if(n20)el.className="n20";else if(n1)el.className="n1";
+  const el=document.createElement("div");el.id="tvDice";el.className=(n20?"n20":n1?"n1":"")+(d3?" d3 rolling":"")+(mode==="off"?" nodie":"");
   el.innerHTML=`<div class="t2rays"></div><div class="t2who"><span class="tveb">${rd?`Round ${rd} · `:""}${esc(r.by||
     "")}</span><span class="tvbig">${esc(what)}</span></div>
-    <div class="t2mid"><svg class="t2die" viewBox="0 0 100 100" role="img" aria-label="d20 showing ${esc(String(
+    <div class="t2mid">${d3?`<div class="t2dice"></div>`:mode==="off"?"":
+      `<svg class="t2die" viewBox="0 0 100 100" role="img" aria-label="d20 showing ${esc(String(
       face))}"><polygon points="50,3 91,26.5 91,73.5 50,97 9,73.5 9,26.5" fill="#2b2233" stroke="${n1?"#e08a7e":
       "#f2c97a"}" stroke-width="2.2" stroke-linejoin="round"/><polygon points="50,22 76,66 24,66" fill="#3a2d40" stroke="${n1?"#e08a7e":
       "#f2c97a"}" stroke-width="1.6" stroke-linejoin="round"/><path d="M50 3 L50 22 M91 26.5 L76 66 M9 26.5 L24 66 M50 97 L76 66 M50 97 L24 66 M91 73.5 L76 66 M9 73.5 L24 66 M91 26.5 L50 22 M9 26.5 L50 22" stroke="${
       n1?
       "#e08a7e":"#f2c97a"}" stroke-width="1.2" fill="none" opacity=".75"/><text x="50" y="56.5" text-anchor="middle" font-family="var(--tdisplay,var(--display))" font-weight="800" font-size="${
-      String(face).length>2?15:21}" fill="${n1?"#ffd0c8":"#ffe2a6"}">${esc(String(face))}</text></svg>
+      String(face).length>2?15:21}" fill="${n1?"#ffd0c8":"#ffe2a6"}">${esc(String(face))}</text></svg>`}
       ${n20?`<span class="t2head tvbig">Natural 20!</span>`:n1?`<span class="t2head tvbig">Natural 1</span>`:`<span class="t2head tvbig">${esc(String(r.total??
         face))}</span>`}
       ${r.text?`<span class="t2line">${esc(r.text)}${r.total!=null&&(n20||n1)?` = <b>${esc(String(r.total))}</b>`:""}</span>`:""}</div>
@@ -11351,7 +11435,11 @@ function tvDice(r){const old=$("#tvDice");if(old)old.remove();
       ""}"><span>${esc(x.by)} · ${esc(x.what)}</span><b>${esc(String(x.v))}</b></div>`).join("")}</div>`:""}`;
   document.body.appendChild(el);
   pv.tvRolls.push({rd,by:r.by||"",what,v:r.total??face,n1});
-  clearTimeout(tvDice.t);tvDice.t=setTimeout(()=>{el.classList.add("out");setTimeout(()=>el.remove(),650)},n20||n1?8000:4500)}
+  const out=()=>{clearTimeout(tvDice.t);tvDice.t=setTimeout(()=>{el.classList.add("out");if(d3)Dice3D.hide();
+    setTimeout(()=>el.remove(),650)},n20||n1?8000:4500)};
+  if(!d3)return out();
+  clearTimeout(tvDice.t);Dice3D.play(dd,r.by,el.querySelector(".t2dice")).then(()=>{if(!el.isConnected)return;el.classList.remove("rolling");
+    if(n20&&sfx("crit"))Scene.crit();out()},()=>{if(el.isConnected){pv.tvRolls.pop();tvDice(r,"light")}})}
 // TV15: the DM's own picture drifts and zooms slowly in Scene mode (not in Light mode or with reduced motion)
 function tvKenBurns(on){const b=$("#bgimg");if(!b)return;on=on&&b.classList.contains("on")&&!document.body.classList.contains("tvlite")&&!reduced;
   if(!on){if(tvKenBurns.t){clearInterval(tvKenBurns.t);tvKenBurns.t=null;b.style.transition="";b.style.scale="";b.style.translate=""}return}
@@ -11747,6 +11835,8 @@ function yourTurn(me){
   if((me.conds||[]).some(x=>(x.n||x)==="Burning"))setTimeout(()=>toast("You're Burning: take 1d4 fire damage",4000),900);
 }
 function surfaceEvents(first){
+  if(diceMode()==="3d"&&!Dice3D.boxP&&!Dice3D.tried){Dice3D.tried=true;setTimeout(()=>Dice3D.get().catch(()=>{}),first?1500:
+    0)}   // 1.6: load the 3D dice before the first roll
   // nat 20 / nat 1 / shared rolls
   const r=state.roll;
   if(first)rollSeen=r?r.id:null;
@@ -11754,8 +11844,12 @@ function surfaceEvents(first){
     // your own ordinary roll: the sheet or the toast you rolled from already shows it, so no second popup over what you do next
     // (it lingered six seconds over the next sheet and took its taps); nat 20 / nat 1 still celebrate
     const own=meName!=="*"&&r.kind==="roll"&&meChar()&&r.by===meChar().name;
-    if(!own&&Math.abs(dmNow()-r.at)<15000&&screenWants("dice")){if(!reduced&&meName==="*"&&!TV)fxDie(r,()=>showRoll(r));
-      else showRoll(r)}}   // the TV has its own die (TV6)
+    if(!own&&Math.abs(dmNow()-r.at)<15000&&screenWants("dice")){
+      if(meName==="*"&&!TV){const m=diceMode(),d=diceOf(r);   // 1.6: the tablet's dice: 3D, the flat d20, or straight to the result
+        if(m==="3d"&&dice3dFits(d))Dice3D.play(d,r.by).then(()=>{Dice3D.hide(1200);showRoll(r)},()=>fxDie(r,()=>showRoll(r)));
+        else if(m==="light")fxDie(r,()=>showRoll(r));else showRoll(r)}
+      else if(TV)showRoll(r);   // the TV has its own die (TV6)
+      else Dice3D.idle().then(()=>showRoll(r))}}   // a phone: your own nat 20 waits for your dice to land
   // a roll call: phones of the called players get a prompt and a buzz
   const me=meChar(),call=state.call;
   if(call&&call.id!==seenCall){seenCall=call.id;
@@ -11792,7 +11886,7 @@ function surfaceEvents(first){
   else if(t&&t.id!==timerSeen){timerSeen=t.id;if(me&&t.cid===me.id){try{navigator.vibrate&&navigator.vibrate([100,60,100,60,300])}catch(e){}}}
 }
 function showRoll(r){
-  if(TV){if(r.kind==="nat20"&&sfx("crit"))Scene.crit();tvDice(r);return}
+  if(TV){if(r.kind==="nat20"&&sfx("crit")&&!(diceMode()==="3d"&&dice3dFits(diceOf(r))))Scene.crit();tvDice(r);return}   // with 3D dice the crit waits for them
   const el=document.createElement("div");if(r.kind==="nat20"&&meName==="*"&&sfx("crit"))Scene.crit();
   if(r.kind==="nat20"){
     el.className="celebrate n20";
@@ -12579,11 +12673,16 @@ document.addEventListener("click",e=>{
     case "preactuse":{const el=$("#reactPing");if(el)el.remove();pSend({action:"tag",tag:"reaction",on:true});spView={n:t.dataset.n,s:t.dataset.s,from:"book"};
       pSheet="spell";renderPSheet();
       refGet("spell",spView.n,spView.s).then(d=>{if(spView&&spView.n===t.dataset.n){spView.d=d;renderPSheet()}});break}
+    case "diceview":{const k=t.dataset.k,v=t.dataset.v;if(!DICE_DEF[k]||!DICE_MODES.some(x=>x[0]===v))break;
+      state.diceView=Object.assign({},diceViewAll(),{[k]:v});commit();break}
+    case "pdiceview":{const v=t.dataset.v;if(v!=="dm"&&!DICE_MODES.some(x=>x[0]===v))break;ls.set("diceView",v);renderPSheet();
+      if(v==="3d"&&!Dice3D.ok())toast("This phone can't show 3D dice, so it shows Light");break}
+    case "dice3dskip": Dice3D.hide(0);break;
     case "preactno":{const el=$("#reactPing");if(el)el.remove();break}
     case "pgiftuse":{const me=meChar(),g=me&&(me.gifts||[]).find(x=>x.id===t.dataset.id);if(!g)break;
       const n=Number(g.die.slice(1)),r=1+Math.floor(Math.random()*n);
       pSend({action:"giftuse",gid:g.id,roll:r});toast(`${g.n}: ${g.die} → ${r}`,6000);
-        if(dice.share)pSend({action:"roll",kind:"roll",text:`${g.n} ${g.die}`,total:r});break}
+        if(dice.share)pSend({action:"roll",kind:"roll",text:`${g.n} ${g.die}`,total:r,dice:[[n,r]]});myDice([[n,r]],r,"roll");break}
     case "pgive":{const r=resGet()[Number(t.dataset.i)];if(!r||r.cur<1){toast("None left");
       break}giveDraft={i:Number(t.dataset.i),name:r.name,die:giveDie(r.name)};pSheet="give";renderPSheet();break}
     case "pgiveto":{const me=meChar(),L=resGet(),r=giveDraft&&L[giveDraft.i];if(!me||!r)break;
@@ -13017,7 +13116,8 @@ if(MODE==="player"){
             c.bloodied=a.bloodied;if(a.down!==!!c.down){c.down=a.down;c.ds={s:0,f:0}}
             if(a.dead&&a.down){c.down=true;c.ds={s:0,f:3};clogPush(`${c.name} dies (massive damage)`)}   // instant death: the damage was at least the max HP
             L(`${c.name}: ${a.dead?"dies outright (massive damage)":a.down?"0 HP":a.bloodied?"Bloodied":"healthy"}`,inv)}
-          else if(a.action==="roll"){state.roll={id:uid(),by:c.name,kind:a.kind,text:a.text,total:a.total,at:Date.now()};
+          else if(a.action==="roll"){state.roll=Object.assign({id:uid(),by:c.name,kind:a.kind,text:a.text,total:a.total,at:Date.now()},
+              Array.isArray(a.dice)?{dice:a.dice}:{});   // 1.6: the dice, for 3D dice on the screens
             (state.rollLog=state.rollLog||[]).unshift({id:state.roll.id,by:c.name,text:a.text,total:a.total,at:state.roll.at});   // E18 (1.4)
             if(state.rollLog.length>8)state.rollLog.length=8;
             if(!a.nat&&(a.kind==="nat20"||a.kind==="nat1"))natAdd(c.id,a.kind==="nat20"?20:1);

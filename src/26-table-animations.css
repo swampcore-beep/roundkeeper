@@ -55,3 +55,20 @@ body.shared:has(.intro,#moment,.celebrate,.rfi,.endscr) #player ol.plist{opacity
 body.shared:has(.fxround) #player ol.plist{opacity:.12;filter:blur(4px)}
 /* a roll notice gives way to a boss intro or another big moment */
 body.shared:has(.intro,#moment,.celebrate,.endscr) .rollbanner{visibility:hidden}
+/* 1.6: 3D dice. One box per screen, hidden until a roll; the TV's sits where the flat d20 was in the roll card */
+#dice3d{position:fixed;opacity:0;pointer-events:none;transition:opacity .4s;z-index:38}
+#dice3d.on{opacity:1}
+#dice3d canvas{display:block}
+#dice3d.tv{width:64vw;height:48vh;left:18vw;top:16vh;z-index:41}
+#dice3d.tab{width:64vw;height:50vh;left:18vw;top:20vh}
+#dice3d.ph{width:100vw;height:62vh;left:0;top:14vh;z-index:90;border-radius:24px;
+  background:radial-gradient(ellipse at 50% 55%,rgba(12,10,16,.62),rgba(12,10,16,0) 70%)}
+#dice3d.ph.on{pointer-events:auto}
+#tvDice .t2dice{width:64vw;height:48vh}
+#tvDice.d3 .t2head,#tvDice.d3 .t2line,#tvDice.d3 .t2rays{transition:opacity .45s}
+#tvDice.rolling .t2head,#tvDice.rolling .t2line,#tvDice.rolling .t2rays{opacity:0}
+#tvDice.nodie .t2mid{margin-top:0}
+body:has(#moment:not(.out),.intro,.celebrate) #dice3d.tv{opacity:0}
+.diceset{margin:2px 0 6px}.diceset-n{grid-column:1/-1;color:var(--muted);font-size:.78rem;line-height:1.35}
+.pdiceset{display:grid;gap:8px;padding:10px 0 4px}.pdiceset .seg2 button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);
+  border-color:var(--accent)}

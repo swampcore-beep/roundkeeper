@@ -136,6 +136,8 @@ function yourTurn(me){
   if((me.conds||[]).some(x=>(x.n||x)==="Burning"))setTimeout(()=>toast("You're Burning: take 1d4 fire damage",4000),900);
 }
 function surfaceEvents(first){
+  if(diceMode()==="3d"&&!Dice3D.boxP&&!Dice3D.tried){Dice3D.tried=true;setTimeout(()=>Dice3D.get().catch(()=>{}),first?1500:
+    0)}   // 1.6: load the 3D dice before the first roll
   // nat 20 / nat 1 / shared rolls
   const r=state.roll;
   if(first)rollSeen=r?r.id:null;
@@ -143,8 +145,12 @@ function surfaceEvents(first){
     // your own ordinary roll: the sheet or the toast you rolled from already shows it, so no second popup over what you do next
     // (it lingered six seconds over the next sheet and took its taps); nat 20 / nat 1 still celebrate
     const own=meName!=="*"&&r.kind==="roll"&&meChar()&&r.by===meChar().name;
-    if(!own&&Math.abs(dmNow()-r.at)<15000&&screenWants("dice")){if(!reduced&&meName==="*"&&!TV)fxDie(r,()=>showRoll(r));
-      else showRoll(r)}}   // the TV has its own die (TV6)
+    if(!own&&Math.abs(dmNow()-r.at)<15000&&screenWants("dice")){
+      if(meName==="*"&&!TV){const m=diceMode(),d=diceOf(r);   // 1.6: the tablet's dice: 3D, the flat d20, or straight to the result
+        if(m==="3d"&&dice3dFits(d))Dice3D.play(d,r.by).then(()=>{Dice3D.hide(1200);showRoll(r)},()=>fxDie(r,()=>showRoll(r)));
+        else if(m==="light")fxDie(r,()=>showRoll(r));else showRoll(r)}
+      else if(TV)showRoll(r);   // the TV has its own die (TV6)
+      else Dice3D.idle().then(()=>showRoll(r))}}   // a phone: your own nat 20 waits for your dice to land
   // a roll call: phones of the called players get a prompt and a buzz
   const me=meChar(),call=state.call;
   if(call&&call.id!==seenCall){seenCall=call.id;
@@ -181,7 +187,7 @@ function surfaceEvents(first){
   else if(t&&t.id!==timerSeen){timerSeen=t.id;if(me&&t.cid===me.id){try{navigator.vibrate&&navigator.vibrate([100,60,100,60,300])}catch(e){}}}
 }
 function showRoll(r){
-  if(TV){if(r.kind==="nat20"&&sfx("crit"))Scene.crit();tvDice(r);return}
+  if(TV){if(r.kind==="nat20"&&sfx("crit")&&!(diceMode()==="3d"&&dice3dFits(diceOf(r))))Scene.crit();tvDice(r);return}   // with 3D dice the crit waits for them
   const el=document.createElement("div");if(r.kind==="nat20"&&meName==="*"&&sfx("crit"))Scene.crit();
   if(r.kind==="nat20"){
     el.className="celebrate n20";

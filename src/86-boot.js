@@ -107,7 +107,8 @@ if(MODE==="player"){
             c.bloodied=a.bloodied;if(a.down!==!!c.down){c.down=a.down;c.ds={s:0,f:0}}
             if(a.dead&&a.down){c.down=true;c.ds={s:0,f:3};clogPush(`${c.name} dies (massive damage)`)}   // instant death: the damage was at least the max HP
             L(`${c.name}: ${a.dead?"dies outright (massive damage)":a.down?"0 HP":a.bloodied?"Bloodied":"healthy"}`,inv)}
-          else if(a.action==="roll"){state.roll={id:uid(),by:c.name,kind:a.kind,text:a.text,total:a.total,at:Date.now()};
+          else if(a.action==="roll"){state.roll=Object.assign({id:uid(),by:c.name,kind:a.kind,text:a.text,total:a.total,at:Date.now()},
+              Array.isArray(a.dice)?{dice:a.dice}:{});   // 1.6: the dice, for 3D dice on the screens
             (state.rollLog=state.rollLog||[]).unshift({id:state.roll.id,by:c.name,text:a.text,total:a.total,at:state.roll.at});   // E18 (1.4)
             if(state.rollLog.length>8)state.rollLog.length=8;
             if(!a.nat&&(a.kind==="nat20"||a.kind==="nat1"))natAdd(c.id,a.kind==="nat20"?20:1);

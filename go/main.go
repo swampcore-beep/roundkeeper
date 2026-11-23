@@ -496,6 +496,50 @@ func lanIPs() []string {
 }
 
 // publicView: what players get. Hidden combatants, monster HP, the party and encounter lists stay on the laptop.
+// rollDice keeps a shared roll's dice when they make sense: up to 30 of them, each [sides, face] with a real die
+// (d4, d6, d8, d10, d12, d20, d100) and a face it can show. Anything else drops the whole list.
+func rollDice(v any) []any {
+	l, ok := v.([]any)
+	if !ok || len(l) == 0 || len(l) > 30 {
+		return nil
+	}
+	out := []any{}
+	for _, it := range l {
+		p, ok := it.([]any)
+		if !ok || len(p) != 2 {
+			return nil
+		}
+		s, ok1 := whole(p[0])
+		f, ok2 := whole(p[1])
+		if !ok1 || !ok2 || !(s == 4 || s == 6 || s == 8 || s == 10 || s == 12 || s == 20 || s == 100) || f < 1 || f > s {
+			return nil
+		}
+		out = append(out, []any{s, f})
+	}
+	return out
+}
+
+// whole reads a JSON number that is a whole number.
+func whole(v any) (int, bool) {
+	var f float64
+	switch n := v.(type) {
+	case json.Number:
+		x, err := n.Float64()
+		if err != nil {
+			return 0, false
+		}
+		f = x
+	case float64:
+		f = n
+	default:
+		return 0, false
+	}
+	if f != float64(int(f)) {
+		return 0, false
+	}
+	return int(f), true
+}
+
 func publicView(st map[string]any) map[string]any {
 	if st == nil {
 		return nil
@@ -672,6 +716,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			ct = "text/css; charset=utf-8"
 		}
 		cached(w, b, ct)
+	case path == "/dice/dice-box.js": // 1.6: the 3D dice (three.js and cannon-es inside), loaded only by a screen set to 3D
+		b, err := asset("dice/dice-box.js")
+		if err != nil {
+			reply(w, 404, []byte("{}"), "")
+			return
+		}
+		cached(w, b, "text/javascript; charset=utf-8")
 	case strings.HasPrefix(path, "/bg/"):
 		name := path[4:]
 		if !bgName.MatchString(name) {
@@ -1249,6 +1300,9 @@ func parseAction(r *http.Request) (act map[string]any, ok bool) {
 			total = v
 		}
 		act["kind"], act["text"], act["total"] = k, cut(text, 40), num(total, -50, 999)
+		if d := rollDice(data["dice"]); d != nil { // 1.6: each die and the face it shows, for the 3D dice on the screens
+			act["dice"] = d
+		}
 	case "answer":
 		call := ""
 		if v, has := data["call"]; has {

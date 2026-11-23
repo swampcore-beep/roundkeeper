@@ -11,6 +11,7 @@ A free, offline combat tracker for in-person 5e (2024 rules). The DM runs it on 
 | `go/main.go`, `go/fivetools.go` | The server, built into `Roundkeeper.exe` and the Mac and Linux programs (the Python server was removed in 1.2); `go/open_windows.go` / `go/open_other.go` open the browser |
 | `go/winres/winres.json` | Icon, version, publisher and manifest of `Roundkeeper.exe`; the release makes `go/rsrc_windows_amd64.syso` from it with go-winres (the committed one says 0.0.0) |
 | `srd/srd-5.2.1.json` | The built-in SRD (made by `tools/srd_from_open5e.py`) |
+| `dice/dice-box.js` | The 3D dice (@3d-dice/dice-box-threejs 0.0.12 with three.js and cannon-es, MIT, unchanged; see `THIRD-PARTY-NOTICES.txt`), served as `/dice/dice-box.js` and loaded only by a screen set to 3D |
 | `media/` | README pictures and GIFs (regenerate with `dev/media/`) |
 | `dev/` | Test servers, test suites, media scripts: see `dev/README.md` |
 | `.github/workflows/release.yml` | A `v*` tag builds the Windows exe, the Mac program (universal, joined by `tools/makefat.py`), and the Linux programs, and attaches them to the release |

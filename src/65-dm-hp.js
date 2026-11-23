@@ -401,4 +401,11 @@ function renderDM(){
   freshIds.clear();markSel();renderSbDrawer();
   const at=$("#autoTimer");if(at&&document.activeElement!==at)at.checked=!!state.autoTimer;
   {const ca=$("#concAuto");if(ca)ca.checked=!!ls.get("concAuto",false)}
+  {const ds=$("#diceSet");if(ds)ds.innerHTML=diceSetHtml()}
 }
+/* 1.6: how rolls show on each screen; a player can still choose for their own phone */
+function diceSetHtml(){const v=diceViewAll();
+  return [["tv","TV"],["tab","Tablet"],["ph","Phones"]].map(([k,l])=>`<span>${l}</span><span class="seg3" role="group" aria-label="Dice on the ${
+    l.toLowerCase()}">${DICE_MODES.map(([m,ml])=>`<button type="button" data-act="diceview" data-k="${k}" data-v="${m}" aria-pressed="${v[k]===m}">${
+    ml}</button>`).join("")}</span>`).join("")+
+      `<small class="diceset-n">3D needs a browser with WebGL; without it the screen shows Light. Players can change it for their own phone.</small>`}

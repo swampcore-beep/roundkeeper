@@ -77,21 +77,23 @@ function tvClockShow(k,zero){const L=(state.clocks||[]).filter(x=>!x.secret&&x.i
   momentShow("tvclk"+(zero?" zero":""),`<div class="mo-eb">⏳ Countdown</div><div class="mo-big">${esc(k.name)}</div>${tvRingSvg(k)}${L.length?
     `<div class="t2more">Also: ${L.map(x=>`${esc(x.name)} · ${x.n}`).join(" · ")}</div>`:""}`,zero?8000:5000)}
 // TV6: a shared roll on the TV: the die lands, the result is big, the round's other rolls on the side
-function tvDice(r){const old=$("#tvDice");if(old)old.remove();
+function tvDice(r,force){const old=$("#tvDice");if(old)old.remove();
+  const mode=force||diceMode(),dd=diceOf(r),d3=mode==="3d"&&dice3dFits(dd);   // 1.6: 3D dice, the flat d20 (light), or the result alone (off)
   const m=String(r.text||"").match(/d20\s*\((\d+)\)/),nat=r.kind==="nat20"?20:r.kind==="nat1"?1:m?+m[1]:null,face=nat!=null?nat:r.total!=null?r.total:"";
   const n20=nat===20,n1=nat===1,rd=state.turn?state.turn.round:0;
   pv.tvRolls=(pv.tvRolls||[]).filter(x=>x.rd===rd);
   const what=String(r.text||"").split(":")[0]||(n20||n1?"Natural "+nat:"Roll");
-  const el=document.createElement("div");el.id="tvDice";if(n20)el.className="n20";else if(n1)el.className="n1";
+  const el=document.createElement("div");el.id="tvDice";el.className=(n20?"n20":n1?"n1":"")+(d3?" d3 rolling":"")+(mode==="off"?" nodie":"");
   el.innerHTML=`<div class="t2rays"></div><div class="t2who"><span class="tveb">${rd?`Round ${rd} · `:""}${esc(r.by||
     "")}</span><span class="tvbig">${esc(what)}</span></div>
-    <div class="t2mid"><svg class="t2die" viewBox="0 0 100 100" role="img" aria-label="d20 showing ${esc(String(
+    <div class="t2mid">${d3?`<div class="t2dice"></div>`:mode==="off"?"":
+      `<svg class="t2die" viewBox="0 0 100 100" role="img" aria-label="d20 showing ${esc(String(
       face))}"><polygon points="50,3 91,26.5 91,73.5 50,97 9,73.5 9,26.5" fill="#2b2233" stroke="${n1?"#e08a7e":
       "#f2c97a"}" stroke-width="2.2" stroke-linejoin="round"/><polygon points="50,22 76,66 24,66" fill="#3a2d40" stroke="${n1?"#e08a7e":
       "#f2c97a"}" stroke-width="1.6" stroke-linejoin="round"/><path d="M50 3 L50 22 M91 26.5 L76 66 M9 26.5 L24 66 M50 97 L76 66 M50 97 L24 66 M91 73.5 L76 66 M9 73.5 L24 66 M91 26.5 L50 22 M9 26.5 L50 22" stroke="${
       n1?
       "#e08a7e":"#f2c97a"}" stroke-width="1.2" fill="none" opacity=".75"/><text x="50" y="56.5" text-anchor="middle" font-family="var(--tdisplay,var(--display))" font-weight="800" font-size="${
-      String(face).length>2?15:21}" fill="${n1?"#ffd0c8":"#ffe2a6"}">${esc(String(face))}</text></svg>
+      String(face).length>2?15:21}" fill="${n1?"#ffd0c8":"#ffe2a6"}">${esc(String(face))}</text></svg>`}
       ${n20?`<span class="t2head tvbig">Natural 20!</span>`:n1?`<span class="t2head tvbig">Natural 1</span>`:`<span class="t2head tvbig">${esc(String(r.total??
         face))}</span>`}
       ${r.text?`<span class="t2line">${esc(r.text)}${r.total!=null&&(n20||n1)?` = <b>${esc(String(r.total))}</b>`:""}</span>`:""}</div>
@@ -99,7 +101,11 @@ function tvDice(r){const old=$("#tvDice");if(old)old.remove();
       ""}"><span>${esc(x.by)} · ${esc(x.what)}</span><b>${esc(String(x.v))}</b></div>`).join("")}</div>`:""}`;
   document.body.appendChild(el);
   pv.tvRolls.push({rd,by:r.by||"",what,v:r.total??face,n1});
-  clearTimeout(tvDice.t);tvDice.t=setTimeout(()=>{el.classList.add("out");setTimeout(()=>el.remove(),650)},n20||n1?8000:4500)}
+  const out=()=>{clearTimeout(tvDice.t);tvDice.t=setTimeout(()=>{el.classList.add("out");if(d3)Dice3D.hide();
+    setTimeout(()=>el.remove(),650)},n20||n1?8000:4500)};
+  if(!d3)return out();
+  clearTimeout(tvDice.t);Dice3D.play(dd,r.by,el.querySelector(".t2dice")).then(()=>{if(!el.isConnected)return;el.classList.remove("rolling");
+    if(n20&&sfx("crit"))Scene.crit();out()},()=>{if(el.isConnected){pv.tvRolls.pop();tvDice(r,"light")}})}
 // TV15: the DM's own picture drifts and zooms slowly in Scene mode (not in Light mode or with reduced motion)
 function tvKenBurns(on){const b=$("#bgimg");if(!b)return;on=on&&b.classList.contains("on")&&!document.body.classList.contains("tvlite")&&!reduced;
   if(!on){if(tvKenBurns.t){clearInterval(tvKenBurns.t);tvKenBurns.t=null;b.style.transition="";b.style.scale="";b.style.translate=""}return}

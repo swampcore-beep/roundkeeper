@@ -20,8 +20,8 @@ if [ "$data" = data ]; then
   mkdir -p "$SRV/5etools"; for f in "$RK_5ETOOLS"/*; do ln -s "$f" "$SRV/5etools/"; done   # links per entry, so tests never write into your folder
 fi
 B=$W/go; mkdir -p "$B/assets"
-if [ ! -x "$B/ti-linux" ] || [ -n "$(find go initiative.html srd -newer "$B/ti-linux" -print -quit)" ]; then
-  cp go/*.go go/go.mod "$B/" && cp initiative.html icon-192.png icon-512.png srd/srd-5.2.1.json "$B/assets/" && rm -rf "$B/assets/fonts" && cp -r fonts "$B/assets/fonts"
+if [ ! -x "$B/ti-linux" ] || [ -n "$(find go initiative.html srd dice -newer "$B/ti-linux" -print -quit)" ]; then
+  cp go/*.go go/go.mod "$B/" && cp initiative.html icon-192.png icon-512.png srd/srd-5.2.1.json "$B/assets/" && rm -rf "$B/assets/fonts" "$B/assets/dice" && cp -r fonts "$B/assets/fonts" && cp -r dice "$B/assets/dice"
   (cd "$B" && go build -o ti-linux .) || { echo "serve: go build failed"; exit 1; }
 fi
 (cd "$SRV" && ROUNDKEEPER_DIR="$SRV" ROUNDKEEPER_NO_BROWSER=1 setsid nohup "$B/ti-linux" > "$SRV/log.txt" 2>&1 &)

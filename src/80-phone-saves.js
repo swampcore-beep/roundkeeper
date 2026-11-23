@@ -2,13 +2,14 @@
 function rollDeathSave(face){
   const me=meChar();if(!me||!me.down||isDead(me)||isStable(me))return;const real=face>=1&&face<=20,s0=shLocal(),adv=!real&&s0&&shCalc(s0).dsAdv,
     r1=1+Math.floor(Math.random()*20),r2=adv?1+Math.floor(Math.random()*20):r1,d=real?face:Math.max(r1,r2),ex=myExh(),
-    bl=real?{n:0,t:""}:blessAdd(),tot=d-
+    bl=real?{n:0,t:"",d:[]}:blessAdd(),tot=d-
     2*ex+bl.n,ds=Object.assign({s:0,f:0},me.ds);let msg;
   if(d===20){const hp=hpGet();if(hp.max){hp.cur=1;hpSet(hp)}pSend({action:"hpstate",bloodied:true,down:false});msg="Natural 20! You're back up with 1 HP"}
   else{if(d===1)ds.f=Math.min(3,ds.f+2);else if(tot>=10)ds.s=Math.min(3,ds.s+1);else ds.f=Math.min(3,ds.f+1);pSend({action:"ds",s:ds.s,f:ds.f});
     msg=d===1?"Natural 1: two failures":tot>=10?"Success":"Failure";if(ds.f>=3)msg+=" — you die";else if(ds.s>=3)msg+=" — you're stable"}
   const text=`Death save ${real?"real ":""}d20 ${adv?`advantage (${r1}, ${r2}) · Durable`:`(${d})`}${bl.t}${ex?` −${2*ex} exhaustion`:""}`;
-  if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
+  const dd=real?null:(adv?[[20,r1],[20,r2]]:[[20,d]]).concat(bl.d),kind=d===20?"nat20":d===1?"nat1":"roll";
+  if(dice.share)pSend(Object.assign({action:"roll",kind,text,total:tot},dd?{dice:dd}:{}));if(dd)myDice(dd,tot,kind);
   dsLast={d,tot,msg};try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1||tot<10?[300]:[80])}catch(e){}
   renderPSheet();
 }
@@ -25,7 +26,8 @@ function rollConcentration(adv){
     const mod=(String(typed).trim()===""&&sh?shCalc(sh).sv.con:Number(typed)||0),ex=myExh();
   const bl=blessAdd(),a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20),d=adv?Math.max(a,b):a,tot=d+mod-2*ex+bl.n,ok=tot>=pConc.dc;
   pConc.res={d,tot,ok,text:`d20${adv?` advantage (${a}, ${b})`:` (${d})`}${mod?(mod>0?" +":" ")+mod:""}${bl.t}${ex?` −${2*ex} exhaustion`:""}`};
-  if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text:"Concentration "+pConc.res.text,total:tot});
+  const dd=(adv?[[20,a],[20,b]]:[[20,d]]).concat(bl.d),kind=d===20?"nat20":d===1?"nat1":"roll";
+  if(dice.share)pSend({action:"roll",kind,text:"Concentration "+pConc.res.text,total:tot,dice:dd});myDice(dd,tot,kind);
   if(pConc.ask)pSend({action:"concans",ask:pConc.ask,ok,total:tot});
   else if(!ok&&me)pSend({action:"cond",cond:"Concentrating",on:false});
   try{navigator.vibrate&&navigator.vibrate(ok?[80]:[300])}catch(e){}renderPSheet();
@@ -39,7 +41,8 @@ function rollDice(){
     text=`${dice.count}d${dice.die}${rolls.length>1?" ("+rolls.join(", ")+")":""}${dice.mod?(dice.mod>0?" +":" ")+dice.mod:""}`}
   const ex=dice.die===20&&dice.count===1?myExh():0;if(ex)text+=` −${2*ex} exhaustion`;
   const total=kept+dice.mod-2*ex;dice.last={total,text,nat};
-  if(dice.share)pSend({action:"roll",kind:nat===20?"nat20":nat===1?"nat1":"roll",text,total});
+  const dd=rolls.map(v=>[dice.die,v]),kind=nat===20?"nat20":nat===1?"nat1":"roll";
+  if(dice.share)pSend({action:"roll",kind,text,total,dice:dd});myDice(dd,total,kind);
   if(nat&&navigator.vibrate)try{navigator.vibrate(nat===20?[60,40,60,40,200]:[300])}catch(e){}
   renderPSheet();
 }
