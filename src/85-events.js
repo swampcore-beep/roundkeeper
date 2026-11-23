@@ -490,11 +490,16 @@ document.addEventListener("click",e=>{
     case "preactuse":{const el=$("#reactPing");if(el)el.remove();pSend({action:"tag",tag:"reaction",on:true});spView={n:t.dataset.n,s:t.dataset.s,from:"book"};
       pSheet="spell";renderPSheet();
       refGet("spell",spView.n,spView.s).then(d=>{if(spView&&spView.n===t.dataset.n){spView.d=d;renderPSheet()}});break}
+    case "diceview":{const k=t.dataset.k,v=t.dataset.v;if(!DICE_DEF[k]||!DICE_MODES.some(x=>x[0]===v))break;
+      state.diceView=Object.assign({},diceViewAll(),{[k]:v});commit();break}
+    case "pdiceview":{const v=t.dataset.v;if(v!=="dm"&&!DICE_MODES.some(x=>x[0]===v))break;ls.set("diceView",v);renderPSheet();
+      if(v==="3d"&&!Dice3D.ok())toast("This phone can't show 3D dice, so it shows Light");break}
+    case "dice3dskip": Dice3D.hide(0);break;
     case "preactno":{const el=$("#reactPing");if(el)el.remove();break}
     case "pgiftuse":{const me=meChar(),g=me&&(me.gifts||[]).find(x=>x.id===t.dataset.id);if(!g)break;
       const n=Number(g.die.slice(1)),r=1+Math.floor(Math.random()*n);
       pSend({action:"giftuse",gid:g.id,roll:r});toast(`${g.n}: ${g.die} → ${r}`,6000);
-        if(dice.share)pSend({action:"roll",kind:"roll",text:`${g.n} ${g.die}`,total:r});break}
+        if(dice.share)pSend({action:"roll",kind:"roll",text:`${g.n} ${g.die}`,total:r,dice:[[n,r]]});myDice([[n,r]],r,"roll");break}
     case "pgive":{const r=resGet()[Number(t.dataset.i)];if(!r||r.cur<1){toast("None left");
       break}giveDraft={i:Number(t.dataset.i),name:r.name,die:giveDie(r.name)};pSheet="give";renderPSheet();break}
     case "pgiveto":{const me=meChar(),L=resGet(),r=giveDraft&&L[giveDraft.i];if(!me||!r)break;

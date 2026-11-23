@@ -136,6 +136,54 @@ function fxDie(r,then){
       duration:380,easing:"ease-out"});
       setTimeout(()=>{el.animate([{opacity:1},{opacity:0}],{duration:300,fill:"forwards"}).onfinish=()=>el.remove();then()},520)};
 }
+/* 1.6: how dice show on each screen: "3d" (3D dice that land on the rolled faces), "light" (the flat d20) or "off" (the result only).
+   The DM picks for the TV, the tablet and the phones (state.diceView); a player can pick for their own phone (ls "diceView"), and that wins there.
+   3D falls back to light without WebGL, in the TV's Light mode or when the library can't load; reduced motion means off. */
+const DICE_DEF={tv:"3d",tab:"light",ph:"light"},DICE_MODES=[["3d","3D"],["light","Light"],["off","Off"]];
+const diceViewAll=()=>Object.assign({},DICE_DEF,state.diceView||{});
+function diceSet(){const v=diceViewAll();if(TV)return v.tv;if(meName==="*")return v.tab;const o=ls.get("diceView","dm");return o==="dm"?v.ph:o}
+function diceMode(){let m=diceSet();if(!["3d","light","off"].includes(m))m="light";if(reduced)return "off";
+  if(m==="3d"&&((TV&&document.body.classList.contains("tvlite"))||!Dice3D.ok()))m="light";return m}
+/* the dice of a shared roll as [sides, face]; real dice at the table only send a nat 20 or nat 1, shown as one d20 */
+function diceOf(r){const d=Array.isArray(r.dice)?r.dice.filter(x=>Array.isArray(x)&&x.length===2):[];
+  if(d.length)return d;if(r.kind==="nat20")return [[20,20]];if(r.kind==="nat1")return [[20,1]];return null}
+const dice3dFits=d=>!!d&&d.length>0&&d.length<=20&&d.every(([s])=>[4,6,8,10,12,20].includes(s));
+/* the dice in the roller's class colour (a player), else the table's accent; the numbers stay light on a dark body */
+function diceColors(who){const c=who?state.list.find(x=>x.name===who):null,fk=c&&c.kind==="pc"?frameKey(c):"";let col="";
+  if(fk){const t=document.createElement("i");t.className="fr-"+fk;t.hidden=true;document.body.appendChild(t);
+    col=getComputedStyle(t).getPropertyValue("--fc").trim();t.remove()}
+  if(!col)col=getComputedStyle(document.body).getPropertyValue("--accent").trim()||"#e3a54a";
+  const x=document.createElement("canvas").getContext("2d");x.fillStyle="#e3a54a";x.fillStyle=col;const h=String(x.fillStyle);
+  const rgb=/^#[0-9a-f]{6}$/i.test(h)?[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)):[227,165,74],
+    mix=(a,b,k)=>"#"+a.map((v,i)=>Math.round(v*k+b[i]*(1-k)).toString(16).padStart(2,"0")).join("");
+  return {name:"rk",background:mix(rgb,[26,22,32],.42),foreground:mix(rgb,[255,246,228],.18),outline:mix(rgb,[255,240,210],.7),texture:"none",
+    material:"plastic"}}
+const Dice3D={box:null,boxP:null,libP:null,el:null,cs:"",cur:null,t:0,_ok:null,
+  ok(){if(this._ok==null){try{const c=document.createElement("canvas");this._ok=!!(window.WebGLRenderingContext&&(c.getContext("webgl")||
+    c.getContext("experimental-webgl")))}catch(e){this._ok=false}}return this._ok},
+  load(){return this.libP||(this.libP=new Promise((res,rej)=>{const s=document.createElement("script");s.src="/dice/dice-box.js";
+    s.onload=()=>{const L=window["dice-box-threejs"];L?res(L):rej(new Error("dice"))};s.onerror=()=>rej(new Error("dice"));document.head.appendChild(s)}))},
+  get(){if(this.boxP)return this.boxP;
+    if(!this.el){this.el=document.createElement("div");this.el.id="dice3d";this.el.className=TV?"tv":meName==="*"?"tab":"ph";
+      this.el.setAttribute("aria-hidden","true");this.el.dataset.act="dice3dskip";document.body.appendChild(this.el)}
+    this.boxP=this.load().then(async L=>{const B=new L("#dice3d",{assetPath:"/dice/",sounds:false,shadows:true,light_intensity:.9,strength:1,
+      gravity_multiplier:TV?400:650,baseScale:TV?170:meName==="*"?140:130,theme_customColorset:diceColors("")});await B.initialize();this.box=B;return B});
+    this.boxP.catch(()=>{this._ok=false;this.boxP=null;this.libP=null});return this.boxP},
+  /* roll [sides, face] dice that land on those faces; resolves when they settle (or after 4.5 s) */
+  play(dice,who,place){const p=(async()=>{const B=await this.get(),col=diceColors(who),cs=JSON.stringify(col);
+      if(cs!==this.cs){this.cs=cs;await B.updateConfig({theme_customColorset:col})}
+      if(place){const r=place.getBoundingClientRect();this.el.style.left=r.left+"px";this.el.style.top=r.top+"px"}
+      const g=[];dice.forEach(([s,f])=>{let x=g.find(y=>y.s===s);if(!x)g.push(x={s,f:[]});x.f.push(f)});
+      clearTimeout(this.t);this.el.classList.add("on");
+      await Promise.race([B.roll(g.map(x=>x.f.length+"d"+x.s).join("+")+"@"+g.flatMap(x=>x.f).join(",")),new Promise(r=>setTimeout(r,4500))])})();
+    this.cur=p.catch(()=>{});return p},
+  hide(ms){clearTimeout(this.t);this.t=setTimeout(()=>{if(!this.el)return;this.el.classList.remove("on");
+    this.t=setTimeout(()=>{try{this.box&&this.box.clearDice()}catch(e){}},450)},ms||0)},
+  idle(){return this.cur||Promise.resolve()}};
+/* a phone's own roll, on this phone: 3D dice (tap to skip), the flat d20, or nothing; the result is already on screen under it */
+function myDice(dice,total,kind){const m=diceMode();if(m==="off"||MODE!=="player")return;
+  if(m==="3d"&&dice3dFits(dice)){Dice3D.play(dice,meName).then(()=>Dice3D.hide(900),()=>fxDie({kind,total},()=>{}));return}
+  fxDie({kind,total},()=>{})}
 
 const served=location.protocol.indexOf("http")===0;
 const path=location.pathname.replace(/\/+$/,"");

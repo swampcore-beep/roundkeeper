@@ -168,23 +168,25 @@ let shLast=null,shAll=false,shDraft=null,shStep=0,shPaste=null,shAdv="",shCrit=f
 const shAdvHtml=()=>`<div class="seg2 shadv" role="group" aria-label="Next roll">${[["dis","Disadvantage"],["","Normal"],["adv","Advantage"]].map(([k,l])=>
   `<button type="button" data-act="shadv" data-v="${k}" aria-pressed="${shAdv===k}">${l}</button>`).join("")}</div>`;
 /* 1.4: Bless (+1d4) and Bane (−1d4) on you go onto attack rolls and saving throws by themselves */
-function blessAdd(){const me=meChar();if(!me)return {n:0,t:""};const on=n=>state.effects.some(e=>(e.targets||[]).includes(me.id)&&
+function blessAdd(){const me=meChar();if(!me)return {n:0,t:"",d:[]};const on=n=>state.effects.some(e=>(e.targets||[]).includes(me.id)&&
   String(e.name).toLowerCase()===n);
-  let n=0,t="";if(on("bless")){const r=1+Math.floor(Math.random()*4);n+=r;t+=` +${r} Bless`}if(on("bane")){const r=1+Math.floor(Math.random()*4);n-=r;
-    t+=` −${r} Bane`}
-  return {n,t}}
+  let n=0,t="";const d=[];if(on("bless")){const r=1+Math.floor(Math.random()*4);n+=r;t+=` +${r} Bless`;d.push([4,r])}
+  if(on("bane")){const r=1+Math.floor(Math.random()*4);n-=r;t+=` −${r} Bane`;d.push([4,r])}
+  return {n,t,d}}   // d: the d4s, for the dice on the screens (1.6)
 const blessFor=label=>/\bsave\b|to hit|attack/i.test(label);
 function shRoll(label,bonus){
-  const bl=blessFor(label)?blessAdd():{n:0,t:""},adv=shAdv;shAdv="";
+  const bl=blessFor(label)?blessAdd():{n:0,t:"",d:[]},adv=shAdv;shAdv="";
   const a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20),d=adv==="adv"?Math.max(a,b):adv==="dis"?Math.min(a,b):a,ex=myExh(),
     tot=d+bonus-2*ex+bl.n,text=`${label}: d20 ${adv?`${adv==="adv"?"advantage":"disadvantage"} (${a}, ${b})`:`(${d})`} ${shS(bonus)}${bl.t}${ex?
       ` −${2*ex} exhaustion`:""}`;
   if(/to hit|attack/i.test(label))shCrit=d===20;   // a natural 20 on an attack: the next damage is a critical hit
-  shLast={label,tot,how:text,n:d===20?"n20":d===1?"n1":""};if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
+  const dd=(adv?[[20,a],[20,b]]:[[20,d]]).concat(bl.d),kind=d===20?"nat20":d===1?"nat1":"roll";
+  shLast={label,tot,how:text,n:d===20?"n20":d===1?"n1":""};if(dice.share)pSend({action:"roll",kind,text,total:tot,dice:dd});myDice(dd,tot,kind);
   try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1?[300]:[60])}catch(e){}return {d,tot,text}}
 function shDmg(label,expr){const crit=shCrit,r=sbDice(String(expr).split(" ")[0],crit);if(!r)return;shCrit=false;
   const text=`${label}${crit?" (critical)":""}: ${r.n}d${r.d} [${r.rolls.join(", ")}]${r.add?(r.add>0?" + ":" − ")+Math.abs(r.add):""}`;
-  shLast={label,tot:r.tot,how:text,n:""};if(dice.share)pSend({action:"roll",kind:"roll",text,total:r.tot})}
+  const dd=r.rolls.map(v=>[r.d,v]);shLast={label,tot:r.tot,how:text,n:""};if(dice.share)pSend({action:"roll",kind:"roll",text,total:r.tot,dice:dd});
+  myDice(dd,r.tot,"roll")}
 /* what a roll call asks for, in the sheet's terms: "Dexterity save DC 15" → Dex save +2 */
 function shAsk(text){const sh=shLocal();if(!sh)return null;const C=shCalc(sh),t=String(text||"").toLowerCase();
   const sk=SH_SK.find(([k])=>t.includes(k));if(sk)return {label:sk[1],b:C.sk[sk[0]]};
@@ -666,6 +668,9 @@ function renderPSheet(){
           " Light screen"}</button>
         <button class="btn" type="button" data-act="pturncard" aria-pressed="${pTurnCard()}">${pTurnCard()?"Your turn screen: on":
           "Your turn screen: off"}</button>
+        <div class="pdiceset"><b>Dice on this phone</b><div class="seg2" role="group" aria-label="Dice on this phone">${[["dm",
+          `As the DM set (${(DICE_MODES.find(x=>x[0]===diceViewAll().ph)||DICE_MODES[1])[1]})`]].concat(DICE_MODES).map(([k,l])=>
+          `<button type="button" data-act="pdiceview" data-v="${k}" aria-pressed="${ls.get("diceView","dm")===k}">${esc(l)}</button>`).join("")}</div></div>
         <button class="btn" type="button" data-act="psimple" aria-pressed="${pSimple()}">${pSimple()?"Show everything again":
           "Simple: just my HP"}<br><small style="font-weight:600;color:var(--muted)">${pSimple()?"Resources, spells, dice, conditions and the rest come back.":
           "Only your HP, and whatever the DM sends you. For players who keep the rest on paper."}</small></button></div>

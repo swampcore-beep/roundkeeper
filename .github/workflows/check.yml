@@ -26,6 +26,7 @@ jobs:
           mkdir -p go/assets
           cp initiative.html icon-192.png icon-512.png srd/srd-5.2.1.json go/assets/
           cp -r fonts go/assets/fonts
+          cp -r dice go/assets/dice
       - name: Icon, version and publisher
         working-directory: go
         run: go run github.com/tc-hib/go-winres@v0.3.3 make --in winres/winres.json --arch amd64 --product-version 0.0.0 --file-version 0.0.0
