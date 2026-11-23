@@ -136,3 +136,19 @@
 .shv .shfeat span:first-child{border-top:0}.shv .shfeat span b{flex:1}.shv .shfeat span small{color:#6b5f50;font-size:.78rem}
 .shv .shadv{margin:0}.shv>.dresult{margin:0}
 .shv .shpool .btn{border:1px solid #cdb894;background:#fffaf1;color:#1f1b16;font-size:1.3rem;font-weight:700}
+/* 1.5: the Feats step */
+.shfts{display:flex;flex-direction:column;gap:6px}
+.shft{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+.shft span{flex:1;min-width:0;display:flex;flex-direction:column}.shft small{color:var(--muted);font-size:.82rem}
+.shflist{gap:0}
+.shflist .spi{display:flex;flex-direction:column;align-items:flex-start;width:100%;min-height:44px;padding:6px 10px;border:0;border-top:1px solid var(--line);
+  background:transparent;color:var(--fg);text-align:left}
+.shflist .spi small{color:var(--muted);font-size:.8rem}
+.shfman{display:flex;align-items:flex-end;gap:8px}.shfman .shfl{flex:1}
+.shfpick{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border:1.5px solid var(--accent);border-radius:12px;background:var(--panel)}
+.shfph{display:flex;align-items:baseline;gap:8px}.shfph b{font-size:1.1rem}.shfph small{color:var(--muted)}
+.shfch button{min-height:38px}
+.shfprev{padding:8px 10px;border-radius:8px;background:var(--panel2);font-size:.92rem}
+.shfgo{display:flex;flex-wrap:wrap;gap:8px}.shfgo .btn{min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.shfgo .btn small{font-size:.72rem;font-weight:600;opacity:.8}
+.dmshfeat{grid-column:1/-1}

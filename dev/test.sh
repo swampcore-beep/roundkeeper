@@ -10,7 +10,7 @@ cd "$(dirname "$0")/.." || exit 1
 ROOT=$PWD; OUT=$ROOT/dev/.work/out; mkdir -p "$OUT"
 python3 tools/build.py --quiet || exit 1   # initiative.html from src/ (dev/serve.sh does it too)
 SRD="verify t2 t4 t9 t10 t11 t12 t13 t14 t15 rulestest_v2 mob2_v2 t29 t30 t31 t32 t33 t34 t35 t36 t37 t38 t39 t40 t41"
-PRIVS="t5 t7 t8"; DATA="t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t28 ui hov"
+PRIVS="t5 t7 t8"; DATA="t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t28 t42 ui hov"
 which=${1:-go}; shift 2>/dev/null
 case $which in go|both) servers=go;; py) echo "test: the Python server is gone since 1.2; use dev/test.sh"; exit 1;; *) set -- "$which" "$@"; servers=go;; esac
 if [ $# -gt 0 ]; then suites="$*"; else

@@ -3517,6 +3517,22 @@ body:not(.shared) #player:not([hidden]) ~ .toast{top:calc(env(safe-area-inset-to
 .shv .shfeat span:first-child{border-top:0}.shv .shfeat span b{flex:1}.shv .shfeat span small{color:#6b5f50;font-size:.78rem}
 .shv .shadv{margin:0}.shv>.dresult{margin:0}
 .shv .shpool .btn{border:1px solid #cdb894;background:#fffaf1;color:#1f1b16;font-size:1.3rem;font-weight:700}
+/* 1.5: the Feats step */
+.shfts{display:flex;flex-direction:column;gap:6px}
+.shft{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+.shft span{flex:1;min-width:0;display:flex;flex-direction:column}.shft small{color:var(--muted);font-size:.82rem}
+.shflist{gap:0}
+.shflist .spi{display:flex;flex-direction:column;align-items:flex-start;width:100%;min-height:44px;padding:6px 10px;border:0;border-top:1px solid var(--line);
+  background:transparent;color:var(--fg);text-align:left}
+.shflist .spi small{color:var(--muted);font-size:.8rem}
+.shfman{display:flex;align-items:flex-end;gap:8px}.shfman .shfl{flex:1}
+.shfpick{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border:1.5px solid var(--accent);border-radius:12px;background:var(--panel)}
+.shfph{display:flex;align-items:baseline;gap:8px}.shfph b{font-size:1.1rem}.shfph small{color:var(--muted)}
+.shfch button{min-height:38px}
+.shfprev{padding:8px 10px;border-radius:8px;background:var(--panel2);font-size:.92rem}
+.shfgo{display:flex;flex-wrap:wrap;gap:8px}.shfgo .btn{min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.shfgo .btn small{font-size:.72rem;font-weight:600;opacity:.8}
+.dmshfeat{grid-column:1/-1}
 </style>
 </head>
 <body>
@@ -10155,7 +10171,54 @@ const SH_CLS_SA={bard:"cha",cleric:"wis",druid:"wis",paladin:"cha",ranger:"wis",
 const shMod=v=>Math.floor(((Number(v)||10)-10)/2),shS=n=>(n>=0?"+":"−")+Math.abs(n);
 function shBlank(name){return {name:name||"",cls:"",sub:"",lvl:1,species:"",bg:"",size:"M",ac:10,hp:0,speed:30,init:null,prof:null,ab:{str:10,dex:10,
   con:10,int:10,
-  wis:10,cha:10},sv:[],sk:{},sa:"",att:[],spells:null,v:0,by:""}}
+  wis:10,cha:10},sv:[],sk:{},sa:"",att:[],feats:[],spells:null,v:0,by:""}}
+/* 1.5: feats. The choices (ability scores, saves, skills, expertise) come from the structured fields of the DM's 5e.tools files; a few feats change
+   numbers only in their text, so their rules are here by name (edition by book). What a feat changes in numbers the player types (scores, saves,
+   skills, speed, max HP) is applied once when it's added ("Add and apply"), or not at all when the sheet already counts it ("Add only"); what the
+   app works out itself (initiative from Dex, passives, advantage on Concentration and death saves) it adds by itself. */
+const FEAT_FX={"alert|2024":{initPB:1},"alert|2014":{init:5},"tough":{hpLvl:2},"speedy":{speed:10},"mobile|2014":{speed:10},"boon of speed":{speed:30},
+  "observant|2014":{pass5:1},"war caster":{concAdv:1},"durable|2024":{dsAdv:1}};
+const featEd=s=>s==="PHB"||s==="XGE"||s==="TCE"?"2014":"2024";
+const featRule=f=>{const n=String(f.n||"").toLowerCase();return FEAT_FX[n+"|"+featEd(f.s||"")]||FEAT_FX[n]||null};
+function shFeatFx(sh){const o={};(sh&&sh.feats||[]).forEach(f=>{const r=featRule(f);
+  if(r)Object.keys(r).forEach(k=>{if(k==="init"||k==="speed")o[k]=(o[k]||0)+r[k];
+  else if(r[k])o[k]=1})});return o}
+const SH_SKN=k=>(SH_SK.find(x=>x[0]===k)||[k,k])[1];
+/* what a feat lets you choose, from its 5e.tools entry */
+function featChoices(item){const out={ab:[],sv:null,sk:null,exp:0};if(!item)return out;
+  (item.ability||[]).forEach(a=>{const fixed=Object.keys(a).filter(k=>SH_AB.includes(k));
+    if(fixed.length){out.ab.push({fixed:Object.fromEntries(fixed.map(k=>[k,a[k]])),
+    max:a.max||20});return}const c=a.choose;if(c&&Array.isArray(c.from))out.ab.push({from:c.from.filter(k=>SH_AB.includes(k)),amount:c.amount||1,
+      count:c.count||1,
+    max:a.max||20})});
+  (item.savingThrowProficiencies||[]).forEach(s=>{if(s.choose&&s.choose.from)out.sv={from:s.choose.from,count:s.choose.count||1};
+    else{const k=Object.keys(s).filter(x=>
+    SH_AB.includes(x));if(k.length)out.sv={fixed:k}}});
+  const sks=SH_SK.map(x=>x[0]);(item.skillProficiencies||[]).forEach(s=>{if(s.choose&&s.choose.from)out.sk={from:s.choose.from.filter(k=>sks.includes(k)),
+    count:s.choose.count||1};else if(s.any)out.sk={from:sks,count:s.any};else{const k=Object.keys(s).filter(x=>sks.includes(x));if(k.length)out.sk={fixed:k}}});
+  (item.skillToolLanguageProficiencies||[]).forEach(s=>(s.choose||[]).forEach(c=>{if((c.from||[]).includes("anySkill"))out.sk={from:sks,count:c.count||1,
+    orTool:1}}));
+  (item.expertise||[]).forEach(e=>{if(e.anyProficientSkill)out.exp=e.anyProficientSkill;else{const k=Object.keys(e).filter(x=>sks.includes(x));
+    if(k.length)out.expFixed=k}});
+  return out}
+/* the changes a feat makes once, from the choices made */
+function featChanges(f,sh){const ch={},C=shCalc(sh),r=featRule(f);
+  if(f.pick&&f.pick.ab)ch.ab=f.pick.ab;if(f.pick&&f.pick.sv&&f.pick.sv.length)ch.sv=f.pick.sv.filter(a=>!(sh.sv||[]).includes(a));
+  if(f.pick&&f.pick.sk&&f.pick.sk.length)ch.sk=f.pick.sk.filter(k=>!Number((sh.sk||{})[k]));if(f.pick&&f.pick.exp&&f.pick.exp.length)ch.exp=f.pick.exp;
+  if(r&&r.speed)ch.speed=r.speed;if(r&&r.hpLvl)ch.hp=r.hpLvl*C.lvl;return ch}
+function featLines(f,sh,ch){const L=[],r=featRule(f);ch=ch||f.ch||{};
+  Object.entries(ch.ab||{}).forEach(([a,n])=>L.push(`${SH_AB3[a]} +${n}`));(ch.sv||[]).forEach(a=>L.push(`${SH_AB3[a]} save`));
+    (ch.sk||[]).forEach(k=>L.push(SH_SKN(k)));
+  (ch.exp||[]).forEach(k=>L.push(`${SH_SKN(k)} expertise`));if(ch.speed)L.push(`Speed +${ch.speed} ft`);if(ch.hp)L.push(`HP +${ch.hp}`);
+  if(r&&r.initPB)L.push("+proficiency to Initiative");if(r&&r.init)L.push(`Initiative +${r.init}`);
+    if(r&&r.pass5)L.push("+5 passive Perception and Investigation");
+  if(r&&r.concAdv)L.push("advantage on Concentration");if(r&&r.dsAdv)L.push("advantage on death saves");return L}
+function featApply(sh,ch,sign){const s=sign||1;
+  Object.entries(ch.ab||{}).forEach(([a,n])=>{sh.ab[a]=Math.max(1,Math.min(30,(Number(sh.ab[a])||10)+s*n))});
+  (ch.sv||[]).forEach(a=>{sh.sv=s>0?[...new Set((sh.sv||[]).concat([a]))]:(sh.sv||[]).filter(x=>x!==a)});
+  (ch.sk||[]).forEach(k=>{sh.sk=sh.sk||{};if(s>0)sh.sk[k]=Math.max(1,Number(sh.sk[k])||0);else if(Number(sh.sk[k])===1)delete sh.sk[k]});
+  (ch.exp||[]).forEach(k=>{sh.sk=sh.sk||{};if(s>0)sh.sk[k]=2;else if(Number(sh.sk[k])===2)sh.sk[k]=1});
+  if(ch.speed)sh.speed=Math.max(0,(Number(sh.speed)||30)+s*ch.speed);if(ch.hp)sh.hp=Math.max(0,(Number(sh.hp)||0)+s*ch.hp)}
 /* 1.5: the class without its level, the subclass (its own field, or "Wizard 5 (Evoker)"), and the size */
 const shClsName=sh=>String(sh&&sh.cls||"").replace(/\([^)]*\)/g,"").replace(/\b\d{1,2}\b/g,"").replace(/\s+/g," ").trim();
 const shSub=sh=>String(sh&&sh.sub||"").trim()||((String(sh&&sh.cls||"").match(/\(([^)]+)\)/)||[])[1]||"").trim();
@@ -10171,8 +10234,10 @@ function shCalc(sh){
   const lvl=Math.max(1,Math.min(20,Number(sh.lvl)||1)),pb=sh.prof!=null?Number(sh.prof):2+Math.floor((lvl-1)/4),m={};
     SH_AB.forEach(a=>m[a]=shMod((sh.ab||{})[a]));
   const sv={},sk={};SH_AB.forEach(a=>sv[a]=m[a]+((sh.sv||[]).includes(a)?pb:0));SH_SK.forEach(([k,,a])=>sk[k]=m[a]+pb*(Number((sh.sk||{})[k])||0));
-  const sa=sh.sa||"";return {lvl,pb,m,sv,sk,init:sh.init!=null?Number(sh.init):m.dex,pp:10+sk.perception,pi:10+sk.insight,pv:10+sk.investigation,
-    dc:sh.dc!=null?Number(sh.dc):sa?8+pb+m[sa]:null,atk:sh.atk!=null?Number(sh.atk):sa?pb+m[sa]:null}}
+  const sa=sh.sa||"",fx=shFeatFx(sh);
+  return {lvl,pb,m,sv,sk,init:sh.init!=null?Number(sh.init):m.dex+(fx.initPB?pb:0)+(fx.init||0),pp:10+sk.perception+(fx.pass5?5:0),pi:10+sk.insight,
+    pv:10+sk.investigation+(fx.pass5?5:0),dc:sh.dc!=null?Number(sh.dc):sa?8+pb+m[sa]:null,atk:sh.atk!=null?Number(sh.atk):sa?pb+m[sa]:null,
+    concAdv:!!fx.concAdv,dsAdv:!!fx.dsAdv,fx}}
 const shAvg=e=>{const x=String(e||"").replace(/\s/g,"").match(/^(\d+)d(\d+)([+-]\d+)?$/i);return x?Math.floor(+x[1]*(+x[2]+1)/2)+(+x[3]||0):null};
 /* the sheet as a statblock in the DM's drawer: the same clickable bonuses and damage as a monster's */
 function shMd(sh,name){const C=shCalc(sh),L=[];
@@ -10238,6 +10303,7 @@ function shFromProf(me){const prof=profGet(),sh=shBlank(me?me.name:meName),S=sta
   if(prof.cls.length){sh.cls=prof.cls.map(e=>`${e.n} ${e.lvl||1}`).join(" / ");sh.sub=prof.cls.filter(e=>e.sub).map(e=>e.sub.sn||e.sub.n).join(" / ");
     sh.lvl=prof.cls.reduce((a,e)=>a+(e.lvl||1),0);const k=String(prof.cls[0].n||"").toLowerCase();sh.sv=(SH_CLS_SV[k]||[]).slice();sh.sa=SH_CLS_SA[k]||""}
   else if(me&&LABEL[me.cls]){const k=String(me.cls).toLowerCase();sh.cls=LABEL[me.cls];sh.sv=(SH_CLS_SV[k]||[]).slice();sh.sa=SH_CLS_SA[k]||""}
+  sh.feats=(prof.feats||[]).filter(f=>f.t==="feat").map(f=>({n:f.n,s:f.s||"",l:f.l||"",ap:false,ch:{}}));   // 1.5: feats picked in Resources, already counted
   if(S.ac)sh.ac=S.ac;if(hp.max)sh.hp=hp.max;return sh}
 function shSpells(){return {prep:prepGet().map(p=>p.n).filter(n=>!alwHas(n)),alw:alwNow().map(a=>[a.n.replace(/\b\w/g,c=>c.toUpperCase()),a.from])}}
 function shSave(sh,quiet){
@@ -10401,14 +10467,17 @@ function shFeatHtml(me,sh){
         `<span><b>${esc(x.n)}</b><small>${x.l}</small></span>`).join("")}</div></div>`).join(""):
       `<p class="psub">${pcData?"Pick your class in Resources and its features show here.":
         "Class features come from the DM's 5e.tools files on the laptop; the built-in SRD doesn't include classes."}</p>`}
-    ${(prof.feats||[]).length?`<div class="shcard"><div class="shcardh">Feats and options</div><div class="shfeat">${prof.feats.map(f=>
-      `<span><b>${esc(f.n)}</b></span>`).join("")}</div></div>`:""}`}
-const SH_STEPS=["Basics","Abilities and saves","Skills","Spells and attacks","Check and save"];
+    ${(()=>{const sf=sh.feats||[],other=(prof.feats||[]).filter(f=>!sf.some(x=>x.n===f.n));
+      return sf.length||other.length?`<div class="shcard"><div class="shcardh">Feats and options</div><div class="shfeat">${
+      sf.map(f=>{const L=featLines(f,sh);return `<span><b>${esc(f.n)}</b><small>${esc(L.join(" · "))}</small></span>`}).join("")}${other.map(f=>
+        `<span><b>${esc(f.n)}</b></span>`).join(
+      "")}</div></div>`:""})()}`}
+const SH_STEPS=["Basics","Abilities and saves","Skills","Feats","Spells and attacks","Check and save"];
 function shStepHtml(){const st=shStep;
   return `<div class="shsteps">${SH_STEPS.map((x,i)=>`<i class="${i<st?"done":i===st?"on":""}"></i>`).join("")}</div><div class="eyebrow2">Step ${st+
-    1} of 5 · ${SH_STEPS[st]}</div>`+shStepBody(st)
+    1} of ${SH_STEPS.length} · ${SH_STEPS[st]}</div>`+shStepBody(st)
     +`<div class="hpbtns">${st?`<button class="btn" type="button" data-act="shstep" data-d="-1">Back</button>`:
-      `<button class="btn" type="button" data-act="shcancel">Later</button>`}${st<4?
+      `<button class="btn" type="button" data-act="shcancel">Later</button>`}${st<SH_STEPS.length-1?
       `<button class="btn primary" type="button" data-act="shstep" data-d="1">Next: ${SH_STEPS[st+1].toLowerCase()}</button>`:
       `<button class="btn primary" type="button" data-act="shdone">Save my sheet</button>`}</div>`}
 function shStepBody(st){const d=shDraft,C=shCalc(d);
@@ -10437,7 +10506,8 @@ function shStepBody(st){const d=shDraft,C=shCalc(d);
     <div>${SH_SK.map(([k,l,a])=>{const v=Number(d.sk[k])||0;return `<div class="shsk"><span>${l}<small>${SH_AB3[a]}</small></span><span class="tri">${[["0",
       "—"],["1","Prof"],["2","Exp"]].map(([x,y])=>`<button type="button" class="${String(v)===x?"on":
       ""}" data-act="shsk" data-k="${esc(k)}" data-v="${x}">${y}</button>`).join("")}</span><b>${shS(C.sk[k])}</b></div>`}).join("")}</div>`;
-  else if(st===3)h+=`<div class="eyebrow2">Spellcasting</div><div class="seg2">${[["","None"],["int","Int"],["wis","Wis"],["cha","Cha"]].map(([k,l])=>
+  else if(st===3)h+=shFeatStepHtml(d);
+  else if(st===4)h+=`<div class="eyebrow2">Spellcasting</div><div class="seg2">${[["","None"],["int","Int"],["wis","Wis"],["cha","Cha"]].map(([k,l])=>
     `<button type="button" data-act="shsa" data-v="${k}" aria-pressed="${(d.sa||"")===k}">${l}</button>`).join("")}</div>
     ${d.sa?`<div class="shbig2"><div><small>Spell save DC</small><b>${C.dc}</b></div><div><small>Spell attack</small><b>${shS(
       C.atk)}</b></div></div><span class="shauto">✓ 8 + proficiency + ${SH_ABN[d.sa]}</span>`:""}
@@ -10451,8 +10521,80 @@ function shStepBody(st){const d=shDraft,C=shCalc(d);
     "—"}</b></div><div><small>INIT</small><b>${shS(C.init)}</b></div><div><small>SPEED</small><b>${d.speed}</b></div></div>
     <div class="shsum">${esc(d.cls||"No class")} · ${SH_AB.map(a=>`${SH_AB3[a]} ${d.ab[a]}`).join(" · ")}<br>Saves: ${d.sv.map(a=>SH_AB3[a]).join(", ")||
       "none"} · Skills: ${SH_SK.filter(([k])=>Number(d.sk[k])).map(x=>x[1]).join(", ")||"none"}<br>Passive Perception ${C.pp}${d.sa?` · Spell DC ${C.dc}`:
-      ""} · ${d.att.filter(a=>a.n).length} attacks</div>`;
+      ""} · ${d.att.filter(a=>a.n).length} attacks${(d.feats||[]).length?` · Feats: ${d.feats.map(f=>esc(f.n)).join(", ")}`:""}</div>`;
   return h}
+/* a feat added on the phone also goes to the class setup in Resources, so its uses become trackers and its spells are always prepared */
+function shFeatToPhone(rec,item){const prof=profGet();if(!(prof.feats||[]).some(f=>f.n===rec.n&&f.s===rec.s)){prof.feats=(prof.feats||[]).concat([{t:"feat",n:
+  rec.n,s:rec.s,
+  l:rec.l||"",u:pcUses(item)}]);profSet(prof)}
+  const have=new Set(resGet().map(r=>r.name.toLowerCase())),C=shCalc(shDraft||shBlank("")),add=[];   // its uses, counted from this sheet (level, modifiers)
+  pcUses(item).forEach(u=>{const mx=typeof u.max==="number"?u.max:u.max==="pb"?C.pb:u.max&&u.max.mod?Math.max(1,C.m[u.max.mod]??0):0;
+    if(mx>0&&!have.has(u.name.toLowerCase()))add.push({name:u.name,max:mx,cur:mx,reset:u.reset||"long",auto:true})});
+  if(add.length){resSet(resGet().concat(add));setTimeout(()=>toast(`${add.map(x=>x.name).join(", ")} added to Resources`),1600)}}
+/* 1.5: the Feats step: your feats with what they change, a search in the DM's 5e.tools feats, and the choices a feat asks for */
+let shFeatQ="",shFeatPick=null;
+function shFeatStepHtml(d){
+  const fl=d.feats||[],rows=pcData&&(pcData.feats||[]).filter(r=>r[0]==="feat");
+  if(!pcData&&!pcLoading&&Date.now()-pcTried>30000)pcLoad().then(x=>{if(x&&shDraft&&shStep===3||x&&MODE==="dm"&&shDraft)shRe()});
+  const mine=fl.length?`<div class="shfts">${fl.map((f,i)=>{const L=featLines(f,d);
+    return `<div class="shft"><span><b>${esc(f.n)}</b><small>${L.length?esc(L.join(" · ")):
+    "nothing on the sheet to change"}${f.ap||!L.length?"":
+      " · already in your numbers"}</small></span><button type="button" class="icon-btn" data-act="shfeatrm" data-i="${i}" aria-label="Remove ${
+    esc(f.n)}">${I.x}</button></div>`}).join("")}</div>`:`<p class="psub" style="margin:0">No feats yet.</p>`;
+  if(shFeatPick)return mine+shFeatPickHtml(d);
+  const txt=(id,label,ph)=>`<label class="shfl">${label}<input class="field" id="${id}" type="text" data-kb="text" inputmode="${MODE==="dm"?"text":
+    "none"}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="${esc(id==="sh_fq"?shFeatQ:
+      "")}" placeholder="${esc(ph)}"></label>`;
+  return mine+(rows&&rows.length?`${txt("sh_fq","Add a feat","Search: Alert, Tough, Resilient…")}<div class="splist shflist" id="shFeatList">${
+    shFeatListHtml(d)}</div>`:
+    `<p class="psub" style="margin:0">The feat list comes from the DM's 5e.tools files on the laptop. Without them, add a feat by its name (it changes nothing on its own).</p>`)+
+    `<div class="shfman">${txt("sh_fman","Or add by name","Feat name")}<button class="btn" type="button" data-act="shfeatman">Add</button></div>`}
+function shFeatListHtml(d){
+  const rows=pcData&&(pcData.feats||[]).filter(r=>r[0]==="feat")||[],q=shFeatQ.trim().toLowerCase(),have=new Set((d.feats||[]).map(f=>f.n.toLowerCase()+"|"+
+    (f.s||"")));
+  const L=rows.filter(r=>(!q?!r[6]&&/^(O|G|FS)/.test(String(r[4]||"")):r[1].toLowerCase().includes(q)&&(!r[6]||q.length>2))&&
+    !have.has(r[1].toLowerCase()+"|"+r[2]));
+  return L.slice(0,q?12:8).map(r=>`<button type="button" class="spi" data-act="shfeatpick" data-n="${esc(r[1])}" data-s="${esc(r[2])}" data-l="${esc(r[
+    3]||"")}"><b>${
+    esc(r[1])}</b><small>${esc([PC_FCAT[r[4]]||"",featEd(r[2])==="2014"?"2014":"",r[3]&&!/^(PHB|XPHB)$/.test(r[2])?r[3]:
+      ""].filter(Boolean).join(" · "))}</small></button>`).join("")||
+    `<p class="psub">No feat by that name.</p>`}
+const PC_FCAT={O:"Origin",G:"General",EB:"Epic Boon",FS:"Fighting Style","FS:P":"Fighting Style","FS:R":"Fighting Style",D:"Dragonmark",DG:"Dark Gift"};
+/* what a picked feat asks for: one of its ability options, saves, skills, expertise; then Add and apply, or Add only */
+function shFeatPickHtml(d){const P=shFeatPick,c=P.c,S=P.sel;
+  if(!P.item)return `<div class="shfpick"><b>${esc(P.n)}</b><p class="psub">${P.item===null?"Couldn't read this feat from the laptop.":"Reading the feat…"}</p>
+    <div class="hpbtns"><button class="btn" type="button" data-act="shfcancel">Cancel</button></div></div>`;
+  const seg=(k,list,count,lab)=>`<div class="seg2 shfch">${list.map(v=>`<button type="button" data-act="shfsel" data-k="${k}" data-v="${esc(
+    v)}" aria-pressed="${S[k].includes(
+    v)}">${esc(lab(v))}</button>`).join("")}</div><small class="psub">Pick ${count}</small>`;
+  const ab=c.ab[P.opt],optLab=o=>o.fixed?Object.entries(o.fixed).map(([a,n])=>`${SH_AB3[a]} +${n}`).join(", "):o.count>1?`+${o.amount} to ${o.count} scores`:
+    `+${o.amount} to one score`;
+  let h=`<div class="shfpick"><div class="shfph"><b>${esc(P.n)}</b><small>${esc(P.l||"")}</small></div>`;
+  if(c.ab.length>1)h+=`<div class="eyebrow2">Ability scores</div><div class="seg2">${c.ab.map((o,i)=>
+    `<button type="button" data-act="shfopt" data-i="${i}" aria-pressed="${
+    P.opt===i}">${esc(optLab(o))}</button>`).join("")}</div>`;
+  if(ab&&!ab.fixed)h+=`${c.ab.length>1?"":`<div class="eyebrow2">Ability score +${ab.amount}${ab.max>20?` (up to ${ab.max})`:""}</div>`}${seg("ab",ab.from,
+    ab.count,a=>SH_AB3[a]+" "+(d.ab[a]||10))}`;
+  else if(ab)h+=`<div class="eyebrow2">Ability scores</div><p class="psub" style="margin:0">${esc(optLab(ab))}</p>`;
+  if(c.sv&&c.sv.from)h+=`<div class="eyebrow2">Saving throw proficiency</div>${seg("sv",c.sv.from,c.sv.count,a=>SH_AB3[a]+((d.sv||[]).includes(a)?" ✓":""))}`;
+  if(c.sk&&c.sk.from)h+=`<div class="eyebrow2">Skill proficiency${c.sk.orTool?" (skills only; tools aren't on the sheet)":""}</div>${seg("sk",c.sk.from,
+    c.sk.count,k=>SH_SKN(k)+
+    (Number((d.sk||{})[k])?" ✓":""))}`;
+  if(c.exp){const pf=SH_SK.map(x=>x[0]).filter(k=>Number((d.sk||{})[k])||S.sk.includes(k)||(c.sk&&c.sk.fixed||[]).includes(k));
+    h+=`<div class="eyebrow2">Expertise</div>${pf.length?seg("exp",pf,c.exp,SH_SKN):
+      `<p class="psub" style="margin:0">Pick a skill you're proficient in first.</p>`}`}
+  const f=shFeatBuild(),L=featLines(f,d,featChanges(f,d));
+  h+=`<div class="shfprev"><b>On your sheet:</b> ${L.length?esc(L.join(" · ")):"nothing to change (its uses go to Resources)"}</div>
+    <div class="shfgo"><button class="btn primary" type="button" data-act="shfadd" data-ap="1">Add and apply</button><button class="btn" type="button" data-act="shfadd" data-ap="0">Add only<small>my numbers already include it</small></button>
+    <button class="btn" type="button" data-act="shfcancel">Cancel</button></div></div>`;
+  return h}
+/* the feat as the choices made so far */
+function shFeatBuild(){const P=shFeatPick,c=P.c,S=P.sel,ab=c.ab[P.opt],pick={ab:{},sv:[],sk:[],exp:[]};
+  if(ab){if(ab.fixed)Object.assign(pick.ab,ab.fixed);else S.ab.forEach(a=>pick.ab[a]=ab.amount)}
+  if(ab){const mx=ab.max||20;Object.keys(pick.ab).forEach(a=>{const n=Math.min(pick.ab[a],mx-(Number((shDraft.ab||{})[a])||10));if(n>0)pick.ab[a]=n;
+    else delete pick.ab[a]})}
+  if(c.sv)pick.sv=c.sv.fixed?c.sv.fixed.slice():S.sv.slice();if(c.sk)pick.sk=c.sk.fixed?c.sk.fixed.slice():S.sk.slice();pick.exp=(c.expFixed||[]).concat(S.exp);
+  return {n:P.n,s:P.s,l:P.l,pick}}
 /* the DM fills in or pastes a player's sheet on the laptop, then sends it to the phone or keeps it */
 let dmShId=null;
 const shRe=()=>MODE==="dm"?dmSheetSheet():rrPSheet();
@@ -10468,7 +10610,7 @@ function dmSheetSheet(){const c=byId(dmShId);if(!c||!shDraft){$("#overlay").inne
       shPaste&&shPaste.res?`<div class="shfound">${shPaste.res.found.map(f=>`<div><span>${esc(f)}</span><b>✓</b></div>`).join("")}${shPaste.res.guess.map(f=>
       `<div class="q"><span>${esc(f)}</span></div>`).join("")}</div>`:""}</details>
     <div class="dmshgrid"><section>${shStepBody(0)}</section><section>${shStepBody(1)}</section><section>${shStepBody(2)}</section><section>${shStepBody(
-      3)}</section></div>
+      4)}</section><section class="dmshfeat"><div class="eyebrow2">Feats</div>${shStepBody(3)}</section></div>
     <div class="dmshgo"><button class="btn" type="button" data-act="close">Cancel</button><button class="btn" type="button" data-act="dmshsave" data-only="1" title="For a player on paper: you see the numbers, the phone gets nothing">Keep only for me</button><button class="btn primary" type="button" data-act="dmshsave">Send to ${
       esc(c.name)}'s phone</button></div>
   </div></div>`;
@@ -10663,7 +10805,9 @@ function renderPSheet(){
           "Concentration lost, your effects end"}</small></div>`:`
         <label class="rangerow" style="max-width:none">Your Constitution save bonus <input class="field big modin" id="pConMod" type="text" data-kb="num" inputmode="none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="${
           esc(mod)}" placeholder="+0" style="max-width:6em"></label>
-        <div class="hpbtns"><button class="btn primary" type="button" data-act="pconroll">Roll it</button><button class="btn" type="button" data-act="pconroll" data-adv="1">Roll with advantage</button></div>
+        ${(()=>{const s0=shLocal(),wc=s0&&shCalc(s0).concAdv;return wc?
+          `<div class="hpbtns"><button class="btn primary" type="button" data-act="pconroll" data-adv="1">Roll with advantage<small> War Caster</small></button><button class="btn" type="button" data-act="pconroll">Roll without</button></div>`:
+          `<div class="hpbtns"><button class="btn primary" type="button" data-act="pconroll">Roll it</button><button class="btn" type="button" data-act="pconroll" data-adv="1">Roll with advantage</button></div>`})()}
         <div class="psec"><div class="eyebrow2">Rolled real dice?</div><div class="hpbtns"><button class="btn heal" type="button" data-act="pconres" data-ok="1">I made it</button><button class="btn dmg" type="button" data-act="pconres" data-ok="0">I lost it</button></div></div>`}
         ${!still&&!r?`<p class="psub">You're no longer Concentrating.</p>`:""}`;
     }else if(pSheet==="turn"){
@@ -10986,13 +11130,14 @@ function hpReport(dead){
 const myExh=()=>{const me=meChar();return me&&(me.conds||[]).some(x=>(x.n||x)==="Exhaustion")?exhOf(me):0};
 /* ---- death saves rolled on the phone: 10+ success, 1 counts twice, 20 brings you back with 1 HP ---- */
 function rollDeathSave(face){
-  const me=meChar();if(!me||!me.down||isDead(me)||isStable(me))return;const real=face>=1&&face<=20,d=real?face:1+Math.floor(Math.random()*20),ex=myExh(),
+  const me=meChar();if(!me||!me.down||isDead(me)||isStable(me))return;const real=face>=1&&face<=20,s0=shLocal(),adv=!real&&s0&&shCalc(s0).dsAdv,
+    r1=1+Math.floor(Math.random()*20),r2=adv?1+Math.floor(Math.random()*20):r1,d=real?face:Math.max(r1,r2),ex=myExh(),
     bl=real?{n:0,t:""}:blessAdd(),tot=d-
     2*ex+bl.n,ds=Object.assign({s:0,f:0},me.ds);let msg;
   if(d===20){const hp=hpGet();if(hp.max){hp.cur=1;hpSet(hp)}pSend({action:"hpstate",bloodied:true,down:false});msg="Natural 20! You're back up with 1 HP"}
   else{if(d===1)ds.f=Math.min(3,ds.f+2);else if(tot>=10)ds.s=Math.min(3,ds.s+1);else ds.f=Math.min(3,ds.f+1);pSend({action:"ds",s:ds.s,f:ds.f});
     msg=d===1?"Natural 1: two failures":tot>=10?"Success":"Failure";if(ds.f>=3)msg+=" — you die";else if(ds.s>=3)msg+=" — you're stable"}
-  const text=`Death save ${real?"real ":""}d20 (${d})${bl.t}${ex?` −${2*ex} exhaustion`:""}`;
+  const text=`Death save ${real?"real ":""}d20 ${adv?`advantage (${r1}, ${r2}) · Durable`:`(${d})`}${bl.t}${ex?` −${2*ex} exhaustion`:""}`;
   if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
   dsLast={d,tot,msg};try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1||tot<10?[300]:[80])}catch(e){}
   renderPSheet();
@@ -11930,7 +12075,10 @@ function pcCardHtml(c){
     <div class="pcclines">${sks.length?L("Skills",sks.map(([k,l])=>`${l} ${chk(l,C.sk[k])}${Number(sh.sk[k])===2?" <small>(expertise)</small>":
       ""}`).join(", ")):""}
       ${L("Passive",`Perception ${C.pp} · Insight ${C.pi} · Investigation ${C.pv}`)}
-      ${sh.sa?L("Spellcasting",`${SH_ABN[sh.sa]} · save <b>DC ${C.dc}</b> · ${chk("Spell attack",C.atk)} to hit`):""}</div>
+      ${sh.sa?L("Spellcasting",`${SH_ABN[sh.sa]} · save <b>DC ${C.dc}</b> · ${chk("Spell attack",C.atk)} to hit`):""}
+      ${(sh.feats||[]).length?L("Feats",sh.feats.map(f=>{const x=featLines(f,sh);
+        return `${refSpan("feat",f.n,f.s||"",esc(f.n))}${x.length?` <small>(${esc(x.join(", "))})</small>`:
+        ""}`}).join(", ")):""}</div>
     ${at.length?`<h4 class="pcch">Attacks</h4>${at.map(a=>`<div class="pcct"><b><i>${esc(
       a.n)}.</i></b> <button type="button" class="sbr hit" data-act="sbroll" data-k="hit" data-m="${
       Number(a.hit)||0}" data-n="${A(a.n)}">${shS(Number(a.hit)||0)}</button> to hit.${a.dmg?` <i>Hit:</i> ${dmgBtn(a)}.`:""}${a.note?
@@ -12356,7 +12504,8 @@ document.addEventListener("click",e=>{
     case "shedit":{const me=meChar();shDraft=JSON.parse(JSON.stringify(Object.assign(shBlank(me&&me.name),shLocal()||{})));shDraft.att=shDraft.att||[];
       shDraft.sv=shDraft.sv||[];shDraft.sk=shDraft.sk||{};shStep=0;pSheet="shed";renderPSheet();break}
     case "shcancel": shDraft=null;pSheet="sheet";renderPSheet();break;
-    case "shstep": shStep=Math.max(0,Math.min(4,shStep+Number(t.dataset.d)));rrPSheet();{const s2=$("#overlay .sheet");if(s2)s2.scrollTop=0}break;
+    case "shstep": shStep=Math.max(0,Math.min(SH_STEPS.length-1,shStep+Number(t.dataset.d)));shFeatPick=null;rrPSheet();{const s2=$("#overlay .sheet");
+      if(s2)s2.scrollTop=0}break;
     case "shdone": shSave(shDraft);shDraft=null;pSheet="sheet";renderPSheet();break;
     case "shnum":{const d=shDraft,k=t.dataset.k,n=Number(t.dataset.d),C=shCalc(d);
       if(k.startsWith("hit:")){const a=d.att[+k.slice(4)];if(a)a.hit=Math.max(-5,Math.min(30,(Number(a.hit)||0)+n))}
@@ -12368,6 +12517,24 @@ document.addEventListener("click",e=>{
     case "shsv":{const a=t.dataset.a,L=shDraft.sv;shDraft.sv=L.includes(a)?L.filter(x=>x!==a):L.concat([a]);shRe();break}
     case "shsk": shDraft.sk[t.dataset.k]=Number(t.dataset.v);if(!shDraft.sk[t.dataset.k])delete shDraft.sk[t.dataset.k];shRe();break;
     case "shsa": shDraft.sa=t.dataset.v;shRe();break;
+    case "shfeatpick":{if(!shDraft)break;const P={n:t.dataset.n,s:t.dataset.s,l:t.dataset.l,item:undefined,c:featChoices(null),opt:0,sel:{ab:[],sv:[],sk:
+      [],exp:[]}};
+      shFeatPick=P;shRe();pcFeatGet("feat",P.n,P.s).then(x=>{if(shFeatPick!==P)return;P.item=x&&x.item||null;P.c=featChoices(P.item);shRe()});break}
+    case "shfopt": if(shFeatPick){shFeatPick.opt=Number(t.dataset.i)||0;shFeatPick.sel.ab=[];shRe()}break;
+    case "shfsel":{const P=shFeatPick;if(!P)break;const k=t.dataset.k,v=t.dataset.v,L=P.sel[k],c=P.c;
+      const max=k==="ab"?(c.ab[P.opt]||{}).count||1:k==="sv"?(c.sv||{}).count||1:k==="sk"?(c.sk||{}).count||1:c.exp||1;
+      if(L.includes(v))P.sel[k]=L.filter(x=>x!==v);else{L.push(v);if(L.length>max)L.shift()}
+      if(k==="sk")P.sel.exp=P.sel.exp.filter(x=>Number((shDraft.sk||{})[x])||P.sel.sk.includes(x));shRe();break}
+    case "shfcancel": shFeatPick=null;shRe();break;
+    case "shfadd":{const P=shFeatPick;if(!P||!shDraft)break;const f=shFeatBuild(),ap=t.dataset.ap==="1",ch=featChanges(f,shDraft);
+      const rec={n:f.n,s:f.s,l:f.l,ap,ch};if(ap)featApply(shDraft,ch,1);(shDraft.feats=shDraft.feats||[]).push(rec);shFeatPick=null;shFeatQ="";
+      if(MODE==="player"&&P.item)shFeatToPhone(rec,P.item);shRe();toast(`${f.n} added${ap&&featLines(rec,shDraft).length?": "+featLines(rec,shDraft).join(", "):
+        ""}`);break}
+    case "shfeatrm":{if(!shDraft)break;const i=Number(t.dataset.i),f=(shDraft.feats||[])[i];if(!f)break;if(f.ap&&f.ch)featApply(shDraft,f.ch,-1);
+      shDraft.feats.splice(i,1);
+      shRe();toast(`${f.n} removed${f.ap&&featLines(f,shDraft,f.ch).length?" and taken off the numbers":""}`);break}
+    case "shfeatman":{if(!shDraft)break;const el=document.getElementById("sh_fman"),n=(el&&el.value||"").trim().slice(0,40);if(!n)break;
+      (shDraft.feats=shDraft.feats||[]).push({n,s:"",ap:false,ch:{}});shRe();break}
     case "shsize": shDraft.size=t.dataset.v||"M";shRe();break;
     case "shattadd": shDraft.att.push({n:"",hit:shCalc(shDraft).pb+Math.max(shCalc(shDraft).m.str,shCalc(shDraft).m.dex),dmg:""});shRe();break;
     case "shattdel": shDraft.att.splice(Number(t.dataset.i),1);shRe();break;
@@ -12487,6 +12654,7 @@ document.addEventListener("input",e=>{
       if(L.length)shDraft.lvl=Math.min(20,L.reduce((x,y)=>x+y,0))}}
     else if(id==="sh_species")shDraft.species=t.value;else if(id==="sh_sub")shDraft.sub=t.value;else if(id==="sh_bg")shDraft.bg=t.value;
     else if(id.startsWith("sh_ao_")){const a=shDraft.att[+id.slice(6)];if(a)a.note=t.value}
+    else if(id==="sh_fq"){shFeatQ=t.value;const l=document.getElementById("shFeatList");if(l)l.innerHTML=shFeatListHtml(shDraft)}
     else if(id.startsWith("sh_an_")){const a=shDraft.att[+id.slice(6)];if(a)a.n=t.value}else if(id.startsWith("sh_ad_")){const a=shDraft.att[+id.slice(6)];
       if(a)a.dmg=t.value}
     return}

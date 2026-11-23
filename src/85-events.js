@@ -415,7 +415,8 @@ document.addEventListener("click",e=>{
     case "shedit":{const me=meChar();shDraft=JSON.parse(JSON.stringify(Object.assign(shBlank(me&&me.name),shLocal()||{})));shDraft.att=shDraft.att||[];
       shDraft.sv=shDraft.sv||[];shDraft.sk=shDraft.sk||{};shStep=0;pSheet="shed";renderPSheet();break}
     case "shcancel": shDraft=null;pSheet="sheet";renderPSheet();break;
-    case "shstep": shStep=Math.max(0,Math.min(4,shStep+Number(t.dataset.d)));rrPSheet();{const s2=$("#overlay .sheet");if(s2)s2.scrollTop=0}break;
+    case "shstep": shStep=Math.max(0,Math.min(SH_STEPS.length-1,shStep+Number(t.dataset.d)));shFeatPick=null;rrPSheet();{const s2=$("#overlay .sheet");
+      if(s2)s2.scrollTop=0}break;
     case "shdone": shSave(shDraft);shDraft=null;pSheet="sheet";renderPSheet();break;
     case "shnum":{const d=shDraft,k=t.dataset.k,n=Number(t.dataset.d),C=shCalc(d);
       if(k.startsWith("hit:")){const a=d.att[+k.slice(4)];if(a)a.hit=Math.max(-5,Math.min(30,(Number(a.hit)||0)+n))}
@@ -427,6 +428,24 @@ document.addEventListener("click",e=>{
     case "shsv":{const a=t.dataset.a,L=shDraft.sv;shDraft.sv=L.includes(a)?L.filter(x=>x!==a):L.concat([a]);shRe();break}
     case "shsk": shDraft.sk[t.dataset.k]=Number(t.dataset.v);if(!shDraft.sk[t.dataset.k])delete shDraft.sk[t.dataset.k];shRe();break;
     case "shsa": shDraft.sa=t.dataset.v;shRe();break;
+    case "shfeatpick":{if(!shDraft)break;const P={n:t.dataset.n,s:t.dataset.s,l:t.dataset.l,item:undefined,c:featChoices(null),opt:0,sel:{ab:[],sv:[],sk:
+      [],exp:[]}};
+      shFeatPick=P;shRe();pcFeatGet("feat",P.n,P.s).then(x=>{if(shFeatPick!==P)return;P.item=x&&x.item||null;P.c=featChoices(P.item);shRe()});break}
+    case "shfopt": if(shFeatPick){shFeatPick.opt=Number(t.dataset.i)||0;shFeatPick.sel.ab=[];shRe()}break;
+    case "shfsel":{const P=shFeatPick;if(!P)break;const k=t.dataset.k,v=t.dataset.v,L=P.sel[k],c=P.c;
+      const max=k==="ab"?(c.ab[P.opt]||{}).count||1:k==="sv"?(c.sv||{}).count||1:k==="sk"?(c.sk||{}).count||1:c.exp||1;
+      if(L.includes(v))P.sel[k]=L.filter(x=>x!==v);else{L.push(v);if(L.length>max)L.shift()}
+      if(k==="sk")P.sel.exp=P.sel.exp.filter(x=>Number((shDraft.sk||{})[x])||P.sel.sk.includes(x));shRe();break}
+    case "shfcancel": shFeatPick=null;shRe();break;
+    case "shfadd":{const P=shFeatPick;if(!P||!shDraft)break;const f=shFeatBuild(),ap=t.dataset.ap==="1",ch=featChanges(f,shDraft);
+      const rec={n:f.n,s:f.s,l:f.l,ap,ch};if(ap)featApply(shDraft,ch,1);(shDraft.feats=shDraft.feats||[]).push(rec);shFeatPick=null;shFeatQ="";
+      if(MODE==="player"&&P.item)shFeatToPhone(rec,P.item);shRe();toast(`${f.n} added${ap&&featLines(rec,shDraft).length?": "+featLines(rec,shDraft).join(", "):
+        ""}`);break}
+    case "shfeatrm":{if(!shDraft)break;const i=Number(t.dataset.i),f=(shDraft.feats||[])[i];if(!f)break;if(f.ap&&f.ch)featApply(shDraft,f.ch,-1);
+      shDraft.feats.splice(i,1);
+      shRe();toast(`${f.n} removed${f.ap&&featLines(f,shDraft,f.ch).length?" and taken off the numbers":""}`);break}
+    case "shfeatman":{if(!shDraft)break;const el=document.getElementById("sh_fman"),n=(el&&el.value||"").trim().slice(0,40);if(!n)break;
+      (shDraft.feats=shDraft.feats||[]).push({n,s:"",ap:false,ch:{}});shRe();break}
     case "shsize": shDraft.size=t.dataset.v||"M";shRe();break;
     case "shattadd": shDraft.att.push({n:"",hit:shCalc(shDraft).pb+Math.max(shCalc(shDraft).m.str,shCalc(shDraft).m.dex),dmg:""});shRe();break;
     case "shattdel": shDraft.att.splice(Number(t.dataset.i),1);shRe();break;
@@ -546,6 +565,7 @@ document.addEventListener("input",e=>{
       if(L.length)shDraft.lvl=Math.min(20,L.reduce((x,y)=>x+y,0))}}
     else if(id==="sh_species")shDraft.species=t.value;else if(id==="sh_sub")shDraft.sub=t.value;else if(id==="sh_bg")shDraft.bg=t.value;
     else if(id.startsWith("sh_ao_")){const a=shDraft.att[+id.slice(6)];if(a)a.note=t.value}
+    else if(id==="sh_fq"){shFeatQ=t.value;const l=document.getElementById("shFeatList");if(l)l.innerHTML=shFeatListHtml(shDraft)}
     else if(id.startsWith("sh_an_")){const a=shDraft.att[+id.slice(6)];if(a)a.n=t.value}else if(id.startsWith("sh_ad_")){const a=shDraft.att[+id.slice(6)];
       if(a)a.dmg=t.value}
     return}

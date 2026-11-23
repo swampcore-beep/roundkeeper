@@ -47,7 +47,7 @@ Two groups need files that can't be in a public repo, and run only when you poin
 | Suites | Needs |
 |---|---|
 | t5, t7, t8 | `RK_PRIVATE=folder` with `sb/gyreguard.md` and `sb/lich.md` (2024 statblocks as Markdown) |
-| t16–t28, ui, hov | `RK_5ETOOLS=folder` with 5e.tools data (`data/bestiary/…`, `data/spells/…`) |
+| t16–t28, t42, ui, hov | `RK_5ETOOLS=folder` with 5e.tools data (`data/bestiary/…`, `data/spells/…`) |
 
 Never commit those files.
 
@@ -71,6 +71,7 @@ Never commit those files.
 | t39 | 1.4.1 on the TV: Bloodied, Down, Stable and Dead on the spotlight, on deck and in the order; "Up next" when the creature on turn is hidden or already defeated; a roll call with no answers yet; the end card without minutes |
 | t40 | 1.4.8: the rules of play the app works out (2024, SRD 5.2.1): temp HP, healing, Concentration (DC, 0 HP, Incapacitated, a new spell ends the old one, undo), immunity, resistance, vulnerability and half on a save, lair action ties, Legendary Actions and Recharge, Bless and spell durations, condition ends and saves, death saves (natural 1 and 20, damage at 0 HP, a critical hit, Stable, instant death), Exhaustion, short and long rests, sheet numbers, advantage and critical damage on the phone sheet and in roll calls, Bless and Bane on monsters, advantage on a target's save in Hit several, 2024 multiclass spell slots |
 | t41 | 1.5: the new character sheet: subclass, background, size and weapon notes (entry and paste), the sheet as a card in the DM's drawer (band, AC, HP from the phone, abilities and saves, skills, spellcasting, attacks, spells; rolls), the phone's sheet with Main (sections that open and are remembered), Spells (slots as boxes, casting time and range) and Features (tracked features, class and subclass features up to your level, feats), the spell list's time and range, and that players never get sheets |
+| t42 | 1.5, needs RK_5ETOOLS: feats on the sheet from the 5e.tools files: the list, the choices a feat asks for, Add and apply / Add only, taking a feat off, Alert, Tough, War Caster, Durable, feat uses as trackers, the feats on the DM's card |
 | ui, hov | the monster search sheet; hover cards for spells and rules |
 
 ## Media for the README

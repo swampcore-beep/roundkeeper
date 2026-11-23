@@ -215,7 +215,10 @@ function pcCardHtml(c){
     <div class="pcclines">${sks.length?L("Skills",sks.map(([k,l])=>`${l} ${chk(l,C.sk[k])}${Number(sh.sk[k])===2?" <small>(expertise)</small>":
       ""}`).join(", ")):""}
       ${L("Passive",`Perception ${C.pp} · Insight ${C.pi} · Investigation ${C.pv}`)}
-      ${sh.sa?L("Spellcasting",`${SH_ABN[sh.sa]} · save <b>DC ${C.dc}</b> · ${chk("Spell attack",C.atk)} to hit`):""}</div>
+      ${sh.sa?L("Spellcasting",`${SH_ABN[sh.sa]} · save <b>DC ${C.dc}</b> · ${chk("Spell attack",C.atk)} to hit`):""}
+      ${(sh.feats||[]).length?L("Feats",sh.feats.map(f=>{const x=featLines(f,sh);
+        return `${refSpan("feat",f.n,f.s||"",esc(f.n))}${x.length?` <small>(${esc(x.join(", "))})</small>`:
+        ""}`}).join(", ")):""}</div>
     ${at.length?`<h4 class="pcch">Attacks</h4>${at.map(a=>`<div class="pcct"><b><i>${esc(
       a.n)}.</i></b> <button type="button" class="sbr hit" data-act="sbroll" data-k="hit" data-m="${
       Number(a.hit)||0}" data-n="${A(a.n)}">${shS(Number(a.hit)||0)}</button> to hit.${a.dmg?` <i>Hit:</i> ${dmgBtn(a)}.`:""}${a.note?
