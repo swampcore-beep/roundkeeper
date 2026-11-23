@@ -72,7 +72,7 @@ The turn order is one row per creature, and the statblock opens beside it, so yo
 
 <table>
 <tr>
-<td width="38%" valign="top"><img src="media/dm-card.jpg" width="100%" alt="Isandros's character sheet on the DM's screen: AC, initiative, HP from the phone, abilities and saves, skills, feats, attacks and spells, each bonus clickable"></td>
+<td width="38%" valign="top"><img src="media/dm-card.jpg" width="100%" alt="Gregori's character sheet on the DM's screen: AC, initiative, HP from the phone, abilities and saves, skills, feats, attacks and spells, each bonus clickable"></td>
 <td valign="top">
 
 **Your players' sheets, one click away.** Open a player like a monster and their sheet appears as a card: AC, HP from their phone, abilities, saves, skills, feats, attacks and prepared spells. Every bonus rolls. A player fills it in on their phone, or you set it up for them and send it over. For a player on paper, keep it just for yourself.
@@ -156,7 +156,7 @@ https://github.com/user-attachments/assets/7b8dfa4b-25bb-4b2c-9c3a-590fa657dc16
 
 <table>
 <tr>
-<td width="30%" valign="top"><img src="media/phone-sheet.jpg" width="100%" alt="Isandros's character sheet on a phone: name, class and level, AC and HP, initiative, speed and proficiency, and abilities and saves that roll when tapped"></td>
+<td width="30%" valign="top"><img src="media/phone-sheet.jpg" width="100%" alt="Gregori's character sheet on a phone: name, class and level, AC and HP, initiative, speed and proficiency, and abilities and saves that roll when tapped"></td>
 <td valign="top">
 
 Players scan a QR code and tap their character. Nothing to install.
