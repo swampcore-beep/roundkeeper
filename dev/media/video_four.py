@@ -48,7 +48,7 @@ if __name__=='__main__':
     OUTRO=look.card("Roundkeeper",["Free and open source, for Windows, Mac and Linux.","No accounts, no internet: it runs on your own Wi-Fi."],foot="github.com/swampcore-beep/roundkeeper")
     def blend(a,b,x): return Image.blend(a,b,max(0,min(1,x)))
     ff=subprocess.Popen(['ffmpeg','-loglevel','error','-y','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-',
-        '-c:v','libx264','-preset','veryfast','-crf','18','-pix_fmt','yuv420p','-movflags','+faststart',OUT],stdin=subprocess.PIPE)
+        '-c:v','libx264','-preset','veryfast','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',OUT],stdin=subprocess.PIPE)
     IN,OUTD,X=2.4,3.5,0.5
     n_main=int(TEND*FPS);first=main_frame(0);last=main_frame(TEND)
     for i in range(int(IN*FPS)): ff.stdin.write(blend(INTRO,first,(i/FPS-(IN-X))/X).tobytes())
