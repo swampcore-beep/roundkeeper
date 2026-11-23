@@ -191,11 +191,14 @@ function renderSbDrawer(){
   const keep=el.querySelector(".sbbody")?el.querySelector(".sbbody").scrollTop:0,same=el.dataset.id===c.id&&el.dataset.tab===String(sbLoreOn);
     el.dataset.id=c.id;el.dataset.tab=String(sbLoreOn);
   const pcs=state.list.filter(x=>x.kind==="pc"&&!x.hidden);
-  el.innerHTML=`<div class="sbhead"><div><h3>${esc(c.name)}</h3><div class="psub">${[c.hpMax!=null?`HP ${c.hp??c.hpMax}/${c.hpMax}`:"",c.ac!=null?"AC "+c.ac:"",
+  const pcSh=c.sb.pc?(state.sheets||{})[c.name.toLowerCase()]:null;
+  el.innerHTML=`<div class="sbhead"><div><h3>${esc(c.name)}</h3><div class="psub">${c.sb.pc?`Player sheet${pcSh&&pcSh.by==="dm"?" · set up by you":
+    " · from the phone"}`:[c.hpMax!=null?`HP ${c.hp??c.hpMax}/${c.hpMax}`:"",c.ac!=null?"AC "+c.ac:"",
     c.sb.cr?"CR "+c.sb.cr:""].filter(Boolean).join(" · ")}</div></div>
       <span class="sbheadb">${c.sb.pc?`<button type="button" class="btn sm" data-act="dmsheet" data-id="${esc(
         c.id)}" title="Change the sheet, send it to the phone">Edit sheet…</button>`:
-        `<button type="button" class="btn sm" data-act="sbedit" title="Change this statblock, or save it as a new monster">Edit…</button>`}<button type="button" class="btn sm" data-act="sbopen" title="Add monsters">+ Add</button><button type="button" class="icon-btn" data-act="sbclose" aria-label="Close the statblock">${
+        `<button type="button" class="btn sm" data-act="sbedit" title="Change this statblock, or save it as a new monster">Edit…</button>`}${c.sb.pc?"":
+        `<button type="button" class="btn sm" data-act="sbopen" title="Add monsters">+ Add</button>`}<button type="button" class="icon-btn" data-act="sbclose" aria-label="Close the statblock">${
         I.x}</button></span></div>
     ${c.sb.pc?"":`<label class="sbfollow" title="On a monster's turn, show its statblock here (only while this is open)">
       <input type="checkbox" data-act="sbfollow"${
@@ -217,7 +220,8 @@ function renderSbDrawer(){
         p.name)}</button>`).join("")}</div>
       <div class="sbaskb"><button class="btn" type="button" data-act="sbaskno">Cancel</button><button class="btn primary" type="button" data-act="sbasksend" ${
         sbSaveAsk.to.length?"":"disabled"}>Send roll call</button></div></div>`:""}`}
-    <div class="sbbody">${sbLoreOn&&!c.sb.pc?picHtml(c)+(loreOf(c)?loreHtml(c):""):sbRender(c.sb.raw)}</div>${sbUnderHtml()}`;
+    <div class="sbbody${c.sb.pc&&pcSh?" pccbody":""}">${sbLoreOn&&!c.sb.pc?picHtml(c)+(loreOf(c)?loreHtml(c):""):c.sb.pc&&pcCardHtml(c)||
+      sbRender(c.sb.raw)}</div>${sbUnderHtml()}`;
   if(sbLog.length&&!ls.get("sbHintSeen",false))ls.set("sbHintSeen",true);
   if(sbLoreOn&&loreOf(c)&&!loreCache.has(c.sb.fet.n+"|"+c.sb.fet.s))loreGet(c.sb.fet).then(()=>{if(sbViewId===c.id)renderSbDrawer()});
   if(same&&keep){const b=el.querySelector(".sbbody");if(b)b.scrollTop=keep}
@@ -256,6 +260,11 @@ function sbApply(i){
 }
 function sbRoll(t){
   const c=byId(sbViewId);if(!c)return;const who=c.name,what=t.dataset.n||"";sbSpend(c,what);
+  if(t.dataset.k==="chk"){const mod=Number(t.dataset.m),a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20),
+      d=sbAdv==="adv"?Math.max(a,b):sbAdv==="dis"?Math.min(a,b):a,bb=/save/i.test(what)?monBB(c):{n:0,t:""};
+    sbLog.unshift({who,what,tot:d+mod+bb.n,how:`d20 ${sbAdv?`(${a}, ${b} ${sbAdv})`:`(${d})`} ${mod>=0?"+":"−"} ${Math.abs(mod)}${bb.t}${d===20?
+      " · natural 20":d===1?
+      " · natural 1":""}`,cls:d===20?"n20":d===1?"n1":""});sbLog=sbLog.slice(0,8);renderSbDrawer();return}
   if(t.dataset.k==="hit"){const mod=Number(t.dataset.m),a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20);
     const d=sbAdv==="adv"?Math.max(a,b):sbAdv==="dis"?Math.min(a,b):a,bb=monBB(c);
     if(!c.hidden&&c.kind!=="pc"){state.react={id:uid(),k:"attack",by:c.name,what,tot:d+mod+bb.n,at:Date.now()};finish()}   // a Shield moment

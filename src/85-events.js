@@ -363,7 +363,7 @@ document.addEventListener("click",e=>{
     case "pbookopen":{const n=t.dataset.n,src=t.dataset.s||"",from=t.dataset.from||(pSheet==="spell"&&spView?spView.from:"book");
       spView={n,s:src,from};pSheet="spell";renderPSheet();
       refGet("spell",n,src,true).then(d=>{if(!spView||spView.n!==n||spView.s!==src)return;spView.d=d;if(pSheet==="spell")renderPSheet()});break}
-    case "pbookback": pSheet=spView&&spView.from==="effs"?"effs":"book";renderPSheet();break;
+    case "pbookback": pSheet=spView&&spView.from==="effs"?"effs":spView&&spView.from==="sheet"?"sheet":"book";renderPSheet();break;
     case "pspfx": pSend({action:"spfx",n:t.dataset.n||"",t:t.dataset.t||""});toast("✨ "+(t.dataset.n||"Your spell")+" on the table");break;
     case "pbookeff":{const x=spellFind(spView&&spView.n,spView&&spView.s);if(!x)break;
       effDraft={name:x[0].slice(0,30),src:x[7]||"",conc:!!x[2],area:!!x[3],targets:new Set(),custom:false};pSheet="effs";renderPSheet();break}
@@ -427,6 +427,7 @@ document.addEventListener("click",e=>{
     case "shsv":{const a=t.dataset.a,L=shDraft.sv;shDraft.sv=L.includes(a)?L.filter(x=>x!==a):L.concat([a]);shRe();break}
     case "shsk": shDraft.sk[t.dataset.k]=Number(t.dataset.v);if(!shDraft.sk[t.dataset.k])delete shDraft.sk[t.dataset.k];shRe();break;
     case "shsa": shDraft.sa=t.dataset.v;shRe();break;
+    case "shsize": shDraft.size=t.dataset.v||"M";shRe();break;
     case "shattadd": shDraft.att.push({n:"",hit:shCalc(shDraft).pb+Math.max(shCalc(shDraft).m.str,shCalc(shDraft).m.dex),dmg:""});shRe();break;
     case "shattdel": shDraft.att.splice(Number(t.dataset.i),1);shRe();break;
     case "dmsheet":{const cc=c||byId(t.dataset.id);if(!cc)break;dmShId=cc.id;const had=(state.sheets||{})[cc.name.toLowerCase()];
@@ -448,8 +449,12 @@ document.addEventListener("click",e=>{
     case "shroll":{const sh=shLocal();if(!sh)break;const C=shCalc(sh),k=t.dataset.k,a=t.dataset.a,A=SH_AB3[a]?SH_AB3[a][0]+SH_AB3[a].slice(1).toLowerCase():"";
       if(k==="ab")shRoll(`${SH_ABN[a]} check`,C.m[a]);else if(k==="sv")shRoll(`${A} save`,C.sv[a]);
         else if(k==="sk")shRoll((SH_SK.find(x=>x[0]===a)||["",a])[1],C.sk[a]);
-      else if(k==="spatk")shRoll("Spell attack",C.atk||0);else{const at=(sh.att||[])[Number(t.dataset.i)];
+      else if(k==="spatk")shRoll("Spell attack",C.atk||0);else if(k==="init")shRoll("Initiative",C.init);else{const at=(sh.att||[])[Number(t.dataset.i)];
         if(at){if(k==="hit")shRoll(`${at.n} to hit`,Number(at.hit)||0);else shDmg(at.n,at.dmg)}}
+      renderPSheet();break}
+    case "shtab": shTab=t.dataset.v||"main";ls.set("shTab",shTab);renderPSheet();{const b=$(".psheet .sbody");if(b)b.scrollTop=0}break;
+    case "shsec":{const o=shOpen(),k=t.dataset.s;o[k]=!o[k];ls.set("shOpen",o);renderPSheet();break}
+    case "shpool":{const r=resGet(),x=r[Number(t.dataset.i)];if(!x)break;x.cur=Math.max(0,Math.min(x.max,x.cur+Number(t.dataset.d)));resSet(r);
       renderPSheet();break}
     case "shadv": shAdv=t.dataset.v||"";renderPSheet();break;
     case "shnocrit": shCrit=false;renderPSheet();break;
@@ -539,7 +544,8 @@ document.addEventListener("input",e=>{
   if(t.id&&t.id.startsWith("sh_")&&shDraft){const id=t.id;   // 79: the sheet's text fields
     if(id==="sh_cls"){shDraft.cls=t.value;const m=t.value.match(/(\d{1,2})/g);if(m){const L=m.map(Number).filter(n=>n>=1&&n<=20);
       if(L.length)shDraft.lvl=Math.min(20,L.reduce((x,y)=>x+y,0))}}
-    else if(id==="sh_species")shDraft.species=t.value;
+    else if(id==="sh_species")shDraft.species=t.value;else if(id==="sh_sub")shDraft.sub=t.value;else if(id==="sh_bg")shDraft.bg=t.value;
+    else if(id.startsWith("sh_ao_")){const a=shDraft.att[+id.slice(6)];if(a)a.note=t.value}
     else if(id.startsWith("sh_an_")){const a=shDraft.att[+id.slice(6)];if(a)a.n=t.value}else if(id.startsWith("sh_ad_")){const a=shDraft.att[+id.slice(6)];
       if(a)a.dmg=t.value}
     return}
@@ -555,6 +561,9 @@ document.addEventListener("input",e=>{
   if(t.id==="pResMax")resDraft.max=t.value;
 });
 document.addEventListener("change",e=>{
+  {const t=e.target;if(t.id&&t.id.startsWith("sh_an_")&&shDraft){const i=+t.id.slice(6),a=shDraft.att[i];   // 1.5: a weapon's notes from the data files
+    if(a&&a.n&&!String(a.note||"").trim())shWeaponNote(a.n).then(nt=>{if(nt&&shDraft&&shDraft.att[i]===a&&!String(a.note||"").trim()){a.note=nt;
+      const f=document.getElementById("sh_ao_"+i);if(f)f.value=nt}})}}
   {const t=e.target;if(t.dataset&&t.dataset.pc&&pcDraft){const x=pcDraft.cls[Number(t.dataset.i)];if(!x)return;const [n,src]=(t.value||"|").split("|");
     if(t.dataset.pc==="cls"){x.n=n||"";x.s=src||"";x.sub=null}else{const sb=n?pcSubs(pcClass(x)).find(y=>y.n===n&&y.s===src):null;
       x.sub=sb?{n:sb.n,s:sb.s,sn:sb.sn}:null}
