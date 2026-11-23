@@ -23,7 +23,7 @@
   &nbsp;·&nbsp; <a href="#faq">FAQ</a>
 </p>
 
-https://github.com/user-attachments/assets/6a9f7b1f-0586-4f68-b038-b5e7c5fdd433
+https://github.com/user-attachments/assets/71eb6c39-75f3-4886-8ee0-8c130f92571c
 
 <p align="center"><sub>One fight on all four screens at once (50 seconds, no sound).</sub></p>
 
@@ -99,7 +99,7 @@ The turn order is one row per creature, and the statblock opens beside it, so yo
 
 ## The tablet and the TV
 
-https://github.com/user-attachments/assets/9c7fc2f0-5240-4582-a20d-53a0d9a02c87
+https://github.com/user-attachments/assets/7bbb1381-49c6-4f52-a0d2-d8d31fed4937
 
 <p align="center"><sub>The tablet on the table and the TV across the room, side by side through one fight (under a minute, no sound).</sub></p>
 
@@ -150,7 +150,7 @@ Pick a theme and change any part of it: colours, fonts, an animated scene or you
 
 ## On the players' phones
 
-https://github.com/user-attachments/assets/7b8dfa4b-25bb-4b2c-9c3a-590fa657dc16
+https://github.com/user-attachments/assets/f4a58735-5e70-4614-bb3c-cf1cf5d98993
 
 <p align="center"><sub>A player's phone with the tablet beside it: joining, initiative, a spell, resources, the character sheet, a roll call and death saves (under a minute, no sound).</sub></p>
 
