@@ -65,7 +65,7 @@ function turnEnd(c){
         else{state.call={id:uid(),text:txt,dc:d.dc,at:Date.now(),to:[c.id],answers:{},cond:{id:c.id,n}};msgs.push(`${c.name}: ${txt}, asked on the phone`)}}
       else{const mod=c.sb?sbSaveMod(c.sb.raw,d.ab):null;
         if(mod==null)msgs.push(`${c.name}: ${txt} to end it`);
-        else{const r=d20(),tot=r+mod;if(tot>=d.dc)condEnd(c,n,`${d.ab} save ${tot} vs DC ${d.dc}`,msgs);
+        else{const r=d20(),bb=monBB(c),tot=r+mod+bb.n;if(tot>=d.dc)condEnd(c,n,`${d.ab} save ${tot}${bb.t} vs DC ${d.dc}`,msgs);
           else msgs.push(`${c.name}: ${d.ab} save ${tot} vs DC ${d.dc}, still ${n}`)}}}
   });
   return msgs;

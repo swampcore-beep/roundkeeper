@@ -153,6 +153,8 @@ document.addEventListener("click",e=>{
     case "mtmode": mt.modes[t.dataset.id]=t.dataset.v;mtTargets();break;
     case "mtrm": mtSel.delete(t.dataset.id);renderDM();break;
     case "mtroll": mtRoll();break;
+    case "mtadv":{const A=mt.adv=mt.adv||{},v=A[t.dataset.id]||"";A[t.dataset.id]=v===""?"adv":v==="adv"?"dis":"";if(!A[t.dataset.id])delete A[t.dataset.id];
+      delete mt.rolls[t.dataset.id];mtTargets();break}
     case "mtapply": mtApply();break;
     case "mtclose": mtStop();break;
     case "caroll": concAnswer(t.dataset.id,"roll");break;
@@ -449,6 +451,8 @@ document.addEventListener("click",e=>{
       else if(k==="spatk")shRoll("Spell attack",C.atk||0);else{const at=(sh.att||[])[Number(t.dataset.i)];
         if(at){if(k==="hit")shRoll(`${at.n} to hit`,Number(at.hit)||0);else shDmg(at.n,at.dmg)}}
       renderPSheet();break}
+    case "shadv": shAdv=t.dataset.v||"";renderPSheet();break;
+    case "shnocrit": shCrit=false;renderPSheet();break;
     case "pcallroll":{const call=state.call,ask=call&&shAsk(call.text);if(!ask)break;const r=shRoll(ask.label,ask.b);
       pSend({action:"answer",call:call.id,value:r.tot,...(r.d===20||r.d===1?{nat:r.d}:{})}).then(ok=>{if(ok){padVal="";pSheet=null;renderPSheet();
         toast(`${ask.label}: ${r.tot} (d20 ${r.d} ${shS(ask.b)}), sent`,5000)}});break}

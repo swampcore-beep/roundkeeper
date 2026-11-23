@@ -97,11 +97,16 @@ if(MODE==="player"){
             L(`${c.name}: death saves ${a.s}✓ ${a.f}✗`,{t:"ds",prev})}
           else if(a.action==="effect_add"){const tg=(a.targets||[]).filter(id=>byId(id));if(!tg.length&&!a.area)return;
             const ef={id:uid(),name:a.name,by:c.id,targets:tg,conc:!!a.conc,area:!!a.area,r0:state.turn?state.turn.round:null,...(a.src?{src:a.src}:{})};
+            const ended=a.conc?state.effects.filter(e=>e.by===c.id&&e.conc):[];   // a new concentration spell ends the old one
+            if(ended.length)state.effects=state.effects.filter(e=>!ended.includes(e));
               state.effects.push(ef);
             const addedConc=!!a.conc&&!c.conds.some(x=>cn(x)==="Concentrating");if(addedConc)c.conds.push("Concentrating");
-            L(`${c.name}: ✦ ${a.name} → ${a.area?"battlefield":tg.map(id=>byId(id).name).join(", ")}`,{t:"effadd",eid:ef.id,addedConc})}
+            L(`${c.name}: ✦ ${a.name} → ${a.area?"battlefield":tg.map(id=>byId(id).name).join(", ")}${ended.length?
+              ` · ${ended.map(e=>e.name).join(", ")} ends`:""}`,{t:"effadd",eid:ef.id,addedConc,ended:JSON.parse(JSON.stringify(ended))})}
           else if(a.action==="hpstate"){const inv={t:"hp",bloodied:!!c.bloodied,down:!!c.down,ds:Object.assign({s:0,f:0},c.ds)};
-            c.bloodied=a.bloodied;if(a.down!==!!c.down){c.down=a.down;c.ds={s:0,f:0}}L(`${c.name}: ${a.down?"0 HP":a.bloodied?"Bloodied":"healthy"}`,inv)}
+            c.bloodied=a.bloodied;if(a.down!==!!c.down){c.down=a.down;c.ds={s:0,f:0}}
+            if(a.dead&&a.down){c.down=true;c.ds={s:0,f:3};clogPush(`${c.name} dies (massive damage)`)}   // instant death: the damage was at least the max HP
+            L(`${c.name}: ${a.dead?"dies outright (massive damage)":a.down?"0 HP":a.bloodied?"Bloodied":"healthy"}`,inv)}
           else if(a.action==="roll"){state.roll={id:uid(),by:c.name,kind:a.kind,text:a.text,total:a.total,at:Date.now()};
             (state.rollLog=state.rollLog||[]).unshift({id:state.roll.id,by:c.name,text:a.text,total:a.total,at:state.roll.at});   // E18 (1.4)
             if(state.rollLog.length>8)state.rollLog.length=8;

@@ -52,6 +52,11 @@ let sbItems=[],lib=[],libQ="",libArmed=null;
 /* how added monsters get their initiative: once for the group, one roll each, or typed in by the DM from real dice (the last choice is remembered) */
 let sbInitMode=ls.get("initMode","group");if(!["group","each","hand"].includes(sbInitMode))sbInitMode="group";
 const d20=()=>1+Math.floor(Math.random()*20);
+/* 1.4.8: Bless (+1d4) and Bane (−1d4) on a creature the DM rolls for: its attack rolls and saving throws */
+function monBB(c){let n=0,t="";if(!c)return {n,t};const on=nm=>(state.effects||[]).some(e=>(e.targets||[]).includes(c.id)&&String(e.name).toLowerCase()===nm);
+  if(on("bless")){const r=1+Math.floor(Math.random()*4);n+=r;t+=` +${r} Bless`}if(on("bane")){const r=1+Math.floor(Math.random()*4);n-=r;t+=` −${r} Bane`}
+  return {n,t}}
+const magicRes=c=>!!(c&&c.sb&&/\bMagic Resistance\b/i.test(c.sb.raw||""));
 const INIT_MODES=[["group","Roll once for the group"],["each","Roll for each"],["hand","I'll roll"]];
 /* the monster library: every statblock you import is kept on the laptop (library.json next to the app) */
 function libPut(x){if(!x.raw)return;const name=(x.base||x.name||"").trim()||x.name;

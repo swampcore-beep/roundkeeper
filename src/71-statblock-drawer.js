@@ -257,9 +257,10 @@ function sbApply(i){
 function sbRoll(t){
   const c=byId(sbViewId);if(!c)return;const who=c.name,what=t.dataset.n||"";sbSpend(c,what);
   if(t.dataset.k==="hit"){const mod=Number(t.dataset.m),a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20);
-    const d=sbAdv==="adv"?Math.max(a,b):sbAdv==="dis"?Math.min(a,b):a;
-    if(!c.hidden&&c.kind!=="pc"){state.react={id:uid(),k:"attack",by:c.name,what,tot:d+mod,at:Date.now()};finish()}   // a Shield moment
-    sbLog.unshift({who,what:(what?what+" ":"")+"to hit",tot:d+mod,how:`d20 ${sbAdv?`(${a}, ${b} ${sbAdv})`:`(${d})`} ${mod>=0?"+":"−"} ${Math.abs(mod)}${d===20?
+    const d=sbAdv==="adv"?Math.max(a,b):sbAdv==="dis"?Math.min(a,b):a,bb=monBB(c);
+    if(!c.hidden&&c.kind!=="pc"){state.react={id:uid(),k:"attack",by:c.name,what,tot:d+mod+bb.n,at:Date.now()};finish()}   // a Shield moment
+    sbLog.unshift({who,what:(what?what+" ":"")+"to hit",tot:d+mod+bb.n,how:`d20 ${sbAdv?`(${a}, ${b} ${sbAdv})`:`(${d})`} ${mod>=0?"+":
+      "−"} ${Math.abs(mod)}${bb.t}${d===20?
       " · natural 20!":d===1?" · natural 1":""}`,cls:d===20?"n20":d===1?"n1":""});
     if(d===20)sbCrit=true}
   else{const r=sbDice(t.dataset.d,sbCrit);if(!r)return;

@@ -97,7 +97,10 @@ function shPull(){   // a sheet the DM sent, or this character's sheet on a new 
     ls.set(shKey(),sh);toast(sh.by==="dm"?"The DM set up your sheet":"Your sheet is back on this phone",4500);renderPlayer();
       renderPSheet()}).catch(()=>{shPullV=null})}
 /* rolling from the sheet */
-let shLast=null,shAll=false,shDraft=null,shStep=0,shPaste=null;
+let shLast=null,shAll=false,shDraft=null,shStep=0,shPaste=null,shAdv="",shCrit=false;
+/* 1.4.8: advantage or disadvantage for the next roll from the sheet (it goes back to Normal after the roll) */
+const shAdvHtml=()=>`<div class="seg2 shadv" role="group" aria-label="Next roll">${[["dis","Disadvantage"],["","Normal"],["adv","Advantage"]].map(([k,l])=>
+  `<button type="button" data-act="shadv" data-v="${k}" aria-pressed="${shAdv===k}">${l}</button>`).join("")}</div>`;
 /* 1.4: Bless (+1d4) and Bane (−1d4) on you go onto attack rolls and saving throws by themselves */
 function blessAdd(){const me=meChar();if(!me)return {n:0,t:""};const on=n=>state.effects.some(e=>(e.targets||[]).includes(me.id)&&
   String(e.name).toLowerCase()===n);
@@ -106,12 +109,15 @@ function blessAdd(){const me=meChar();if(!me)return {n:0,t:""};const on=n=>state
   return {n,t}}
 const blessFor=label=>/\bsave\b|to hit|attack/i.test(label);
 function shRoll(label,bonus){
-  const bl=blessFor(label)?blessAdd():{n:0,t:""};
-  const d=1+Math.floor(Math.random()*20),ex=myExh(),tot=d+bonus-2*ex+bl.n,text=`${label}: d20 (${d}) ${shS(bonus)}${bl.t}${ex?` −${2*ex} exhaustion`:""}`;
+  const bl=blessFor(label)?blessAdd():{n:0,t:""},adv=shAdv;shAdv="";
+  const a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20),d=adv==="adv"?Math.max(a,b):adv==="dis"?Math.min(a,b):a,ex=myExh(),
+    tot=d+bonus-2*ex+bl.n,text=`${label}: d20 ${adv?`${adv==="adv"?"advantage":"disadvantage"} (${a}, ${b})`:`(${d})`} ${shS(bonus)}${bl.t}${ex?
+      ` −${2*ex} exhaustion`:""}`;
+  if(/to hit|attack/i.test(label))shCrit=d===20;   // a natural 20 on an attack: the next damage is a critical hit
   shLast={label,tot,how:text,n:d===20?"n20":d===1?"n1":""};if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
   try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1?[300]:[60])}catch(e){}return {d,tot,text}}
-function shDmg(label,expr){const r=sbDice(String(expr).split(" ")[0],false);if(!r)return;
-  const text=`${label}: ${r.n}d${r.d} [${r.rolls.join(", ")}]${r.add?(r.add>0?" + ":" − ")+Math.abs(r.add):""}`;
+function shDmg(label,expr){const crit=shCrit,r=sbDice(String(expr).split(" ")[0],crit);if(!r)return;shCrit=false;
+  const text=`${label}${crit?" (critical)":""}: ${r.n}d${r.d} [${r.rolls.join(", ")}]${r.add?(r.add>0?" + ":" − ")+Math.abs(r.add):""}`;
   shLast={label,tot:r.tot,how:text,n:""};if(dice.share)pSend({action:"roll",kind:"roll",text,total:r.tot})}
 /* what a roll call asks for, in the sheet's terms: "Dexterity save DC 15" → Dex save +2 */
 function shAsk(text){const sh=shLocal();if(!sh)return null;const C=shCalc(sh),t=String(text||"").toLowerCase();
@@ -128,6 +134,8 @@ function shViewHtml(me){const sh=shLocal();
     ${shLast?`<div class="dresult ${shLast.n}"><b>${shLast.tot}</b><small>${esc(shLast.how)}</small></div>`:""}
     <div class="shstat"><div><small>AC</small><b>${sh.ac||10}</b></div><div><small>HP</small><b>${hp.max?`${hp.cur}<i>/${hp.max}</i>`:sh.hp||
       "—"}</b></div><div><small>INIT</small><b>${shS(C.init)}</b></div><div><small>SPEED</small><b>${sh.speed||30}</b></div></div>
+    ${shAdvHtml()}${
+      shCrit?`<div class="shcrit">Natural 20: the next damage is a critical hit (dice doubled) <button type="button" class="linkbtn" data-act="shnocrit">cancel</button></div>`:""}
     <div class="eyebrow2">Tap to roll · checks</div><div class="shabr">${SH_AB.map(a=>
       `<button type="button" data-act="shroll" data-k="ab" data-a="${a}"><small>${SH_AB3[a]}</small><b>${shS(C.m[a])}</b><i>${(sh.ab||{})[a]||
       10}</i></button>`).join("")}</div>
@@ -434,7 +442,7 @@ function renderPSheet(){
       const ask=shAsk(call.text);
       body=`<div class="callhead">${D20}<div><div class="eyebrow2">The DM calls for a roll</div><h2>${esc(call.text)}</h2></div></div>
         ${(call.aura||[]).filter(a=>a.id!==me.id).map(a=>`<div class="aurahint">${esc(a.t)}</div>`).join("")}
-        ${ask?`<button class="shrollbig" type="button" data-act="pcallroll"><b>Roll ${esc(ask.label)} ${shS(
+        ${ask?`${shAdvHtml()}<button class="shrollbig" type="button" data-act="pcallroll"><b>Roll ${esc(ask.label)} ${shS(
           ask.b)}</b><small>from your sheet</small></button><div class="eyebrow2">Rolled real dice?</div>`:""}
         <div class="psec padsec">${padHtml("Your total",true)}<button class="btn primary e-send" type="button" data-act="pcallsend">Send result</button></div>
         <div class="e-status" id="pCallStatus"></div>
@@ -454,7 +462,9 @@ function renderPSheet(){
           <div class="hpbig${hp.cur===0?" zero":""}"><b>${hp.cur}</b><span>/ ${hp.max}</span>${hp.temp?`<i>+${hp.temp} temp</i>`:""}</div>
           <div class="hpbar"><span style="width:${Math.round(100*hp.cur/hp.max)}%"></span></div>
           <div class="psec padsec">${padHtml("How much?")}<div class="hpprev" id="hpPrev" aria-live="polite"></div>
-            <div class="hpbtns"><button class="btn dmg" type="button" data-act="phpdo" data-hp="dmg">Damage</button><button class="btn heal" type="button" data-act="phpdo" data-hp="heal">Heal</button><button class="btn" type="button" data-act="phpdo" data-hp="temp">Temp HP</button></div>
+            <div class="hpbtns"><button class="btn dmg" type="button" data-act="phpdo" data-hp="dmg">Damage</button><button class="btn heal" type="button" data-act="phpdo" data-hp="heal">Heal</button><button class="btn" type="button" data-act="phpdo" data-hp="temp">Temp HP</button></div>${
+              hp.cur===0&&me.down&&!isDead(me)?
+              `<button class="btn dmg hpcrit" type="button" data-act="phpdo" data-hp="crit">Damage from a critical hit <small>two death save failures</small></button>`:""}
           </div>
           <button class="linkbtn hpmaxlink" type="button" data-act="phpmax">Change max HP (${hp.max})</button>
           <label class="chk"><input type="checkbox" id="pHpShare" ${phpOn()?"checked":""}> Share my HP with the DM (only the DM sees it)</label>`;
@@ -694,22 +704,28 @@ function renderPSheet(){
     `<button class="sx" type="button" data-act="pclose" aria-label="Close">${I.x}</button>`:""}</div><div class="sbody">${rest}</div></div></div>`;
   if(keep){const nb=O.querySelector(".psheet .sbody");if(nb)nb.scrollTop=keep}
 }
-/* HP rules: temp HP absorbs damage first; healing from 0 brings you back; damage at 0 HP is a death save failure */
+/* HP rules: temp HP absorbs damage first; healing from 0 brings you back; damage at 0 HP is a death save failure (two from a critical hit,
+   and it stops you being Stable); damage that leaves at least your max HP over after 0, or at 0 HP, kills you outright */
 async function hpChange(kind,n){
-  const hp=hpGet(),me=meChar();if(!me)return;
+  const hp=hpGet(),me=meChar();if(!me)return;let dead=false;
   if(kind==="max"){if(n>0){hp.max=n;if(!hp.cur||hp.cur>n)hp.cur=n}}
   else if(kind==="temp"){hp.temp=Math.max(hp.temp,n)}
   else if(kind==="heal"){if(!hp.max){toast("Set your max HP first");return}hp.cur=Math.min(hp.max,hp.cur+n)}
-  else if(kind==="dmg"){if(!hp.max){toast("Set your max HP first");return}
-    const wasZero=hp.cur===0;const fromTemp=Math.min(hp.temp,n);hp.temp-=fromTemp;hp.cur=Math.max(0,hp.cur-(n-fromTemp));
-    if(wasZero&&n>0&&me.down){const ds=Object.assign({s:0,f:0},me.ds);ds.f=Math.min(3,ds.f+1);pSend({action:"ds",s:ds.s,f:ds.f});
-      toast("Damage at 0 HP: one death save failure")}}
-  hpSet(hp);hpReport();renderPlayer();
+  else if(kind==="dmg"||kind==="crit"){if(!hp.max){toast("Set your max HP first");return}
+    const wasZero=hp.cur===0;const fromTemp=Math.min(hp.temp,n);hp.temp-=fromTemp;const rest=n-fromTemp,over=rest-hp.cur;hp.cur=Math.max(0,hp.cur-rest);
+    if(wasZero&&rest>0&&me.down&&!isDead(me)){
+      if(rest>=hp.max){dead=true;toast(`${rest} damage at 0 HP is at least your max HP: you die`,6000)}
+      else{const ds=Object.assign({s:0,f:0},me.ds),k=kind==="crit"?2:1;if(ds.s>=3)ds.s=0;ds.f=Math.min(3,ds.f+k);pSend({action:"ds",s:ds.s,f:ds.f});
+        toast(`Damage at 0 HP: ${k===2?"two death save failures (critical hit)":"one death save failure"}${ds.f>=3?" — you die":""}`)}}
+    else if(!wasZero&&hp.cur===0&&over>=hp.max){dead=true;toast(`${over} damage left over at 0 HP is at least your max HP: you die`,6000)}}
+  hpSet(hp);hpReport(dead);renderPlayer();
   if(kind==="dmg"&&n>0&&hp.cur>0&&(me.conds||[]).some(x=>(x.n||x)==="Concentrating"))return askConcentration(n);
   renderPSheet();
 }
-function hpReport(){
-  const hp=hpGet(),me=meChar();if(!me||!hp.auto||!hp.max)return;
+function hpReport(dead){
+  const hp=hpGet(),me=meChar();if(!me||!hp.max)return;
+  if(dead){pSend({action:"hpstate",bloodied:false,down:true,dead:true});return}   // instant death goes to the table even without automatic HP
+  if(!hp.auto)return;
   const down=hp.cur===0,bloodied=!down&&hp.cur<=Math.floor(hp.max/2);
   if(!!me.bloodied!==bloodied||!!me.down!==down)pSend({action:"hpstate",bloodied,down});
 }

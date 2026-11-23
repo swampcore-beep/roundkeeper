@@ -64,7 +64,8 @@ function pcTrackers(prof){
   let slots=[];
   if(casters.length===1)slots=own(casters[0])||[];
   else if(casters.length>1){const cl=casters.reduce((a,r)=>{const cp=r.c.cp||(r.sub&&r.sub.cp);
-    return a+(cp==="full"?r.lvl:cp==="artificer"?Math.ceil(r.lvl/2):cp==="1/2"?Math.floor(r.lvl/2):cp==="1/3"?Math.floor(r.lvl/3):0)},0);
+    return a+(cp==="full"?r.lvl:cp==="artificer"?Math.ceil(r.lvl/2):cp==="1/2"?(r.e24?Math.ceil(r.lvl/2):Math.floor(r.lvl/2)):cp==="1/3"?
+      Math.floor(r.lvl/3):0)},0);
     slots=PC_SLOTS[Math.min(20,cl)]||[]}
   slots.forEach((n,i)=>add(`Spell slot ${i+1}`,n,"long"));
   rows.forEach(r=>{
