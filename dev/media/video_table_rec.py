@@ -11,7 +11,7 @@ BASE=(";state.weather='none';state.tod='none';state.tune={};state.sceneFx={};sta
 FIGHT=("state.list=window.__keep.map(c=>Object.assign({},c,c.kind==='pc'?{init:null}:{}));state.turn=null;state.effects=[];state.fightAt=Date.now();commit()")
 async def main():
     async with async_playwright() as p:
-        b=await p.chromium.launch(args=['--no-proxy-server'])
+        b=await p.chromium.launch(args=['--no-proxy-server','--use-gl=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist'])
         dmc=await b.new_context(viewport={'width':1440,'height':900});dm=await dmc.new_page()
         await dm.goto(rk.DM+'/');await asyncio.sleep(1.5)
         async def S(js,w=0): await T(dm,js);await asyncio.sleep(w)
@@ -38,9 +38,9 @@ async def main():
         mark("A roll call: a card for each player as they answer")
         await S("state.call={id:'c'+Date.now(),text:'Dexterity save DC 15',dc:15,at:Date.now(),to:['i','s','a','gr'],answers:{}};commit()",1.2)
         for k,v in (('i',17),('s',12),('a',19),('gr',16)): await S(f"state.call.answers=Object.assign({{}},state.call.answers,{{{k}:{v}}});commit()",.6)
-        await asyncio.sleep(1.3);await S("delete state.call;commit()",.3)
-        mark("Rolls shared from a phone land on the big screen")
-        await S("state.turn={round:1,id:'s',init:15};state.roll={id:uid(),at:Date.now(),kind:'roll',by:'Styx',text:'Attack: d20 (14) + 7',total:21};commit()",4.4)
+        await asyncio.sleep(.6);await S("delete state.call;commit()",.3)
+        mark("A roll shared from a phone lands on the TV as 3D dice")
+        await S("state.turn={round:1,id:'s',init:15};state.roll={id:uid(),at:Date.now(),kind:'roll',by:'Styx',text:'Attack: d20 advantage (14, 6) + 7',total:21,dice:[[20,14],[20,6]]};commit()",5.2)
         mark("A hidden boss is revealed")
         await S("byId('d').hidden=false;byId('d').introAt=Date.now();commit()",4.8)
         mark("A new round: what happened, then the countdown")

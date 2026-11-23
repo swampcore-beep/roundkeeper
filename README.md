@@ -152,7 +152,7 @@ Pick a theme and change any part of it: colours, fonts, an animated scene or you
 
 https://github.com/user-attachments/assets/7b8dfa4b-25bb-4b2c-9c3a-590fa657dc16
 
-<p align="center"><sub>A player's phone with the tablet beside it: joining, initiative, a spell, resources, a roll call and death saves (under a minute, no sound).</sub></p>
+<p align="center"><sub>A player's phone with the tablet beside it: joining, initiative, a spell, resources, the character sheet, a roll call and death saves (under a minute, no sound).</sub></p>
 
 <table>
 <tr>

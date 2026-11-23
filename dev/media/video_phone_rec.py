@@ -14,7 +14,7 @@ ME=("hpSet({cur:32,max:32,temp:0,auto:true});"
     "renderPlayer()")
 async def main():
     async with async_playwright() as p:
-        b=await p.chromium.launch(args=['--no-proxy-server'])
+        b=await p.chromium.launch(args=['--no-proxy-server','--use-gl=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist'])
         dmc=await b.new_context(viewport={'width':1440,'height':900});dm=await dmc.new_page()
         await dm.goto(rk.DM+'/');await asyncio.sleep(1.5)
         async def S(js,w=0): await T(dm,js);await asyncio.sleep(w)
@@ -31,7 +31,7 @@ async def main():
         mark("start")
         mark("Scan the code, then tap your character")
         await asyncio.sleep(1.2);await tap('[data-act=pickme][data-n=Gregori]',.4)
-        await T(ph,ME+";window.__r=Math.random");await asyncio.sleep(1.6)
+        await T(ph,ME+";window.__r=Math.random;Dice3D.get()");await asyncio.sleep(1.6)
         mark("Initiative on the app's own keypad")
         await tap('.pdock [data-act=pinit]',.5)
         for k in "17": await tap(f'[data-act=pkey][data-k="{k}"]',.3)
@@ -54,7 +54,8 @@ async def main():
         await tap('[data-act=pmore]',.6)
         await tap('[data-act=psheet]',1.8)
         await tap('[data-act=shsec][data-s=sk]',.8)
-        await T(ph,"Math.random=()=>0.81");await tap('[data-act=shroll][data-k=sk][data-a=arcana]',1.6);await T(ph,"Math.random=window.__r")
+        await T(ph,"Math.random=()=>0.81;ls.set('diceView','3d')");await tap('[data-act=shroll][data-k=sk][data-a=arcana]',3.2)
+        await T(ph,"Math.random=window.__r;ls.set('diceView','dm')")
         await tap('[data-act=shtab][data-v=spells]',2.2)
         await tap('.sx[data-act=pclose]',.4)
         mark("Roll calls: one tap rolls the save with your sheet's bonus")
