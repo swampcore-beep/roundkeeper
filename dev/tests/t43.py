@@ -68,6 +68,17 @@ async def main():
         chk("TV: then the total shows",await T(tv,"getComputedStyle(document.querySelector('#tvDice .t2head')).opacity==='1'"))
         chk("TV: the dice stand where the card keeps their place",await T(tv,
             "(()=>{const a=$('#dice3d').getBoundingClientRect(),b=$('#tvDice .t2dice').getBoundingClientRect();return Math.abs(a.left-b.left)<2&&Math.abs(a.top-b.top)<2})()"))
+        # 1.6.1: each player's dice in their own class colour (the library keeps materials by colour set name)
+        chk("Dice colours have their own names (wizard, bard)",await T(tv,"diceColors('Gregori').name!==diceColors('Isandros').name"))
+        async def tint(who,face):
+            post({"id":who,"action":"roll","kind":"roll","text":"d20","total":face,"dice":[[20,face]]})
+            await wait(tv,f"!!window.__dr&&window.__note==='1d20@{face}'",10);await T(tv,"window.__dr=null");await asyncio.sleep(.3)
+            from PIL import Image;import io
+            im=Image.open(io.BytesIO(await tv.locator('#dice3d').screenshot())).convert('RGB');px=[p for p in im.getdata() if max(p)-min(p)>40]
+            return (sum(p[2]-p[0] for p in px)/len(px)) if px else 0   # blue minus red over the coloured pixels
+        g=await tint("g",13);i=await tint("i",8)
+        chk("Gregori's dice are blue, Isandros's are not (the colour changes between rolls)",g>10 and i<0,[round(g,1),round(i,1)])
+        await T(tv,"window.__dr=null")
         # a nat 20 with real dice: one d20 that lands on 20
         await T(tv,"window.__dr=null");post({"id":"i","action":"roll","kind":"nat20","text":"real dice","total":20})
         ok=await wait(tv,"!!window.__dr",10)

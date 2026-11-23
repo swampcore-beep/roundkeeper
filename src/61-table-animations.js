@@ -156,8 +156,8 @@ function diceColors(who){const c=who?state.list.find(x=>x.name===who):null,fk=c&
   const x=document.createElement("canvas").getContext("2d");x.fillStyle="#e3a54a";x.fillStyle=col;const h=String(x.fillStyle);
   const rgb=/^#[0-9a-f]{6}$/i.test(h)?[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)):[227,165,74],
     mix=(a,b,k)=>"#"+a.map((v,i)=>Math.round(v*k+b[i]*(1-k)).toString(16).padStart(2,"0")).join("");
-  return {name:"rk",background:mix(rgb,[26,22,32],.42),foreground:mix(rgb,[255,246,228],.18),outline:mix(rgb,[255,240,210],.7),texture:"none",
-    material:"plastic"}}
+  const bg=mix(rgb,[26,22,32],.42);   // the library keeps dice materials by colour set name, so each colour needs its own name (1.6.1)
+  return {name:"rk"+bg.slice(1),background:bg,foreground:mix(rgb,[255,246,228],.18),outline:mix(rgb,[255,240,210],.7),texture:"none",material:"plastic"}}
 const Dice3D={box:null,boxP:null,libP:null,el:null,cs:"",cur:null,t:0,_ok:null,
   ok(){if(this._ok==null){try{const c=document.createElement("canvas");this._ok=!!(window.WebGLRenderingContext&&(c.getContext("webgl")||
     c.getContext("experimental-webgl")))}catch(e){this._ok=false}}return this._ok},
