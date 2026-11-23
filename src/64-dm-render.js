@@ -24,6 +24,7 @@ function undoLog(id){
     c.exh=v.prev}else{c.conds=c.conds.filter(x=>cn(x)!=="Exhaustion");delete c.exh}}
   else if(v.t==="ds"&&c)c.ds=v.prev;
   else if(v.t==="effadd"){state.effects=state.effects.filter(x=>x.id!==v.eid);
+    (v.ended||[]).forEach(ef=>{if(!state.effects.some(x=>x.id===ef.id))state.effects.push(ef)});   // the spell it ended comes back
     if(c&&v.addedConc&&!state.effects.some(x=>x.by===c.id&&x.conc))c.conds=c.conds.filter(x=>cn(x)!=="Concentrating")}
   else if(v.t==="effrm"){if(!state.effects.some(x=>x.id===v.ef.id))state.effects.push(v.ef)}
   else if(v.t==="hp"&&c){c.bloodied=v.bloodied;c.down=v.down;c.ds=v.ds}
@@ -102,7 +103,7 @@ function concCheck(c,n,hp){
   const mod=c.sb&&c.sb.raw?sbSaveMod(c.sb.raw,"Con"):null;
   if(!ls.get("concAuto",false)){concAsks.push({id:uid(),cid:c.id,n,dc,mod});concAskT=setTimeout(concAskRender,0);
     return}   // the DM rolls it, types it, or lets it go
-  const r=d20();concResolve(c,r+(mod||0),dc,`d20 ${r}${mod!=null?` ${mod<0?"−":"+"} ${Math.abs(mod)}`:", no statblock"}`);
+  const r=d20(),bb=monBB(c);concResolve(c,r+(mod||0)+bb.n,dc,`d20 ${r}${mod!=null?` ${mod<0?"−":"+"} ${Math.abs(mod)}`:", no statblock"}${bb.t}`);
 }
 function concResolve(c,tot,dc,how){
   const t=`Con save ${tot}${how?` (${how})`:""} vs DC ${dc}`;

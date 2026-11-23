@@ -71,3 +71,8 @@ svg.tci{display:block;padding:5px;fill:none;stroke:var(--cc,currentColor);stroke
 /* the phone's toast sits at the top: at the bottom it covered the tabs and swallowed a tap on them */
 body:not(.shared) #player:not([hidden]) ~ .toast{top:calc(env(safe-area-inset-top,0px) + 10px);bottom:auto;max-width:calc(100vw - 32px)}
 .rollbanner{pointer-events:none}
+/* 1.4.8: damage from a critical hit at 0 HP (two death save failures) */
+.padsec .hpcrit{width:100%;min-height:48px;margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.padsec .hpcrit small{font-size:.8rem;font-weight:600;opacity:.85}
+.psheet .shadv{margin:4px 0 8px}.psheet .shadv button{flex:1;min-height:40px}
+.psheet .shcrit{margin:0 0 8px;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--save) 16%,transparent);font-weight:700;font-size:.92rem}

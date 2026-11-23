@@ -100,7 +100,8 @@ function sbDefs(c){   // resistances, immunities and vulnerabilities from the st
 function mtCalc(c){
   const n=Math.max(0,Number(mt.n)||0),mode=mt.modes[c.id]||"full";let x=mode==="full"?n:mode==="half"?Math.floor(n/2):0,note="";
   const d=mt.type?sbDefs(c):null;
-  if(d){if(d.imm.has(mt.type)){x=0;note="immune"}else if(d.res.has(mt.type)){x=Math.floor(x/2);note="resistant"}else if(d.vul.has(mt.type)){x*=2;
+  if(d){if(d.imm.has(mt.type)){x=0;note="immune"}else if(d.res.has(mt.type)&&d.vul.has(mt.type))note="resistant and vulnerable: they cancel out"
+    else if(d.res.has(mt.type)){x=Math.floor(x/2);note="resistant"}else if(d.vul.has(mt.type)){x*=2;
     note="vulnerable"}
     else if(d.soft.has(mt.type))note=`resistant only in some cases: check`}
   return {x,mode,note};
@@ -168,14 +169,19 @@ function mtTargets(){
       ${c.hpMax==null?`<i>${n?"takes "+x:"player"}</i>${(c.conds||[]).some(q=>(q.n||q)==="Concentrating")?`<small>Concentration save asked</small>`:""}`:
         `<i class="${h===0&&n?"dead":""}">${n?`${cur}${t?`+${t}`:""} → ${h}${h===0?" ☠":""}`:`${cur}/${c.hpMax}`}</i>`}${x!==n&&n&&mode==="full"?
         `<small>${x}</small>`:""}${note?`<small class="mtn2">${esc(note)}</small>`:""}${ro?`<small>${ro.wait?"asked on the phone…":`${ro.ok?"saved":
-        "failed"} (${ro.tot}${ro.pc?"":ro.mod==null?", no statblock":""})`}</small>`:""}
+        "failed"} (${ro.tot}${ro.adv?` ${ro.adv}`:""}${ro.bb?esc(ro.bb):""}${ro.pc?"":ro.mod==null?", no statblock":""})`}</small>`:""}${mt.ab&&c.kind!=="pc"?
+        `<button type="button" class="mtadv" data-act="mtadv" data-id="${esc(c.id)}" aria-pressed="${!!(mt.adv||{})[c.id]}" title="${magicRes(c)?
+          "Magic Resistance: advantage on saves against spells and magical effects. ":""}Click: advantage, disadvantage, normal">${{adv:"Adv",dis:
+            "Dis"}[(mt.adv||
+          {})[c.id]]||(magicRes(c)?"Adv? (Magic Res.)":"Adv")}</button>`:""}
       <button type="button" class="x" data-act="mtrm" data-id="${esc(c.id)}" aria-label="Leave ${esc(c.name)} out">${I.x}</button></span>`}).join("")||
         `<span class="psub">Tick the creatures it hits: the boxes on the left of the rows, or Shift+click a row.</span>`;
 }
 function mtRoll(){
   const dc=Number(mt.dc);if(!mt.ab||!dc){toast("Pick the save and type the DC");return}
-  [...mtSel].map(byId).filter(c=>c&&c.kind!=="pc").forEach(c=>{const mod=c.sb&&c.sb.raw?sbSaveMod(c.sb.raw,mt.ab):null,r=d20(),tot=r+(mod||0),ok=tot>=dc;
-    mt.rolls[c.id]={r,tot,mod,ok};mt.modes[c.id]=ok?(mt.on==="half"?"half":"none"):"full"});
+  [...mtSel].map(byId).filter(c=>c&&c.kind!=="pc").forEach(c=>{const mod=c.sb&&c.sb.raw?sbSaveMod(c.sb.raw,mt.ab):null,adv=(mt.adv||{})[c.id]||"",
+    a=d20(),b=d20(),r=adv==="adv"?Math.max(a,b):adv==="dis"?Math.min(a,b):a,bb=monBB(c),tot=r+(mod||0)+bb.n,ok=tot>=dc;
+    mt.rolls[c.id]={r,tot,mod,ok,adv,bb:bb.t};mt.modes[c.id]=ok?(mt.on==="half"?"half":"none"):"full"});
   // players roll their own: a roll call to their phones, and the answers set Full or ½
   const pcs=[...mtSel].map(byId).filter(c=>c&&c.kind==="pc"&&!mt.rolls[c.id]);
   if(pcs.length){state.call={id:uid(),text:`${mt.ab} save DC ${dc}${mt.src&&mt.src.act?" · "+mt.src.act:""}`,dc,at:Date.now(),to:pcs.map(c=>c.id),answers:{}};

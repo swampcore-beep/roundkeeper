@@ -3296,6 +3296,11 @@ html:root[data-dmlook=tool] .atmobtn .atsw{display:inline-flex;align-items:cente
   box-shadow:0 0 0 1px color-mix(in srgb,var(--fg) 18%,transparent)}
 html:root[data-dmlook=tool] .atmobtn .atsw b{width:8px;height:8px;border-radius:999px;margin-left:-2px;box-shadow:0 0 0 1px var(--sw0)}
 html:root[data-dmlook=tool] .atmobtn .atsw b:first-child{margin-left:0}
+/* 1.4.8: advantage or disadvantage on one target's save in Hit several (Magic Resistance and the like) */
+.mtt .mtadv{min-height:24px;padding:0 8px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--muted);font:inherit;
+  font-size:.78rem;
+  font-weight:700;cursor:pointer}
+.mtt .mtadv[aria-pressed="true"]{border-color:var(--fg);color:var(--fg)}
 /* ---------- phones, 1.4: a dock in the class colour and four tabs where the thumb is; nothing on a phone under 12 px ----------
    The dock: HP (tap to change), AC and initiative, then what's on you. The tabs: Roll, Conditions, Spells (or Resources), More. */
 .pbar.v14{gap:8px;padding:10px max(12px,env(safe-area-inset-right,0px)) 0 max(12px,env(safe-area-inset-left,0px));
@@ -3369,6 +3374,11 @@ svg.tci{display:block;padding:5px;fill:none;stroke:var(--cc,currentColor);stroke
 /* the phone's toast sits at the top: at the bottom it covered the tabs and swallowed a tap on them */
 body:not(.shared) #player:not([hidden]) ~ .toast{top:calc(env(safe-area-inset-top,0px) + 10px);bottom:auto;max-width:calc(100vw - 32px)}
 .rollbanner{pointer-events:none}
+/* 1.4.8: damage from a critical hit at 0 HP (two death save failures) */
+.padsec .hpcrit{width:100%;min-height:48px;margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.padsec .hpcrit small{font-size:.8rem;font-weight:600;opacity:.85}
+.psheet .shadv{margin:4px 0 8px}.psheet .shadv button{flex:1;min-height:40px}
+.psheet .shcrit{margin:0 0 8px;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--save) 16%,transparent);font-weight:700;font-size:.92rem}
 </style>
 </head>
 <body>
@@ -6384,6 +6394,7 @@ function undoLog(id){
     c.exh=v.prev}else{c.conds=c.conds.filter(x=>cn(x)!=="Exhaustion");delete c.exh}}
   else if(v.t==="ds"&&c)c.ds=v.prev;
   else if(v.t==="effadd"){state.effects=state.effects.filter(x=>x.id!==v.eid);
+    (v.ended||[]).forEach(ef=>{if(!state.effects.some(x=>x.id===ef.id))state.effects.push(ef)});   // the spell it ended comes back
     if(c&&v.addedConc&&!state.effects.some(x=>x.by===c.id&&x.conc))c.conds=c.conds.filter(x=>cn(x)!=="Concentrating")}
   else if(v.t==="effrm"){if(!state.effects.some(x=>x.id===v.ef.id))state.effects.push(v.ef)}
   else if(v.t==="hp"&&c){c.bloodied=v.bloodied;c.down=v.down;c.ds=v.ds}
@@ -6462,7 +6473,7 @@ function concCheck(c,n,hp){
   const mod=c.sb&&c.sb.raw?sbSaveMod(c.sb.raw,"Con"):null;
   if(!ls.get("concAuto",false)){concAsks.push({id:uid(),cid:c.id,n,dc,mod});concAskT=setTimeout(concAskRender,0);
     return}   // the DM rolls it, types it, or lets it go
-  const r=d20();concResolve(c,r+(mod||0),dc,`d20 ${r}${mod!=null?` ${mod<0?"−":"+"} ${Math.abs(mod)}`:", no statblock"}`);
+  const r=d20(),bb=monBB(c);concResolve(c,r+(mod||0)+bb.n,dc,`d20 ${r}${mod!=null?` ${mod<0?"−":"+"} ${Math.abs(mod)}`:", no statblock"}${bb.t}`);
 }
 function concResolve(c,tot,dc,how){
   const t=`Con save ${tot}${how?` (${how})`:""} vs DC ${dc}`;
@@ -6688,7 +6699,8 @@ function sbDefs(c){   // resistances, immunities and vulnerabilities from the st
 function mtCalc(c){
   const n=Math.max(0,Number(mt.n)||0),mode=mt.modes[c.id]||"full";let x=mode==="full"?n:mode==="half"?Math.floor(n/2):0,note="";
   const d=mt.type?sbDefs(c):null;
-  if(d){if(d.imm.has(mt.type)){x=0;note="immune"}else if(d.res.has(mt.type)){x=Math.floor(x/2);note="resistant"}else if(d.vul.has(mt.type)){x*=2;
+  if(d){if(d.imm.has(mt.type)){x=0;note="immune"}else if(d.res.has(mt.type)&&d.vul.has(mt.type))note="resistant and vulnerable: they cancel out"
+    else if(d.res.has(mt.type)){x=Math.floor(x/2);note="resistant"}else if(d.vul.has(mt.type)){x*=2;
     note="vulnerable"}
     else if(d.soft.has(mt.type))note=`resistant only in some cases: check`}
   return {x,mode,note};
@@ -6756,14 +6768,19 @@ function mtTargets(){
       ${c.hpMax==null?`<i>${n?"takes "+x:"player"}</i>${(c.conds||[]).some(q=>(q.n||q)==="Concentrating")?`<small>Concentration save asked</small>`:""}`:
         `<i class="${h===0&&n?"dead":""}">${n?`${cur}${t?`+${t}`:""} → ${h}${h===0?" ☠":""}`:`${cur}/${c.hpMax}`}</i>`}${x!==n&&n&&mode==="full"?
         `<small>${x}</small>`:""}${note?`<small class="mtn2">${esc(note)}</small>`:""}${ro?`<small>${ro.wait?"asked on the phone…":`${ro.ok?"saved":
-        "failed"} (${ro.tot}${ro.pc?"":ro.mod==null?", no statblock":""})`}</small>`:""}
+        "failed"} (${ro.tot}${ro.adv?` ${ro.adv}`:""}${ro.bb?esc(ro.bb):""}${ro.pc?"":ro.mod==null?", no statblock":""})`}</small>`:""}${mt.ab&&c.kind!=="pc"?
+        `<button type="button" class="mtadv" data-act="mtadv" data-id="${esc(c.id)}" aria-pressed="${!!(mt.adv||{})[c.id]}" title="${magicRes(c)?
+          "Magic Resistance: advantage on saves against spells and magical effects. ":""}Click: advantage, disadvantage, normal">${{adv:"Adv",dis:
+            "Dis"}[(mt.adv||
+          {})[c.id]]||(magicRes(c)?"Adv? (Magic Res.)":"Adv")}</button>`:""}
       <button type="button" class="x" data-act="mtrm" data-id="${esc(c.id)}" aria-label="Leave ${esc(c.name)} out">${I.x}</button></span>`}).join("")||
         `<span class="psub">Tick the creatures it hits: the boxes on the left of the rows, or Shift+click a row.</span>`;
 }
 function mtRoll(){
   const dc=Number(mt.dc);if(!mt.ab||!dc){toast("Pick the save and type the DC");return}
-  [...mtSel].map(byId).filter(c=>c&&c.kind!=="pc").forEach(c=>{const mod=c.sb&&c.sb.raw?sbSaveMod(c.sb.raw,mt.ab):null,r=d20(),tot=r+(mod||0),ok=tot>=dc;
-    mt.rolls[c.id]={r,tot,mod,ok};mt.modes[c.id]=ok?(mt.on==="half"?"half":"none"):"full"});
+  [...mtSel].map(byId).filter(c=>c&&c.kind!=="pc").forEach(c=>{const mod=c.sb&&c.sb.raw?sbSaveMod(c.sb.raw,mt.ab):null,adv=(mt.adv||{})[c.id]||"",
+    a=d20(),b=d20(),r=adv==="adv"?Math.max(a,b):adv==="dis"?Math.min(a,b):a,bb=monBB(c),tot=r+(mod||0)+bb.n,ok=tot>=dc;
+    mt.rolls[c.id]={r,tot,mod,ok,adv,bb:bb.t};mt.modes[c.id]=ok?(mt.on==="half"?"half":"none"):"full"});
   // players roll their own: a roll call to their phones, and the answers set Full or ½
   const pcs=[...mtSel].map(byId).filter(c=>c&&c.kind==="pc"&&!mt.rolls[c.id]);
   if(pcs.length){state.call={id:uid(),text:`${mt.ab} save DC ${dc}${mt.src&&mt.src.act?" · "+mt.src.act:""}`,dc,at:Date.now(),to:pcs.map(c=>c.id),answers:{}};
@@ -7383,6 +7400,11 @@ let sbItems=[],lib=[],libQ="",libArmed=null;
 /* how added monsters get their initiative: once for the group, one roll each, or typed in by the DM from real dice (the last choice is remembered) */
 let sbInitMode=ls.get("initMode","group");if(!["group","each","hand"].includes(sbInitMode))sbInitMode="group";
 const d20=()=>1+Math.floor(Math.random()*20);
+/* 1.4.8: Bless (+1d4) and Bane (−1d4) on a creature the DM rolls for: its attack rolls and saving throws */
+function monBB(c){let n=0,t="";if(!c)return {n,t};const on=nm=>(state.effects||[]).some(e=>(e.targets||[]).includes(c.id)&&String(e.name).toLowerCase()===nm);
+  if(on("bless")){const r=1+Math.floor(Math.random()*4);n+=r;t+=` +${r} Bless`}if(on("bane")){const r=1+Math.floor(Math.random()*4);n-=r;t+=` −${r} Bane`}
+  return {n,t}}
+const magicRes=c=>!!(c&&c.sb&&/\bMagic Resistance\b/i.test(c.sb.raw||""));
 const INIT_MODES=[["group","Roll once for the group"],["each","Roll for each"],["hand","I'll roll"]];
 /* the monster library: every statblock you import is kept on the laptop (library.json next to the app) */
 function libPut(x){if(!x.raw)return;const name=(x.base||x.name||"").trim()||x.name;
@@ -8113,9 +8135,10 @@ function sbApply(i){
 function sbRoll(t){
   const c=byId(sbViewId);if(!c)return;const who=c.name,what=t.dataset.n||"";sbSpend(c,what);
   if(t.dataset.k==="hit"){const mod=Number(t.dataset.m),a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20);
-    const d=sbAdv==="adv"?Math.max(a,b):sbAdv==="dis"?Math.min(a,b):a;
-    if(!c.hidden&&c.kind!=="pc"){state.react={id:uid(),k:"attack",by:c.name,what,tot:d+mod,at:Date.now()};finish()}   // a Shield moment
-    sbLog.unshift({who,what:(what?what+" ":"")+"to hit",tot:d+mod,how:`d20 ${sbAdv?`(${a}, ${b} ${sbAdv})`:`(${d})`} ${mod>=0?"+":"−"} ${Math.abs(mod)}${d===20?
+    const d=sbAdv==="adv"?Math.max(a,b):sbAdv==="dis"?Math.min(a,b):a,bb=monBB(c);
+    if(!c.hidden&&c.kind!=="pc"){state.react={id:uid(),k:"attack",by:c.name,what,tot:d+mod+bb.n,at:Date.now()};finish()}   // a Shield moment
+    sbLog.unshift({who,what:(what?what+" ":"")+"to hit",tot:d+mod+bb.n,how:`d20 ${sbAdv?`(${a}, ${b} ${sbAdv})`:`(${d})`} ${mod>=0?"+":
+      "−"} ${Math.abs(mod)}${bb.t}${d===20?
       " · natural 20!":d===1?" · natural 1":""}`,cls:d===20?"n20":d===1?"n1":""});
     if(d===20)sbCrit=true}
   else{const r=sbDice(t.dataset.d,sbCrit);if(!r)return;
@@ -8343,7 +8366,7 @@ function turnEnd(c){
         else{state.call={id:uid(),text:txt,dc:d.dc,at:Date.now(),to:[c.id],answers:{},cond:{id:c.id,n}};msgs.push(`${c.name}: ${txt}, asked on the phone`)}}
       else{const mod=c.sb?sbSaveMod(c.sb.raw,d.ab):null;
         if(mod==null)msgs.push(`${c.name}: ${txt} to end it`);
-        else{const r=d20(),tot=r+mod;if(tot>=d.dc)condEnd(c,n,`${d.ab} save ${tot} vs DC ${d.dc}`,msgs);
+        else{const r=d20(),bb=monBB(c),tot=r+mod+bb.n;if(tot>=d.dc)condEnd(c,n,`${d.ab} save ${tot}${bb.t} vs DC ${d.dc}`,msgs);
           else msgs.push(`${c.name}: ${d.ab} save ${tot} vs DC ${d.dc}, still ${n}`)}}}
   });
   return msgs;
@@ -9856,7 +9879,8 @@ function pcTrackers(prof){
   let slots=[];
   if(casters.length===1)slots=own(casters[0])||[];
   else if(casters.length>1){const cl=casters.reduce((a,r)=>{const cp=r.c.cp||(r.sub&&r.sub.cp);
-    return a+(cp==="full"?r.lvl:cp==="artificer"?Math.ceil(r.lvl/2):cp==="1/2"?Math.floor(r.lvl/2):cp==="1/3"?Math.floor(r.lvl/3):0)},0);
+    return a+(cp==="full"?r.lvl:cp==="artificer"?Math.ceil(r.lvl/2):cp==="1/2"?(r.e24?Math.ceil(r.lvl/2):Math.floor(r.lvl/2)):cp==="1/3"?
+      Math.floor(r.lvl/3):0)},0);
     slots=PC_SLOTS[Math.min(20,cl)]||[]}
   slots.forEach((n,i)=>add(`Spell slot ${i+1}`,n,"long"));
   rows.forEach(r=>{
@@ -10068,7 +10092,10 @@ function shPull(){   // a sheet the DM sent, or this character's sheet on a new 
     ls.set(shKey(),sh);toast(sh.by==="dm"?"The DM set up your sheet":"Your sheet is back on this phone",4500);renderPlayer();
       renderPSheet()}).catch(()=>{shPullV=null})}
 /* rolling from the sheet */
-let shLast=null,shAll=false,shDraft=null,shStep=0,shPaste=null;
+let shLast=null,shAll=false,shDraft=null,shStep=0,shPaste=null,shAdv="",shCrit=false;
+/* 1.4.8: advantage or disadvantage for the next roll from the sheet (it goes back to Normal after the roll) */
+const shAdvHtml=()=>`<div class="seg2 shadv" role="group" aria-label="Next roll">${[["dis","Disadvantage"],["","Normal"],["adv","Advantage"]].map(([k,l])=>
+  `<button type="button" data-act="shadv" data-v="${k}" aria-pressed="${shAdv===k}">${l}</button>`).join("")}</div>`;
 /* 1.4: Bless (+1d4) and Bane (−1d4) on you go onto attack rolls and saving throws by themselves */
 function blessAdd(){const me=meChar();if(!me)return {n:0,t:""};const on=n=>state.effects.some(e=>(e.targets||[]).includes(me.id)&&
   String(e.name).toLowerCase()===n);
@@ -10077,12 +10104,15 @@ function blessAdd(){const me=meChar();if(!me)return {n:0,t:""};const on=n=>state
   return {n,t}}
 const blessFor=label=>/\bsave\b|to hit|attack/i.test(label);
 function shRoll(label,bonus){
-  const bl=blessFor(label)?blessAdd():{n:0,t:""};
-  const d=1+Math.floor(Math.random()*20),ex=myExh(),tot=d+bonus-2*ex+bl.n,text=`${label}: d20 (${d}) ${shS(bonus)}${bl.t}${ex?` −${2*ex} exhaustion`:""}`;
+  const bl=blessFor(label)?blessAdd():{n:0,t:""},adv=shAdv;shAdv="";
+  const a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20),d=adv==="adv"?Math.max(a,b):adv==="dis"?Math.min(a,b):a,ex=myExh(),
+    tot=d+bonus-2*ex+bl.n,text=`${label}: d20 ${adv?`${adv==="adv"?"advantage":"disadvantage"} (${a}, ${b})`:`(${d})`} ${shS(bonus)}${bl.t}${ex?
+      ` −${2*ex} exhaustion`:""}`;
+  if(/to hit|attack/i.test(label))shCrit=d===20;   // a natural 20 on an attack: the next damage is a critical hit
   shLast={label,tot,how:text,n:d===20?"n20":d===1?"n1":""};if(dice.share)pSend({action:"roll",kind:d===20?"nat20":d===1?"nat1":"roll",text,total:tot});
   try{navigator.vibrate&&navigator.vibrate(d===20?[60,40,60,40,200]:d===1?[300]:[60])}catch(e){}return {d,tot,text}}
-function shDmg(label,expr){const r=sbDice(String(expr).split(" ")[0],false);if(!r)return;
-  const text=`${label}: ${r.n}d${r.d} [${r.rolls.join(", ")}]${r.add?(r.add>0?" + ":" − ")+Math.abs(r.add):""}`;
+function shDmg(label,expr){const crit=shCrit,r=sbDice(String(expr).split(" ")[0],crit);if(!r)return;shCrit=false;
+  const text=`${label}${crit?" (critical)":""}: ${r.n}d${r.d} [${r.rolls.join(", ")}]${r.add?(r.add>0?" + ":" − ")+Math.abs(r.add):""}`;
   shLast={label,tot:r.tot,how:text,n:""};if(dice.share)pSend({action:"roll",kind:"roll",text,total:r.tot})}
 /* what a roll call asks for, in the sheet's terms: "Dexterity save DC 15" → Dex save +2 */
 function shAsk(text){const sh=shLocal();if(!sh)return null;const C=shCalc(sh),t=String(text||"").toLowerCase();
@@ -10099,6 +10129,8 @@ function shViewHtml(me){const sh=shLocal();
     ${shLast?`<div class="dresult ${shLast.n}"><b>${shLast.tot}</b><small>${esc(shLast.how)}</small></div>`:""}
     <div class="shstat"><div><small>AC</small><b>${sh.ac||10}</b></div><div><small>HP</small><b>${hp.max?`${hp.cur}<i>/${hp.max}</i>`:sh.hp||
       "—"}</b></div><div><small>INIT</small><b>${shS(C.init)}</b></div><div><small>SPEED</small><b>${sh.speed||30}</b></div></div>
+    ${shAdvHtml()}${
+      shCrit?`<div class="shcrit">Natural 20: the next damage is a critical hit (dice doubled) <button type="button" class="linkbtn" data-act="shnocrit">cancel</button></div>`:""}
     <div class="eyebrow2">Tap to roll · checks</div><div class="shabr">${SH_AB.map(a=>
       `<button type="button" data-act="shroll" data-k="ab" data-a="${a}"><small>${SH_AB3[a]}</small><b>${shS(C.m[a])}</b><i>${(sh.ab||{})[a]||
       10}</i></button>`).join("")}</div>
@@ -10405,7 +10437,7 @@ function renderPSheet(){
       const ask=shAsk(call.text);
       body=`<div class="callhead">${D20}<div><div class="eyebrow2">The DM calls for a roll</div><h2>${esc(call.text)}</h2></div></div>
         ${(call.aura||[]).filter(a=>a.id!==me.id).map(a=>`<div class="aurahint">${esc(a.t)}</div>`).join("")}
-        ${ask?`<button class="shrollbig" type="button" data-act="pcallroll"><b>Roll ${esc(ask.label)} ${shS(
+        ${ask?`${shAdvHtml()}<button class="shrollbig" type="button" data-act="pcallroll"><b>Roll ${esc(ask.label)} ${shS(
           ask.b)}</b><small>from your sheet</small></button><div class="eyebrow2">Rolled real dice?</div>`:""}
         <div class="psec padsec">${padHtml("Your total",true)}<button class="btn primary e-send" type="button" data-act="pcallsend">Send result</button></div>
         <div class="e-status" id="pCallStatus"></div>
@@ -10425,7 +10457,9 @@ function renderPSheet(){
           <div class="hpbig${hp.cur===0?" zero":""}"><b>${hp.cur}</b><span>/ ${hp.max}</span>${hp.temp?`<i>+${hp.temp} temp</i>`:""}</div>
           <div class="hpbar"><span style="width:${Math.round(100*hp.cur/hp.max)}%"></span></div>
           <div class="psec padsec">${padHtml("How much?")}<div class="hpprev" id="hpPrev" aria-live="polite"></div>
-            <div class="hpbtns"><button class="btn dmg" type="button" data-act="phpdo" data-hp="dmg">Damage</button><button class="btn heal" type="button" data-act="phpdo" data-hp="heal">Heal</button><button class="btn" type="button" data-act="phpdo" data-hp="temp">Temp HP</button></div>
+            <div class="hpbtns"><button class="btn dmg" type="button" data-act="phpdo" data-hp="dmg">Damage</button><button class="btn heal" type="button" data-act="phpdo" data-hp="heal">Heal</button><button class="btn" type="button" data-act="phpdo" data-hp="temp">Temp HP</button></div>${
+              hp.cur===0&&me.down&&!isDead(me)?
+              `<button class="btn dmg hpcrit" type="button" data-act="phpdo" data-hp="crit">Damage from a critical hit <small>two death save failures</small></button>`:""}
           </div>
           <button class="linkbtn hpmaxlink" type="button" data-act="phpmax">Change max HP (${hp.max})</button>
           <label class="chk"><input type="checkbox" id="pHpShare" ${phpOn()?"checked":""}> Share my HP with the DM (only the DM sees it)</label>`;
@@ -10665,22 +10699,28 @@ function renderPSheet(){
     `<button class="sx" type="button" data-act="pclose" aria-label="Close">${I.x}</button>`:""}</div><div class="sbody">${rest}</div></div></div>`;
   if(keep){const nb=O.querySelector(".psheet .sbody");if(nb)nb.scrollTop=keep}
 }
-/* HP rules: temp HP absorbs damage first; healing from 0 brings you back; damage at 0 HP is a death save failure */
+/* HP rules: temp HP absorbs damage first; healing from 0 brings you back; damage at 0 HP is a death save failure (two from a critical hit,
+   and it stops you being Stable); damage that leaves at least your max HP over after 0, or at 0 HP, kills you outright */
 async function hpChange(kind,n){
-  const hp=hpGet(),me=meChar();if(!me)return;
+  const hp=hpGet(),me=meChar();if(!me)return;let dead=false;
   if(kind==="max"){if(n>0){hp.max=n;if(!hp.cur||hp.cur>n)hp.cur=n}}
   else if(kind==="temp"){hp.temp=Math.max(hp.temp,n)}
   else if(kind==="heal"){if(!hp.max){toast("Set your max HP first");return}hp.cur=Math.min(hp.max,hp.cur+n)}
-  else if(kind==="dmg"){if(!hp.max){toast("Set your max HP first");return}
-    const wasZero=hp.cur===0;const fromTemp=Math.min(hp.temp,n);hp.temp-=fromTemp;hp.cur=Math.max(0,hp.cur-(n-fromTemp));
-    if(wasZero&&n>0&&me.down){const ds=Object.assign({s:0,f:0},me.ds);ds.f=Math.min(3,ds.f+1);pSend({action:"ds",s:ds.s,f:ds.f});
-      toast("Damage at 0 HP: one death save failure")}}
-  hpSet(hp);hpReport();renderPlayer();
+  else if(kind==="dmg"||kind==="crit"){if(!hp.max){toast("Set your max HP first");return}
+    const wasZero=hp.cur===0;const fromTemp=Math.min(hp.temp,n);hp.temp-=fromTemp;const rest=n-fromTemp,over=rest-hp.cur;hp.cur=Math.max(0,hp.cur-rest);
+    if(wasZero&&rest>0&&me.down&&!isDead(me)){
+      if(rest>=hp.max){dead=true;toast(`${rest} damage at 0 HP is at least your max HP: you die`,6000)}
+      else{const ds=Object.assign({s:0,f:0},me.ds),k=kind==="crit"?2:1;if(ds.s>=3)ds.s=0;ds.f=Math.min(3,ds.f+k);pSend({action:"ds",s:ds.s,f:ds.f});
+        toast(`Damage at 0 HP: ${k===2?"two death save failures (critical hit)":"one death save failure"}${ds.f>=3?" — you die":""}`)}}
+    else if(!wasZero&&hp.cur===0&&over>=hp.max){dead=true;toast(`${over} damage left over at 0 HP is at least your max HP: you die`,6000)}}
+  hpSet(hp);hpReport(dead);renderPlayer();
   if(kind==="dmg"&&n>0&&hp.cur>0&&(me.conds||[]).some(x=>(x.n||x)==="Concentrating"))return askConcentration(n);
   renderPSheet();
 }
-function hpReport(){
-  const hp=hpGet(),me=meChar();if(!me||!hp.auto||!hp.max)return;
+function hpReport(dead){
+  const hp=hpGet(),me=meChar();if(!me||!hp.max)return;
+  if(dead){pSend({action:"hpstate",bloodied:false,down:true,dead:true});return}   // instant death goes to the table even without automatic HP
+  if(!hp.auto)return;
   const down=hp.cur===0,bloodied=!down&&hp.cur<=Math.floor(hp.max/2);
   if(!!me.bloodied!==bloodied||!!me.down!==down)pSend({action:"hpstate",bloodied,down});
 }
@@ -11745,6 +11785,8 @@ document.addEventListener("click",e=>{
     case "mtmode": mt.modes[t.dataset.id]=t.dataset.v;mtTargets();break;
     case "mtrm": mtSel.delete(t.dataset.id);renderDM();break;
     case "mtroll": mtRoll();break;
+    case "mtadv":{const A=mt.adv=mt.adv||{},v=A[t.dataset.id]||"";A[t.dataset.id]=v===""?"adv":v==="adv"?"dis":"";if(!A[t.dataset.id])delete A[t.dataset.id];
+      delete mt.rolls[t.dataset.id];mtTargets();break}
     case "mtapply": mtApply();break;
     case "mtclose": mtStop();break;
     case "caroll": concAnswer(t.dataset.id,"roll");break;
@@ -12041,6 +12083,8 @@ document.addEventListener("click",e=>{
       else if(k==="spatk")shRoll("Spell attack",C.atk||0);else{const at=(sh.att||[])[Number(t.dataset.i)];
         if(at){if(k==="hit")shRoll(`${at.n} to hit`,Number(at.hit)||0);else shDmg(at.n,at.dmg)}}
       renderPSheet();break}
+    case "shadv": shAdv=t.dataset.v||"";renderPSheet();break;
+    case "shnocrit": shCrit=false;renderPSheet();break;
     case "pcallroll":{const call=state.call,ask=call&&shAsk(call.text);if(!ask)break;const r=shRoll(ask.label,ask.b);
       pSend({action:"answer",call:call.id,value:r.tot,...(r.d===20||r.d===1?{nat:r.d}:{})}).then(ok=>{if(ok){padVal="";pSheet=null;renderPSheet();
         toast(`${ask.label}: ${r.tot} (d20 ${r.d} ${shS(ask.b)}), sent`,5000)}});break}
@@ -12477,11 +12521,16 @@ if(MODE==="player"){
             L(`${c.name}: death saves ${a.s}✓ ${a.f}✗`,{t:"ds",prev})}
           else if(a.action==="effect_add"){const tg=(a.targets||[]).filter(id=>byId(id));if(!tg.length&&!a.area)return;
             const ef={id:uid(),name:a.name,by:c.id,targets:tg,conc:!!a.conc,area:!!a.area,r0:state.turn?state.turn.round:null,...(a.src?{src:a.src}:{})};
+            const ended=a.conc?state.effects.filter(e=>e.by===c.id&&e.conc):[];   // a new concentration spell ends the old one
+            if(ended.length)state.effects=state.effects.filter(e=>!ended.includes(e));
               state.effects.push(ef);
             const addedConc=!!a.conc&&!c.conds.some(x=>cn(x)==="Concentrating");if(addedConc)c.conds.push("Concentrating");
-            L(`${c.name}: ✦ ${a.name} → ${a.area?"battlefield":tg.map(id=>byId(id).name).join(", ")}`,{t:"effadd",eid:ef.id,addedConc})}
+            L(`${c.name}: ✦ ${a.name} → ${a.area?"battlefield":tg.map(id=>byId(id).name).join(", ")}${ended.length?
+              ` · ${ended.map(e=>e.name).join(", ")} ends`:""}`,{t:"effadd",eid:ef.id,addedConc,ended:JSON.parse(JSON.stringify(ended))})}
           else if(a.action==="hpstate"){const inv={t:"hp",bloodied:!!c.bloodied,down:!!c.down,ds:Object.assign({s:0,f:0},c.ds)};
-            c.bloodied=a.bloodied;if(a.down!==!!c.down){c.down=a.down;c.ds={s:0,f:0}}L(`${c.name}: ${a.down?"0 HP":a.bloodied?"Bloodied":"healthy"}`,inv)}
+            c.bloodied=a.bloodied;if(a.down!==!!c.down){c.down=a.down;c.ds={s:0,f:0}}
+            if(a.dead&&a.down){c.down=true;c.ds={s:0,f:3};clogPush(`${c.name} dies (massive damage)`)}   // instant death: the damage was at least the max HP
+            L(`${c.name}: ${a.dead?"dies outright (massive damage)":a.down?"0 HP":a.bloodied?"Bloodied":"healthy"}`,inv)}
           else if(a.action==="roll"){state.roll={id:uid(),by:c.name,kind:a.kind,text:a.text,total:a.total,at:Date.now()};
             (state.rollLog=state.rollLog||[]).unshift({id:state.roll.id,by:c.name,text:a.text,total:a.total,at:state.roll.at});   // E18 (1.4)
             if(state.rollLog.length>8)state.rollLog.length=8;

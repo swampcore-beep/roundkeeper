@@ -1232,6 +1232,9 @@ func parseAction(r *http.Request) (act map[string]any, ok bool) {
 		act["src"] = cut(src, 20)
 	case "hpstate":
 		act["bloodied"], act["down"] = truthy(data["bloodied"]), truthy(data["down"])
+		if truthy(data["dead"]) {
+			act["dead"] = true // instant death from massive damage
+		}
 	case "roll":
 		k, _ := data["kind"].(string)
 		if k != "nat20" && k != "nat1" && k != "roll" {

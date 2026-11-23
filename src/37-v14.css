@@ -243,3 +243,8 @@ html:root[data-dmlook=tool] .atmobtn .atsw{display:inline-flex;align-items:cente
   box-shadow:0 0 0 1px color-mix(in srgb,var(--fg) 18%,transparent)}
 html:root[data-dmlook=tool] .atmobtn .atsw b{width:8px;height:8px;border-radius:999px;margin-left:-2px;box-shadow:0 0 0 1px var(--sw0)}
 html:root[data-dmlook=tool] .atmobtn .atsw b:first-child{margin-left:0}
+/* 1.4.8: advantage or disadvantage on one target's save in Hit several (Magic Resistance and the like) */
+.mtt .mtadv{min-height:24px;padding:0 8px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--muted);font:inherit;
+  font-size:.78rem;
+  font-weight:700;cursor:pointer}
+.mtt .mtadv[aria-pressed="true"]{border-color:var(--fg);color:var(--fg)}
