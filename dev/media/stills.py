@@ -22,7 +22,15 @@ async def main():
         await tv.goto('http://127.0.0.1:8765/players?shared=1&screen=tv');await asyncio.sleep(3)
         ph=await (await b.new_context(viewport={'width':390,'height':844},device_scale_factor=2)).new_page()
         await ph.goto(rk.PL+'/players');await asyncio.sleep(1.2);await ph.click('[data-act=pickme][data-n=Isandros]');await asyncio.sleep(1)
-        await T(ph,"hpSet({cur:44,max:52,temp:0,auto:true});ls.set(shKey(),Object.assign(shBlank('Isandros'),{cls:'Paladin 5 (Devotion)',lvl:5,species:'Human',ac:18,hp:52,ab:{str:16,dex:10,con:14,int:8,wis:12,cha:16},sv:['wis','cha'],sk:{athletics:1,persuasion:1,insight:1},sa:'cha',att:[{n:'Longsword',hit:6,dmg:'1d8+3 slashing'},{n:'Javelin',hit:6,dmg:'1d6+3 piercing'}],v:Date.now()}));renderPlayer()")
+        SH=("{name:'Isandros',cls:'Paladin 5',sub:'Oath of Devotion',lvl:5,species:'Human',bg:'Acolyte',size:'M',ac:18,hp:52,speed:30,init:null,prof:null,"
+            "ab:{str:16,dex:10,con:14,int:8,wis:12,cha:16},sv:['wis','cha'],sk:{athletics:1,insight:1,persuasion:1,religion:1},sa:'cha',"
+            "att:[{n:'Longsword',hit:6,dmg:'1d8+3 slashing',note:'Versatile (1d10) · Sap'},{n:'Javelin',hit:6,dmg:'1d6+3 piercing',note:'Thrown (30/120 ft)'}],"
+            "feats:[{n:'Alert',s:'XPHB',ap:false,ch:{}},{n:'Defense',s:'XPHB',ap:false,ch:{}}],"
+            "spells:{prep:['Bless','Command','Cure Wounds','Shield of Faith'],alw:[['Protection from Evil and Good','Oath of Devotion'],['Aid','Oath of Devotion']]},v:Date.now(),by:''}")
+        await S("state.sheets={isandros:"+SH+"};commit()")   # the same sheet on the DM's side, for the player card
+        await T(ph,"hpSet({cur:44,max:52,temp:0,auto:true});ls.set(shKey(),"+SH+");"
+                "resSet([{name:'Lay on Hands',max:25,cur:20,reset:'long'},{name:'Channel Divinity',max:2,cur:1,reset:'short'},"
+                "{name:'Spell slot 1',max:4,cur:3,reset:'long'},{name:'Spell slot 2',max:2,cur:2,reset:'long'}]);renderPlayer()")
         await asyncio.sleep(1.5)
         # 1. the four screens, same moment: the dragon's turn
         if want('four'):
@@ -74,8 +82,16 @@ async def main():
             await T(ph,"spView={n:'Fireball',s:'SRD52',from:'book'};pSheet='spell';renderPSheet();refGet('spell','Fireball','SRD52',true).then(d=>{spView.d=d;renderPSheet()})");await asyncio.sleep(1.5);await ph.screenshot(path=O+'g_spell.png')
             await T(ph,"pSheet=null;renderPSheet()")
         if want('sheet'):
-            await T(ph,"pSheet='sheet';shLast=null;renderPSheet()");await asyncio.sleep(.5)
-            await ph.click('[data-act=shroll][data-k=sk][data-a=athletics]');await asyncio.sleep(.5);await ph.screenshot(path=O+'g_sheet.png');await T(ph,"pSheet=null;renderPSheet()")
+            await asyncio.sleep(4)   # the "sheet is back" toast from the DM's copy
+            await T(ph,"pSheet='sheet';shLast=null;shTab='main';ls.set('shOpen',{ab:true,wp:true});renderPSheet()");await asyncio.sleep(.8)
+            await ph.screenshot(path=O+'g_sheet.png')
+            await T(ph,"shTab='spells';renderPSheet()");await asyncio.sleep(1.5);await ph.screenshot(path=O+'g_sheet_spells.png')
+            await T(ph,"shTab='main';ls.set('shTab','main');pSheet=null;renderPSheet()")
+        if want('pccard'):
+            await dm.set_viewport_size({'width':1536,'height':1500})
+            await S("sbViewId='i';sbLoreOn=false;renderDM();renderSbDrawer()",.8)
+            await dm.locator('#sbDrawer .sbbody > *').first.screenshot(path=O+'g_pccard.png')
+            await dm.set_viewport_size({'width':1536,'height':864});await S("sbViewId='d';renderDM()",.3)
         if want('conc'):
             await S("byId('a').conds=['Concentrating'];commit()")
             p2=await (await b.new_context(viewport={'width':390,'height':844},device_scale_factor=2)).new_page()

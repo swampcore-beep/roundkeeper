@@ -9,7 +9,7 @@ R=Rec('phone',sys.argv[1]);TGT=R.tgt
 BASE=(";state.weather='none';state.tod='none';state.tune={};state.sceneFx={};state.sceneReact=true;state.layout='auto';state.ended=null;state.clocks=[];state.call=null;state.roll=null;"
       "state.turn=null;byId('gr').init=null;byId('gr').conds=['Concentrating'];state.effects.push({id:'e3',name:'Haste',by:'gr',targets:['i'],conc:true,area:false,r0:1});commit()")
 ME=("hpSet({cur:32,max:32,temp:0,auto:true});"
-    "ls.set(shKey(),Object.assign(shBlank('Gregori'),{cls:'Wizard 5',lvl:5,species:'Elf',ac:12,hp:32,ab:{str:8,dex:14,con:14,int:18,wis:12,cha:10},sv:['int','wis'],sk:{arcana:1,investigation:1},sa:'int',att:[{n:'Fire Bolt',hit:7,dmg:'2d10 fire'}],v:Date.now()}));"
+    "ls.set(shKey(),Object.assign(shBlank('Gregori'),{cls:'Wizard 5',sub:'Evoker',lvl:5,species:'Elf',bg:'Sage',ac:12,hp:32,ab:{str:8,dex:14,con:14,int:18,wis:12,cha:10},sv:['int','wis'],sk:{arcana:1,investigation:1},sa:'int',att:[{n:'Fire Bolt',hit:7,dmg:'2d10 fire',note:'Cantrip · 120 ft'},{n:'Dagger',hit:5,dmg:'1d4+2 piercing',note:'Finesse, Light, Thrown (20/60 ft)'}],spells:{prep:['Magic Missile','Shield','Misty Step','Fireball','Counterspell']},v:Date.now()}));"
     "resSet([{name:'Spell slots · level 1',max:4,cur:3,reset:'long'},{name:'Spell slots · level 2',max:3,cur:3,reset:'long'},{name:'Spell slots · level 3',max:2,cur:2,reset:'long'},{name:'Arcane Recovery',max:1,cur:1,reset:'long'}]);"
     "renderPlayer()")
 async def main():
@@ -50,11 +50,12 @@ async def main():
         await tap(ph.locator('.rcard').nth(2).locator('.rpip.on').first,.9)
         await tap(ph.locator('.rcard').nth(0).locator('.rpip.on').first,1.0)
         await tap('.sx[data-act=pclose]',.4)
-        mark("Your character sheet: tap a check or an attack to roll")
+        mark("Your character sheet: Main, Spells and Features; tap to roll")
         await tap('[data-act=pmore]',.6)
-        await tap('[data-act=psheet]',.8)
-        await T(ph,"Math.random=()=>0.81");await tap('[data-act=shroll][data-k=sk][data-a=arcana]',1.5)
-        await tap('[data-act=shroll][data-k=spatk]',1.5);await T(ph,"Math.random=window.__r")
+        await tap('[data-act=psheet]',1.8)
+        await tap('[data-act=shsec][data-s=sk]',.8)
+        await T(ph,"Math.random=()=>0.81");await tap('[data-act=shroll][data-k=sk][data-a=arcana]',1.6);await T(ph,"Math.random=window.__r")
+        await tap('[data-act=shtab][data-v=spells]',2.2)
         await tap('.sx[data-act=pclose]',.4)
         mark("Roll calls: one tap rolls the save with your sheet's bonus")
         await S("state.call={id:'c'+Date.now(),text:'Dexterity save DC 15',dc:15,at:Date.now(),to:['i','s','a','gr'],answers:{}};commit()",1.4)
