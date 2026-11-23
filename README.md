@@ -1,16 +1,19 @@
-# Roundkeeper
+<p align="center">
+  <img src="media/four-screens.jpg" width="100%" alt="Roundkeeper: the same moment on four screens. The DM's laptop with the Adult Red Dragon's statblock, the TV with the dragon in the spotlight, the tablet with the turn order, and a player's phone">
+</p>
 
-<p>
+<p align="center">
+  <b>A free, offline combat tracker for 5e games around a real table (2024 rules).</b><br>
+  The DM runs the fight from a laptop. The tablet on the table, the TV across the room and the players' phones follow along over your Wi-Fi.
+</p>
+
+<p align="center">
   <a href="../../releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/swampcore-beep/roundkeeper?label=release&color=e3a54a"></a>
   <a href="../../releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/swampcore-beep/roundkeeper/total?color=6cb4cc"></a>
   <img alt="Windows, Mac, Linux" src="https://img.shields.io/badge/runs%20on-Windows%20%C2%B7%20Mac%20%C2%B7%20Linux-8fa0b5">
   <img alt="Works offline" src="https://img.shields.io/badge/works-offline-5ea37a">
   <a href="LICENSE"><img alt="License: AGPL-3.0" src="https://img.shields.io/badge/license-AGPL--3.0-d66a5b"></a>
 </p>
-
-**A free, offline combat tracker for in-person 5e games (2024 rules).** The DM runs the fight from a laptop, the turn order sits on a tablet in the middle of the table, the TV across the room shows whose turn it is, and players follow along on their phones.
-
-It comes with the **SRD 5.2.1** built in: 331 monsters with clickable statblocks, 339 spells, magic items, conditions and rules. No account, no subscription, no internet: it runs on your own computer, and everyone at the table connects over your Wi-Fi with a browser.
 
 <p align="center">
   <a href="../../releases/latest"><b>⬇&nbsp;&nbsp;Download for Windows</b></a>
@@ -20,28 +23,22 @@ It comes with the **SRD 5.2.1** built in: 331 monsters with clickable statblocks
   &nbsp;·&nbsp; <a href="#faq">FAQ</a>
 </p>
 
-> **Quick start on Windows**
-> 1. [Download `Roundkeeper-windows.zip`](../../releases/latest) and unzip it.
-> 2. Double-click `Roundkeeper.exe`. If Windows says *"Windows protected your PC"*, click **More info → Run anyway** (the app isn't signed; GitHub builds it from this code).
-> 3. Scan the QR code with the tablet, the TV and the players' phones.
->
-> *Not a virtual tabletop:* there are no maps or tokens, and it isn't for online play. It's made for a group sitting around a real table.
-
 https://github.com/user-attachments/assets/6a9f7b1f-0586-4f68-b038-b5e7c5fdd433
 
-<p align="center"><sub>One fight on all four screens at once: the DM's laptop, the tablet, the TV and a phone (50 seconds, no sound).</sub></p>
+<p align="center"><sub>One fight on all four screens at once (50 seconds, no sound).</sub></p>
 
-**Three short tours, under a minute each:** [the DM's laptop](#the-dms-laptop) · [the tablet and the TV](#the-tablet-and-the-tv) · [the players' phones](#on-players-phones)
+<table>
+<tr>
+<td width="50%" valign="top"><b>Made for the table</b><br>Not a virtual tabletop: no maps, no tokens, no online play. It keeps the fight moving for a group sitting in one room.</td>
+<td width="50%" valign="top"><b>Free, offline, nothing to install on phones</b><br>It runs on your own computer. Everyone else scans a QR code and opens it in a browser. No accounts, no subscription.</td>
+</tr>
+<tr>
+<td valign="top"><b>The SRD 5.2.1 built in</b><br>331 monsters with statblocks you click to roll, 339 spells, magic items, conditions and rules, from the first start.</td>
+<td valign="top"><b>Secrets stay secret</b><br>Each screen shows only what its people need. Monster HP, statblocks, hidden enemies and secret countdowns never leave the DM's laptop.</td>
+</tr>
+</table>
 
-> **New in 1.4:** a calmer, clearer DM screen and phones, and more on the TV. [What's changed](../../releases)
-
----
-
-## One fight, four screens
-
-<img src="media/four-screens.jpg" width="100%" alt="The same moment on all four screens: the DM's laptop with the Adult Red Dragon's statblock, the TV with the dragon in the spotlight, the tablet with the turn order, and Isandros's phone">
-
-Each screen shows what its people need, and only that. Monster HP, statblocks, hidden enemies and secret countdowns never leave the DM's laptop. Use any of the four: a laptop and a tablet are enough.
+> **New in 1.5:** a real character sheet, with tabs on the phone and its own card on the DM's screen, plus feats. [What's changed](../../releases/latest)
 
 ---
 
@@ -49,45 +46,52 @@ Each screen shows what its people need, and only that. Monster HP, statblocks, h
 
 https://github.com/user-attachments/assets/ad0e8f23-1c19-4388-82c5-350a6e711e61
 
-<p align="center"><sub>From the DM's seat: monsters from the built-in SRD, the statblock, a roll call, Hit several, conditions, Ctrl+K, Devices and Atmosphere (under a minute, no sound).</sub></p>
+<p align="center"><sub>Monsters from the SRD, the statblock, a roll call, Hit several, conditions and the rules lookup (under a minute, no sound).</sub></p>
 
 <img src="media/dm.jpg" width="100%" alt="The DM screen: the turn order with the Adult Red Dragon's turn, HP, AC and conditions in each row, and its statblock open on the right">
 
-The order is a table, one row per creature: initiative, picture, name, conditions (each with its icon), HP, AC, and Bloodied and Down, quiet icons until they're on. The row whose turn it is is lighter with a white edge (black on the light screen), and the one after it is marked *next*. The combat tools sit above the order, and the turn sits below it in one row: round, whose turn and who's next, the nearest countdown with − and +, and back and Next turn. The order scrolls on its own, so nothing covers a row, and on a laptop with scaling (1536×864) a whole fight still fits. The statblock opens beside the list as a cream page, so the order stays in view.
+The turn order is one row per creature, and the statblock opens beside it, so you never lose your place.
 
 - **Initiative and turns:** add players and monsters, roll or type initiative, step through turns and rounds. Undo is always there.
-- **Statblocks you click:** an attack bonus rolls the attack, a damage number rolls damage, a save sends a roll call to the players it targets. Recharge, X/Day and Legendary actions are tracked as you use them. With **Follow the turn** on, the statblock switches to each monster as its turn comes up.
-- **Handouts:** write a notice, a sealed letter, a wanted poster or a page of lore, see it as you type, and show it on the tablet, the TV or both, and on the phones if you like. Your saved handouts never leave the laptop.
-- **Monster HP that only you see:** damage, healing, temp HP and a history you can undo one entry at a time. Bloodied and Down stay your call.
-- **Hit several:** one Fireball or breath weapon on several targets, with saves rolled from each statblock, resistances applied, and players asked on their phones.
-- **Conditions and spells with their 2024 durations**, ending by themselves at the right turn; Concentration saves worked out for you.
-- **Devices:** one window with the QR code, every screen and phone, whether it's connected, and its full address.
-- **A quiet screen:** the buttons you need every round are always there; **New combat**, **Clear all** and stopping turn tracking wait in small ⋯ menus, and settings sit behind the gear, with a **Light screen** for a bright room. The side panel shows Add to combat, Party and Encounters first before the fight, and Roll call, Battlefield and Player activity first during it; in a narrow window it becomes a drawer.
-
-<details>
-<summary><b>More for the DM</b></summary>
-
-- **Rules lookup (Ctrl+K):** spells, conditions, rules and items, with cards you can pin or show on the table.
-- **Lair actions, countdowns** ("the ritual completes in 3 rounds"), **ongoing damage** (Heat Metal, poison) and **monster groups** that players see as one row.
-- **Players' character sheets:** open a player's sheet like a statblock, with clickable bonuses and their prepared spells. Fill in or paste a sheet yourself and send it to their phone, or keep it only for you for a player on paper.
-- **Players' HP from their phones** shows in their rows (only you see it). A player who keeps HP on paper gets a quiet dash.
-- **Party numbers:** AC, passive Perception, Insight and Investigation and spell DCs in one table.
-- **Boss tools:** preview the reveal before you show it, give a boss a title and its own background.
-- **Summons and familiars** that follow their owner's turn, with HP the player can see.
-- **Recap:** a summary of the fight with defeats, damage, nat 20s and nat 1s and turn times, saved as a document for your notes.
-- **A desktop as the server, the laptop as the DM:** pair any device as a DM screen.
-- **Your own homebrew:** paste or drop statblocks, or import a JSON file.
-
-</details>
+- **Statblocks you click:** the attack bonus rolls the attack, the damage rolls damage, and a save asks the players it targets on their phones. Recharge, X/Day and Legendary actions keep count.
+- **Monster HP only you see:** damage, healing and temp HP, with a history you can undo. Bloodied and Down stay your call.
+- **Hit several:** one Fireball on many targets, with every save rolled and resistances worked out.
+- **Conditions and spells with their 2024 durations:** they end by themselves at the right turn, and Concentration saves are asked for you.
+- **Rules lookup (Ctrl+K):** any spell, condition, rule or item, and a card you can show the table.
 
 <table>
 <tr>
 <td width="50%"><img src="media/hit-several.jpg" width="100%" alt="Hit several: Gregori's Fireball on three goblins, with their Dexterity saves rolled"><br><sub><b>Hit several:</b> 28 fire on three goblins; two saved for half.</sub></td>
-<td width="50%"><img src="media/rules.jpg" width="100%" alt="Ctrl+K rules lookup showing the Fireball card"><br><sub><b>Ctrl+K:</b> any spell, condition, rule or item, and "Show on the table".</sub></td>
+<td width="50%"><img src="media/rules.jpg" width="100%" alt="Ctrl+K rules lookup showing the Fireball card"><br><sub><b>Ctrl+K:</b> any spell, condition, rule or item.</sub></td>
 </tr>
 <tr>
-<td width="50%"><img src="media/atmosphere.jpg" width="100%" alt="Atmosphere: themes, colours, fonts, rows and scenes, with a preview of the tablet"><br><sub><b>Atmosphere:</b> build the table's look with a live preview before it changes.</sub></td>
-<td width="50%"><img src="media/party.jpg" width="100%" alt="Party numbers: AC and passive scores for each player"><br><sub><b>Party numbers:</b> passives at a glance; a passive check marks who notices.</sub></td>
+<td width="50%"><img src="media/atmosphere.jpg" width="100%" alt="Atmosphere: themes, colours, fonts, rows and scenes, with a preview of the tablet"><br><sub><b>Atmosphere:</b> the table's look, with a preview before it changes.</sub></td>
+<td width="50%"><img src="media/party.jpg" width="100%" alt="Party numbers: AC and passive scores for each player"><br><sub><b>Party numbers:</b> AC, passives and spell DCs at a glance.</sub></td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="38%" valign="top"><img src="media/dm-card.jpg" width="100%" alt="Isandros's character sheet on the DM's screen: AC, initiative, HP from the phone, abilities and saves, skills, feats, attacks and spells, each bonus clickable"></td>
+<td valign="top">
+
+**Your players' sheets, one click away.** Open a player like a monster and their sheet appears as a card: AC, HP from their phone, abilities, saves, skills, feats, attacks and prepared spells. Every bonus rolls. A player fills it in on their phone, or you set it up for them and send it over. For a player on paper, keep it just for yourself.
+
+<details>
+<summary><b>More for the DM</b></summary>
+
+- **Handouts:** notices, sealed letters, wanted posters or lore, shown on the tablet, the TV or the phones.
+- **Lair actions, countdowns** ("the ritual completes in 3 rounds"), **ongoing damage** and **monster groups** that players see as one row.
+- **Boss tools:** preview the reveal, give a boss a title, its own background and phases.
+- **Summons and familiars** that follow their owner's turn.
+- **Recap:** the fight's defeats, damage, natural 20s and 1s and turn times, saved for your notes.
+- **Devices:** the QR code and every connected screen and phone in one window.
+- **Light screen** for a bright room, and a narrow window turns the side panel into a drawer.
+- **Your own homebrew:** paste or drop statblocks, or import a JSON file.
+
+</details>
+
+</td>
 </tr>
 </table>
 
@@ -97,21 +101,19 @@ The order is a table, one row per creature: initiative, picture, name, condition
 
 https://github.com/user-attachments/assets/9c7fc2f0-5240-4582-a20d-53a0d9a02c87
 
-<p align="center"><sub>What the players see: the tablet on the table and the TV across the room, side by side through one fight (under a minute, no sound).</sub></p>
-
-### On the table
+<p align="center"><sub>The tablet on the table and the TV across the room, side by side through one fight (under a minute, no sound).</sub></p>
 
 <table>
 <tr>
 <td width="42%" valign="top"><img src="media/boss.gif" width="100%" alt="A hidden Adult Red Dragon is revealed: its name and title fill the tablet"></td>
 <td valign="top">
 
-- The turn order, big and readable from every seat, in portrait or landscape. Even with many conditions on screen, labels stay whole words.
-- **Boss intros:** reveal a hidden enemy and its name and title fill the screen. When a boss falls, the player who landed the blow gets *"How do you want to do this?"*
-- **Roll calls:** "Dexterity save DC 21" shows a tile for each player as they answer.
-- **Conditions with their own animation:** stone for Petrified, chains for Restrained.
-- **The scene reacts:** Fireball explodes over the order, Cone of Cold frosts the edges, Fog Cloud and Darkness stay while they last, Bless sends a golden wave from the caster. A nat 20 flashes, a lair action rumbles, the colour drains when a player drops to 0 HP.
-- Players see only what you show: hidden enemies and monster HP never reach it.
+**On the table**, the turn order is big enough to read from every seat.
+
+- **Boss intros:** reveal a hidden enemy and its name fills the screen. When it falls, the player who landed the blow gets *"How do you want to do this?"*
+- **Roll calls:** "Dexterity save DC 21", with a tile for each player as they answer.
+- **Conditions with their own look:** stone for Petrified, chains for Restrained.
+- **The scene reacts:** Fireball explodes over the order, Fog Cloud stays while it lasts, a natural 20 flashes.
 
 </td>
 </tr>
@@ -125,28 +127,16 @@ https://github.com/user-attachments/assets/9c7fc2f0-5240-4582-a20d-53a0d9a02c87
 </tr>
 </table>
 
-### On a TV
+**On the TV**, one big thing at a time. In Auto it follows the fight by itself:
 
-One big thing at a time, readable from across the room. In **Auto** the TV follows the fight by itself:
-
-- **Before the fight:** your scene or picture (it drifts and zooms slowly), title cards for locations and chapters, and a **break timer** ("we continue at 21:40").
-- **Roll for initiative:** each player's number arrives as a card, and it shows who hasn't rolled yet.
-- **Spotlight:** whose turn it is, huge and in a pool of light, with its picture from Lore & picture (or its sigil), its conditions as icons and Bloodied or Down; who's up next waits dimmed beside it, with **This round** below (who fell, who dropped to 0 HP, natural 20s), and the whole **party** runs along the bottom with what is on each of them, never their HP. Both can be switched off in the TV menu. A boss can have **phases** that you light by hand: a bar of segments, no HP numbers, and a big moment when the next one starts. **Order:** the whole initiative as cards.
-- **Roll calls as cards** that flip as players answer, with the DC and "3 of 4 succeeded".
-- **Its own dice:** a shared roll lands big on the TV; a nat 20 or nat 1 stays longer.
-- **Death saves:** on a downed player's turn, a heartbeat and three plus three boxes.
-- **Each new round:** what happened last round, then the countdown as a big ring.
-- **End of the fight:** victory, the MVP, the biggest hit, the luckiest roll, the final blow and the XP. Hidden creatures are never named.
-- Its own look (theme, colours, fonts, scene) with a live preview, and a Light mode for a slow TV browser. You choose which big moments show on the tablet, on the TV, or on both.
+- **Before the fight:** your scene, title cards for places and chapters, and a break timer.
+- **During it:** whose turn it is in a spotlight, who's next, and the party along the bottom. Roll calls and shared rolls arrive as cards.
+- **The big moments:** a heartbeat and death saves when a player is down, a recap at each new round, and at the end the MVP, the biggest hit and the XP.
 
 <table>
 <tr>
 <td width="50%"><img src="media/tv-roll-call.jpg" width="100%" alt="A roll call on the TV: a card for each player with their result and the DC"><br><sub>A roll call on the TV.</sub></td>
 <td width="50%"><img src="media/tv-end.jpg" width="100%" alt="The end of the fight on the TV: Victory, the MVP, the luckiest roll, the final blow and the XP"><br><sub>The end of the fight.</sub></td>
-</tr>
-<tr>
-<td width="50%"><img src="media/tv-title.jpg" width="100%" alt="A title card on the TV: The Ashen Peaks, where the road climbs into smoke"><br><sub>A title card.</sub></td>
-<td width="50%"><img src="media/tv-break.jpg" width="100%" alt="A break timer on the TV"><br><sub>A short break, counting down.</sub></td>
 </tr>
 </table>
 
@@ -154,31 +144,30 @@ One big thing at a time, readable from across the room. In **Auto** the TV follo
 
 <p align="center"><img src="media/scenes.gif" width="720" alt="Animated scenes: Infernal wastes, Blood moon, Ritual circle, Forest with rain at dusk, Graveyard at night, Festival, Northern lights with snow"></p>
 
-Pick a theme, then change any part of it: colours, fonts, row style, an animated scene or your own background picture. Put **rain, snow, fog or ash** over any scene or picture, set the **time of day** (dawn, day, dusk, night), and make each scene calmer or wilder. Save the look as your own theme.
+Pick a theme and change any part of it: colours, fonts, an animated scene or your own picture, with rain, snow, fog or ash and the time of day on top. Save it as your own.
 
 ---
 
-## On players' phones
+## On the players' phones
 
 https://github.com/user-attachments/assets/7b8dfa4b-25bb-4b2c-9c3a-590fa657dc16
 
-<p align="center"><sub>A player's phone with the tablet beside it: joining, initiative, a spell on the table, resources, the sheet, a roll call, Concentration and death saves (under a minute, no sound).</sub></p>
+<p align="center"><sub>A player's phone with the tablet beside it: joining, initiative, a spell, resources, a roll call and death saves (under a minute, no sound).</sub></p>
 
 <table>
 <tr>
-<td width="30%" valign="top"><img src="media/phone-sheet.jpg" width="100%" alt="A character sheet on a phone with tap-to-roll checks, saves and attacks"></td>
+<td width="30%" valign="top"><img src="media/phone-sheet.jpg" width="100%" alt="Isandros's character sheet on a phone: name, class and level, AC and HP, initiative, speed and proficiency, and abilities and saves that roll when tapped"></td>
 <td valign="top">
 
-- Join by scanning a QR code. Nothing to install.
-- **A dock in their class colour** with their HP, AC and initiative and what's on them, and four tabs where the thumb is: Roll, Conditions, Spells and More.
-- **Their own HP**, temp HP and death saves, with big buttons and the app's own keypad; before they press Damage or Heal, the phone shows where it would leave them.
-- **Your turn:** when their turn comes, a screen with what matters: their conditions in plain words (and *I stand up* when they're Prone), effects and who cast them, Concentration, dice a friend gave them, and their reaction. It can be turned off in More.
-- **Character sheet (optional):** fill it in step by step or paste the text of an existing sheet. Checks, saves, skills and attacks roll with the real bonuses, and a roll call offers "Roll Dex save +2".
-- **Spellbook** with full spell cards and prepared spells, including the ones a subclass always prepares. "Show it on the table" plays a spell in the tablet's scene.
-- **Spell slots and class resources** (Rage, Focus, Channel Divinity…) as circles: tap a full one to use it, an empty one to get it back. Short and long rests reset them.
-- They answer your **roll calls** and **Concentration saves**, give Bardic Inspiration to a friend, and run their familiar or summon. A saving throw roll call reminds them of a Paladin's Aura of Protection, and Bless and Bane go onto their saves and attacks by themselves.
-- **The table's rolls:** the rolls people show the table appear under the dice on every phone.
-- **Simple mode** for players who keep the rest on paper: just their HP, plus whatever you send them.
+Players scan a QR code and tap their character. Nothing to install.
+
+- **Their character sheet:** Main, Spells and Features, with sections that open when needed. Checks, saves and attacks roll with the right bonus. Fill it in step by step, or paste an existing sheet.
+- **Feats:** pick them from your data files and the sheet counts what they change (Alert, Tough and the like).
+- **HP and death saves**, with big buttons and the app's own keypad.
+- **Your turn:** what's on them in plain words, who cast it, and their reaction.
+- **Spellbook** with full spell cards, and spell slots and class resources as boxes to tap.
+- **Roll calls and Concentration saves** with one tap, Bless and Bane added by themselves.
+- **Simple mode** for players who keep the rest on paper: just their HP.
 
 </td>
 </tr>
@@ -186,10 +175,10 @@ https://github.com/user-attachments/assets/7b8dfa4b-25bb-4b2c-9c3a-590fa657dc16
 
 <table>
 <tr>
-<td width="25%"><img src="media/phone-spells.jpg" width="100%" alt="The spell list on a phone"><br><sub>Spells by level.</sub></td>
+<td width="25%"><img src="media/phone-sheet-spells.jpg" width="100%" alt="The Spells tab: spellcasting numbers, spell slots, and prepared spells with casting time and range"><br><sub>Spells: slots, time and range.</sub></td>
 <td width="25%"><img src="media/phone-spell.jpg" width="100%" alt="The Fireball card on a phone"><br><sub>A full spell card.</sub></td>
 <td width="25%"><img src="media/phone-conc.jpg" width="100%" alt="A Concentration save asked on a phone"><br><sub>A Concentration save.</sub></td>
-<td width="25%"><img src="media/phone-dice.jpg" width="100%" alt="The dice roller on a phone"><br><sub>Dice, shared on the table if they like.</sub></td>
+<td width="25%"><img src="media/phone-dice.jpg" width="100%" alt="The dice roller on a phone"><br><sub>Dice, shared with the table if they like.</sub></td>
 </tr>
 </table>
 
@@ -198,88 +187,68 @@ https://github.com/user-attachments/assets/7b8dfa4b-25bb-4b2c-9c3a-590fa657dc16
 ## Getting started
 
 ### Windows
-1. Download `Roundkeeper-windows.zip` from [Releases](../../releases) and unzip it anywhere.
-2. Double-click `Roundkeeper.exe`. Your browser opens the DM screen.
-3. Click **Devices**: it shows a QR code for the players and the full address for the tablet and the TV. Scan the code or type the address, then pick **This is the tablet**, **This is the TV**, or your character.
-
-Windows may say *"Windows protected your PC"* because the app isn't signed. Click **More info → Run anyway**. The exe is built by GitHub from the code in this repository; see [`.github/workflows`](.github/workflows).
+1. [Download `Roundkeeper-windows.zip`](../../releases/latest) and unzip it anywhere.
+2. Double-click `Roundkeeper.exe`. Your browser opens the DM screen. If Windows says *"Windows protected your PC"*, click **More info → Run anyway**: the app isn't signed, and GitHub builds it from the code here ([`.github/workflows`](.github/workflows)).
+3. Click **Devices** and scan the QR code with the tablet, the TV and the phones. Each one picks **This is the tablet**, **This is the TV**, or a character.
 
 <p align="center"><img src="media/devices.jpg" width="460" alt="The Devices window: the QR code and address for players, the tablet and the TV with their addresses, and which phones are connected"><br><sub><b>Devices:</b> who is connected, and where each screen goes.</sub></p>
 
 ### Mac
-1. Download `Roundkeeper-mac.zip` from [Releases](../../releases) and unzip it into a normal folder, e.g. `Documents/Roundkeeper`. It's one program for both Intel and Apple Silicon Macs.
-2. Double-click `Roundkeeper`. A Terminal window opens and keeps the server running, and your browser opens the DM screen.
-3. The first time, the Mac says it can't check the developer, because the app isn't signed with an Apple account. Click **Done**, open **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to Roundkeeper. When the Mac asks whether to accept incoming network connections, choose **Allow**.
+1. [Download `Roundkeeper-mac.zip`](../../releases/latest) and unzip it into a normal folder, such as `Documents/Roundkeeper`. One program runs on Intel and Apple Silicon.
+2. Double-click `Roundkeeper`. A Terminal window keeps the server running, and your browser opens the DM screen.
+3. The first time, the Mac can't check the developer. Click **Done**, then **System Settings → Privacy & Security → Open Anyway**. Allow incoming network connections when asked.
 
-I haven't been able to test the Mac version on many Macs yet. If it doesn't start, please [open an issue](../../issues).
+I haven't tested it on many Macs yet. If it doesn't start, please [open an issue](../../issues).
 
 ### Linux
-Download `Roundkeeper-linux.zip`, unzip it, and run `./roundkeeper` (on a Raspberry Pi or another ARM computer, `./roundkeeper-arm64`). Nothing else to install. Then open the address it prints.
+[Download `Roundkeeper-linux.zip`](../../releases/latest), unzip it, and run `./roundkeeper` (`./roundkeeper-arm64` on a Raspberry Pi). Then open the address it prints.
 
-### Updating
-**Settings and files → Updates → Check for updates** says whether there's a newer version, shows what's new, and links the download for your computer. Close Roundkeeper, put the new program in place of the old one, and start it again: your fights, library and pictures stay. You can also let it check each time it starts; that's off unless you turn it on.
-
-### Server on a desktop, DM on a laptop
-Run the app on a desktop (on a cable, or connected to the TV), then pair your laptop as the DM under **Devices → DM devices**. Phones stay players.
-
-### If someone can't connect
-**Devices → Can't connect?** in the app has the same list.
-- Everyone must be on the same Wi-Fi.
-- On Windows, allow the app through the firewall when asked (private networks).
-- Guest networks often block devices from seeing each other.
+### Good to know
+- **Updating:** **Settings and files → Updates** checks for a new version. Replace the program; your fights, library and pictures stay.
+- **Server on a desktop, DM on a laptop:** run it on the desktop and pair your laptop under **Devices → DM devices**.
+- **Can't connect?** Everyone must be on the same Wi-Fi (guest networks often keep devices apart), and on Windows allow the app through the firewall on private networks. **Devices → Can't connect?** has the full list.
 
 ---
 
 ## Game data
 
-- **The SRD 5.2.1 is built in:** 331 monsters with clickable statblocks, 339 spells with full text (on players' phones too), magic items, conditions and rules, ready in the monster search and in Ctrl+K from the first start.
-- **Statblocks:** paste or drop a monster's statblock (text or .md) and its attacks, damage and saves become clickable. It's kept in your library for next time.
-- **Import your homebrew:** Settings → Game data → **Import a JSON file** adds one homebrew file (monsters, spells, items, conditions or rules in the common community format). Remove it there again.
-- **Bring more (optional):** put more JSON data in a folder named `5etools` next to the app and it's read the same way. Anything your files also have is shown from your files, so nothing appears twice.
-- **Nothing is downloaded.** The app only reads files that are already on your computer. Monster pictures are ones you add yourself.
+- **Built in:** the SRD 5.2.1, in the monster search and Ctrl+K from the first start, with spell cards on the phones too.
+- **Your statblocks:** paste or drop a monster's statblock as text and its attacks, damage and saves become clickable. It stays in your library.
+- **Your homebrew:** **Settings → Game data → Import a JSON file** adds monsters, spells, items, conditions or rules in the common community format.
+- **More data (optional):** put JSON files in that format in a folder named `5etools` next to the app. They add their monsters, spells, items and rules; class features, subclasses and resources on the phones; feats on the sheet; weapon properties for attacks; and monster pictures from that folder. Nothing appears twice.
+- **Nothing is downloaded.** The app only reads files already on your computer.
 
 ---
 
 ## FAQ
 
-**Is it free?** Yes, completely, and the code is open source ([AGPL-3.0](LICENSE)). No accounts, no subscriptions, no ads.
+**Is it free?** Yes, and open source ([AGPL-3.0](LICENSE)). No accounts, no subscriptions, no ads.
 
-**Can I change it or share it?** Yes. You can use, change and share it, as long as what you share stays open under the same license, with its source. See [License and credits](#license-and-credits).
+**Does it need the internet?** No. Everything connects over your own Wi-Fi. It only goes online when you check for updates, and then it only asks GitHub for the latest release.
 
-**Does it need the internet?** No. The laptop (or desktop) runs it, and the tablet, TV and phones connect to it over your own Wi-Fi. It only goes online when you ask it to look for a new version (**Settings and files → Updates**), and then it only asks GitHub for the latest release.
+**What do the players need?** A phone with a browser, or nothing at all: players on paper never hold anything up.
 
-**What do the players need?** A phone with a browser. They scan a QR code and pick their character; nothing to install. Players who prefer paper don't need anything, and nothing waits for them.
+**Do I need a tablet and a TV?** No. A laptop and one shared screen (a tablet, a second monitor or a TV) is the usual setup.
 
-**Do I need a tablet and a TV?** No. A laptop and one shared screen (a tablet, a second monitor or the TV) is the usual setup. Use whatever you have.
+**Which rules?** Fifth edition as revised in 2024: conditions, durations, Concentration, death saves, Exhaustion. Players can switch their spell list to the 2014 versions if your data files have them.
 
-**Does it come with monsters and spells?** Yes, the SRD 5.2.1: 331 monsters, 339 spells, magic items, conditions and rules. You can add your own homebrew as JSON, and paste or drop statblocks.
-
-**Which rules?** Fifth edition as revised in 2024 (conditions, durations, Concentration, death saves, Exhaustion). Players can switch their spell list to the 2014 versions when your files have them.
-
-**Mac or Linux?** Yes. There is a ready-made program for Windows 10 and 11, for Mac (Intel and Apple Silicon) and for Linux (x86-64 and ARM).
-
-**Can I use it online, with players at home?** It's made for a table in one room, on one Wi-Fi network.
+**Can I use it online?** No. It's made for one room on one Wi-Fi network.
 
 ---
 
 ## Privacy and safety
 
-- Everything runs on your computer. There are no accounts, analytics or cloud services.
-- Your fights, library and settings are plain files in the app's folder, and backups are made automatically.
-- **Made for your home Wi-Fi.** Player pages have no password, so don't run it on public networks (cafés, conventions).
+- Everything runs on your computer: no accounts, analytics or cloud services. Your fights and library are plain files in the app's folder, backed up automatically.
+- Player pages have no password, so use it on your home Wi-Fi, not on public networks.
 - Only the DM's devices can change the fight. Phones see only what players are allowed to see.
 
 ---
 
-## How it was made
+## About
 
-I designed this for my own table, decided how every part should work, and tested it in real sessions. The code was written with an AI assistant (Claude). There is **no AI-generated art** in it: the scenes, icons and animations are drawn in code, and the fonts are open-licensed. The full source is here, so you can see exactly what it does.
+I made this for my own table, decided how every part should work, and tested it in real sessions. The code was written with an AI assistant (Claude). There is **no AI-generated art**: the scenes, icons and animations are drawn in code, and the fonts are open-licensed.
 
----
-
-## Feedback
-
-I made this for my own table, so there's no roadmap. Bug reports are very welcome: [open an issue](../../issues). Ideas might happen if they fit how we play. For a bug, it helps to say how your table is set up: which screens you use, and whether your players use phones or paper.
+There's no roadmap. Bug reports are very welcome: [open an issue](../../issues), and say which screens you use and whether your players use phones or paper. Ideas may happen if they fit how we play.
 
 Pull requests are welcome. The app is edited in [`src/`](src) and put together into `initiative.html` with `python3 tools/build.py`; [`dev/README.md`](dev/README.md) has the test servers and suites. By opening one, you agree that your contribution is licensed under the AGPL-3.0 (or later) like the rest of the code, and that the maintainer may also license it under other terms.
 
