@@ -34,11 +34,11 @@ https://github.com/user-attachments/assets/6a9f7b1f-0586-4f68-b038-b5e7c5fdd433
 </tr>
 <tr>
 <td valign="top"><b>The SRD 5.2.1 built in</b><br>331 monsters with statblocks you click to roll, 339 spells, magic items, conditions and rules, from the first start.</td>
-<td valign="top"><b>Secrets stay secret</b><br>Each screen shows only what its people need. Monster HP, statblocks, hidden enemies and secret countdowns never leave the DM's laptop.</td>
+<td valign="top"><b>Every screen has a job</b><br>The laptop runs the fight, the tablet shows the order, the TV the big moments, each phone its own character. Monster HP and hidden enemies stay on the laptop.</td>
 </tr>
 </table>
 
-> **New in 1.5:** a real character sheet, with tabs on the phone and its own card on the DM's screen, plus feats. [What's changed](../../releases/latest)
+> **New in 1.6:** 3D dice. **In 1.5:** a real character sheet on the phone and the DM's screen, with feats. [What's changed](../../releases)
 
 ---
 
@@ -130,7 +130,7 @@ https://github.com/user-attachments/assets/9c7fc2f0-5240-4582-a20d-53a0d9a02c87
 **On the TV**, one big thing at a time. In Auto it follows the fight by itself:
 
 - **Before the fight:** your scene, title cards for places and chapters, and a break timer.
-- **During it:** whose turn it is in a spotlight, who's next, and the party along the bottom. Roll calls and shared rolls arrive as cards.
+- **During it:** whose turn it is in a spotlight, who's next, and the party along the bottom. Roll calls arrive as cards, and shared rolls as 3D dice, flat dice or just the number.
 - **The big moments:** a heartbeat and death saves when a player is down, a recap at each new round, and at the end the MVP, the biggest hit and the XP.
 
 <table>
