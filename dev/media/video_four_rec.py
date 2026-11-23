@@ -25,7 +25,7 @@ async def cast(ctx,pg,name,q=88):
 def mark(cap): marks.append((time.time(),cap));print(round(time.time()-marks[0][0],1) if marks else 0,cap)
 async def main():
     async with async_playwright() as p:
-        b=await p.chromium.launch(args=['--no-proxy-server'])
+        b=await p.chromium.launch(args=['--no-proxy-server','--use-gl=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist'])
         dmc=await b.new_context(viewport={'width':1536,'height':864});dm=await dmc.new_page()
         await dm.goto(rk.DM+'/');await asyncio.sleep(1.5)
         async def S(js,w=0): await T(dm,js);await asyncio.sleep(w)
@@ -53,8 +53,10 @@ async def main():
         await nxt();await asyncio.sleep(2.0)
         await nxt();await asyncio.sleep(1.4)
         mark("A natural 20 lights up the table")
-        await S("state.roll={id:uid(),at:Date.now(),kind:'nat20',by:'Styx',text:'Attack',total:20};commit()",3.6)
-        await nxt();await asyncio.sleep(1.2);await nxt();await asyncio.sleep(1.2);await nxt();await asyncio.sleep(1.0)
+        await S("state.roll={id:uid(),at:Date.now(),kind:'nat20',by:'Styx',text:'Attack: d20 (20) + 7',total:27,dice:[[20,20]]};commit()",5.6)
+        await nxt();await asyncio.sleep(1.2);await nxt();await asyncio.sleep(1.2);await nxt()
+        if tv: await T(tv,"{const e=$('#tvDice');if(e){e.classList.add('out');Dice3D.hide();setTimeout(()=>e.remove(),650)}}")   # the nat 20 card makes way for the Fireball
+        await asyncio.sleep(1.0)
         mark("Fireball on three goblins")
         await S("state.spfx={id:uid(),at:Date.now(),n:'Fireball',t:'fire',from:'gr',to:['g1','g2','g3']};commit()",2.6)
         await S("for(const k of ['g1','g3']){const g=byId(k);g.hp=0;g.down=true};const h=byId('g2');h.hp=3;h.bloodied=true;commit()",2.4)

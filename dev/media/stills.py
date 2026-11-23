@@ -22,7 +22,13 @@ async def main():
         await tv.goto('http://127.0.0.1:8765/players?shared=1&screen=tv');await asyncio.sleep(3)
         ph=await (await b.new_context(viewport={'width':390,'height':844},device_scale_factor=2)).new_page()
         await ph.goto(rk.PL+'/players');await asyncio.sleep(1.2);await ph.click('[data-act=pickme][data-n=Isandros]');await asyncio.sleep(1)
-        await T(ph,"hpSet({cur:44,max:52,temp:0,auto:true});ls.set(shKey(),Object.assign(shBlank('Isandros'),{cls:'Paladin 5 (Devotion)',lvl:5,species:'Human',ac:18,hp:52,ab:{str:16,dex:10,con:14,int:8,wis:12,cha:16},sv:['wis','cha'],sk:{athletics:1,persuasion:1,insight:1},sa:'cha',att:[{n:'Longsword',hit:6,dmg:'1d8+3 slashing'},{n:'Javelin',hit:6,dmg:'1d6+3 piercing'}],v:Date.now()}));renderPlayer()")
+        SH=("{name:'Gregori',cls:'Wizard 5',sub:'Evoker',lvl:5,species:'Elf',bg:'Sage',size:'M',ac:12,hp:32,speed:30,init:null,prof:null,"
+            "ab:{str:8,dex:14,con:14,int:18,wis:12,cha:10},sv:['int','wis'],sk:{arcana:1,history:1,investigation:1,insight:1},sa:'int',"
+            "att:[{n:'Fire Bolt',hit:7,dmg:'2d10 fire',note:'Cantrip · 120 ft'},{n:'Dagger',hit:5,dmg:'1d4+2 piercing',note:'Finesse, Light, Thrown (20/60 ft)'}],"
+            "feats:[{n:'Magic Initiate',s:'XPHB',ap:false,ch:{}}],"
+            "spells:{prep:['Magic Missile','Shield','Mage Armor','Misty Step','Fireball','Counterspell']},v:Date.now(),by:''}")
+        await S("state.sheets={gregori:"+SH+"};byId('gr').php={cur:27,max:32,temp:0};commit()")   # Gregori's sheet on the DM's side, for the player card
+        await T(ph,"hpSet({cur:44,max:52,temp:0,auto:true});renderPlayer()")
         await asyncio.sleep(1.5)
         # 1. the four screens, same moment: the dragon's turn
         if want('four'):
@@ -73,9 +79,20 @@ async def main():
             await T(ph,"pSheet='book';spellScope='all';bookQ='';renderPSheet()");await asyncio.sleep(2.5);await ph.screenshot(path=O+'g_spells.png')
             await T(ph,"spView={n:'Fireball',s:'SRD52',from:'book'};pSheet='spell';renderPSheet();refGet('spell','Fireball','SRD52',true).then(d=>{spView.d=d;renderPSheet()})");await asyncio.sleep(1.5);await ph.screenshot(path=O+'g_spell.png')
             await T(ph,"pSheet=null;renderPSheet()")
-        if want('sheet'):
-            await T(ph,"pSheet='sheet';shLast=null;renderPSheet()");await asyncio.sleep(.5)
-            await ph.click('[data-act=shroll][data-k=sk][data-a=athletics]');await asyncio.sleep(.5);await ph.screenshot(path=O+'g_sheet.png');await T(ph,"pSheet=null;renderPSheet()")
+        if want('sheet'):   # Gregori's phone: the wizard's blue sheet
+            pg=await (await b.new_context(viewport={'width':390,'height':844},device_scale_factor=2)).new_page()
+            await pg.goto(rk.PL+'/players');await asyncio.sleep(1.2);await pg.click('[data-act=pickme][data-n=Gregori]');await asyncio.sleep(1)
+            await T(pg,"hpSet({cur:27,max:32,temp:0,auto:true});ls.set(shKey(),"+SH+");resSet([{name:'Spell slot 1',max:4,cur:3,reset:'long'},"
+                    "{name:'Spell slot 2',max:3,cur:3,reset:'long'},{name:'Spell slot 3',max:2,cur:1,reset:'long'},{name:'Arcane Recovery',max:1,cur:1,reset:'long'}]);renderPlayer()")
+            await asyncio.sleep(4.5)   # the "sheet is back" toast from the DM's copy
+            await T(pg,"pSheet='sheet';shLast=null;shTab='main';ls.set('shOpen',{ab:true,wp:true});renderPSheet()");await asyncio.sleep(.8)
+            await pg.screenshot(path=O+'g_sheet.png')
+            await T(pg,"shTab='spells';renderPSheet()");await asyncio.sleep(1.5);await pg.screenshot(path=O+'g_sheet_spells.png')
+        if want('pccard'):
+            await dm.set_viewport_size({'width':1536,'height':1500})
+            await S("sbViewId='gr';sbLoreOn=false;renderDM();renderSbDrawer()",.8)
+            await dm.locator('#sbDrawer .sbbody > *').first.screenshot(path=O+'g_pccard.png')
+            await dm.set_viewport_size({'width':1536,'height':864});await S("sbViewId='d';renderDM()",.3)
         if want('conc'):
             await S("byId('a').conds=['Concentrating'];commit()")
             p2=await (await b.new_context(viewport={'width':390,'height':844},device_scale_factor=2)).new_page()
