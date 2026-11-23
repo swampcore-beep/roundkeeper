@@ -186,6 +186,7 @@ func fetAddPC(db *fetDB, b []byte, label func(string) string, group string) {
 			HD           *struct{ Faces int } `json:"hd"`
 			CP           any                  `json:"casterProgression"`
 			TG           json.RawMessage      `json:"classTableGroups"`
+			CF           []any                `json:"classFeatures"`
 		}
 		if json.Unmarshal(raw, &c) != nil || c.Name == "" || c.Sidekick {
 			continue
@@ -202,7 +203,8 @@ func fetAddPC(db *fetDB, b []byte, label func(string) string, group string) {
 		if n, s, ok := fetReprintOf(raw); ok {
 			re = []string{n, s}
 		}
-		db.pcCls[fetKey(c.Name, c.Source)] = map[string]any{"n": c.Name, "s": c.Source, "l": label(c.Source), "g": group, "hd": hd, "cp": cp, "tb": fetPCTables(c.TG), "re": re}
+		db.pcCls[fetKey(c.Name, c.Source)] = map[string]any{"n": c.Name, "s": c.Source, "l": label(c.Source), "g": group, "hd": hd, "cp": cp, "tb": fetPCTables(c.TG), "re": re,
+			"cf": fetFeatureNames(c.CF, 3)}
 	}
 	for _, raw := range f.Subclass {
 		var c struct {
@@ -210,6 +212,7 @@ func fetAddPC(db *fetDB, b []byte, label func(string) string, group string) {
 			CP                                              any             `json:"casterProgression"`
 			TG                                              json.RawMessage `json:"subclassTableGroups"`
 			AS                                              json.RawMessage `json:"additionalSpells"`
+			SF                                              []any           `json:"subclassFeatures"`
 		}
 		if json.Unmarshal(raw, &c) != nil || c.Name == "" {
 			continue
@@ -223,8 +226,37 @@ func fetAddPC(db *fetDB, b []byte, label func(string) string, group string) {
 			cp = ""
 		}
 		db.pcSub[fetKey(c.ClassName+"|"+c.ClassSource+"|"+c.Name, c.Source)] = map[string]any{"n": c.Name, "sn": sn, "s": c.Source, "l": label(c.Source), "g": group,
-			"cn": c.ClassName, "cs": c.ClassSource, "cp": cp, "tb": fetPCTables(c.TG), "as": fetAlwaysSpells(c.AS)}
+			"cn": c.ClassName, "cs": c.ClassSource, "cp": cp, "tb": fetPCTables(c.TG), "as": fetAlwaysSpells(c.AS), "sf": fetFeatureNames(c.SF, 5)}
 	}
+}
+
+// 1.5: the names and levels of a class's or subclass's features, for the Features tab on the phone ("Lay On Hands|Paladin|XPHB|1",
+// or {"classFeature": "..."}); lv is the place of the level in the reference (3 for a class feature, 5 for a subclass feature)
+func fetFeatureNames(list []any, lv int) [][]any {
+	out := [][]any{}
+	for _, v := range list {
+		s, ok := v.(string)
+		if m, isMap := v.(map[string]any); isMap {
+			for _, k := range []string{"classFeature", "subclassFeature"} {
+				if x, has := m[k].(string); has {
+					s, ok = x, true
+				}
+			}
+		}
+		if !ok {
+			continue
+		}
+		p := strings.Split(s, "|")
+		if len(p) <= lv || strings.TrimSpace(p[0]) == "" {
+			continue
+		}
+		l, err := strconv.Atoi(strings.TrimSpace(p[lv]))
+		if err != nil || l < 1 || l > 20 {
+			continue
+		}
+		out = append(out, []any{strings.TrimSpace(p[0]), l})
+	}
+	return out
 }
 
 // 81: the spells a subclass or feat keeps always prepared, as [level, name, source]; "_" means from the start.
@@ -483,7 +515,62 @@ func b01(b bool) int {
 	return 0
 }
 
-// the spell list the phones get: name, level, concentration, battlefield, duration, classes, book. Nothing else.
+// 1.5: a spell's casting time ("Action", "Bonus", "Reaction", "1 min") and range ("60 ft", "Touch", "Self"), short, for the phone's sheet
+func fetSpellTimeRange(raw json.RawMessage) (string, string) {
+	var x struct {
+		Time []struct {
+			Number int
+			Unit   string
+		}
+		Range struct {
+			Type     string
+			Distance struct {
+				Type   string
+				Amount int
+			}
+		}
+	}
+	json.Unmarshal(raw, &x)
+	tm := ""
+	if len(x.Time) > 0 {
+		t := x.Time[0]
+		switch t.Unit {
+		case "action":
+			tm = "Action"
+		case "bonus":
+			tm = "Bonus"
+		case "reaction":
+			tm = "Reaction"
+		case "minute":
+			tm = fmt.Sprintf("%d min", t.Number)
+		case "hour":
+			tm = fmt.Sprintf("%d h", t.Number)
+		default:
+			tm = t.Unit
+		}
+	}
+	rg, d := "", x.Range.Distance
+	switch d.Type {
+	case "feet":
+		rg = fmt.Sprintf("%d ft", d.Amount)
+	case "miles":
+		rg = fmt.Sprintf("%d mi", d.Amount)
+	case "self":
+		rg = "Self"
+	case "touch":
+		rg = "Touch"
+	case "sight":
+		rg = "Sight"
+	case "unlimited":
+		rg = "Unlimited"
+	}
+	if x.Range.Type == "special" {
+		rg = "Special"
+	}
+	return tm, rg
+}
+
+// the spell list the phones get: name, level, concentration, battlefield, duration, classes, book, casting time, range. Nothing else.
 func fetBuildSpells(db *fetDB, sig string) {
 	rows := [][]any{}
 	for k, raw := range db.refs {
@@ -514,7 +601,8 @@ func fetBuildSpells(db *fetDB, sig string) {
 		if !ok {
 			cls14 = cls
 		}
-		rows = append(rows, []any{x.Name, lvl, b01(conc), b01(ar), dur, cls, db.refLabel[k], x.Source, g, old, b01(ritual), cls14})
+		tm, rg := fetSpellTimeRange(raw)
+		rows = append(rows, []any{x.Name, lvl, b01(conc), b01(ar), dur, cls, db.refLabel[k], x.Source, g, old, b01(ritual), cls14, tm, rg})
 	}
 	sort.Slice(rows, func(i, j int) bool {
 		a, b := rows[i], rows[j]
@@ -1633,7 +1721,7 @@ func fetPublic(w http.ResponseWriter, r *http.Request, path string) bool {
 	if path == "/pcref" {
 		q := r.URL.Query()
 		t := q.Get("t")
-		if t != "feat" && t != "optionalfeature" {
+		if t != "feat" && t != "optionalfeature" && t != "baseitem" { // 1.5: base weapons, for the notes on the sheet's attacks
 			reply(w, 404, []byte("{}"), "")
 			return true
 		}

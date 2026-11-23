@@ -11,18 +11,80 @@ const SH_CLS_SV={barbarian:["str","con"],bard:["dex","cha"],cleric:["wis","cha"]
   "cha"],ranger:["str","dex"],rogue:["dex","int"],sorcerer:["con","cha"],warlock:["wis","cha"],wizard:["int","wis"],artificer:["con","int"]};
 const SH_CLS_SA={bard:"cha",cleric:"wis",druid:"wis",paladin:"cha",ranger:"wis",sorcerer:"cha",warlock:"cha",wizard:"int",artificer:"int"};
 const shMod=v=>Math.floor(((Number(v)||10)-10)/2),shS=n=>(n>=0?"+":"−")+Math.abs(n);
-function shBlank(name){return {name:name||"",cls:"",lvl:1,species:"",ac:10,hp:0,speed:30,init:null,prof:null,ab:{str:10,dex:10,con:10,int:10,wis:10,cha:10},sv:
-  [],sk:{},sa:"",att:[],spells:null,v:0,by:""}}
+function shBlank(name){return {name:name||"",cls:"",sub:"",lvl:1,species:"",bg:"",size:"M",ac:10,hp:0,speed:30,init:null,prof:null,ab:{str:10,dex:10,
+  con:10,int:10,
+  wis:10,cha:10},sv:[],sk:{},sa:"",att:[],feats:[],spells:null,v:0,by:""}}
+/* 1.5: feats. The choices (ability scores, saves, skills, expertise) come from the structured fields of the DM's 5e.tools files; a few feats change
+   numbers only in their text, so their rules are here by name (edition by book). What a feat changes in numbers the player types (scores, saves,
+   skills, speed, max HP) is applied once when it's added ("Add and apply"), or not at all when the sheet already counts it ("Add only"); what the
+   app works out itself (initiative from Dex, passives, advantage on Concentration and death saves) it adds by itself. */
+const FEAT_FX={"alert|2024":{initPB:1},"alert|2014":{init:5},"tough":{hpLvl:2},"speedy":{speed:10},"mobile|2014":{speed:10},"boon of speed":{speed:30},
+  "observant|2014":{pass5:1},"war caster":{concAdv:1},"durable|2024":{dsAdv:1}};
+const featEd=s=>s==="PHB"||s==="XGE"||s==="TCE"?"2014":"2024";
+const featRule=f=>{const n=String(f.n||"").toLowerCase();return FEAT_FX[n+"|"+featEd(f.s||"")]||FEAT_FX[n]||null};
+function shFeatFx(sh){const o={};(sh&&sh.feats||[]).forEach(f=>{const r=featRule(f);
+  if(r)Object.keys(r).forEach(k=>{if(k==="init"||k==="speed")o[k]=(o[k]||0)+r[k];
+  else if(r[k])o[k]=1})});return o}
+const SH_SKN=k=>(SH_SK.find(x=>x[0]===k)||[k,k])[1];
+/* what a feat lets you choose, from its 5e.tools entry */
+function featChoices(item){const out={ab:[],sv:null,sk:null,exp:0};if(!item)return out;
+  (item.ability||[]).forEach(a=>{const fixed=Object.keys(a).filter(k=>SH_AB.includes(k));
+    if(fixed.length){out.ab.push({fixed:Object.fromEntries(fixed.map(k=>[k,a[k]])),
+    max:a.max||20});return}const c=a.choose;if(c&&Array.isArray(c.from))out.ab.push({from:c.from.filter(k=>SH_AB.includes(k)),amount:c.amount||1,
+      count:c.count||1,
+    max:a.max||20})});
+  (item.savingThrowProficiencies||[]).forEach(s=>{if(s.choose&&s.choose.from)out.sv={from:s.choose.from,count:s.choose.count||1};
+    else{const k=Object.keys(s).filter(x=>
+    SH_AB.includes(x));if(k.length)out.sv={fixed:k}}});
+  const sks=SH_SK.map(x=>x[0]);(item.skillProficiencies||[]).forEach(s=>{if(s.choose&&s.choose.from)out.sk={from:s.choose.from.filter(k=>sks.includes(k)),
+    count:s.choose.count||1};else if(s.any)out.sk={from:sks,count:s.any};else{const k=Object.keys(s).filter(x=>sks.includes(x));if(k.length)out.sk={fixed:k}}});
+  (item.skillToolLanguageProficiencies||[]).forEach(s=>(s.choose||[]).forEach(c=>{if((c.from||[]).includes("anySkill"))out.sk={from:sks,count:c.count||1,
+    orTool:1}}));
+  (item.expertise||[]).forEach(e=>{if(e.anyProficientSkill)out.exp=e.anyProficientSkill;else{const k=Object.keys(e).filter(x=>sks.includes(x));
+    if(k.length)out.expFixed=k}});
+  return out}
+/* the changes a feat makes once, from the choices made */
+function featChanges(f,sh){const ch={},C=shCalc(sh),r=featRule(f);
+  if(f.pick&&f.pick.ab)ch.ab=f.pick.ab;if(f.pick&&f.pick.sv&&f.pick.sv.length)ch.sv=f.pick.sv.filter(a=>!(sh.sv||[]).includes(a));
+  if(f.pick&&f.pick.sk&&f.pick.sk.length)ch.sk=f.pick.sk.filter(k=>!Number((sh.sk||{})[k]));if(f.pick&&f.pick.exp&&f.pick.exp.length)ch.exp=f.pick.exp;
+  if(r&&r.speed)ch.speed=r.speed;if(r&&r.hpLvl)ch.hp=r.hpLvl*C.lvl;return ch}
+function featLines(f,sh,ch){const L=[],r=featRule(f);ch=ch||f.ch||{};
+  Object.entries(ch.ab||{}).forEach(([a,n])=>L.push(`${SH_AB3[a]} +${n}`));(ch.sv||[]).forEach(a=>L.push(`${SH_AB3[a]} save`));
+    (ch.sk||[]).forEach(k=>L.push(SH_SKN(k)));
+  (ch.exp||[]).forEach(k=>L.push(`${SH_SKN(k)} expertise`));if(ch.speed)L.push(`Speed +${ch.speed} ft`);if(ch.hp)L.push(`HP +${ch.hp}`);
+  if(r&&r.initPB)L.push("+proficiency to Initiative");if(r&&r.init)L.push(`Initiative +${r.init}`);
+    if(r&&r.pass5)L.push("+5 passive Perception and Investigation");
+  if(r&&r.concAdv)L.push("advantage on Concentration");if(r&&r.dsAdv)L.push("advantage on death saves");return L}
+function featApply(sh,ch,sign){const s=sign||1;
+  Object.entries(ch.ab||{}).forEach(([a,n])=>{sh.ab[a]=Math.max(1,Math.min(30,(Number(sh.ab[a])||10)+s*n))});
+  (ch.sv||[]).forEach(a=>{sh.sv=s>0?[...new Set((sh.sv||[]).concat([a]))]:(sh.sv||[]).filter(x=>x!==a)});
+  (ch.sk||[]).forEach(k=>{sh.sk=sh.sk||{};if(s>0)sh.sk[k]=Math.max(1,Number(sh.sk[k])||0);else if(Number(sh.sk[k])===1)delete sh.sk[k]});
+  (ch.exp||[]).forEach(k=>{sh.sk=sh.sk||{};if(s>0)sh.sk[k]=2;else if(Number(sh.sk[k])===2)sh.sk[k]=1});
+  if(ch.speed)sh.speed=Math.max(0,(Number(sh.speed)||30)+s*ch.speed);if(ch.hp)sh.hp=Math.max(0,(Number(sh.hp)||0)+s*ch.hp)}
+/* 1.5: the class without its level, the subclass (its own field, or "Wizard 5 (Evoker)"), and the size */
+const shClsName=sh=>String(sh&&sh.cls||"").replace(/\([^)]*\)/g,"").replace(/\b\d{1,2}\b/g,"").replace(/\s+/g," ").trim();
+const shSub=sh=>String(sh&&sh.sub||"").trim()||((String(sh&&sh.cls||"").match(/\(([^)]+)\)/)||[])[1]||"").trim();
+const SH_SIZE={T:"Tiny",S:"Small",M:"Medium",L:"Large"};
+/* 1.5: the notes on a weapon from the 5e.tools files (properties and mastery); the SRD has no weapon properties, so without them the player types it */
+const SH_PROP={V:"Versatile",T:"Thrown",F:"Finesse",L:"Light",H:"Heavy","2H":"Two-handed",R:"Reach",A:"Ammunition",LD:"Loading",S:"Special"};
+async function shWeaponNote(name){
+  try{const r=await fetch("/pcref?t=baseitem&n="+encodeURIComponent(name),{cache:"no-store"});if(!r.ok)return "";const it=(await r.json()).item||{},out=[];
+    (it.property||[]).forEach(p=>{const k=String(p.uid||p).split("|")[0],l=SH_PROP[k];if(!l)return;
+      out.push(k==="V"&&it.dmg2?`Versatile (${it.dmg2})`:(k==="T"||k==="A")&&it.range?`${l} ${it.range} ft`:l)});
+    (it.mastery||[]).forEach(m=>out.push(String(m.uid||m).split("|")[0]));return out.join(" · ")}catch(e){return ""}}
 function shCalc(sh){
   const lvl=Math.max(1,Math.min(20,Number(sh.lvl)||1)),pb=sh.prof!=null?Number(sh.prof):2+Math.floor((lvl-1)/4),m={};
     SH_AB.forEach(a=>m[a]=shMod((sh.ab||{})[a]));
   const sv={},sk={};SH_AB.forEach(a=>sv[a]=m[a]+((sh.sv||[]).includes(a)?pb:0));SH_SK.forEach(([k,,a])=>sk[k]=m[a]+pb*(Number((sh.sk||{})[k])||0));
-  const sa=sh.sa||"";return {lvl,pb,m,sv,sk,init:sh.init!=null?Number(sh.init):m.dex,pp:10+sk.perception,pi:10+sk.insight,pv:10+sk.investigation,
-    dc:sh.dc!=null?Number(sh.dc):sa?8+pb+m[sa]:null,atk:sh.atk!=null?Number(sh.atk):sa?pb+m[sa]:null}}
+  const sa=sh.sa||"",fx=shFeatFx(sh);
+  return {lvl,pb,m,sv,sk,init:sh.init!=null?Number(sh.init):m.dex+(fx.initPB?pb:0)+(fx.init||0),pp:10+sk.perception+(fx.pass5?5:0),pi:10+sk.insight,
+    pv:10+sk.investigation+(fx.pass5?5:0),dc:sh.dc!=null?Number(sh.dc):sa?8+pb+m[sa]:null,atk:sh.atk!=null?Number(sh.atk):sa?pb+m[sa]:null,
+    concAdv:!!fx.concAdv,dsAdv:!!fx.dsAdv,fx}}
 const shAvg=e=>{const x=String(e||"").replace(/\s/g,"").match(/^(\d+)d(\d+)([+-]\d+)?$/i);return x?Math.floor(+x[1]*(+x[2]+1)/2)+(+x[3]||0):null};
 /* the sheet as a statblock in the DM's drawer: the same clickable bonuses and damage as a monster's */
 function shMd(sh,name){const C=shCalc(sh),L=[];
-  L.push(`## ${name||sh.name||"Character"}`,`*${[sh.cls||"",sh.species||""].filter(Boolean).join(" · ")||"Player character"}*`,"",`**Armor Class** ${sh.ac||
+  L.push(`## ${name||sh.name||"Character"}`,`*${[sh.cls||"",sh.sub&&!/\(/.test(sh.cls||"")?sh.sub:"",sh.species||"",sh.bg||""].filter(Boolean).join(" · ")||
+    "Player character"}*`,"",`**Armor Class** ${sh.ac||
     10}`,`**Hit Points** ${sh.hp||"—"}`,`**Speed** ${sh.speed||30} ft.`,`**Initiative** ${shS(C.init)} · **Proficiency** ${shS(C.pb)}`,"",
     "| STR | DEX | CON | INT | WIS | CHA |","|:---:|:---:|:---:|:---:|:---:|:---:|","| "+SH_AB.map(a=>`${(sh.ab||{})[a]||10} (${C.m[a]>=0?"+":
       ""}${C.m[a]})`).join(" | ")+" |","");
@@ -35,7 +97,7 @@ function shMd(sh,name){const C=shCalc(sh),L=[];
   const at=(sh.att||[]).filter(a=>a&&a.n);if(at.length){L.push("","### Attacks");
     at.forEach(a=>{const dm=String(a.dmg||"").trim(),m=dm.match(/^(\d+d\d+(?:\s*[+-]\s*\d+)?)\s*(.*)$/i),av=m&&shAvg(m[1]);
     L.push(`***${a.n}.*** *Attack:* ${Number(a.hit)>=0?"+":""}${Number(a.hit)||0} to hit.${dm?` *Hit:* ${m&&av!=null?`${av} (${m[1].replace(/\s/g,
-      "").replace(/([+-])/," $1 ")})${m[2]?" "+m[2]:""} damage`:esc(dm)}.`:""}`)})}
+      "").replace(/([+-])/," $1 ")})${m[2]?" "+m[2]:""} damage`:esc(dm)}.`:""}${a.note?` ${esc(a.note)}.`:""}`)})}
   const sp=sh.spells;if(sp&&((sp.prep||[]).length||(sp.alw||[]).length)){L.push("","### Spells");
     if((sp.alw||[]).length)L.push(`**Always prepared:** ${sp.alw.map(([n,f])=>`*${n}* (${f})`).join(", ")}`);
     if((sp.prep||[]).length)L.push(`**Prepared:** ${sp.prep.map(n=>`*${n}*`).join(", ")}`)}
@@ -72,14 +134,18 @@ function shParse(text,base){
     guess.push(`Spell save DC (not in the text): ${shCalc(sh).dc}, worked out`)}
   const spc=t.match(/\b(Human|Elf|High Elf|Wood Elf|Drow|Dwarf|Halfling|Gnome|Half-Elf|Half-Orc|Orc|Tiefling|Dragonborn|Aasimar|Goliath)\b/);
     if(spc&&!sh.species)sh.species=spc[1];
+  {const bg=t.match(/\bBackground\s*[:=]?\s*([A-Z][A-Za-z' -]{2,30}?)\s*(?:\n|$|,|·|\|)/);if(bg){sh.bg=bg[1].trim();found.push("Background: "+sh.bg)}   // 1.5
+   const sz=t.match(/\bSize\s*[:=]?\s*(Tiny|Small|Medium|Large)\b/i);if(sz){sh.size=sz[1][0].toUpperCase();found.push("Size: "+SH_SIZE[sh.size])}
+   const sb=String(sh.cls||"").match(/\(([^)]+)\)/);if(sb&&!sh.sub)sh.sub=sb[1].trim()}
   return {sh,found,guess}}
 /* the phone's copy, and the laptop's */
 const shKey=()=>"sheet:"+(meName||"").toLowerCase();
 const shLocal=()=>{const v=ls.get(shKey(),null);return v&&typeof v==="object"&&v.ab?v:null};
 function shFromProf(me){const prof=profGet(),sh=shBlank(me?me.name:meName),S=statsGet(),hp=hpGet();
-  if(prof.cls.length){sh.cls=prof.cls.map(e=>`${e.n} ${e.lvl||1}${e.sub?` (${e.sub.sn||e.sub.n})`:""}`).join(" / ");
+  if(prof.cls.length){sh.cls=prof.cls.map(e=>`${e.n} ${e.lvl||1}`).join(" / ");sh.sub=prof.cls.filter(e=>e.sub).map(e=>e.sub.sn||e.sub.n).join(" / ");
     sh.lvl=prof.cls.reduce((a,e)=>a+(e.lvl||1),0);const k=String(prof.cls[0].n||"").toLowerCase();sh.sv=(SH_CLS_SV[k]||[]).slice();sh.sa=SH_CLS_SA[k]||""}
   else if(me&&LABEL[me.cls]){const k=String(me.cls).toLowerCase();sh.cls=LABEL[me.cls];sh.sv=(SH_CLS_SV[k]||[]).slice();sh.sa=SH_CLS_SA[k]||""}
+  sh.feats=(prof.feats||[]).filter(f=>f.t==="feat").map(f=>({n:f.n,s:f.s||"",l:f.l||"",ap:false,ch:{}}));   // 1.5: feats picked in Resources, already counted
   if(S.ac)sh.ac=S.ac;if(hp.max)sh.hp=hp.max;return sh}
 function shSpells(){return {prep:prepGet().map(p=>p.n).filter(n=>!alwHas(n)),alw:alwNow().map(a=>[a.n.replace(/\b\w/g,c=>c.toUpperCase()),a.from])}}
 function shSave(sh,quiet){
@@ -129,35 +195,131 @@ function shViewHtml(me){const sh=shLocal();
   if(!sh)return `<p class="psub">Add your character once: the DM sees it, and your phone rolls with your real bonuses. Players who keep their sheet on paper can skip this.</p>
     <div class="morelist"><button class="btn primary" type="button" data-act="shnew">Fill it in, step by step<br><small style="font-weight:600;opacity:.85">About 3 minutes. Most numbers fill in by themselves.</small></button>
     <button class="btn" type="button" data-act="shpaste">Paste text from my sheet<br><small style="font-weight:600;color:var(--muted)">From D&amp;D Beyond, a PDF or your notes. You check what was found.</small></button></div>`;
-  const C=shCalc(sh),hp=hpGet(),sks=SH_SK.filter(([k])=>shAll||Number((sh.sk||{})[k]));
-  return `<div class="psub" style="margin:-6px 0 0">${esc([sh.cls,sh.species].filter(Boolean).join(" · "))}${sh.by==="dm"?" · set up by the DM":""}</div>
-    ${shLast?`<div class="dresult ${shLast.n}"><b>${shLast.tot}</b><small>${esc(shLast.how)}</small></div>`:""}
-    <div class="shstat"><div><small>AC</small><b>${sh.ac||10}</b></div><div><small>HP</small><b>${hp.max?`${hp.cur}<i>/${hp.max}</i>`:sh.hp||
-      "—"}</b></div><div><small>INIT</small><b>${shS(C.init)}</b></div><div><small>SPEED</small><b>${sh.speed||30}</b></div></div>
-    ${shAdvHtml()}${
-      shCrit?`<div class="shcrit">Natural 20: the next damage is a critical hit (dice doubled) <button type="button" class="linkbtn" data-act="shnocrit">cancel</button></div>`:""}
-    <div class="eyebrow2">Tap to roll · checks</div><div class="shabr">${SH_AB.map(a=>
-      `<button type="button" data-act="shroll" data-k="ab" data-a="${a}"><small>${SH_AB3[a]}</small><b>${shS(C.m[a])}</b><i>${(sh.ab||{})[a]||
-      10}</i></button>`).join("")}</div>
-    <div class="eyebrow2">Saves</div><div class="shchips">${SH_AB.map(a=>`<button type="button" class="${(sh.sv||[]).includes(a)?"pf":
-      ""}" data-act="shroll" data-k="sv" data-a="${a}">${SH_AB3[a]}<b>${shS(C.sv[a])}</b></button>`).join("")}</div>
-    <div class="eyebrow2">Skills</div><div class="shchips">${sks.map(([k,l])=>`<button type="button" class="${Number((sh.sk||{})[k])?"pf":
-      ""}" data-act="shroll" data-k="sk" data-a="${esc(k)}">${l}<b>${shS(C.sk[k])}</b></button>`).join("")}<button type="button" data-act="shall">${shAll?
-      "Fewer":"All 18…"}</button></div>
-    ${sh.sa?`<div class="shbig2"><div><small>Spell save DC</small><b>${
-      C.dc}</b></div><button type="button" data-act="shroll" data-k="spatk"><small>Spell attack</small><b>${shS(C.atk)}</b></button></div>`:""}
-    ${(sh.att||[]).filter(a=>a.n).map((a,i)=>`<div class="shatk"><b>${esc(a.n)}</b><small>${shS(Number(a.hit)||0)}${a.dmg?" · "+esc(a.dmg):
-      ""}</small><span class="r"><button class="btn sm" type="button" data-act="shroll" data-k="hit" data-i="${i}">Hit</button>${a.dmg&&
-      sbDice(String(a.dmg).split(" ")[0],false)?`<button class="btn sm primary" type="button" data-act="shroll" data-k="dmg" data-i="${i}">Damage</button>`:
-      ""}</span></div>`).join("")}
+  return shView2Html(me,sh)}
+/* 1.5: the sheet on the phone, after Encounter+ and the 2024 sheet: a band in the class colour, Main · Spells · Features, and sections that open on Main
+   (each shows its numbers when closed; the phone remembers which are open) */
+let shTab=ls.get("shTab","main");
+const shOpen=()=>Object.assign({ab:true,sk:false,wp:false,rs:false},ls.get("shOpen",{}));
+function shView2Html(me,sh){
+  const C=shCalc(sh),hp=hpGet(),fk=me&&me.kind==="pc"?frameKey(me):"",sub=shSub(sh),O=shOpen();
+  const line1=[shClsName(sh),sub].filter(Boolean).join(" · "),line2=[sh.species,sh.bg,sh.size&&sh.size!=="M"?SH_SIZE[sh.size]:""].filter(Boolean).join(" · ");
+  const R=(k,a,inner,cls,lbl)=>`<button type="button" class="${cls||""}" data-act="shroll" data-k="${k}"${a!=null?` data-a="${esc(a)}"`:""}${lbl?
+    ` aria-label="${esc(lbl)}"`:
+    ""}>${inner}</button>`;
+  const head=`<div class="shband"><div class="shbn"><b>${esc(sh.name||me.name)}</b>${line1?`<span class="l1">${esc(line1)}</span>`:""}${line2?
+    `<span class="l2">${esc(line2)}</span>`:""}</div><span class="shlvl"><b>${C.lvl}</b><small>LEVEL</small></span></div>
+    <nav class="shtabs" aria-label="Sheet sections">${[["main","Main"],["spells","Spells"],["feat","Features"]].map(([k,l])=>
+      `<button type="button" data-act="shtab" data-v="${k}" aria-pressed="${shTab===k}">${l}</button>`).join("")}</nav>
+    ${shLast?`<div class="dresult ${shLast.n}"><b>${shLast.tot}</b><small>${esc(shLast.how)}</small></div>`:""}`;
+  const advRow=`${shAdvHtml()}${
+    shCrit?`<div class="shcrit">Natural 20: the next damage is a critical hit (dice doubled) <button type="button" class="linkbtn" data-act="shnocrit">cancel</button></div>`:""}`;
+  const sec=(k,title,sum,body)=>`<section class="shsec${O[k]?" open":""}"><button type="button" class="shsech" data-act="shsec" data-s="${
+    k}" aria-expanded="${!!O[k]}">
+    <span class="t"><b>${title}</b><small>${sum}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>${O[k]?
+    `<div class="shsecb">${body}</div>`:""}</section>`;
+  let body="";
+  if(shTab==="spells")body=advRow+shSpellsHtml(sh,C);
+  else if(shTab==="feat")body=shFeatHtml(me,sh);
+  else{
+    const sks=SH_SK.map(([k,l,a])=>({k,l,a,lv:Number((sh.sk||{})[k])||0,v:C.sk[k]})),prof=sks.filter(x=>x.lv);
+    const at=(sh.att||[]).filter(a=>a&&a.n),R2=resGet(),hdI=R2.findIndex(x=>/^Hit Dice/i.test(x.name));
+    body=`<div class="shtop"><span class="shac"><b>${esc(String(sh.ac||10))}</b><small>AC</small></span>
+      <button type="button" class="shhp${hp.max&&hp.cur===0?" zero":""}" data-act="php"><small>HIT POINTS</small><span><b>${hp.max?hp.cur:sh.hp||
+        "—"}</b>${hp.max?
+        `<i>/ ${hp.max}</i>`:""}${hp.temp?`<em>+${hp.temp} temp</em>`:""}</span>${hp.max?
+          `<span class="hpbar"><i style="width:${Math.round(100*hp.cur/hp.max)}%"></i></span>`:
+        `<small class="psub">Tap to set your HP</small>`}</button></div>
+      <div class="shplates">${R("init",null,`<b>${shS(C.init)}</b><small>INITIATIVE</small>`,"shpl",
+        "Roll initiative")}<span class="shpl"><b>${esc(String(sh.speed||
+        30))} ft</b><small>SPEED</small></span><span class="shpl"><b>${shS(C.pb)}</b><small>PROFICIENCY</small></span><span class="shpl"><b>${
+          C.pp}</b><small>PASSIVE PERC.</small></span></div>
+      ${advRow}
+      ${sec("ab","Abilities and saves",SH_AB.map(a=>`${SH_AB3[a]} ${shS(C.m[a])}`).join(" · "),`<div class="shab6">${SH_AB.map(a=>{const pf=(sh.sv||
+        []).includes(a);
+        return `<div class="shab1${pf?" pf":""}"><span class="k">${SH_AB3[a]}</span>${R("ab",a,shS(C.m[a]),"m",SH_ABN[a]+
+          " check")}<span class="sc">${(sh.ab||{})[a]||
+          10}</span>${R("sv",a,`${pf?"● ":""}save ${shS(C.sv[a])}`,"sv",SH_ABN[a]+" save")}</div>`}).join("")}</div>`)}
+      ${sec("sk","Skills",prof.length?prof.map(x=>`${x.l} ${shS(x.v)}`).join(" · "):"No proficient skills",`<div class="shsk2">${sks.map(x=>R("sk",x.k,
+        `<span class="d">${x.lv===2?"◆":x.lv?"●":"○"}</span><span class="n">${esc(x.l)} <small>${SH_AB3[x.a]}</small></span><b>${shS(x.v)}</b>`,x.lv?"pf":"",
+        x.l)).join("")}</div><div class="shpas2"><span>Passive Insight <b>${C.pi}</b></span><span>Passive Investigation <b>${C.pv}</b></span></div>`)}
+      ${at.length?sec("wp","Weapons",at.map(a=>`${a.n} ${shS(Number(a.hit)||0)}`).join(" · "),at.map((a,i0)=>{const i=(sh.att||[]).indexOf(a);
+        return `<div class="shatk2"><span class="n"><b>${
+        esc(a.n)}</b>${a.note?`<small>${esc(a.note)}</small>`:""}</span>${R("hit",null,shS(Number(a.hit)||0),"atk","To hit").replace('data-k="hit"',
+          `data-k="hit" data-i="${i}"`)}${
+        a.dmg&&sbDice(String(a.dmg).split(" ")[0],false)?R("dmg",null,`<b>${esc(String(a.dmg).split(" ")[0])}</b><small>${esc(String(a.dmg).split(" ").slice(
+          1).join(" ")||
+        "damage")}</small>`,"dmg","Damage").replace('data-k="dmg"',`data-k="dmg" data-i="${i}"`):""}</div>`}).join("")):""}
+      ${hdI>=0||me.insp?sec("rs","Hit Dice and Inspiration",[hdI>=0?`${R2[hdI].note||""} ${R2[hdI].cur} of ${R2[hdI].max} left`.trim():"",me.insp?
+        "Heroic Inspiration":""].filter(Boolean).join(" · "),
+        `${hdI>=0?shTrackRow(R2[hdI],hdI,"Hit Dice"+(R2[hdI].note?" · "+R2[hdI].note:""),"all back on a long rest"):""}${me.insp?
+          `<div class="shtr"><span class="n"><b>★ Heroic Inspiration</b><small>from the DM: reroll any die you just rolled</small></span></div>`:""}`):""}`}
+  return `<div class="shv${fk?" fr-"+fk:""}">${head}${body}</div>
     <p class="psub">Rolls are shared with the table when "Share" is on in Roll.</p>
     <div class="hpbtns"><button class="btn" type="button" data-act="shedit">Edit sheet</button><button class="btn" type="button" data-act="shpaste">Paste again…</button></div>`}
-const SH_STEPS=["Basics","Abilities and saves","Skills","Spells and attacks","Check and save"];
+/* one tracker as boxes (taps use and give back, as in Resources), or as a pool with − and + when it's big (Lay on Hands) */
+function shTrackRow(r,i,label,note){
+  const boxes=r.max<=12?`<span class="shbx">${Array.from({length:r.max},(_,k)=>`<button type="button" class="rpip${k<r.cur?" on":
+    ""}" data-act="rpip" data-i="${i}" aria-label="${
+    esc(label)} ${k+1}${k<r.cur?"":", used"}"></button>`).join("")}</span>`:
+      `<span class="shpool"><button type="button" class="btn" data-act="shpool" data-i="${i}" data-d="-1" aria-label="Use one">−</button><b>${
+    r.cur}<i> / ${r.max}</i></b><button type="button" class="btn" data-act="shpool" data-i="${i}" data-d="1" aria-label="Get one back">+</button></span>`;
+  return `<div class="shtr"><span class="n"><b>${esc(label)}</b>${note?`<small>${esc(note)}</small>`:""}</span>${boxes}</div>`}
+const RESET_TXT={long:"back on a long rest",short:"back on a short rest",shortOne:"one back on a short rest, all on a long rest",none:
+  "doesn't come back by itself"};
+/* the Spells tab: spellcasting numbers, slots as boxes (from the trackers), and the spells by level with casting time, range, C and ◆ */
+function shSpellsHtml(sh,C){
+  const R2=resGet(),slots=R2.map((r,i)=>({r,i})).filter(x=>/^Spell slot \d|^Pact slots/.test(x.r.name));
+  const alw=alwNow?alwNow():[],prep=prepGet?prepGet():[],have=new Map();
+  alw.forEach(a=>have.set(a.n.toLowerCase(),{n:a.n.replace(/\b\w/g,c=>c.toUpperCase()),from:a.from,alw:true}));
+  prep.forEach(p=>{const k=String(p.n).toLowerCase();if(!have.has(k))have.set(k,{n:p.n,alw:false})});
+  if(!have.size&&sh.spells){(sh.spells.alw||[]).forEach(([n,f])=>have.set(n.toLowerCase(),{n,from:f,alw:true}));(sh.spells.prep||[]).forEach(n=>{if(!have.has(
+    n.toLowerCase()))have.set(n.toLowerCase(),{n,alw:false})})}
+  const L=[...have.values()].map(x=>{const row=spByName&&spByName.get(x.n.toLowerCase());
+    return Object.assign(x,{lv:row?row[1]:99,c:row?!!row[2]:false,t:row&&row[12]||"",
+    r:row&&row[13]||"",s:row?row[7]:"",row})}).sort((a,b)=>a.lv-b.lv||a.n.localeCompare(b.n));
+  const lvName=l=>l===0?"Cantrips":l===99?"Other":`Level ${l}`,groups=[...new Set(L.map(x=>x.lv))];
+  const nPrep=L.filter(x=>!x.alw&&x.lv>0).length;
+  return `${sh.sa?`<div class="shplates">${[["ABILITY",SH_AB3[sh.sa]],["MODIFIER",shS(C.m[sh.sa])],["SAVE DC",String(C.dc)]].map(([k,v])=>
+    `<span class="shpl"><b>${
+    v}</b><small>${k}</small></span>`).join("")}<button type="button" class="shpl" data-act="shroll" data-k="spatk" aria-label="Roll a spell attack"><b>${shS(
+      C.atk)}</b><small>SPELL ATTACK</small></button></div>`:
+    `<p class="psub">No spellcasting on this sheet. Edit sheet → Spells and attacks sets it.</p>`}
+    ${slots.length?`<div class="shcard"><div class="shcardh">Spell slots</div>${slots.map(x=>shTrackRow(x.r,x.i,x.r.name.replace(/^Spell slot (\d)$/,(m,n)=>
+      `Level ${n}`)+(x.r.note?" · "+x.r.note:""),"")).join("")}<p class="psub">Tap a full box to spend a slot, an empty one to get it back.</p></div>`:""}
+    ${L.length?`<p class="psub">${nPrep?`Prepared ${nPrep}`:""}${nPrep?" · ":""}◆ always prepared · C Concentration · tap a spell to read it</p>${groups.map(g=>
+      `<div class="shcard"><div class="shsph"><span>${lvName(g)}</span><span>Time</span><span>Range</span></div>${L.filter(x=>x.lv===g).map(x=>
+        `<button type="button" class="shsp" data-act="pbookopen" data-n="${
+        esc(x.row?x.row[0]:x.n)}" data-s="${esc(x.s||"")}" data-from="sheet"><span class="n">${x.alw?`<i class="alw" title="Always prepared${x.from?": "+
+          esc(x.from):""}">◆</i>`:
+        ""}<b>${esc(x.n)}</b>${x.c?`<i class="c" title="Concentration">C</i>`:
+          ""}</span><span>${esc(x.t)}</span><span>${esc(x.r)}</span></button>`).join("")}</div>`).join("")}`:
+      `<p class="psub">No spells yet. Pick them in Spells on the phone, and they show here.</p>`}`}
+/* the Features tab: the class and subclass features up to your level (from the 5e.tools files), feats, and the trackers that aren't slots or Hit Dice */
+function shFeatHtml(me,sh){
+  const R2=resGet(),tr=R2.map((r,i)=>({r,i})).filter(x=>!/^Spell slot \d|^Pact slots|^Hit Dice/i.test(x.r.name)),prof=profGet();
+  const rows=[];prof.cls.forEach(e=>{const c=pcClass(e);if(!c)return;const lvl=e.lvl||1,sub=e.sub?pcSubs(c).find(x=>x.n===e.sub.n&&x.s===e.sub.s):null;
+    const cf=(c.cf||[]).filter(([,l])=>l<=lvl).map(([n,l])=>({n,l,k:"c"})),sf=sub?(sub.sf||[]).filter(([,l])=>l<=lvl).map(([n,l])=>({n,l,k:"s"})):[];
+    rows.push({t:`${c.n} ${lvl}${sub?" · "+(sub.sn||sub.n):""}`,f:cf.concat(sf).sort((a,b)=>a.l-b.l)})});
+  const seen=new Set();
+  return `${tr.length?`<div class="shcard"><div class="shcardh">Features you track</div>${tr.map(x=>shTrackRow(x.r,x.i,x.r.name,RESET_TXT[x.r.reset||"long"]||
+    "")).join("")}</div>`:""}
+    ${rows.length?rows.map(r=>`<div class="shcard"><div class="shcardh">${esc(r.t)}</div><div class="shfeat">${r.f.filter(x=>{const k=x.n.toLowerCase();
+      if(seen.has(k))return false;
+      seen.add(k);return !/^ability score improvement$|^subclass feature$|^epic boon$/i.test(x.n)}).map(x=>
+        `<span><b>${esc(x.n)}</b><small>${x.l}</small></span>`).join("")}</div></div>`).join(""):
+      `<p class="psub">${pcData?"Pick your class in Resources and its features show here.":
+        "Class features come from the DM's 5e.tools files on the laptop; the built-in SRD doesn't include classes."}</p>`}
+    ${(()=>{const sf=sh.feats||[],other=(prof.feats||[]).filter(f=>!sf.some(x=>x.n===f.n));
+      return sf.length||other.length?`<div class="shcard"><div class="shcardh">Feats and options</div><div class="shfeat">${
+      sf.map(f=>{const L=featLines(f,sh);return `<span><b>${esc(f.n)}</b><small>${esc(L.join(" · "))}</small></span>`}).join("")}${other.map(f=>
+        `<span><b>${esc(f.n)}</b></span>`).join(
+      "")}</div></div>`:""})()}`}
+const SH_STEPS=["Basics","Abilities and saves","Skills","Feats","Spells and attacks","Check and save"];
 function shStepHtml(){const st=shStep;
   return `<div class="shsteps">${SH_STEPS.map((x,i)=>`<i class="${i<st?"done":i===st?"on":""}"></i>`).join("")}</div><div class="eyebrow2">Step ${st+
-    1} of 5 · ${SH_STEPS[st]}</div>`+shStepBody(st)
+    1} of ${SH_STEPS.length} · ${SH_STEPS[st]}</div>`+shStepBody(st)
     +`<div class="hpbtns">${st?`<button class="btn" type="button" data-act="shstep" data-d="-1">Back</button>`:
-      `<button class="btn" type="button" data-act="shcancel">Later</button>`}${st<4?
+      `<button class="btn" type="button" data-act="shcancel">Later</button>`}${st<SH_STEPS.length-1?
       `<button class="btn primary" type="button" data-act="shstep" data-d="1">Next: ${SH_STEPS[st+1].toLowerCase()}</button>`:
       `<button class="btn primary" type="button" data-act="shdone">Save my sheet</button>`}</div>`}
 function shStepBody(st){const d=shDraft,C=shCalc(d);
@@ -168,7 +330,10 @@ function shStepBody(st){const d=shDraft,C=shCalc(d);
     id}" type="text" data-kb="text" inputmode="none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="${esc(v||
     "")}" placeholder="${esc(ph||"")}"></label>`;
   let h="";
-  if(st===0)h+=txt("sh_cls","Class and level",d.cls,"Wizard 5 (Evoker)")+txt("sh_species","Species",d.species,"High Elf")+`<div class="shgrid">${num("lvl",
+  if(st===0)h+=txt("sh_cls","Class and level",d.cls,"Wizard 5")+txt("sh_sub","Subclass",d.sub,shSub(d)||"Evoker")+txt("sh_species","Species",d.species,
+    "High Elf")+txt("sh_bg","Background",d.bg,"Sage")+`<div class="shfl">Size<div class="seg2 shsize">${["S","M","L"].map(k=>
+      `<button type="button" data-act="shsize" data-v="${
+    k}" aria-pressed="${(d.size||"M")===k}">${SH_SIZE[k]}</button>`).join("")}</div></div><div class="shgrid">${num("lvl",
     "Level",d.lvl)}${num("ac","AC",d.ac)}${num("hp","HP max",d.hp||0,1)}${num("speed","Speed",d.speed,5)}${num("init","Initiative",shS(C.init),1,d.init==null?
     "✓ from Dex":"set by hand")}${num("prof","Proficiency",shS(C.pb),1,d.prof==null?`✓ from level ${C.lvl}`:"set by hand")}</div>
     ${MODE==="dm"?"":`<label class="chk"><input type="checkbox" id="pHpShare" ${phpOn()?"checked":""}> Share my HP with the DM (only the DM sees it)</label>`}`;
@@ -183,22 +348,95 @@ function shStepBody(st){const d=shDraft,C=shCalc(d);
     <div>${SH_SK.map(([k,l,a])=>{const v=Number(d.sk[k])||0;return `<div class="shsk"><span>${l}<small>${SH_AB3[a]}</small></span><span class="tri">${[["0",
       "—"],["1","Prof"],["2","Exp"]].map(([x,y])=>`<button type="button" class="${String(v)===x?"on":
       ""}" data-act="shsk" data-k="${esc(k)}" data-v="${x}">${y}</button>`).join("")}</span><b>${shS(C.sk[k])}</b></div>`}).join("")}</div>`;
-  else if(st===3)h+=`<div class="eyebrow2">Spellcasting</div><div class="seg2">${[["","None"],["int","Int"],["wis","Wis"],["cha","Cha"]].map(([k,l])=>
+  else if(st===3)h+=shFeatStepHtml(d);
+  else if(st===4)h+=`<div class="eyebrow2">Spellcasting</div><div class="seg2">${[["","None"],["int","Int"],["wis","Wis"],["cha","Cha"]].map(([k,l])=>
     `<button type="button" data-act="shsa" data-v="${k}" aria-pressed="${(d.sa||"")===k}">${l}</button>`).join("")}</div>
     ${d.sa?`<div class="shbig2"><div><small>Spell save DC</small><b>${C.dc}</b></div><div><small>Spell attack</small><b>${shS(
       C.atk)}</b></div></div><span class="shauto">✓ 8 + proficiency + ${SH_ABN[d.sa]}</span>`:""}
     <div class="eyebrow2" style="margin-top:6px">Attacks</div>
     ${d.att.map((a,i)=>`<div class="shatked">${txt("sh_an_"+i,"Name",a.n,"Longsword")}<div class="shatkrow">${num("hit:"+i,"To hit",shS(Number(a.hit)||
       0))}${txt("sh_ad_"+i,"Damage",a.dmg,"1d8+3 slashing")}<button type="button" class="icon-btn" data-act="shattdel" data-i="${i}" aria-label="Remove">${
-      I.x}</button></div></div>`).join("")}
+      I.x}</button></div>${txt("sh_ao_"+i,"Notes",a.note,"Versatile (1d10) · Sap")}</div>`).join("")}
     <button class="btn" type="button" data-act="shattadd">+ Add an attack</button>${d.sa?
       `<p class="psub" style="margin:0">Your prepared spells from Spells are linked to the sheet by themselves.</p>`:""}`;
   else h+=`<div class="shstat"><div><small>AC</small><b>${d.ac}</b></div><div><small>HP</small><b>${d.hp||
     "—"}</b></div><div><small>INIT</small><b>${shS(C.init)}</b></div><div><small>SPEED</small><b>${d.speed}</b></div></div>
     <div class="shsum">${esc(d.cls||"No class")} · ${SH_AB.map(a=>`${SH_AB3[a]} ${d.ab[a]}`).join(" · ")}<br>Saves: ${d.sv.map(a=>SH_AB3[a]).join(", ")||
       "none"} · Skills: ${SH_SK.filter(([k])=>Number(d.sk[k])).map(x=>x[1]).join(", ")||"none"}<br>Passive Perception ${C.pp}${d.sa?` · Spell DC ${C.dc}`:
-      ""} · ${d.att.filter(a=>a.n).length} attacks</div>`;
+      ""} · ${d.att.filter(a=>a.n).length} attacks${(d.feats||[]).length?` · Feats: ${d.feats.map(f=>esc(f.n)).join(", ")}`:""}</div>`;
   return h}
+/* a feat added on the phone also goes to the class setup in Resources, so its uses become trackers and its spells are always prepared */
+function shFeatToPhone(rec,item){const prof=profGet();if(!(prof.feats||[]).some(f=>f.n===rec.n&&f.s===rec.s)){prof.feats=(prof.feats||[]).concat([{t:"feat",n:
+  rec.n,s:rec.s,
+  l:rec.l||"",u:pcUses(item)}]);profSet(prof)}
+  const have=new Set(resGet().map(r=>r.name.toLowerCase())),C=shCalc(shDraft||shBlank("")),add=[];   // its uses, counted from this sheet (level, modifiers)
+  pcUses(item).forEach(u=>{const mx=typeof u.max==="number"?u.max:u.max==="pb"?C.pb:u.max&&u.max.mod?Math.max(1,C.m[u.max.mod]??0):0;
+    if(mx>0&&!have.has(u.name.toLowerCase()))add.push({name:u.name,max:mx,cur:mx,reset:u.reset||"long",auto:true})});
+  if(add.length){resSet(resGet().concat(add));setTimeout(()=>toast(`${add.map(x=>x.name).join(", ")} added to Resources`),1600)}}
+/* 1.5: the Feats step: your feats with what they change, a search in the DM's 5e.tools feats, and the choices a feat asks for */
+let shFeatQ="",shFeatPick=null;
+function shFeatStepHtml(d){
+  const fl=d.feats||[],rows=pcData&&(pcData.feats||[]).filter(r=>r[0]==="feat");
+  if(!pcData&&!pcLoading&&Date.now()-pcTried>30000)pcLoad().then(x=>{if(x&&shDraft&&shStep===3||x&&MODE==="dm"&&shDraft)shRe()});
+  const mine=fl.length?`<div class="shfts">${fl.map((f,i)=>{const L=featLines(f,d);
+    return `<div class="shft"><span><b>${esc(f.n)}</b><small>${L.length?esc(L.join(" · ")):
+    "nothing on the sheet to change"}${f.ap||!L.length?"":
+      " · already in your numbers"}</small></span><button type="button" class="icon-btn" data-act="shfeatrm" data-i="${i}" aria-label="Remove ${
+    esc(f.n)}">${I.x}</button></div>`}).join("")}</div>`:`<p class="psub" style="margin:0">No feats yet.</p>`;
+  if(shFeatPick)return mine+shFeatPickHtml(d);
+  const txt=(id,label,ph)=>`<label class="shfl">${label}<input class="field" id="${id}" type="text" data-kb="text" inputmode="${MODE==="dm"?"text":
+    "none"}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="${esc(id==="sh_fq"?shFeatQ:
+      "")}" placeholder="${esc(ph)}"></label>`;
+  return mine+(rows&&rows.length?`${txt("sh_fq","Add a feat","Search: Alert, Tough, Resilient…")}<div class="splist shflist" id="shFeatList">${
+    shFeatListHtml(d)}</div>`:
+    `<p class="psub" style="margin:0">The feat list comes from the DM's 5e.tools files on the laptop. Without them, add a feat by its name (it changes nothing on its own).</p>`)+
+    `<div class="shfman">${txt("sh_fman","Or add by name","Feat name")}<button class="btn" type="button" data-act="shfeatman">Add</button></div>`}
+function shFeatListHtml(d){
+  const rows=pcData&&(pcData.feats||[]).filter(r=>r[0]==="feat")||[],q=shFeatQ.trim().toLowerCase(),have=new Set((d.feats||[]).map(f=>f.n.toLowerCase()+"|"+
+    (f.s||"")));
+  const L=rows.filter(r=>(!q?!r[6]&&/^(O|G|FS)/.test(String(r[4]||"")):r[1].toLowerCase().includes(q)&&(!r[6]||q.length>2))&&
+    !have.has(r[1].toLowerCase()+"|"+r[2]));
+  return L.slice(0,q?12:8).map(r=>`<button type="button" class="spi" data-act="shfeatpick" data-n="${esc(r[1])}" data-s="${esc(r[2])}" data-l="${esc(r[
+    3]||"")}"><b>${
+    esc(r[1])}</b><small>${esc([PC_FCAT[r[4]]||"",featEd(r[2])==="2014"?"2014":"",r[3]&&!/^(PHB|XPHB)$/.test(r[2])?r[3]:
+      ""].filter(Boolean).join(" · "))}</small></button>`).join("")||
+    `<p class="psub">No feat by that name.</p>`}
+const PC_FCAT={O:"Origin",G:"General",EB:"Epic Boon",FS:"Fighting Style","FS:P":"Fighting Style","FS:R":"Fighting Style",D:"Dragonmark",DG:"Dark Gift"};
+/* what a picked feat asks for: one of its ability options, saves, skills, expertise; then Add and apply, or Add only */
+function shFeatPickHtml(d){const P=shFeatPick,c=P.c,S=P.sel;
+  if(!P.item)return `<div class="shfpick"><b>${esc(P.n)}</b><p class="psub">${P.item===null?"Couldn't read this feat from the laptop.":"Reading the feat…"}</p>
+    <div class="hpbtns"><button class="btn" type="button" data-act="shfcancel">Cancel</button></div></div>`;
+  const seg=(k,list,count,lab)=>`<div class="seg2 shfch">${list.map(v=>`<button type="button" data-act="shfsel" data-k="${k}" data-v="${esc(
+    v)}" aria-pressed="${S[k].includes(
+    v)}">${esc(lab(v))}</button>`).join("")}</div><small class="psub">Pick ${count}</small>`;
+  const ab=c.ab[P.opt],optLab=o=>o.fixed?Object.entries(o.fixed).map(([a,n])=>`${SH_AB3[a]} +${n}`).join(", "):o.count>1?`+${o.amount} to ${o.count} scores`:
+    `+${o.amount} to one score`;
+  let h=`<div class="shfpick"><div class="shfph"><b>${esc(P.n)}</b><small>${esc(P.l||"")}</small></div>`;
+  if(c.ab.length>1)h+=`<div class="eyebrow2">Ability scores</div><div class="seg2">${c.ab.map((o,i)=>
+    `<button type="button" data-act="shfopt" data-i="${i}" aria-pressed="${
+    P.opt===i}">${esc(optLab(o))}</button>`).join("")}</div>`;
+  if(ab&&!ab.fixed)h+=`${c.ab.length>1?"":`<div class="eyebrow2">Ability score +${ab.amount}${ab.max>20?` (up to ${ab.max})`:""}</div>`}${seg("ab",ab.from,
+    ab.count,a=>SH_AB3[a]+" "+(d.ab[a]||10))}`;
+  else if(ab)h+=`<div class="eyebrow2">Ability scores</div><p class="psub" style="margin:0">${esc(optLab(ab))}</p>`;
+  if(c.sv&&c.sv.from)h+=`<div class="eyebrow2">Saving throw proficiency</div>${seg("sv",c.sv.from,c.sv.count,a=>SH_AB3[a]+((d.sv||[]).includes(a)?" ✓":""))}`;
+  if(c.sk&&c.sk.from)h+=`<div class="eyebrow2">Skill proficiency${c.sk.orTool?" (skills only; tools aren't on the sheet)":""}</div>${seg("sk",c.sk.from,
+    c.sk.count,k=>SH_SKN(k)+
+    (Number((d.sk||{})[k])?" ✓":""))}`;
+  if(c.exp){const pf=SH_SK.map(x=>x[0]).filter(k=>Number((d.sk||{})[k])||S.sk.includes(k)||(c.sk&&c.sk.fixed||[]).includes(k));
+    h+=`<div class="eyebrow2">Expertise</div>${pf.length?seg("exp",pf,c.exp,SH_SKN):
+      `<p class="psub" style="margin:0">Pick a skill you're proficient in first.</p>`}`}
+  const f=shFeatBuild(),L=featLines(f,d,featChanges(f,d));
+  h+=`<div class="shfprev"><b>On your sheet:</b> ${L.length?esc(L.join(" · ")):"nothing to change (its uses go to Resources)"}</div>
+    <div class="shfgo"><button class="btn primary" type="button" data-act="shfadd" data-ap="1">Add and apply</button><button class="btn" type="button" data-act="shfadd" data-ap="0">Add only<small>my numbers already include it</small></button>
+    <button class="btn" type="button" data-act="shfcancel">Cancel</button></div></div>`;
+  return h}
+/* the feat as the choices made so far */
+function shFeatBuild(){const P=shFeatPick,c=P.c,S=P.sel,ab=c.ab[P.opt],pick={ab:{},sv:[],sk:[],exp:[]};
+  if(ab){if(ab.fixed)Object.assign(pick.ab,ab.fixed);else S.ab.forEach(a=>pick.ab[a]=ab.amount)}
+  if(ab){const mx=ab.max||20;Object.keys(pick.ab).forEach(a=>{const n=Math.min(pick.ab[a],mx-(Number((shDraft.ab||{})[a])||10));if(n>0)pick.ab[a]=n;
+    else delete pick.ab[a]})}
+  if(c.sv)pick.sv=c.sv.fixed?c.sv.fixed.slice():S.sv.slice();if(c.sk)pick.sk=c.sk.fixed?c.sk.fixed.slice():S.sk.slice();pick.exp=(c.expFixed||[]).concat(S.exp);
+  return {n:P.n,s:P.s,l:P.l,pick}}
 /* the DM fills in or pastes a player's sheet on the laptop, then sends it to the phone or keeps it */
 let dmShId=null;
 const shRe=()=>MODE==="dm"?dmSheetSheet():rrPSheet();
@@ -214,7 +452,7 @@ function dmSheetSheet(){const c=byId(dmShId);if(!c||!shDraft){$("#overlay").inne
       shPaste&&shPaste.res?`<div class="shfound">${shPaste.res.found.map(f=>`<div><span>${esc(f)}</span><b>✓</b></div>`).join("")}${shPaste.res.guess.map(f=>
       `<div class="q"><span>${esc(f)}</span></div>`).join("")}</div>`:""}</details>
     <div class="dmshgrid"><section>${shStepBody(0)}</section><section>${shStepBody(1)}</section><section>${shStepBody(2)}</section><section>${shStepBody(
-      3)}</section></div>
+      4)}</section><section class="dmshfeat"><div class="eyebrow2">Feats</div>${shStepBody(3)}</section></div>
     <div class="dmshgo"><button class="btn" type="button" data-act="close">Cancel</button><button class="btn" type="button" data-act="dmshsave" data-only="1" title="For a player on paper: you see the numbers, the phone gets nothing">Keep only for me</button><button class="btn primary" type="button" data-act="dmshsave">Send to ${
       esc(c.name)}'s phone</button></div>
   </div></div>`;
@@ -409,7 +647,9 @@ function renderPSheet(){
           "Concentration lost, your effects end"}</small></div>`:`
         <label class="rangerow" style="max-width:none">Your Constitution save bonus <input class="field big modin" id="pConMod" type="text" data-kb="num" inputmode="none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" value="${
           esc(mod)}" placeholder="+0" style="max-width:6em"></label>
-        <div class="hpbtns"><button class="btn primary" type="button" data-act="pconroll">Roll it</button><button class="btn" type="button" data-act="pconroll" data-adv="1">Roll with advantage</button></div>
+        ${(()=>{const s0=shLocal(),wc=s0&&shCalc(s0).concAdv;return wc?
+          `<div class="hpbtns"><button class="btn primary" type="button" data-act="pconroll" data-adv="1">Roll with advantage<small> War Caster</small></button><button class="btn" type="button" data-act="pconroll">Roll without</button></div>`:
+          `<div class="hpbtns"><button class="btn primary" type="button" data-act="pconroll">Roll it</button><button class="btn" type="button" data-act="pconroll" data-adv="1">Roll with advantage</button></div>`})()}
         <div class="psec"><div class="eyebrow2">Rolled real dice?</div><div class="hpbtns"><button class="btn heal" type="button" data-act="pconres" data-ok="1">I made it</button><button class="btn dmg" type="button" data-act="pconres" data-ok="0">I lost it</button></div></div>`}
         ${!still&&!r?`<p class="psub">You're no longer Concentrating.</p>`:""}`;
     }else if(pSheet==="turn"){
@@ -431,7 +671,7 @@ function renderPSheet(){
           "Only your HP, and whatever the DM sends you. For players who keep the rest on paper."}</small></button></div>
         <p class="psub">Tap a status in the bar at the bottom twice to remove it. The light or dark screen is only on this phone.</p>`;
     }else if(pSheet==="sheet"){
-      body=`<h2>${esc(me.name)}</h2>${shViewHtml(me)}`;
+      body=`<h2>${shLocal()?"Your sheet":esc(me.name)}</h2>${shViewHtml(me)}`;
     }else if(pSheet==="shed"){
       if(!shDraft){pSheet="sheet";return renderPSheet()}
       body=`<h2>Character sheet · ${esc(me.name)}</h2>${shStepHtml()}`;

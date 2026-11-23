@@ -41,7 +41,8 @@ async def main():
         chk("Party numbers from the sheet",await T(dm,"byId('m').pst.pp")==14)
         await dm.click('#roster .row[data-id=m] [data-act=sbview]'); await asyncio.sleep(.4)
         t=await dm.locator('#sbDrawer').inner_text()
-        chk("drawer shows saves, skills, passives, attacks",all(x in t for x in ["Int +7","Arcana +7","Passive Perception 14","Fire Bolt"]),t[:300])
+        chk("drawer shows saves, skills, passives, attacks (1.5: the sheet card)",all(x in t for x in ["Arcana +7","Perception 14","Fire Bolt"]) and
+            await dm.locator('#sbDrawer .pcca.pf .sv').filter(has_text="+7").count()>=1,t[:300])
         chk("drawer: Edit sheet…, no lore tab",await dm.locator('#sbDrawer [data-act=dmsheet]').count()==1 and await dm.locator('#sbDrawer .sbtabs').count()==0)
         # the phone rolls with it
         chk("phone view: tap-to-roll",await ph.locator('[data-act=shroll][data-k=sv][data-a=int]').count()==1)
@@ -56,7 +57,7 @@ async def main():
         # the steps on the phone, from the existing sheet
         await T(ph,"pSheet='sheet';renderPSheet()"); await asyncio.sleep(.2); await ph.click('[data-act=shedit]'); await asyncio.sleep(.2)
         await ph.click('[data-act=shnum][data-k=ac][data-d="1"]'); await asyncio.sleep(.1)
-        for _ in range(4): await ph.click('[data-act=shstep][data-d="1"]'); await asyncio.sleep(.15)
+        for _ in range(5): await ph.click('[data-act=shstep][data-d="1"]'); await asyncio.sleep(.15)   # 1.5: six steps (Feats)
         await ph.click('[data-act=shdone]'); await asyncio.sleep(3)
         chk("edited on the phone: AC 13 on the laptop",await T(dm,"state.sheets.mira.ac")==13)
         # the DM makes Bram's sheet and sends it

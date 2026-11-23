@@ -174,3 +174,56 @@ function updSheet(){
     <div class="spacts"><button class="btn" type="button" data-act="close">Close</button><button class="btn primary" type="button" data-act="updcheck"`+
       `${updBusy?" disabled":""}>${updInfo&&!updBusy?"Check again":"Check for updates"}</button></div></div></div>`;
 }
+/* 1.5: a player's sheet in the DM's drawer, as a card (after Encounter+ and the 2024 sheet): the band in the class colour, AC on a shield, the HP from the
+   phone, the six abilities with their saves, then skills, passives, spellcasting, attacks and spells. Every bonus rolls in the drawer, as on a statblock. */
+function pcCardHtml(c){
+  const sh=(state.sheets||{})[c.name.toLowerCase()];if(!sh||!sh.ab)return null;const C=shCalc(sh),fk=frameKey(c),A=n=>esc(n);
+  const chk=(label,b,cls)=>`<button type="button" class="sbr ${cls||"hit"}" data-act="sbroll" data-k="chk" data-m="${b}" data-n="${A(label)}">${shS(
+    b)}</button>`;
+  const sub=shSub(sh),line1=[shClsName(sh)||"Player character",sub].filter(Boolean).join(" · "),
+    line2=[sh.species,sh.bg,sh.size&&sh.size!=="M"?SH_SIZE[sh.size]:""].filter(Boolean).join(" · ");
+  const p=c.php,hp=p&&p.max?`<div class="pcchp"><span class="k">Hit points</span><b class="v">${p.cur} / ${p.max}</b>${p.temp?
+    `<span class="t">+${p.temp} temp</span>`:
+    ""}<span class="sp"></span><small>from the phone</small><span class="pcchpbar"><span class="f" style="width:${Math.max(0,Math.min(100,
+      Math.round(100*p.cur/p.max)))}%"></span></span></div>`:
+    `<div class="pcchp"><span class="k">Hit points</span><b class="v">${sh.hp||
+      "—"}</b><span class="sp"></span><small>max · not shared from a phone</small></div>`;
+  const effs=(state.effects||[]).filter(e=>(e.targets||[]).includes(c.id)).map(e=>{const by=byId(e.by);return `<span class="pccchip eff">✦ ${esc(e.name)}${
+    by&&by.id!==c.id?` · from ${esc(by.name)}`:""}</span>`});
+  if(c.insp)effs.push(`<span class="pccchip insp">Heroic Inspiration</span>`);
+  const sks=SH_SK.filter(([k])=>Number((sh.sk||{})[k])),L=(k,v)=>`<div class="pccl"><span class="pcck">${k}</span> ${v}</div>`;
+  const dmgBtn=(a)=>{const m=String(a.dmg||"").trim().match(/^(\d+d\d+(?:\s*[+-]\s*\d+)?)\s*(.*)$/i);if(!m)return esc(a.dmg||"");const av=shAvg(m[1]);
+    return `<button type="button" class="sbr dmg" data-act="sbroll" data-k="dmg" data-d="${m[1].replace(/\s/g,"")}" data-t="${esc(m[2])}" data-n="${A(a.n)}">${
+      av!=null?av+" ":""}(${esc(m[1].replace(/\s/g,""))})</button>${m[2]?" "+esc(m[2]):""}`};
+  const at=(sh.att||[]).filter(a=>a&&a.n),sp=sh.spells||{},alw=sp.alw||[],prep=sp.prep||[];
+  const alwBy=new Map();alw.forEach(([n,f])=>{const k=f||"";alwBy.set(k,(alwBy.get(k)||[]).concat([n]))});
+  const spl=n=>refSpan("spell",n,"",n);
+  return `<div class="pcc${fk?" fr-"+fk:""}">
+    <div class="pccband"><div class="pccname"><b>${esc(c.name)}</b><span class="l1">${esc(line1)}</span>${line2?
+      `<span class="l2">${esc(line2)}</span>`:""}</div>
+      <span class="pcclvl" title="Level ${C.lvl}"><b>${C.lvl}</b><small>LEVEL</small></span></div>
+    <div class="pccdef"><span class="pccac" title="Armor Class"><b>${esc(String(sh.ac||10))}</b><small>AC</small></span>
+      <span class="pccpl"><span class="v">${chk("Initiative",C.init,"hit plain")}</span><small>INITIATIVE</small></span>
+      <span class="pccpl"><span class="v">${esc(String(sh.speed||30))} ft</span><small>SPEED</small></span>
+      <span class="pccpl"><span class="v">${shS(C.pb)}</span><small>PROFICIENCY</small></span></div>
+    ${hp}${effs.length?`<div class="pccchips">${effs.join("")}</div>`:""}
+    <div class="pccab">${SH_AB.map(a=>{const pf=(sh.sv||[]).includes(a);return `<div class="pcca${pf?" pf":""}"><span class="k">${SH_AB3[a]}</span>${
+      chk(SH_ABN[a]+" check",C.m[a],"hit plain big")}<span class="sc">${(sh.ab||{})[a]||
+        10}</span><span class="svk">SAVE</span><button type="button" class="sbr ${pf?"save":"hit"} sv" data-act="sbroll" data-k="chk" data-m="${
+      C.sv[a]}" data-n="${A(SH_AB3[a][0]+SH_AB3[a].slice(1).toLowerCase()+" save")}" title="${SH_ABN[a]} save${pf?" (proficient)":""}">${pf?"● ":
+        ""}${shS(C.sv[a])}</button></div>`}).join("")}</div>
+    <div class="pcclines">${sks.length?L("Skills",sks.map(([k,l])=>`${l} ${chk(l,C.sk[k])}${Number(sh.sk[k])===2?" <small>(expertise)</small>":
+      ""}`).join(", ")):""}
+      ${L("Passive",`Perception ${C.pp} · Insight ${C.pi} · Investigation ${C.pv}`)}
+      ${sh.sa?L("Spellcasting",`${SH_ABN[sh.sa]} · save <b>DC ${C.dc}</b> · ${chk("Spell attack",C.atk)} to hit`):""}
+      ${(sh.feats||[]).length?L("Feats",sh.feats.map(f=>{const x=featLines(f,sh);
+        return `${refSpan("feat",f.n,f.s||"",esc(f.n))}${x.length?` <small>(${esc(x.join(", "))})</small>`:
+        ""}`}).join(", ")):""}</div>
+    ${at.length?`<h4 class="pcch">Attacks</h4>${at.map(a=>`<div class="pcct"><b><i>${esc(
+      a.n)}.</i></b> <button type="button" class="sbr hit" data-act="sbroll" data-k="hit" data-m="${
+      Number(a.hit)||0}" data-n="${A(a.n)}">${shS(Number(a.hit)||0)}</button> to hit.${a.dmg?` <i>Hit:</i> ${dmgBtn(a)}.`:""}${a.note?
+        ` <span class="pccnote">${esc(a.note)}</span>`:
+      ""}</div>`).join("")}`:""}
+    ${alw.length||prep.length?`<h4 class="pcch">Spells</h4>${alw.length?L("Always prepared",[...alwBy].map(([f,ns])=>ns.map(spl).join(", ")+(f?
+      ` <small>(${esc(f)})</small>`:"")).join(", ")):""}${prep.length?L("Prepared",prep.map(spl).join(", ")):""}`:""}
+  </div>`}
