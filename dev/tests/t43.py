@@ -74,8 +74,14 @@ async def main():
             post({"id":who,"action":"roll","kind":"roll","text":"d20","total":face,"dice":[[20,face]]})
             await wait(tv,f"!!window.__dr&&window.__note==='1d20@{face}'",10);await T(tv,"window.__dr=null");await asyncio.sleep(.3)
             from PIL import Image;import io
-            im=Image.open(io.BytesIO(await tv.locator('#dice3d').screenshot())).convert('RGB');px=[p for p in im.getdata() if max(p)-min(p)>40]
-            return (sum(p[2]-p[0] for p in px)/len(px)) if px else 0   # blue minus red over the coloured pixels
+            # 1.6.2: black behind the (transparent) dice canvas while it is measured, so the scene behind it doesn't count, and only the
+            # dice's coloured faces: lit but not dark, saturated (the cream numerals are not). A plain "max-min>40" missed the
+            # darker blue faces under the lights and measured the numerals alone (−44 for blue dice).
+            await T(tv,"document.getElementById('dice3d').style.background='#000'")
+            im=Image.open(io.BytesIO(await tv.locator('#dice3d').screenshot())).convert('RGB')
+            await T(tv,"document.getElementById('dice3d').style.background=''")
+            px=[p for p in im.getdata() if max(p)>60 and max(p)-min(p)>=.25*max(p)]
+            return (sum(p[2]-p[0] for p in px)/len(px)) if len(px)>200 else 0   # blue minus red over the dice's faces
         g=await tint("g",13);i=await tint("i",8)
         chk("Gregori's dice are blue, Isandros's are not (the colour changes between rolls)",g>10 and i<0,[round(g,1),round(i,1)])
         await T(tv,"window.__dr=null")
