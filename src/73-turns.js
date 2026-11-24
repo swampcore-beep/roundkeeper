@@ -54,9 +54,30 @@ function sbSaveMod(raw,ab){
 }
 const callBusy=()=>{const k=state.call;if(!k)return false;const to=k.to&&k.to.length?k.to:state.list.filter(c=>c.kind==="pc"&&!c.hidden).map(c=>c.id);
   return to.some(id=>byId(id)&&(k.answers||{})[id]==null)};
+/* 1.7: a spell that lasts and allows a save (Hold Person): a success takes the creature off the effect; with nobody left, the effect ends */
+function effOff(e,c,why,msgs){
+  e.targets=(e.targets||[]).filter(id=>id!==c.id);msgs&&msgs.push(`${c.name}: saved (${why}), ${e.name} ends on it`);
+    clogPush(`${c.name}: ${e.name} ends (${why})`);
+  if(!e.area&&!e.targets.length)state.effects=state.effects.filter(x=>x!==e);
+}
+function effSaved(call,c,v,L){
+  const ce=call&&call.eff,e=ce&&state.effects.find(x=>x.id===ce.id);if(!e||call.dc==null||Number(v)<Number(call.dc)||!(e.targets||[]).includes(c.id))return;
+  e.targets=e.targets.filter(id=>id!==c.id);if(!e.area&&!e.targets.length)state.effects=state.effects.filter(x=>x!==e);
+  L&&L(`${c.name}: saved, ${e.name} ends on them`);clogPush(`${c.name}: ${e.name} ends (save ${v} vs DC ${call.dc})`);
+}
+function effTurnEnd(c,msgs){
+  (state.effects||[]).filter(e=>e.save&&e.save.again&&(e.targets||[]).includes(c.id)).forEach(e=>{const sv=e.save,
+    txt=`${abFull(sv.ab)} save DC ${sv.dc} · ${e.name}`;
+    if(c.kind==="pc"){if(callBusy())msgs.push(`${c.name}: ${txt} (a roll call is still open, ask at the table)`);
+      else{state.call={id:uid(),text:txt,dc:sv.dc,at:Date.now(),to:[c.id],answers:{},eff:{id:e.id}};msgs.push(`${c.name}: ${txt}, asked on the phone`)}}
+    else{const mod=c.sb?sbSaveMod(c.sb.raw,sv.ab):null;
+      if(mod==null){msgs.push(`${c.name}: ${txt} to end it`);return}
+      const r=d20(),bb=monBB(c),tot=r+mod+bb.n;if(tot>=sv.dc)effOff(e,c,`${sv.ab} save ${tot}${bb.t} vs DC ${sv.dc}`,msgs);
+      else msgs.push(`${c.name}: ${sv.ab} save ${tot} vs DC ${sv.dc}, still under ${e.name}`)}});
+}
 /* the end of a creature's turn: conditions that end now, and saves to end them */
 function turnEnd(c){
-  const msgs=[];if(!c||!c.cdur)return msgs;
+  const msgs=[];if(!c)return msgs;effTurnEnd(c,msgs);if(!c.cdur)return msgs;
   Object.entries(c.cdur).forEach(([n,d])=>{if(!hasCond(c,n))return;
     if(d.end==="end")condEnd(c,n,"end of its turn",msgs);
     else if(d.end==="save"&&d.ab&&d.dc){const txt=`${abFull(d.ab)} save DC ${d.dc} · ${n}`;

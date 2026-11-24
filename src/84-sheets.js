@@ -3,11 +3,51 @@ function closeSheet(){$("#overlay").innerHTML=""}
 let condTarget=null;
 /* ---- the DM puts a spell on anyone: Bless from a player, Hold Person from a monster, Darkness on the battlefield ---- */
 let dEff=null;
+/* ---- Spell effect (1.7): cast a spell from a statblock or by hand. With a saving throw: an instant spell with damage (Fireball) goes to Hit several,
+   filled in and with the saves rolled (monsters here, players on their phones); a spell that lasts (Hold Person) stays only on those who fail, and
+   can be saved against again at the end of each of their turns. The save, its DC, the dice and the level come from the spell and the caster's
+   statblock (the SRD or 5e.tools, the same fields), and every one of them can be changed. ---- */
 function dEffSheet(o){
-  dEff=Object.assign({name:"",src:"",conc:false,area:false,by:"",targets:new Set(),q:""},o||{});
+  dEff=Object.assign({name:"",src:"",conc:false,area:false,by:"",targets:new Set(),q:"",lvl:0,lvl0:0,lvlNote:"",inst:false,sv:{ab:"",dc:"",on:"half",
+    again:true},
+    dmg:{d:"",t:"",base:"",inc:""},warn:"",touched:{},showOng:false,info:null},o||{});
   if(dEff.name){const x=spellFind(dEff.name,dEff.src);if(x){dEff.conc=!!x[2];dEff.area=!!x[3];dEff.src=x[7]||dEff.src}}
   if(!dEff.by)dEff.conc=false;
-  dEffRender(true);
+  dEffSpell();dEffRender(true);
+}
+const dEffTxt=e=>{const out=[];const w=x=>{if(typeof x==="string")out.push(x);else if(Array.isArray(x))x.forEach(w);else if(x&&typeof x==="object"){
+  if(x.entries)w(x.entries);if(x.items)w(x.items)}};w(e);
+  return out.join(" ").replace(/\{@(\w+) ([^}]*)\}/g,(m,t,b)=>{const p=b.split("|");return t==="scaledamage"||t==="scaledice"?p[2]||p[0]:p[0]})};
+const dEffDiceAt=(base,inc,l0,l)=>{const b=String(base||"").replace(/\s/g,"").match(/^(\d+)d(\d+)([+-]\d+)?$/),i=String(inc||"").match(/^(\d+)d(\d+)$/);
+  if(!b)return base||"";if(!i||i[2]!==b[2]||!(l>l0))return b[0];return `${Number(b[1])+Number(i[1])*(l-l0)}d${b[2]}${b[3]||""}`};
+/* what the caster's statblock says: its spell save DC, and "Fireball (level 6 version)" */
+function dEffCaster(){
+  const c=byId(dEff.by),T=dEff.touched;if(!c)return;const raw=c.sb&&c.sb.raw?refPlain(c.sb.raw):"";
+  if(!T.dc){const m=raw.match(/spell save DC\s*(\d+)/i);dEff.sv.dc=m?m[1]:c.kind==="pc"?String(ls.get("spellDC:"+c.name,"")||""):""}
+  if(!T.lvl&&dEff.name&&raw){const k=dEff.name.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),m=raw.match(new RegExp(k+
+    "[^\\n(]{0,30}\\(\\s*level\\s*(\\d)\\s*version","i"));
+    if(m&&Number(m[1])>dEff.lvl0){dEff.lvl=Number(m[1]);dEff.lvlNote=`the statblock says “level ${m[1]} version”`}}
+  if(!T.dmg&&dEff.dmg.base)dEff.dmg.d=dEffDiceAt(dEff.dmg.base,dEff.dmg.inc,dEff.lvl0,dEff.lvl);
+}
+/* the spell's own data: level, instant or not, the save, the damage and how it grows */
+async function dEffSpell(){
+  const D=dEff;if(!D||!D.name)return;const x=spellFind(D.name,D.src);
+  if(x){D.lvl0=Number(x[1])||0;if(!D.touched.lvl)D.lvl=D.lvl0;D.inst=x[4]==="Instant"}
+  dEffCaster();
+  const d=await refGet("spell",D.name,D.src||(x&&x[7])||"");if(dEff!==D||!d||!d.item)return;const it=d.item,T=D.touched;
+  if(!x){D.lvl0=Number(it.level)||0;if(!T.lvl)D.lvl=D.lvl0;D.inst=(it.duration||[]).some(u=>u.type==="instant")}
+  const txt=dEffTxt(it.entries),hi=dEffTxt(it.entriesHigherLevel||[]),sv=(it.savingThrow||[])[0];
+  const rg=it.range||{},self=rg.type&&rg.type!=="point"||(rg.distance||{}).type==="self";   // Spirit Guardians and the like: no save for its caster
+  if(sv&&!T.ab&&(D.inst||!self))D.sv.ab=sv.slice(0,3).replace(/^./,c=>c.toUpperCase());
+  if(!T.on)D.sv.on=/half (?:as much|the|that) damage|half damage|half as much/i.test(txt)?"half":"none";
+  const re=new RegExp(`(\\d+d\\d+(?:\\s*[+-]\\s*\\d+)?)\\s+(${DMG_TYPES.join("|")})\\s+damage`,"gi"),hits=[...txt.matchAll(re)];
+  if(hits.length&&D.inst){D.dmg.base=hits[0][1].replace(/\s/g,"");if(!T.type)D.dmg.t=hits[0][2].toLowerCase();
+    const inc=hi.match(/increases? by (\d+d\d+)/i);D.dmg.inc=inc?inc[1]:""}
+  const types=new Set(hits.map(h=>h[2].toLowerCase()));
+  D.warn=it.spellAttack?"It starts with a spell attack: check who it hits.":types.size>1||(it.damageInflict||[]).length>1?
+    "More than one kind of damage: check the dice.":/random|roll a d8|1d8 to determine/i.test(txt)&&/color|ray/i.test(txt)?
+      "Its damage depends on a roll: check it.":"";
+  dEffCaster();if($("#dEffForm"))dEffRender();
 }
 function dEffListHtml(){
   const q=dEff.q.trim(),ql=q.toLowerCase();
@@ -15,66 +55,153 @@ function dEffListHtml(){
   return spRowsHtml(hit,"deffpick",q,false)+(q?`<button type="button" class="sprow other" data-act="deffname"><b>Use “${esc(
     q)}”</b><small>an effect of your own, by name</small></button>`:"")+spHbHtml();
 }
+const dEffPcSide=c=>c.kind==="pc"||!!c.owner;
+function dEffWhy(){   // what the button will do, or what is missing
+  const D=dEff,tg=[...D.targets].map(byId).filter(Boolean),c=byId(D.by),save=!!D.sv.ab;
+  if(!D.name)return {ok:false,t:"Pick a spell, or type the name of an effect of your own."};
+  if(!D.area&&!tg.length)return {ok:false,t:"Pick at least one target."};
+  if(save&&!/^\d+$/.test(String(D.sv.dc)))return {ok:false,t:"Type the DC of the save."};
+  const who=c?`<b>${esc(c.name)}</b> casts`:"Cast:",lv=D.lvl&&D.lvl>D.lvl0?` (level ${D.lvl})`:"",on=D.area?"the battlefield":tg.length>3?
+    `<b>${tg.length}</b> targets`:
+    `<b>${tg.map(x=>esc(x.name)).join(", ")}</b>`;
+  if(save&&D.inst){if(!sbDiceOk(D.dmg.d))return {ok:false,t:"Type the damage dice, like 8d6."};
+    return {ok:true,roll:true,t:`${who} <b>${esc(D.name)}</b>${lv} on ${on}: ${abFull(D.sv.ab)} save DC ${D.sv.dc}, ${esc(D.dmg.d)}${D.dmg.t?" "+D.dmg.t:""}, ${
+      D.sv.on==="half"?"half":"nothing"} on a success. Monsters roll their saves, players are asked on their phones, then Hit several applies it.`}}
+  if(save)return {ok:true,t:`${who} <b>${esc(D.name)}</b>${lv} on ${on}: ${abFull(D.sv.ab)} save DC ${D.sv.dc}. Only those who fail keep it${D.sv.again?
+    "; they save again at the end of each of their turns":""}.`};
+  return {ok:true,t:`${who} <b>${esc(D.name)}</b>${lv} on ${on}.`};
+}
+const sbDiceOk=d=>/^\d+d\d+([+-]\d+)?$/.test(String(d||"").replace(/\s/g,""))||/^\d+$/.test(String(d||"").trim());
 function dEffRender(focus){
-  const L=state.list.filter(c=>c.kind!=="lair"),x=dEff.name?spellFind(dEff.name,dEff.src):null;
-  const chip=(act,c,on)=>`<button type="button" data-act="${act}" data-id="${esc(c.id)}" aria-pressed="${on}" class="dw ${c.kind==="pc"?"pc":
-    "foe"}">${esc(c.name)}${c.hidden?` <small>hidden</small>`:""}</button>`;
-  const ok=dEff.name&&(dEff.area||dEff.targets.size);
+  const D=dEff,L=state.list.filter(c=>c.kind!=="lair"),x=D.name?spellFind(D.name,D.src):null,c=byId(D.by),save=!!D.sv.ab;
+  const chip=k=>`<button type="button" data-act="defftgt" data-id="${esc(k.id)}" aria-pressed="${D.targets.has(k.id)}" class="dw ${dEffPcSide(k)?"pc":
+    "foe"}"><span class="dwdot" aria-hidden="true"></span>${esc(k.name)}${k.hidden?` <small>hidden</small>`:""}</button>`;
+  const grp=(lab,side,arr)=>arr.length?`<div class="degrp"><span>${lab}</span><button type="button" class="btn sm" data-act="deffall" data-v="${side}">All ${
+    lab.toLowerCase()}</button></div><div class="chipgrid">${arr.map(chip).join("")}</div>`:"";
+  const pcs=L.filter(dEffPcSide),foes=L.filter(k=>!dEffPcSide(k)),why=dEffWhy(),opt=k=>`<option value="${esc(k.id)}"${D.by===k.id?" selected":
+    ""}>${esc(k.name)}</option>`;
+  const dcNote=!c?"":c.sb&&c.sb.raw&&/spell save DC/i.test(refPlain(c.sb.raw))?"from its statblock":c.kind==="pc"?`remembered for ${esc(c.name)}`:"";
   $("#overlay").innerHTML=
-    `<div class="scrim" data-act="close"><div class="sheet deffsheet" role="dialog" aria-modal="true" aria-label="Spell effect"><h2>Spell effect</h2>
-    <div class="psec"><div class="eyebrow2">Spell</div>
-      ${dEff.name?`<div class="spsel"><div><b>${ic("spark")} ${esc(dEff.name)}</b><small>${x?esc(spellMeta(x)):
-        "your own effect"}</small></div><button type="button" class="btn" data-act="deffchg">Change</button></div>`
-        :`<input class="field" id="dEffQ" type="search" placeholder="Search spells, or type a name of your own" autocomplete="off" spellcheck="false" value="${
-          esc(dEff.q)}"><div class="splist deffl" id="dEffList">${dEffListHtml()}</div>`}</div>
-    <div class="psec"><div class="eyebrow2">Cast by</div><div class="chipgrid"><button type="button" data-act="deffby" data-id="" aria-pressed="${
-      !dEff.by}">No one</button>${L.map(c=>chip("deffby",c,dEff.by===c.id)).join("")}</div></div>
-    <div class="psec"><div class="eyebrow2">On</div>
-      <label class="chk"><input type="checkbox" id="dEffArea" ${dEff.area?"checked":""}> The battlefield (a zone, no targets)</label>
-      ${dEff.area?"":`<div class="chipgrid">${L.map(c=>chip("defftgt",c,dEff.targets.has(c.id))).join("")}</div>`}</div>
-    ${dEff.area?"":
-      `<div class="psec"><div class="eyebrow2">Damage each turn <small>optional: Heat Metal, poison, Searing Smite…</small></div><div class="ongrow">
-      <input class="field" id="dEffOngD" placeholder="2d6" maxlength="12" value="${esc((dEff.ong||{}).d||"")}" aria-label="Dice" autocomplete="off">
-      <select class="field" id="dEffOngT" aria-label="Damage type"><option value="">damage</option>${DMG_TYPES.map(x=>`<option${(dEff.ong||{}).t===x?
-        " selected":""}>${x}</option>`).join("")}</select>
-      <select class="field" id="dEffOngW" aria-label="When"><option value="start"${(dEff.ong||{}).when!=="end"?" selected":
-        ""}>at the start of the target's turn</option><option value="end"${(dEff.ong||{}).when==="end"?" selected":
-        ""}>at the end of the target's turn</option></select></div>
-      <p class="psub">Rolled for you on that turn; you apply it or skip it (if they saved).</p></div>`}
-    <label class="chk"><input type="checkbox" id="dEffConc" ${dEff.conc?"checked":""}${dEff.by?"":" disabled"}> Needs Concentration${dEff.by?
-      ` (${esc((byId(dEff.by)||{}).name||"")} gets Concentrating, and the effect ends when it's lost)`:" (pick who casts it)"}</label>
-    <div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="button" data-act="deffadd"${
-      ok?"":" disabled"}>${ic("spark")} Add effect</button></div></div></div>`;
-  ["dEffOngD","dEffOngT","dEffOngW"].forEach(id=>{const el=$("#"+id);if(el)el.addEventListener("input",()=>{dEff.ong={d:$("#dEffOngD").value.trim(),t:
+    `<div class="scrim" data-act="close"><div class="sheet deffsheet" id="dEffForm" role="dialog" aria-modal="true" aria-label="Spell effect">
+    ${D.name?`<div class="dehead"><h2>${ic("spark")} ${esc(D.name)}</h2><button type="button" class="btn sm" data-act="deffchg">Change spell</button></div>
+      <p class="psub demeta">${x?esc(spellMeta(x)):"your own effect"}</p>${D.lvl0>0?
+        `<div class="derow delv"><span>Cast at level</span><div class="seg2 sm" role="group"
+        aria-label="Spell level">${[...Array(10-D.lvl0)].map((_,i)=>D.lvl0+i).map(l=>`<button type="button" data-act="defflv" data-v="${l}" aria-pressed="${
+        (D.lvl||D.lvl0)===l}">${l}</button>`).join("")}</div>${D.lvlNote?`<span class="psub">${esc(D.lvlNote)}</span>`:""}</div>`:""}`
+      :`<h2>Spell effect</h2><input class="field" id="dEffQ" type="search" placeholder="Search spells, or type a name of your own" autocomplete="off" spellcheck="false"
+        value="${esc(D.q)}"><div class="splist deffl" id="dEffList">${dEffListHtml()}</div>`}
+    <div class="psec"><label class="eyebrow2" for="dEffBy">Cast by</label><select class="field" id="dEffBy"><option value="">No one</option>${pcs.length?
+      `<optgroup label="Players">${pcs.map(opt).join("")}</optgroup>`:""}${foes.length?`<optgroup label="Enemies">${foes.map(opt).join("")}</optgroup>`:
+        ""}</select>
+      ${save&&c?`<p class="psub">${D.sv.dc?`Spell save DC ${esc(D.sv.dc)}${dcNote?" · "+dcNote:""}`:c.kind==="pc"?
+        "Players have no statblock here: type the DC below, it is remembered for them":"No spell save DC in its statblock: type it below"}</p>`:""}</div>
+    <div class="psec"><div class="eyebrow2">On</div>${D.area?"":grp("Players","pc",pcs)+grp("Enemies","foe",foes)}
+      <label class="chk"><input type="checkbox" id="dEffArea" ${D.area?"checked":""}> A zone on the battlefield instead (no targets)</label></div>
+    ${D.area?"":`<div class="psec"><div class="eyebrow2">Saving throw</div><div class="seg2 sm desave" role="group" aria-label="Saving throw">${[["",
+      "None"]].concat(
+      ABIL3.map(([a])=>[a,a.toUpperCase()])).map(([a,l])=>`<button type="button" data-act="deffsv" data-v="${a}" aria-pressed="${D.sv.ab===
+        a}">${l}</button>`).join("")}</div>
+      ${save?`<div class="derow"><label for="dEffDC">DC</label><input class="field" id="dEffDC" inputmode="numeric" maxlength="2" value="${esc(
+        D.sv.dc)}" style="width:4.5em">
+        ${D.inst?`<span>On a success</span><div class="seg2 sm" role="group" aria-label="On a success">${[["half","Half damage"],["none",
+          "Nothing"]].map(([v,l])=>
+          `<button type="button" data-act="deffwin" data-v="${v}" aria-pressed="${D.sv.on===v}">${l}</button>`).join("")}</div>`:""}</div>
+        ${D.inst?"":`<label class="chk"><input type="checkbox" id="dEffAgain" ${D.sv.again?"checked":""}> Save again at the end of each of its turns
+          <small>a success ends it on that target</small></label>`}`:""}</div>`}
+    ${save&&D.inst&&!D.area?
+      `<div class="psec"><div class="eyebrow2">Damage</div><div class="derow"><input class="field" id="dEffDmgD" placeholder="8d6" maxlength="14"
+      value="${
+        esc(D.dmg.d)}" aria-label="Damage dice" autocomplete="off" style="width:7em"><select class="field" id="dEffDmgT" aria-label="Damage type"><option value="">damage</option>${
+      DMG_TYPES.map(t=>`<option${D.dmg.t===t?" selected":""}>${t}</option>`).join("")}</select><span class="psub">one roll for everyone</span></div>
+      ${D.warn?`<p class="fixhint">${esc(D.warn)}</p>`:""}<p class="psub">Instant: nothing stays on the targets after the damage.</p></div>`:""}
+    ${D.area||(save&&D.inst)?"":D.showOng||(D.ong&&D.ong.d)?
+      `<div class="psec"><div class="eyebrow2">Damage each turn <small>optional: Heat Metal, poison, Searing Smite…</small></div>
+      <div class="ongrow"><input class="field" id="dEffOngD" placeholder="2d6" maxlength="12" value="${esc((D.ong||{}).d||
+        "")}" aria-label="Dice" autocomplete="off">
+      <select class="field" id="dEffOngT" aria-label="Damage type"><option value="">damage</option>${DMG_TYPES.map(t=>`<option${(D.ong||{}).t===t?" selected":
+        ""}>${t}</option>`).join("")}</select>
+      <select class="field" id="dEffOngW" aria-label="When"><option value="start"${(D.ong||{}).when!=="end"?" selected":
+        ""}>at the start of the target's turn</option>
+        <option value="end"${(D.ong||{}).when==="end"?" selected":""}>at the end of the target's turn</option></select></div>
+      <p class="psub">Rolled for you on that turn; you apply it or skip it (if they saved).</p></div>`
+      :`<button type="button" class="linkbtn deplus" data-act="deffong">+ Damage each turn</button>`}
+    ${save&&D.inst?"":`<label class="chk"><input type="checkbox" id="dEffConc" ${D.conc?"checked":""}${c?"":" disabled"}> Concentration <small>${c?
+      `${esc(c.name)} gets Concentrating; it ends when that is lost`:
+      "pick who casts it"}</small></label>`}
+    <p class="desum" id="dEffSum" role="status">${why.t}</p>
+    <div class="deact"><button class="btn" type="button" data-act="close">Cancel</button><button class="btn primary" type="button" data-act="${why.roll?
+      "deffroll":"deffadd"}"${
+      why.ok?"":" disabled"}>${ic("spark")} ${save?"Roll saves":"Add effect"}</button></div></div></div>`;
+  ["dEffOngD","dEffOngT","dEffOngW"].forEach(id=>{const el=$("#"+id);if(el)el.addEventListener("input",()=>{D.ong={d:$("#dEffOngD").value.trim(),t:
     $("#dEffOngT").value,when:$("#dEffOngW").value}})});
-  const q=$("#dEffQ");if(q){q.addEventListener("input",()=>{dEff.q=q.value;$("#dEffList").innerHTML=dEffListHtml()});
+  const q=$("#dEffQ");if(q){q.addEventListener("input",()=>{D.q=q.value;$("#dEffList").innerHTML=dEffListHtml()});
     q.addEventListener("keydown",e=>{if(e.key==="Enter"&&q.value.trim()){e.preventDefault();const r=spellFind(q.value.trim());
       dEffPick(r?r[0]:q.value.trim().slice(0,30),r?r[7]||"":"")}});
     if(focus)q.focus()}
-  const a=$("#dEffArea");if(a)a.addEventListener("change",()=>{dEff.area=a.checked;dEffRender()});
-  const cc=$("#dEffConc");if(cc)cc.addEventListener("change",()=>{dEff.conc=cc.checked;dEffRender()});
+  const sum=()=>{const w=dEffWhy(),b=$("#dEffForm .deact .primary"),s=$("#dEffSum");if(s)s.innerHTML=w.t;if(b){b.disabled=!w.ok;
+    b.dataset.act=w.roll?"deffroll":"deffadd"}};
+  const on=(id,ev,f)=>{const el=$("#"+id);if(el)el.addEventListener(ev,f)};
+  on("dEffArea","change",e=>{D.area=e.target.checked;dEffRender()});
+  on("dEffConc","change",e=>{D.conc=e.target.checked;dEffRender()});
+  on("dEffAgain","change",e=>{D.sv.again=e.target.checked;sum()});
+  on("dEffBy","change",e=>{D.by=e.target.value;D.touched.dc=false;D.touched.lvl=false;const k=D.name&&spellFind(D.name,D.src);D.conc=!!D.by&&!!(k&&k[2]);
+    dEffCaster();dEffRender()});
+  on("dEffDC","input",e=>{D.sv.dc=e.target.value.replace(/\D/g,"");D.touched.dc=true;const k=byId(D.by);
+    if(k&&k.kind==="pc"&&D.sv.dc)ls.set("spellDC:"+k.name,D.sv.dc);sum()});
+  on("dEffDmgD","input",e=>{D.dmg.d=e.target.value.trim();D.touched.dmg=true;sum()});
+  on("dEffDmgT","change",e=>{D.dmg.t=e.target.value;D.touched.type=true;sum()});
 }
 function dEffPick(name,src){
   const x=spellFind(name,src);dEff.name=String(x?x[0]:name).slice(0,30);dEff.src=x?x[7]||"":src||"";
-  if(x){dEff.conc=!!x[2]&&!!dEff.by;dEff.area=!!x[3]}dEffRender();
+  dEff.sv={ab:"",dc:dEff.sv.dc,on:"half",again:true};dEff.dmg={d:"",t:"",base:"",inc:""};dEff.warn="";dEff.lvl=dEff.lvl0=0;dEff.lvlNote="";dEff.inst=false;
+  dEff.touched={dc:dEff.touched.dc};
+  if(x){dEff.conc=!!x[2]&&!!dEff.by;dEff.area=!!x[3]}dEffSpell();dEffRender();
 }
+/* adds the effect; with a save, monsters roll now and those who succeed come off it, players are asked on their phones */
 function dEffAdd(){
-  if(!dEff||!dEff.name)return;const c=byId(dEff.by),tg=dEff.area?[]:[...dEff.targets].filter(id=>byId(id));
-  if(!dEff.area&&!tg.length)return;
-  const conc=!!(dEff.conc&&c),ended=[];
+  if(!dEff||!dEff.name)return;const D=dEff,c=byId(D.by),tg=D.area?[]:[...D.targets].filter(id=>byId(id));
+  if(!D.area&&!tg.length)return;const sv=!D.area&&D.sv.ab&&/^\d+$/.test(String(D.sv.dc))?{ab:D.sv.ab,dc:Number(D.sv.dc),again:!!D.sv.again}:null;
+  const conc=!!(D.conc&&c),ended=[];
   if(conc){   // a new concentration spell ends the caster's old one
     state.effects=state.effects.filter(e=>{if(e.by===c.id&&e.conc){ended.push(e.name);return false}return true});
     if(!c.conds.some(x=>(x.n||x)==="Concentrating"))c.conds.push("Concentrating");
   }
-  const ong=!dEff.area&&dEff.ong&&/^\d*d\d+(\s*[+-]\s*\d+)?$|^\d+$/i.test(dEff.ong.d||"")?{d:dEff.ong.d.replace(/\s/g,"").replace(/^d/i,"1d").toLowerCase(),t:
-    dEff.ong.t||"",when:dEff.ong.when==="end"?"end":"start"}:null;
-  state.effects.push({id:uid(),name:dEff.name,by:c?c.id:"dm",targets:tg,conc,area:!!dEff.area,r0:state.turn?state.turn.round:null,...(dEff.src?{src:dEff.src}:{
-    }),...(ong?{ong}:{})});
-  if(c&&c.kind!=="pc"&&!c.hidden)state.react={id:uid(),k:"spell",by:c.name,what:dEff.name,at:Date.now()};   // a Counterspell moment
-  const name=dEff.name,spent=c&&c.sb?sbSpend(c,name,true):"";closeSheet();commit();
-  toast(`✦ ${name}${c?` from ${c.name}`:""}${dEff.area?" on the battlefield":` on ${tg.map(id=>byId(id).name).join(", ")}`}${ended.length?
+  const ong=!D.area&&D.ong&&/^\d*d\d+(\s*[+-]\s*\d+)?$|^\d+$/i.test(D.ong.d||"")?{d:D.ong.d.replace(/\s/g,"").replace(/^d/i,"1d").toLowerCase(),t:
+    D.ong.t||"",when:D.ong.when==="end"?"end":"start"}:null;
+  const e={id:uid(),name:D.name,by:c?c.id:"dm",targets:tg.slice(),conc,area:!!D.area,r0:state.turn?state.turn.round:null,...(D.src?{src:D.src}:{
+    }),...(ong?{ong}:{}),...(sv?{save:sv}:{})};
+  const msgs=[];
+  if(sv){const pcs=[];
+    tg.map(byId).forEach(k=>{if(k.kind==="pc"){pcs.push(k.id);return}const mod=k.sb?sbSaveMod(k.sb.raw,sv.ab):null;
+      if(mod==null){msgs.push(`${k.name}: roll its ${sv.ab} save at the table`);return}
+      const r=d20(),bb=monBB(k),tot=r+mod+bb.n;if(tot>=sv.dc){e.targets=e.targets.filter(id=>id!==k.id);msgs.push(`${k.name} saved (${tot})`)}
+      else msgs.push(`${k.name} failed (${tot})`)});
+    if(pcs.length){if(callBusy())msgs.push("players: a roll call is still open, ask at the table");
+      else{state.call={id:uid(),text:`${abFull(sv.ab)} save DC ${sv.dc} · ${D.name}`,dc:sv.dc,at:Date.now(),to:pcs,answers:{},eff:{id:e.id}};
+        msgs.push(`${pcs.map(id=>byId(id).name).join(", ")} asked on the phone`)}}}
+  if(e.area||e.targets.length)state.effects.push(e);
+  if(c&&c.kind!=="pc"&&!c.hidden)state.react={id:uid(),k:"spell",by:c.name,what:D.name,at:Date.now()};   // a Counterspell moment
+  const name=D.name,spent=c&&c.sb?sbSpend(c,name,true):"";closeSheet();commit();
+  toast(`✦ ${name}${c?` from ${c.name}`:""}${D.area?" on the battlefield":sv?`: ${msgs.join(" · ")}`:` on ${tg.map(id=>
+    byId(id).name).join(", ")}`}${ended.length?
     ` · ${ended.join(", ")} ends`:""}${spent?` · ${spent}`:""}`);
+  if(sv)clogPush(`${name}${c?` (${c.name})`:""}, ${sv.ab} save DC ${sv.dc}: ${msgs.join(", ")}`);
   dEff=null;
+}
+/* an instant spell with a save and damage: the dice are rolled once, then Hit several takes over with the targets ticked and the saves rolled */
+function dEffRoll(){
+  const D=dEff;if(!D||!dEffWhy().roll)return;const c=byId(D.by),d=String(D.dmg.d).replace(/\s/g,"");
+  const r=/^\d+$/.test(d)?{tot:Number(d),rolls:[d]}:sbDice(d,false);if(!r)return;
+  const tg=[...D.targets].map(byId).filter(Boolean),ok=tg.filter(mtOk),skip=tg.filter(k=>!mtOk(k));
+  if(c&&c.kind!=="pc"&&!c.hidden)state.react={id:uid(),k:"spell",by:c.name,what:D.name,at:Date.now()};
+  const spent=c&&c.sb?sbSpend(c,D.name,true):"";
+  closeSheet();mtOn=true;mtSel=new Set(ok.map(k=>k.id));
+  mt={n:String(r.tot),type:D.dmg.t||"",ab:D.sv.ab,dc:String(D.sv.dc),on:D.sv.on==="none"?"none":"half",modes:{},rolls:{},src:{cid:c?c.id:"",act:D.name}};
+  clogPush(`${D.name}${c?` (${c.name})`:""}${D.lvl>D.lvl0?` at level ${D.lvl}`:""}: ${d} = ${r.tot}${D.dmg.t?" "+D.dmg.t:""}`);
+  dEff=null;hpPopClose();renderDM();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{if(mtOn&&ok.length)mtRoll()}));
+  toast(`✦ ${mt.src.act}: ${d} = ${r.tot}${mt.type?" "+mt.type:""}${spent?` · ${spent}`:""}${skip.length?` · ${skip.map(k=>k.name).join(", ")
+    }: no HP tracked, left out`:""}`);
 }
 function condSheet(id){
   condTarget=id;const c=byId(id);if(!c)return;const has=new Set(c.conds||[]);

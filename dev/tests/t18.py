@@ -20,7 +20,7 @@ async def main():
         await dm.locator('#dEffList .sprow:has-text("Bless")').first.click(); await asyncio.sleep(.2)
         chk("no caster: no concentration",await T(dm,"dEff.name==='Bless'&&!dEff.conc")and await dm.locator('#dEffConc').is_disabled())
         chk("Add disabled? no, has a target",not await dm.locator('[data-act=deffadd]').is_disabled())
-        await dm.locator('.deffsheet [data-act=deffby][data-id=b]').click(); await asyncio.sleep(.2)
+        await dm.select_option('#dEffBy','b'); await asyncio.sleep(.2)
         chk("caster picks up concentration",await T(dm,"dEff.conc===true"))
         await dm.locator('.deffsheet [data-act=defftgt][data-id=m]').click(); await asyncio.sleep(.2)
         await dm.screenshot(path=S+"t18_sheet.png")

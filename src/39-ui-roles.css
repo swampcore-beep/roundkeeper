@@ -93,3 +93,35 @@ html:root[data-dmlook=tool] #sbDrawer .sbheadb .icon-btn{background:transparent;
 html:root[data-dmlook=tool] #sbDrawer .sbheadb .icon-btn:hover{background:var(--btnbg);border-color:var(--btnbd);color:var(--fg)}
 /* the light turn bar sits on a darker grey: its buttons take the stronger edge */
 html:root[data-dmlook=tool][data-dm=light] :is(.tnav:not(.primary),.turnmore .icon-btn){border-color:var(--btnbd-h)}
+
+/* ---- 1.7: the Spell effect window: the spell and its level, one field for who casts it, targets in two groups, the save, the damage, and a
+   line that says what will happen (or what is missing) above the button ---- */
+html:root[data-dmlook=tool] .deffsheet{width:min(640px,100%);display:flex;flex-direction:column;gap:16px}
+.deffsheet .dehead{display:flex;align-items:center;gap:10px}.deffsheet .dehead h2{flex:1;margin:0;display:flex;align-items:center;gap:8px}
+.deffsheet .dehead h2 svg{width:18px;height:18px;color:var(--boss)}
+.deffsheet .demeta{margin:-10px 0 0}
+.deffsheet .psec{display:flex;flex-direction:column;gap:9px;margin:0}
+.deffsheet .derow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.deffsheet .derow>span,.deffsheet .derow>label{font-size:var(--fs14);color:var(--fg)}
+.deffsheet .derow .psub{color:var(--muted)}
+.deffsheet .degrp{display:flex;align-items:center;justify-content:space-between;font:600 var(--fs12)/1 var(--ui);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted)}
+.deffsheet .degrp .btn.sm{min-height:26px;height:26px;padding:0 9px;font-size:var(--fs12);text-transform:none;letter-spacing:0}
+html:root[data-dmlook=tool] .deffsheet .chipgrid button.dw{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--btnbd);background:transparent;
+  color:var(--fg)}
+html:root[data-dmlook=tool] .deffsheet .chipgrid button.dw[aria-pressed=true]{border-color:var(--pc);background:color-mix(in srgb,var(--pc) 18%,transparent);
+  color:var(--fg)}
+html:root[data-dmlook=tool] .deffsheet .chipgrid button.dw[aria-pressed=true]::before{content:"✓";font-weight:700}
+.deffsheet .dwdot{width:7px;height:7px;border-radius:50%;background:var(--pc);flex:none}
+.deffsheet .dw.foe .dwdot{background:var(--enemy,#ef6a5f)}
+html:root[data-dmlook=tool] .deffsheet .seg2{display:inline-flex;flex-wrap:wrap;gap:3px;padding:3px;border-radius:10px;background:var(--bg);
+  align-self:flex-start}
+html:root[data-dmlook=tool] .deffsheet .seg2 button{min-height:28px;padding:0 10px;border-radius:7px;border:1px solid transparent;background:transparent;
+  color:var(--muted);
+  font-weight:600;font-size:var(--fs13)}
+html:root[data-dmlook=tool] .deffsheet .seg2 button[aria-pressed=true]{background:var(--btnbg);border-color:var(--btnbd);color:var(--fg)}
+.deffsheet .deplus{align-self:flex-start}
+.deffsheet .chk small{display:block;color:var(--muted);font-size:var(--fs12)}
+.deffsheet .desum{margin:0;padding-top:12px;border-top:1px solid var(--line);font-size:var(--fs14);line-height:1.5;color:var(--fg)}
+.deffsheet .deact{display:flex;justify-content:flex-end;gap:8px}
+html:root[data-dmlook=tool] .deffsheet .derow .field{width:auto;flex:none}

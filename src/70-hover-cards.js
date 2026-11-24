@@ -85,16 +85,17 @@ async function refOpen(el,pin){
   refClose(lvl);const d=await refGet(el.dataset.rt,el.dataset.rn,el.dataset.rs);
   if(!d||!el.isConnected){if(!d&&pin)toast("Nothing to show for that");return}
   refClose(lvl);measureCovered();const c=document.createElement("div");c.className="refcard"+(pin?" pinned":"");c.dataset.l=lvl;c.innerHTML=refCardHtml(d);
+  /* 1.7: before measuring, so a card near the bottom still fits the window */
+  if(d.t==="spell"&&MODE==="dm"&&d.item){   // a spell in a statblock: that monster casts it
+    const by=el.closest("#sbDrawer")&&sbViewId&&byId(sbViewId)?sbViewId:"";
+    c.insertAdjacentHTML("beforeend",`<div class="refacts"><button type="button" class="btn sm" data-act="refcast" data-n="${esc(d.item.name)}" data-s="${esc(
+      d.item.source||"")}" data-by="${esc(by)}">${ic("spark")} Cast as an effect${by?` · ${esc(byId(by).name)}`:""}</button></div>`)}
     document.body.appendChild(c);refCards[lvl]=c;
   const bottom=innerHeight-coveredPx-12,maxH=Math.min(640,bottom-12);c.style.maxHeight=maxH+"px";
   const r=el.getBoundingClientRect(),W=Math.min(400,innerWidth-24);c.style.width=W+"px";const H=Math.min(c.offsetHeight,maxH);
   let x=r.left-W-12;if(x<12)x=Math.min(innerWidth-W-12,r.right+12);let y=Math.max(12,Math.min(r.top-20,bottom-H));
   if(el.closest("#sbDrawer")&&x+W>innerWidth-12){x=12}
   Object.assign(c.style,{left:x+"px",top:y+"px",width:W+"px"});
-  if(d.t==="spell"&&MODE==="dm"&&d.item){   // a spell in a statblock: that monster casts it
-    const by=el.closest("#sbDrawer")&&sbViewId&&byId(sbViewId)?sbViewId:"";
-    c.insertAdjacentHTML("beforeend",`<div class="refacts"><button type="button" class="btn sm" data-act="refcast" data-n="${esc(d.item.name)}" data-s="${esc(
-      d.item.source||"")}" data-by="${esc(by)}">${ic("spark")} Cast as an effect${by?` · ${esc(byId(by).name)}`:""}</button></div>`)}
 }
 /* the browser window can be taller than what's visible (full screen with the taskbar on top, or a window
    reaching under it); the hidden strip at the bottom is measured so cards and panels stay above it */
