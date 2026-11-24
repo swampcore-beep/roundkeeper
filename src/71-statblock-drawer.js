@@ -182,6 +182,9 @@ function sbUnderHtml(){
 function sbFollowTurn(){const t=state.turn&&byId(state.turn.id);
   if(!sbViewId||!sbFollow()||!t||t.id===sbViewId||t.kind==="pc"||!t.sb||!t.sb.raw||t.sb.pc)return;
   sbViewId=t.id;sbCrit=false;sbSaveAsk=null;sbLoreOn=false}
+/* 1.7: the hint on rolling from the statblock shows until the first roll, then behind "?" */
+let sbHelpOn=false;
+const SBHINT="Click a bonus to roll the attack, a damage number to roll damage, a saving throw to ask the players. Only you see these rolls.";
 function renderSbDrawer(){
   let el=$("#sbDrawer");const c=sbViewId&&byId(sbViewId);
   if(!c||!c.sb||!c.sb.raw){if(el)el.remove();sbViewId=null;document.body.classList.remove("sbopen");return}
@@ -208,13 +211,15 @@ function renderSbDrawer(){
       "A picture for its intro"}">${loreOf(c)?"Lore & picture":"Picture"}</button></div>`}
     ${sbLoreOn?"":`<div class="sbtools"><div class="seg2" aria-label="Attack rolls">${[["dis","Disadvantage"],["","Normal"],["adv","Advantage"]].map(([k,l])=>
       `<button type="button" data-act="sbadv" data-v="${k}" aria-pressed="${sbAdv===k}">${l}</button>`).join("")}</div>
+      <button type="button" class="sbhelp" data-act="sbhelp" aria-expanded="${
+        sbHelpOn}" aria-label="How rolling from the statblock works" title="How rolling from the statblock works">?</button>
       ${sbCrit?`<span class="sbcrit">Next damage: critical (dice doubled) <button type="button" class="linkbtn" data-act="sbnocrit">cancel</button></span>`:""}
-      <div class="sblog">${sbLog.length?sbLog.map((r,i)=>`<div class="sbl${r.cls?" "+r.cls:
+      <div class="sblog">${sbHelpOn&&sbLog.length?`<p class="psub">${SBHINT}</p>`:""}${sbLog.length?sbLog.map((r,i)=>`<div class="sbl${r.cls?" "+r.cls:
         ""}"><span>${esc(r.who)} · ${esc(r.what)}</span><b>${r.tot}</b><small>${esc(r.how)}</small>${r.cid?
         `<button type="button" class="btn sm sbapply" data-act="sbapply" data-i="${
         i}" title="Pick who it hits; saves are rolled or asked">Apply to targets…</button>`:""}</div>`).join(""):
-        (ls.get("sbHintSeen",false)?
-          "":`<p class="psub">Click a bonus to roll the attack, a damage number to roll damage, a saving throw to ask the players. Only you see these rolls.</p>`)}</div></div>
+        (ls.get("sbHintSeen",false)&&!sbHelpOn?
+          "":`<p class="psub">${SBHINT}</p>`)}</div></div>
     ${sbSaveAsk?`<div class="sbask"><b>${esc(sbSaveAsk.ab)} save DC ${sbSaveAsk.dc}</b>${sbSaveAsk.n?` <span class="psub">· ${esc(sbSaveAsk.n)}</span>`:""}
       <div class="chipgrid">${pcs.map(p=>`<button type="button" data-act="sbasktgt" data-id="${esc(p.id)}" aria-pressed="${sbSaveAsk.to.includes(p.id)}">${esc(
         p.name)}</button>`).join("")}</div>

@@ -1,8 +1,9 @@
 /* ---- 1.7: the side panel in two tabs, on one surface; buttons that stand apart from the panel; light or dark in one click ---- */
 .vh{position:absolute!important;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;padding:0}
 /* buttons sit above the panel (lighter, with an edge of 3:1), fields sit below it (darker) */
-html:root[data-dmlook=tool]{--btnbg:#323238;--btnbd:#6a6a72;--btnbg-h:#3d3d44;--btnbd-h:#85858d;--fieldbd:#6a6a72}
-html:root[data-dmlook=tool][data-dm=light]{--btnbg:#ececf0;--btnbd:#8e8e96;--btnbg-h:#e1e1e7;--btnbd-h:#6c6c74;--fieldbd:#8e8e96}
+/* 1.7: edges a bit stronger (3:1 on the rows and on the page too, not only on the panel) */
+html:root[data-dmlook=tool]{--btnbg:#323238;--btnbd:#7c7c84;--btnbg-h:#3d3d44;--btnbd-h:#9a9aa2;--fieldbd:#6a6a72}
+html:root[data-dmlook=tool][data-dm=light]{--btnbg:#ececf0;--btnbd:#7f7f87;--btnbg-h:#e1e1e7;--btnbd-h:#5d5d66;--fieldbd:#8e8e96}
 
 /* the panel: one surface with lines between the sections */
 html:root[data-dmlook=tool] #side{display:flex;flex-direction:column;gap:0;padding:0 0 2px;background:var(--panel);border-radius:12px;overflow:auto}

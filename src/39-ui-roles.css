@@ -1,0 +1,95 @@
+/* ---- 1.7: one look per role across the DM screen ----
+   1 main (white, one per area: Next turn, Send) · 2 button (raised, edge 3:1: --btnbg/--btnbd from 39-side-panel.css) · 3 danger (red edge: End
+   combat) · 4 toggle (on: tinted with a tick, off: an outline; a segmented choice where one of several is on) · 5 quiet icon (light enough to
+   read, a circle under the mouse, a ring from the keyboard) · 6 a value you can change (initiative, HP, AC, name: calm, a field's edge under
+   the mouse). Hints that were always on screen sit behind "?". */
+html:root[data-dmlook=tool]{--qicon:#b8b8bf;--dangerfg:#ff7a72;--dangerbd:#d9534f}
+html:root[data-dmlook=tool][data-dm=light]{--qicon:#4a4a52;--dangerfg:#c62828;--dangerbd:#c62828}
+html:root[data-dmlook=tool] #dm :is(button,input,select,summary,[tabindex]):focus-visible{outline:2px solid var(--pc);outline-offset:2px}
+
+/* 2 · the header: pills and round buttons with an edge; redo plainly off while there is nothing to redo */
+html:root[data-dmlook=tool] #dm>.bar :is(.btn,.icon-btn):not(.themetog .icon-btn){background:var(--btnbg);border:1px solid var(--btnbd);box-sizing:border-box}
+html:root[data-dmlook=tool] #dm>.bar :is(.btn,.icon-btn):not(.themetog .icon-btn):hover{background:var(--btnbg-h);border-color:var(--btnbd-h)}
+html:root[data-dmlook=tool] #dm>.bar .icon-btn:disabled{opacity:.4;background:transparent;border-style:dashed}
+html:root[data-dmlook=tool] #dm>.bar .joinpill>*{border:0}
+
+/* 2 · the toolbar above the order: real buttons with icons, in two groups */
+html:root[data-dmlook=tool] .dmtools{gap:8px}
+html:root[data-dmlook=tool] .dmtools .fgrp{gap:8px}
+html:root[data-dmlook=tool] .dmtools .fgrp+.fgrp{padding-left:10px;margin-left:2px}
+html:root[data-dmlook=tool] .dmtools .btn,html:root[data-dmlook=tool] .dmtools .icon-btn{height:34px;min-height:34px;box-sizing:border-box;padding:0 12px;
+  border:1px solid var(--btnbd);border-radius:8px;background:var(--btnbg);color:var(--fg);display:inline-flex;align-items:center;gap:7px;font-weight:500}
+html:root[data-dmlook=tool] .dmtools .icon-btn{width:34px;padding:0;justify-content:center}
+html:root[data-dmlook=tool] .dmtools :is(.btn,.icon-btn):hover{background:var(--btnbg-h);border-color:var(--btnbd-h)}
+html:root[data-dmlook=tool] .dmtools .btn>svg{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;
+  stroke-linejoin:round}
+/* 4 · Lair action on the order, Players can edit: toggles */
+html:root[data-dmlook=tool] .dmtools #lairBtn[aria-pressed=true]{border-color:var(--boss);background:color-mix(in srgb,var(--boss) 18%,transparent)}
+html:root[data-dmlook=tool] .dmtools .btn.pebox{border-radius:999px;background:transparent;color:var(--muted)}
+html:root[data-dmlook=tool] .dmtools .btn.pebox::before{content:"";width:auto;height:auto;border:0;background:none;display:none}
+html:root[data-dmlook=tool] .dmtools .btn.pebox[aria-pressed=true]{border-color:var(--pc);background:color-mix(in srgb,var(--pc) 18%,transparent);
+  color:var(--fg)}
+html:root[data-dmlook=tool] .dmtools .btn.pebox[aria-pressed=true]::before{content:"✓";display:inline;font-weight:700;color:var(--fg)}
+/* 3 · End combat: a red edge, apart from the rest */
+html:root[data-dmlook=tool] .dmtools #endBtn:not(.primary){background:transparent;border-color:var(--dangerbd);color:var(--dangerfg)}
+html:root[data-dmlook=tool] .dmtools #endBtn:not(.primary):hover{background:color-mix(in srgb,var(--dangerbd) 14%,transparent)}
+
+/* the order's rows */
+/* 2 · Statblock is a button, not a tag */
+html:root[data-dmlook=tool] #roster .sblink{border:1px solid color-mix(in srgb,var(--arcane) 70%,transparent);background:transparent;border-radius:999px;
+  padding:0 9px}
+html:root[data-dmlook=tool] #roster .sblink:hover,html:root[data-dmlook=tool] #roster .sblink.on{background:color-mix(in srgb,var(--arcane) 20%,transparent)}
+/* the boss line: In lair is a toggle, LA and recharges are small buttons, LR keeps its pips */
+html:root[data-dmlook=tool] #roster .sbline :is(.sbc,.sbreset,.sbrech,.sbmore){border:1px solid var(--btnbd);background:transparent;color:var(--fg)}
+html:root[data-dmlook=tool] #roster .sbline .sbc>.sbreset{border:0;padding:0}
+html:root[data-dmlook=tool] #roster .sbline :is(.sbreset,.sbrech,.sbmore):hover,html:root[data-dmlook=tool] #roster .sbline .sbc:has(>.sbreset):hover{
+  background:var(--btnbg)}
+html:root[data-dmlook=tool] #roster .sbline .sblair{color:var(--muted)}
+html:root[data-dmlook=tool] #roster .sbline .sblair[aria-pressed=true]{border-color:var(--pc);background:color-mix(in srgb,var(--pc) 18%,transparent);
+  color:var(--fg)}
+html:root[data-dmlook=tool] #roster .sbline .sblair[aria-pressed=true]::before{content:"✓";font-weight:700;margin-right:2px}
+/* 2 · + Condition and the small + have an edge */
+html:root[data-dmlook=tool] #roster .chips .addc,html:root[data-dmlook=tool] body.sbopen #roster .chips .addc{box-shadow:inset 0 0 0 1px var(--btnbd)!important;
+  color:var(--fg)!important}
+html:root[data-dmlook=tool] #roster .chips .addc:hover{background:var(--btnbg)!important;box-shadow:inset 0 0 0 1px var(--btnbd-h)!important}
+/* 5 · quiet icons: Bloodied, Down, Show AC; ⋯ keeps a visible ring */
+html:root[data-dmlook=tool] #roster .stat .tog:is(.blood,.downt):not([aria-pressed=true]),html:root[data-dmlook=tool] #roster .ac-wrap .tog{
+  color:var(--qicon)!important;
+  border:1px solid transparent!important}
+html:root[data-dmlook=tool] #roster .stat .tog:is(.blood,.downt):not([aria-pressed=true]):hover,html:root[data-dmlook=tool] #roster .ac-wrap .tog:hover{
+  background:var(--btnbg)!important;border-color:var(--btnbd)!important;color:var(--fg)!important}
+html:root[data-dmlook=tool] #roster .ac-wrap .tog[aria-pressed=true]{color:var(--fg)!important}
+html:root[data-dmlook=tool] #roster .stat .morebtn2{border:1px solid var(--btnbd);color:var(--qicon)}
+html:root[data-dmlook=tool] #roster .stat .morebtn2:hover{background:var(--btnbg);border-color:var(--btnbd-h);color:var(--fg)}
+/* 6 · values you can change: a field's edge under the mouse */
+html:root[data-dmlook=tool] #roster .hexw .init-in:hover,html:root[data-dmlook=tool] #roster .hpw.hpb:hover,
+  html:root[data-dmlook=tool] #roster .ac-wrap input:hover,
+html:root[data-dmlook=tool] #roster .row input[data-act=name]:hover{background:var(--bg)!important;box-shadow:inset 0 0 0 1px var(--btnbd)}
+
+/* the turn bar: previous and ⋯ are buttons; Next turn stays the one white button */
+html:root[data-dmlook=tool] .tnav:not(.primary),html:root[data-dmlook=tool] .turnmore .icon-btn{background:var(--btnbg);border:1px solid var(--btnbd);
+  box-sizing:border-box}
+html:root[data-dmlook=tool] .tnav:not(.primary):hover,html:root[data-dmlook=tool] .turnmore .icon-btn:hover{background:var(--btnbg-h);
+  border-color:var(--btnbd-h)}
+
+/* the statblock: Edit… and + Add are buttons; Statblock/Picture and the attack rolls are segmented choices, the one picked raised */
+html:root[data-dmlook=tool] #sbDrawer .sbheadb .btn{background:var(--btnbg);border:1px solid var(--btnbd)}
+html:root[data-dmlook=tool] #sbDrawer .sbheadb .btn:hover{background:var(--btnbg-h);border-color:var(--btnbd-h)}
+html:root[data-dmlook=tool] #sbDrawer .seg2{display:inline-grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:3px;padding:3px;border-radius:10px;
+  background:var(--bg);flex-wrap:nowrap}
+html:root[data-dmlook=tool] #sbDrawer .seg2.sbtabs{display:grid}
+html:root[data-dmlook=tool] #sbDrawer .seg2 button,html:root[data-dmlook=tool] #sbDrawer .seg2 button[aria-pressed=false]{border:1px solid transparent;
+  background:transparent;
+  color:var(--muted);border-radius:7px;box-shadow:none}
+html:root[data-dmlook=tool] #sbDrawer .seg2 button:hover{color:var(--fg)}
+html:root[data-dmlook=tool] #sbDrawer .seg2 button[aria-pressed=true]{background:var(--btnbg);border-color:var(--btnbd);color:var(--fg)}
+html:root[data-dmlook=tool] #sbDrawer .sbtools{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+html:root[data-dmlook=tool] #sbDrawer .sbtools .sblog{flex-basis:100%}
+html:root[data-dmlook=tool] #sbDrawer .sbhelp{margin-left:auto;width:32px;height:32px;min-height:32px;padding:0;border-radius:8px;background:var(--btnbg);
+  border:1px solid var(--btnbd);color:var(--fg);font-weight:700}
+html:root[data-dmlook=tool] #sbDrawer .sbhelp[aria-expanded=true]{background:var(--btnbg-h);border-color:var(--btnbd-h)}
+/* 5 · the statblock's × is a quiet icon */
+html:root[data-dmlook=tool] #sbDrawer .sbheadb .icon-btn{background:transparent;border:1px solid transparent;border-radius:999px;color:var(--qicon)}
+html:root[data-dmlook=tool] #sbDrawer .sbheadb .icon-btn:hover{background:var(--btnbg);border-color:var(--btnbd);color:var(--fg)}
+/* the light turn bar sits on a darker grey: its buttons take the stronger edge */
+html:root[data-dmlook=tool][data-dm=light] :is(.tnav:not(.primary),.turnmore .icon-btn){border-color:var(--btnbd-h)}

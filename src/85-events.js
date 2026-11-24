@@ -228,6 +228,7 @@ document.addEventListener("click",e=>{
     case "settingsopen": if($("#setSheet"))closeSheet();else setSheet();break;
     case "dmtheme":{const want=t.dataset.v==="light";if(!!ls.get("dmLight",false)!==want){ls.set("dmLight",want);dmLightApply()}break}
     case "sidetab": sideTabPick=t.dataset.v;sideTabApply();break;
+    case "sbhelp": sbHelpOn=!sbHelpOn;renderSbDrawer();break;
     case "qhelp":{const q=t.closest(".quick"),on=!q.classList.contains("showhint");q.classList.toggle("showhint",on);t.setAttribute("aria-expanded",
       String(on));break}
     case "sbopen": sbItems=[];libQ="";libArmed=null;sbSheet();setTimeout(()=>{const q=$("#fetQ")||$("#libQ");q&&q.focus()},0);
