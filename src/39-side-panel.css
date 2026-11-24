@@ -6,6 +6,8 @@ html:root[data-dmlook=tool][data-dm=light]{--btnbg:#ececf0;--btnbd:#8e8e96;--btn
 
 /* the panel: one surface with lines between the sections */
 html:root[data-dmlook=tool] #side{display:flex;flex-direction:column;gap:0;padding:0 0 2px;background:var(--panel);border-radius:12px;overflow:auto}
+/* an open statblock takes the panel's place, as before 1.6.2 (the rule above outweighed body.sbopen .side{display:none}) */
+html:root[data-dmlook=tool] body.sbopen #side{display:none}
 html:root[data-dmlook=tool] #side>.panel{flex:none;background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none;padding:0}
 html:root[data-dmlook=tool] #side>.panel>summary,html:root[data-dmlook=tool] #side>.panel[open]>summary{min-height:44px;box-sizing:border-box;
   padding:0 16px;margin:0;border:0;font-size:var(--fs15);font-weight:600}
