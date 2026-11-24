@@ -78,6 +78,11 @@ async def main():
         y=await dm.evaluate("()=>[document.getElementById('callText').getBoundingClientRect().top,document.querySelector('#callForm [type=submit]').getBoundingClientRect().top].map(Math.round)")
         chk("roll call: field and Send in one row",abs(y[0]-y[1])<=4,y)
         chk("…Send says who in its label",await dm.get_attribute('#callForm [type=submit]','aria-label')=='Send to all players')
+        # ---- 1.6.3: an open statblock hides the panel, as before 1.6.2
+        await T(dm,"(()=>{const r='Orc\\nArmor Class 13\\nHit Points 15 (2d8 + 6)';byId('o').sb=Object.assign(parseStatblock(r)||{},{raw:r});commit();sbViewId='o';renderDM()})()");await asyncio.sleep(.5)
+        chk("an open statblock hides the panel",await dm.evaluate("()=>document.body.classList.contains('sbopen')") and not await dm.locator('#side').is_visible())
+        await T(dm,"sbViewId=null;renderDM()");await asyncio.sleep(.4)
+        chk("…and it comes back when the statblock closes",await dm.locator('#side').is_visible())
         # ---- Settings and files: a window from the gear
         await dm.click('#setBtn');await asyncio.sleep(.3)
         chk("the gear opens Settings and files in a window",await dm.locator('#setSheet[role=dialog]').is_visible())
