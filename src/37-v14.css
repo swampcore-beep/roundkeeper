@@ -159,9 +159,6 @@ html:root[data-dmlook=tool] .toast{top:calc(var(--barh,64px) + 6px);bottom:auto;
 html:root[data-dmlook=tool] .side .panel{border-radius:10px}
 html:root[data-dmlook=tool] .side .panel>summary{font-size:var(--fs15);font-weight:600;padding:12px 16px}
 html:root[data-dmlook=tool] .side .panel>:not(summary){margin:0 16px 14px}
-/* Settings and files open from the gear in the header, on top of the panel; the panel puts first what this part of the fight needs */
-html:root[data-dmlook=tool] .side .panel[data-k=more]:not(.on){display:none}
-html:root[data-dmlook=tool] .side .panel[data-k=more].on{order:-1}
 html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=add]{order:1}
 html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=party]{order:2}
 html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=enc]{order:3}

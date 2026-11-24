@@ -40,10 +40,10 @@ async def main():
             r=await roll_after({"id":"i","action":"roll","kind":"roll","text":"x","total":3,"dice":bad})
             chk(f"The server drops dice that aren't real ({why}), and keeps the roll",r and r.get('total')==3 and 'dice' not in r,r)
         # ---------- the DM's setting reaches the screens ----------
-        await T(dm,"$('#diceSet')&&renderDM()");n=await T(dm,"document.querySelectorAll('#diceSet [data-act=diceview]').length")
+        await dm.click('#setBtn');await asyncio.sleep(.4)   # 1.7: Settings and files is a window
+        n=await T(dm,"document.querySelectorAll('#diceSet [data-act=diceview]').length")
         chk("Settings and files: 3D, Light and Off for the TV, the tablet and the phones",n==9,n)
-        await dm.click('#setBtn');await asyncio.sleep(.4);await T(dm,"$('#diceSet').scrollIntoView()");await asyncio.sleep(.2)
-        await dm.locator('details[data-k=more]').screenshot(path='/tmp/dv/set.png')
+        await dm.locator('#setSheet').screenshot(path='/tmp/dv/set.png')
         await dm.click('#diceSet [data-act=diceview][data-k=tab][data-v=light]');await asyncio.sleep(.3)
         chk("A click sets that screen (tablet: Light)",await T(dm,"diceViewAll().tab==='light'&&diceViewAll().tv==='3d'"))
         pub=json.loads(op.open(rk.PL+'/state').read())

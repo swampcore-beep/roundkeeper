@@ -1,0 +1,106 @@
+/* ---- 1.7: the side panel in two tabs, on one surface; buttons that stand apart from the panel; light or dark in one click ---- */
+.vh{position:absolute!important;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;padding:0}
+/* buttons sit above the panel (lighter, with an edge of 3:1), fields sit below it (darker) */
+html:root[data-dmlook=tool]{--btnbg:#323238;--btnbd:#6a6a72;--btnbg-h:#3d3d44;--btnbd-h:#85858d;--fieldbd:#6a6a72}
+html:root[data-dmlook=tool][data-dm=light]{--btnbg:#ececf0;--btnbd:#8e8e96;--btnbg-h:#e1e1e7;--btnbd-h:#6c6c74;--fieldbd:#8e8e96}
+
+/* the panel: one surface with lines between the sections */
+html:root[data-dmlook=tool] #side{display:flex;flex-direction:column;gap:0;padding:0 0 2px;background:var(--panel);border-radius:12px;overflow:auto}
+html:root[data-dmlook=tool] #side>.panel{flex:none;background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none;padding:0}
+html:root[data-dmlook=tool] #side>.panel>summary,html:root[data-dmlook=tool] #side>.panel[open]>summary{min-height:44px;box-sizing:border-box;
+  padding:0 16px;margin:0;border:0;font-size:var(--fs15);font-weight:600}
+html:root[data-dmlook=tool] #side>.panel>:not(summary){margin:0 16px 14px;width:auto;min-width:0}
+html:root[data-dmlook=tool] #side .pmeta{font-size:var(--fs13);font-weight:500;color:var(--muted);margin-left:-2px}
+html:root[data-dmlook=tool] #side .pmeta:empty{display:none}
+html:root[data-dmlook=tool] #side>.panel.noitems>:not(summary){display:none}
+html:root[data-dmlook=tool] #side>.panel.noitems>summary::after{opacity:.35}
+
+/* the tabs; the phase picks one (#dm[data-tab]), the DM can pick the other */
+html:root[data-dmlook=tool] #side .sidetabs{flex:none;order:-10;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;
+  margin:12px 16px 10px;border-radius:10px;background:var(--bg)}
+html:root[data-dmlook=tool] #side .sidetabs button{position:relative;height:32px;border-radius:7px;border:1px solid transparent;background:none;
+  color:var(--muted);font:600 var(--fs15)/1 var(--ui);cursor:pointer}
+html:root[data-dmlook=tool] #side .sidetabs button:hover{color:var(--fg)}
+html:root[data-dmlook=tool] #side .sidetabs button[aria-selected=true]{background:var(--btnbg);border-color:var(--btnbd);color:var(--fg)}
+html:root[data-dmlook=tool] #side .sidetabs button.dot::after{content:"";position:absolute;top:7px;right:10px;width:7px;height:7px;border-radius:50%;
+  background:var(--pc)}
+html:root[data-dmlook=tool] #dm[data-tab=fight] #side [data-tab=prep],html:root[data-dmlook=tool] #dm[data-tab=prep] #side [data-tab=fight]{
+  display:none!important}
+
+/* the foot of Fight: Add monsters and quick add, always in reach */
+html:root[data-dmlook=tool] #side .sidefoot{order:99;margin-top:auto;flex:none;border-top:1px solid var(--line);padding:12px 16px 12px}
+html:root[data-dmlook=tool] #side .sidefoot:empty{display:none}
+
+/* quick add (it moves between the foot and Add to combat): one row, the help behind ? */
+html:root[data-dmlook=tool] #side .quick{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:0;padding:0;margin:0}
+html:root[data-dmlook=tool] #side .quick .sbbtn{order:-1;flex:1 0 100%;margin:0;text-align:left}
+html:root[data-dmlook=tool] #side .quick .field{flex:1 1 0;min-width:0}
+html:root[data-dmlook=tool] #side .quick .qhelp{flex:none;width:36px;padding:0;font-weight:700}
+html:root[data-dmlook=tool] #side .quick .qhint{display:none;flex-basis:100%}
+html:root[data-dmlook=tool] #side .quick.showhint .qhint{display:block}
+html:root[data-dmlook=tool] #side .quick.showhint .qhelp{background:var(--btnbg-h);border-color:var(--btnbd-h)}
+
+/* roll call: the question and Send in one row, who rolls below */
+html:root[data-dmlook=tool] #side #callForm{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+html:root[data-dmlook=tool] #side .callrow{display:flex;gap:8px;align-items:center}
+html:root[data-dmlook=tool] #side .callrow .field{flex:1 1 0;min-width:0}
+html:root[data-dmlook=tool] #side .callpick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+html:root[data-dmlook=tool] #side .callto{font-size:var(--fs12);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+  margin-right:4px}
+html:root[data-dmlook=tool] #side .callpick button{min-height:30px;padding:0 11px;font-size:var(--fs13);border:1px solid var(--line);background:transparent;
+  color:var(--muted);border-radius:999px}
+html:root[data-dmlook=tool] #side .callpick button[aria-pressed=true]{border-color:var(--pc);background:color-mix(in srgb,var(--pc) 16%,transparent);
+  color:var(--fg)}
+html:root[data-dmlook=tool] #side .callpick button[aria-pressed=true]::before{content:"✓";margin-right:5px;font-weight:700}
+html:root[data-dmlook=tool] #side .callin{display:none}
+html:root[data-dmlook=tool] #side .strip.call{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+
+/* battlefield: the field and Add in one row, the two bigger tools below */
+html:root[data-dmlook=tool] #side .strip.field{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+html:root[data-dmlook=tool] #side #fieldForm{display:flex;gap:8px;flex:1 0 100%;flex-wrap:nowrap}
+html:root[data-dmlook=tool] #side #fieldForm .field{flex:1 1 0;min-width:0}
+html:root[data-dmlook=tool] #side .fieldmore{display:flex;gap:8px;flex-wrap:wrap}
+html:root[data-dmlook=tool] #side .strip.field .clocks{flex-basis:100%}
+
+/* buttons and fields in the panel and in Settings */
+html:root[data-dmlook=tool] :is(#side,#setSheet) .btn:not(.primary):not(.byhandbtn){background:var(--btnbg);border:1px solid var(--btnbd);color:var(--fg)}
+html:root[data-dmlook=tool] :is(#side,#setSheet) .btn:not(.primary):not(.byhandbtn):hover{background:var(--btnbg-h);border-color:var(--btnbd-h)}
+html:root[data-dmlook=tool] :is(#side,#setSheet) .btn.primary{border:1px solid var(--accent)}
+html:root[data-dmlook=tool] :is(#side,#setSheet) .btn{min-height:36px;box-sizing:border-box}
+html:root[data-dmlook=tool] :is(#side,#setSheet) .btn.sm{min-height:32px;padding:0 11px;font-size:var(--fs13)}
+html:root[data-dmlook=tool] #side .byhandbtn{background:transparent;border:1px solid transparent;color:var(--muted)}
+html:root[data-dmlook=tool] #side .byhandbtn:hover{color:var(--fg);background:var(--btnbg)}
+html:root[data-dmlook=tool] :is(#side,#setSheet) :is(input,select,textarea).field{background:var(--bg);border:1px solid var(--fieldbd);border-radius:6px}
+html:root[data-dmlook=tool][data-dm=light] :is(#side,#setSheet) :is(input,select,textarea).field{background:#fff}
+html:root[data-dmlook=tool] :is(#side,#setSheet) :is(.acts,.handrow,.fieldmore,form){gap:8px}
+html:root[data-dmlook=tool] #side .pchip{border:1px solid var(--line)}
+
+/* Settings and files, a window */
+html:root[data-dmlook=tool] .setsheet{width:min(640px,100%)}
+.setsheet .sethd{display:flex;align-items:center;gap:12px;margin:-4px -8px 2px 0}.setsheet .sethd h2{flex:1;margin:0}
+.setsheet .setgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 28px}
+.setsheet .setsec{display:grid;gap:10px;align-content:start}
+.setsheet .setsec .acts{display:flex;flex-wrap:wrap}
+@media (max-width:640px){.setsheet .setgrid{grid-template-columns:minmax(0,1fr)}}
+
+/* the header: sun and moon switch the screen in one click; the gear has teeth */
+html:root[data-dmlook=tool] #dm>.bar .themetog{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:var(--bg)}
+html:root[data-dmlook=tool] #dm>.bar .themetog .icon-btn{width:32px;height:30px;min-width:0;min-height:0;padding:0;border:1px solid transparent;
+  border-radius:999px;background:transparent;color:var(--muted)}
+html:root[data-dmlook=tool] #dm>.bar .themetog .icon-btn:hover{color:var(--fg)}
+html:root[data-dmlook=tool] #dm>.bar .themetog .icon-btn[aria-pressed=true]{background:var(--btnbg);border-color:var(--btnbd);color:var(--fg)}
+html:root[data-dmlook=tool] #dm>.bar .themetog svg{width:16px;height:16px;fill:none}
+html:root[data-dmlook=tool] #dm>.bar #setBtn svg{fill:none}
+
+/* a narrow window: the drawer is the same one surface */
+@media (max-width:1100px){html:root[data-dmlook=tool] #side{padding:0;background:var(--panel)}}
+/* rows that must not spill out of the panel */
+html:root[data-dmlook=tool] #side :is(#fieldForm,#partyForm,#encForm){display:flex;flex-wrap:nowrap;gap:8px;min-width:0;width:100%;align-items:center}
+html:root[data-dmlook=tool] #side :is(#fieldForm,#partyForm,#encForm) .field{flex:1 1 0;min-width:0;width:auto}
+html:root[data-dmlook=tool] #side #partyForm #pCls{flex:0 0 96px}
+html:root[data-dmlook=tool] #side #partyForm .ac{flex:0 0 56px}
+html:root[data-dmlook=tool] #side :is(#fieldForm,#partyForm,#encForm) .btn{flex:none}
+.setsheet .setopt{align-items:flex-start}.setsheet .setopt input[type=checkbox]{margin-top:2px}
+.setsheet .setopt small{display:block;flex-basis:auto;padding:0;margin:2px 0 0}
+.setsheet label.btn{display:inline-flex;align-items:center;justify-content:center}
+.setsheet .setopt[for=timerSecs]{align-items:center}

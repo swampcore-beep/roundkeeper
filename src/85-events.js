@@ -225,11 +225,11 @@ document.addEventListener("click",e=>{
     case "turnmenu": turnMenuOn=!turnMenuOn;renderDM();break;
     case "footmore": footMenu(!$("#footMenu").hidden?false:true);break;
     case "sidetoggle":{const d=$("#dm"),on=!d.classList.contains("sideon");d.classList.toggle("sideon",on);t.setAttribute("aria-expanded",String(on));break}
-    case "settingsopen":{if(matchMedia("(max-width:1100px)").matches)$("#dm").classList.add("sideon");if(sbViewId){sbViewId=null;
-      renderDM()}const pn=document.querySelector('.panel[data-k="more"]');
-      if(pn){if(pn.classList.contains("on")&&pn.open){pn.open=false;pn.classList.remove("on");break}
-      pn.classList.add("on");pn.open=true;if(!pn.dataset.tw){pn.dataset.tw="1";pn.addEventListener("toggle",()=>{if(!pn.open)pn.classList.remove("on")})}
-      pn.scrollIntoView({block:"nearest",behavior:"smooth"});pn.classList.remove("ping");void pn.offsetWidth;pn.classList.add("ping")}break}
+    case "settingsopen": if($("#setSheet"))closeSheet();else setSheet();break;
+    case "dmtheme":{const want=t.dataset.v==="light";if(!!ls.get("dmLight",false)!==want){ls.set("dmLight",want);dmLightApply()}break}
+    case "sidetab": sideTabPick=t.dataset.v;sideTabApply();break;
+    case "qhelp":{const q=t.closest(".quick"),on=!q.classList.contains("showhint");q.classList.toggle("showhint",on);t.setAttribute("aria-expanded",
+      String(on));break}
     case "sbopen": sbItems=[];libQ="";libArmed=null;sbSheet();setTimeout(()=>{const q=$("#fetQ")||$("#libQ");q&&q.focus()},0);
       fetRefresh().then(fetRedraw);break;
     case "fetpick": fetPick(t.dataset.id);break;
@@ -282,7 +282,8 @@ document.addEventListener("click",e=>{
     case "sbaskno": sbSaveAsk=null;renderSbDrawer();break;
     case "sbasksend":{if(!sbSaveAsk||!sbSaveAsk.to.length)break;const a=sbSaveAsk,src=byId(sbViewId);sbSpend(src,a.n);
       state.call={id:uid(),text:`${a.ab} save DC ${a.dc}${a.n?" · "+a.n:""}`,dc:a.dc,at:Date.now(),to:a.to.slice(),answers:{}};sbSaveAsk=null;commit();
-      toast(`Roll call sent: ${a.ab} save DC ${a.dc}`);const pn=document.querySelector('#side details.panel[data-k="call"]');if(pn)pn.open=true;break}
+      toast(`Roll call sent: ${a.ab} save DC ${a.dc}`);const pn=document.querySelector('#side details.panel[data-k="call"]');if(pn)pn.open=true;
+      sideTabPick="fight";sideTabApply();break}
     case "sbdrop": sbItems.splice(Number(t.dataset.i),1);sbSheet();break;
     case "sbinit":{const x=sbItems[Number(t.dataset.i)];if(x){x.im=t.dataset.m;sbInitMode=t.dataset.m;ls.set("initMode",sbInitMode);sbSheet()}break}
     case "sbcount":{const x=sbItems[Number(t.dataset.i)];if(x){x.count=Math.max(1,Math.min(12,x.count+Number(t.dataset.d)));sbSheet()}break}

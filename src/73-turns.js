@@ -117,9 +117,8 @@ function renderParty(){
     ` <small>AC ${esc(p.ac)}</small>`:""}<button type="button" class="x" data-act="prm" data-i="${i}" aria-label="Remove ${esc(p.name)} from the party">${
     I.x}</button></span>`).join("");
   const pcsInFight=state.list.filter(c=>c.kind==="pc").length;
-  $("#party").innerHTML=`<span class="strip-label">Party</span>${chips||
-    '<span class="strip-empty">Enter the players once and they stay saved for every combat.</span>'}
-    <form id="partyForm" autocomplete="off"><input class="field" id="pName" placeholder="Player name" aria-label="Player name"><select class="field" id="pCls" aria-label="Class">${
+  $("#party").innerHTML=`<span class="strip-label">Party</span>${chips}
+    <form id="partyForm" autocomplete="off" title="Enter the players once and they stay saved for every combat"><input class="field" id="pName" placeholder="Player name" aria-label="Player name"><select class="field" id="pCls" aria-label="Class">${
       typeOptions(CLASSES,"",
       "Class")}</select><input class="field ac" id="pAc" type="number" placeholder="AC" aria-label="AC"><button class="btn" type="submit">Add</button></form>
     <span class="spacer"></span>
@@ -127,7 +126,7 @@ function renderParty(){
     ${party.length?`<button class="btn" type="button" data-act="ptoggle" aria-pressed="${showPartyTable}">Passives and DCs</button>`:""}
     ${party.length?'<button class="btn primary" type="button" data-act="pload">Add party to combat</button>':""}
     <label class="chk surpchk" title="Phones tell the players to roll initiative with disadvantage. Turns off by itself when turns start."><input type="checkbox" id="partySurp" ${
-      state.surprise?"checked":""}> Party is surprised (initiative with disadvantage)</label>`;
+      state.surprise?"checked":""}> Party is surprised</label>`;
   const ae=document.activeElement;if(!(ae&&$("#partyTbl").contains(ae)))$("#partyTbl").innerHTML=partyTable();
 }
 function renderEnc(){
@@ -137,10 +136,9 @@ function renderEnc(){
     esc(e.name)} <small>${e.foes.length}×</small></button><button type="button" class="x" data-act="erm" data-i="${i}" aria-label="Delete encounter ${esc(
     e.name)}">${I.x}</button></span>`).join("");
   const keep=$("#eName")?$("#eName").value:"";
-  $("#enc").innerHTML=`<span class="strip-label">Encounters</span>${chips||
-    '<span class="strip-empty">Set up enemies in a combat and save them as an encounter for later.</span>'}
+  $("#enc").innerHTML=`<span class="strip-label">Encounters</span>${chips}
     <span class="spacer"></span>
-    <form id="encForm" autocomplete="off"><input class="field wide" id="eName" placeholder="Name, e.g. Goblin ambush" aria-label="Encounter name" value="${esc(
+    <form id="encForm" autocomplete="off"><input class="field wide" id="eName" placeholder="Name, e.g. Goblin ambush" aria-label="Encounter name" title="Set up enemies in a combat and save them as an encounter for later" value="${esc(
       keep)}"><button class="btn" type="submit" ${foes?"":"disabled"}>Save enemies from combat</button></form>`;
 }
 function loadParty(){

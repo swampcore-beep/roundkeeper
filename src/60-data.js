@@ -120,8 +120,7 @@ const SUN='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r
 function dmLookApply(){if(MODE!=="dm"||PREVIEW)return;document.documentElement.dataset.dmlook="tool"}
 function dmLightApply(){if(MODE!=="dm"||PREVIEW)return;const on=!!ls.get("dmLight",false),d=document.documentElement.dataset;if(on)d.dm="light";
   else delete d.dm;
-  const b=document.getElementById("dmLightBtn");if(b){b.textContent="Light screen";
-    b.title=on?"Switch to the dark screen":"Switch to the light screen";b.setAttribute("aria-pressed",String(on))}}
+  document.querySelectorAll('[data-act="dmtheme"]').forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.v==="light")===on)))}
 const themeOf=k=>THEMES.find(t=>t[0]===k)||THEMES[0];
 /* what the tablet shows: the theme's parts, with the DM's own picks over them */
 function lookOf(st){const th=themeOf(st.theme||"tavern"),L=st.look||{};return {pal:L.pal||th[0],rows:L.rows||th[0],font:L.font||th[3],tfont:L.tfont||th[4],
@@ -161,6 +160,7 @@ const SVGI={
   castle:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V9h2V5h2v2h2V5h4v2h2V5h2v4h2v12h-6v-5a2 2 0 00-4 0v5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
   search:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
   book:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 5v16M8 7h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>',
+  hourglass:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   spark:
     '<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z" fill="currentColor"/></svg>',
   reload:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 11-2.3-5.6M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',

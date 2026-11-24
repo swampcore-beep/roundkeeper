@@ -268,6 +268,7 @@ function renderDM(){
   $("#endedNote").hidden=!state.ended;
   {const tb=$("#turnBox");if(tb)tb.innerHTML=turnTiles()}
   {const d=$("#dm");if(d)d.dataset.phase=state.turn?"fight":"setup"}
+  sideTabApply();
   const base=sorted(),list=withLair(base);const R=$("#roster");
   if(!list.length){R.innerHTML=
     `<div class="empty"><strong>Nobody in the order yet</strong><span>Add the party and some enemies, or drop in a saved encounter.</span><div class="acts">${

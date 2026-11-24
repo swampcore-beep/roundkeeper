@@ -9,11 +9,44 @@ function renderLog(){
   el.innerHTML=actLog.length?actLog.map(e=>`<div class="le${e.done?" undone":""}${e.fresh?" fresh":""}"><span class="lt">${new Date(e.at).toLocaleTimeString([],
     {hour:"2-digit",minute:"2-digit",hourCycle:"h23"})}</span><span class="lx">${esc(e.text)}</span>${e.inv&&!e.done?
     `<button class="btn sm" type="button" data-act="logundo" data-l="${e.id}">Undo</button>`:"<span></span>"}</div>`).join("")
-    :`<p class="strip-empty" style="margin:0">Nothing from the phones yet.</p>`;
+    :"";
   actLog.forEach(e=>e.fresh=false);
   const pn=document.querySelector('.panel[data-k="log"]'),cnt=$("#logCount");if(!pn||!cnt)return;
+  pn.classList.toggle("noitems",!actLog.length);sideMetaSet("log",actLog.length?"":"nothing yet");
   if(pn.open){logSeen=Date.now();cnt.hidden=true}else{const n=actLog.filter(e=>e.at>logSeen).length;cnt.hidden=!n;cnt.textContent=n}
+  sideTabDot();
 }
+/* 1.7: the side panel has two tabs. Fight holds what a turn needs (roll call, battlefield, player activity, handouts, quick add at the
+   foot); Prep holds what comes before (add to combat, players, encounters). The phase picks the tab; a tab the DM picks (or a roll
+   call sent from a statblock) stays until the phase changes. Each title says what is in it, so a closed section still tells. */
+let sideTabPick=null,sideTabWas=null;
+function sideTabAuto(){return state.turn?"fight":"prep"}
+function sideTabApply(){
+  const d=$("#dm");if(!d||MODE!=="dm")return;const auto=sideTabAuto();
+  if(auto!==sideTabWas){sideTabWas=auto;sideTabPick=null}
+  const tab=sideTabPick||auto;
+  if(d.dataset.tab!==tab){d.dataset.tab=tab;
+    document.querySelectorAll("#side .sidetabs [role=tab]").forEach(b=>{const on=b.dataset.v===tab;b.setAttribute("aria-selected",String(on));
+      b.tabIndex=on?0:-1});
+    const q=$("#side .quick"),to=tab==="fight"?$("#sideFoot"):$("#addForm");
+    if(q&&to&&q.parentNode!==to&&!q.contains(document.activeElement))to.appendChild(q)}
+  sideMeta();sideTabDot();
+}
+function sideMetaSet(k,t){const m=document.querySelector(`#side [data-meta="${k}"]`);if(m)m.textContent=t?"· "+t:""}
+function sideMeta(){
+  const call=state.call;let ct="";
+  if(call){const pcs=state.list.filter(c=>c.kind==="pc"&&!c.hidden),to=(call.to&&call.to.length?call.to:pcs.map(c=>c.id)).filter(byId),
+    a=call.answers||{},n=to.filter(id=>a[id]!=null).length;ct=n===to.length?"all in":`${n} of ${to.length} in`}
+  sideMetaSet("call",ct);
+  const area=state.effects.filter(e=>e.area).length,cl=(state.clocks||[]).length;
+  sideMetaSet("field",[area?`${area} active`:"",cl?`${cl} countdown${cl>1?"s":""}`:""].filter(Boolean).join(", ")||"none");
+  const H=state.handouts||[];sideMetaSet("hand",state.handout?"on the table":H.length?`${H.length} saved`:"none");
+  sideMetaSet("party",state.party.length?`${state.party.length} saved`:"");
+  sideMetaSet("enc",state.encounters.length?`${state.encounters.length} saved`:"");
+}
+/* a dot on the Fight tab while the DM is on Prep and something there wants a look */
+function sideTabDot(){const f=$("#tabFight");if(!f)return;const d=$("#dm"),n=actLog.filter(e=>e.at>logSeen).length;
+  f.classList.toggle("dot",!!(d&&d.dataset.tab==="prep"&&(state.call||n)))}
 function undoLog(id){
   const e=actLog.find(x=>x.id===id);if(!e||e.done||!e.inv)return;const v=e.inv,c=byId(v.cid),cn=x=>x.n||x;
   if(v.t==="init"&&c)c.init=v.prev;

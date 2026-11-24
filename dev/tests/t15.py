@@ -59,6 +59,7 @@ async def main():
         await T(dm,"state.turn=null;state.surprise=false;commit()")
         await T(dm,"let q=[0.99,0.0];const R=Math.random;Math.random=()=>q.length?q.shift():R();sbItems=[{name:'Orc',ctype:'humanoid',size:'Medium',ac:13,hp:15,hpf:'',ib:2,cr:'1/2',lr:0,la:0,uses:[],rech:[],know:[],raw:'',count:1,hidden:false,boss:false,surp:true,im:'group'}];sbAdd()")
         chk("surprised monster: lower of two d20",await T(dm,"state.list.find(c=>c.name==='Orc').init")==3)
+        await dm.click('#tabPrep'); await asyncio.sleep(.2)   # 1.7: Players are on the Prep tab
         await dm.check('#partySurp'); await asyncio.sleep(.3)
         chk("party surprised on",await T(dm,"state.surprise")==True)
         await T(ph,"pSheet='init';renderPSheet()"); await asyncio.sleep(2.2); await T(ph,"pSheet='init';renderPSheet()"); await asyncio.sleep(.3)
