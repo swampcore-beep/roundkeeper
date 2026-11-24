@@ -14,16 +14,17 @@ function renderCall(){
   if(!call){
     const keep=$("#callText")?$("#callText").value:"";
     el.innerHTML=`<span class="strip-label">Roll call</span>
-      <form id="callForm" autocomplete="off"><input class="field wide" id="callText" list="callList" placeholder="Dexterity save DC 15" aria-label="What to roll" value="${
+      <form id="callForm" autocomplete="off"><div class="callrow"><input class="field wide" id="callText" list="callList" placeholder="Dexterity save DC 15" aria-label="What to roll" value="${
         esc(keep)}">
       <datalist id="callList">${["Dexterity save DC 15","Constitution save DC 13","Wisdom save DC 14","Strength save DC 12","Perception check","Stealth check",
         "Initiative"].map(x=>`<option value="${x}">`).join("")}</datalist>
-      ${pcs.length>1?`<div class="chipgrid callpick" role="group" aria-label="Who rolls">${pcs.map(c=>
-        `<button type="button" data-act="callpick" data-id="${esc(c.id)}" aria-pressed="${!callSkip.has(c.id)}">${esc(c.name)}</button>`).join("")}</div>`:""}
-      ${(()=>{const n=callTargets().length;return `<button class="btn${n?" primary":""}" type="submit">${!n?"Send":n===pcs.length?
-        "Send to all players":`Send to ${n} player${n>1?"s":""}`}</button>${n?"":
-          `<span class="fixhint" role="status">Pick at least one player above</span>`}`})()}</form>
-      <span class="strip-empty">Phones buzz and ask for the total; you see every result here.</span>`;
+      ${(()=>{const n=callTargets().length,to=!n?"Send":n===pcs.length?"Send to all players":`Send to ${n} player${n>1?"s":""}`;
+        return `<button class="btn${n?" primary":""}" type="submit" aria-label="${to}" title="${
+          to}: phones buzz and ask for the total; you see every result here">Send</button></div>${
+        pcs.length>1?`<div class="chipgrid callpick" role="group" aria-label="Who rolls"><span class="callto" aria-hidden="true">To</span>${pcs.map(c=>
+        `<button type="button" data-act="callpick" data-id="${esc(c.id)}" aria-pressed="${!callSkip.has(c.id)}">${esc(c.name)}</button>`).join(
+          "")}</div>`:""}${n?"":
+          `<span class="fixhint" role="status">Pick at least one player</span>`}`})()}</form>`;
     return;
   }
   const to=(call.to&&call.to.length?call.to:pcs.map(c=>c.id)).map(byId).filter(Boolean),ans=call.answers||{};
@@ -49,8 +50,8 @@ function renderHand(){
       esc(h.id)}">${on&&on.id===h.id?"Shown":"Show"}</button><button type="button" class="btn sm" data-act="handedit" data-id="${esc(
         h.id)}">Edit</button><button type="button" class="icon-btn sm" data-act="handdel" data-id="${
       esc(h.id)}" aria-label="Delete ${esc(h.title||"this handout")}" title="Delete (click twice)">${I.x}</button></div>`).join("")}</div>`
-      :`<p class="strip-empty" style="margin:0">A note, a letter, a wanted poster or a page of lore, shown on the table.</p>`)
-    +`<button type="button" class="btn sm" data-act="handnew">New handout…</button>`;
+      :"")
+    +`<button type="button" class="btn sm" data-act="handnew" title="A note, a letter, a wanted poster or a page of lore, shown on the table">New handout…</button>`;
 }
 function handShow(h){const d=state.handoutWhere||{};state.handout={id:h.id,style:h.style||"parch",title:h.title||"",body:h.body||"",sign:h.sign||"",
   where:d.where||"both",phones:!!d.phones,at:Date.now()};commit()}
@@ -96,12 +97,13 @@ function renderField(){
   $("#fieldStrip").innerHTML=`<span class="strip-label">Battlefield</span>${area.map(e=>{const c=byId(e.by);
     return `<span class="pchip">✦ ${esc(e.name)}${c?` <small>${esc(c.name)}</small>`:
     ""}<button type="button" class="x" data-act="effrm" data-e="${esc(e.id)}" aria-label="Remove ${esc(e.name)}">${I.x}</button></span>`}).join("")||
-    '<span class="strip-empty">Area effects everyone should see: Fog Cloud, Darkness, Wall of Fire…</span>'}
-    <span class="spacer"></span><form id="fieldForm" autocomplete="off"><input class="field wide" id="fieldName" list="fieldList" maxlength="30" placeholder="Fog Cloud" aria-label="Battlefield effect">
+    ''}
+    <span class="spacer"></span><form id="fieldForm" autocomplete="off"><input class="field wide" id="fieldName" list="fieldList" maxlength="30" placeholder="Fog Cloud, Darkness…" aria-label="Battlefield effect" title="Area effects everyone should see: Fog Cloud, Darkness, Wall of Fire…">
     <datalist id="fieldList">${["Fog Cloud","Darkness","Spirit Guardians","Wall of Fire","Web","Entangle","Silence","Stinking Cloud","Sleet Storm",
       "Spike Growth","Difficult terrain","Dim light","Heavy rain"].map(x=>`<option value="${x}">`).join("")}</datalist>
-    <button class="btn" type="submit">Add</button></form><button class="btn" type="button" data-act="deffnew" title="A spell on players or monsters, with who cast it">${
-      ic("spark")} Spell effect…</button><button class="btn" type="button" data-act="clocknew" title="Goes down by one each round">⏳ Countdown…</button>${
+    <button class="btn" type="submit">Add</button></form><span class="fieldmore"><button class="btn sm" type="button" data-act="deffnew" title="A spell on players or monsters, with who cast it">${
+      ic("spark")} Spell effect…</button><button class="btn sm" type="button" data-act="clocknew" title="Goes down by one each round">${ic(
+        "hourglass")} Countdown…</button></span>${
       clocksHtml()}`;
 }
 function partyStats(name){return state.party.find(p=>p.name.toLowerCase()===String(name).toLowerCase())}

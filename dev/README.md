@@ -73,6 +73,7 @@ Never commit those files.
 | t41 | 1.5: the new character sheet: subclass, background, size and weapon notes (entry and paste), the sheet as a card in the DM's drawer (band, AC, HP from the phone, abilities and saves, skills, spellcasting, attacks, spells; rolls), the phone's sheet with Main (sections that open and are remembered), Spells (slots as boxes, casting time and range) and Features (tracked features, class and subclass features up to your level, feats), the spell list's time and range, and that players never get sheets |
 | t42 | 1.5, needs RK_5ETOOLS: feats on the sheet from the 5e.tools files: the list, the choices a feat asks for, Add and apply / Add only, taking a feat off, Alert, Tough, War Caster, Durable, feat uses as trackers, the feats on the DM's card |
 | t43 | 1.6: dice on the screens: shared rolls carry their dice and the server keeps only real ones, the DM's 3D / Light / Off for the TV, the tablet and the phones and a player's own choice on their phone, 3D dice that land on the rolled faces (WebGL in software), Light without WebGL and in the TV's Light mode, Off with reduced motion |
+| t44 | 1.7: the side panel: Fight and Prep tabs by the phase and by hand, quick add at the foot of Fight, titles that say what is in each section, a fight that fits 1536×864, Settings and files in a window, the sun and moon switch, button edges of 3:1 in both themes |
 | ui, hov | the monster search sheet; hover cards for spells and rules |
 
 ## Media for the README

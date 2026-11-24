@@ -73,7 +73,8 @@ async def main():
         chk("and the release page opens in a new tab",await dm.get_attribute('#updSheet a[target=_blank]','href')=='https://github.com/swampcore-beep/roundkeeper/releases/tag/v1.0.8')
         how=await dm.inner_text('#updSheet')
         chk("how to swap, for this kind of program",('Stop Roundkeeper' in how) if plat=='linux' else ('Stop the server' in how and 'state.json' in how),plat)
-        chk("a dot on Settings and on Updates",await dm.evaluate("()=>document.querySelector('[data-k=more]>summary').classList.contains('upddot')&&document.querySelector('[data-act=updates]').classList.contains('upddot')"))
+        chk("a dot on Settings and on Updates",await dm.evaluate("()=>document.querySelector('#setBtn').classList.contains('upddot')")
+            and await T(dm,"(()=>{setSheet();const on=document.querySelector('#setSheet [data-act=updates]').classList.contains('upddot');updSheet();return on})()"))
         await dm.check('#updAuto');await asyncio.sleep(.3)
         chk("the start-up check can be turned on",await dm.evaluate("()=>localStorage.getItem('it.updAuto')")=='true')
         # every state of the window

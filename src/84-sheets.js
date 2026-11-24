@@ -148,7 +148,36 @@ async function updCheck(force){
   catch(e){updInfo={error:"server"}}
   updBusy=false;updMark();if($("#updSheet"))updSheet();return updInfo}
 function updMark(){const on=!!(updInfo&&updInfo.newer);
-  document.querySelectorAll('[data-k="more"]>summary,[data-act="updates"]').forEach(el=>el.classList.toggle("upddot",on))}
+  document.querySelectorAll('#setBtn,[data-act="updates"]').forEach(el=>el.classList.toggle("upddot",on))}
+/* 1.7: Settings and files open in a window from the gear, like Devices, so the side panel stays as it was. Light or dark is the
+   sun and moon in the header now. renderDM fills the fields that follow the state. */
+function setSheet(){
+  const upd=updInfo&&updInfo.newer?" upddot":"";
+  $("#overlay").innerHTML=
+    `<div class="scrim" data-act="close"><div class="sheet setsheet setpanel" id="setSheet" role="dialog" aria-modal="true" aria-label="Settings and files">
+    <div class="sethd"><h2>Settings and files</h2><button class="icon-btn" type="button" data-act="close" aria-label="Close">${I.x}</button></div>
+    <div class="setgrid">
+    <section class="setsec" aria-label="During combat"><div class="sethead">During combat</div>
+      <label class="setopt" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="${
+        state.timerSecs||30}" style="width:5em"> seconds</label>
+      <label class="setopt"><input type="checkbox" id="autoTimer"${state.autoTimer?" checked":
+        ""}> <span>Start the hourglass on every player's turn</span></label>
+      <label class="setopt" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"${ls.get("concAuto",false)?
+        " checked":""}> <span>Roll monsters' Concentration saves for me <small>otherwise the app asks</small></span></label></section>
+    <section class="setsec" aria-label="Dice on the screens"><div class="sethead">Dice on the screens</div><div class="tvev diceset" id="diceSet">${
+      diceSetHtml()}</div></section>
+    <section class="setsec" aria-label="This laptop"><div class="sethead">This laptop</div><div class="acts">
+      <button class="btn sm" type="button" data-act="dmdev">DM devices</button>
+      <button class="btn sm${upd}" type="button" data-act="updates">Updates</button>
+      <button class="btn sm" type="button" data-act="keys">Shortcuts (?)</button></div></section>
+    <section class="setsec" aria-label="Data and files"><div class="sethead">Data and files</div><div class="acts">
+      <button class="btn sm" type="button" data-act="gdata">Game data</button>
+      <button class="btn sm" type="button" data-act="pics">Pictures</button>
+      <button class="btn sm" type="button" data-act="export">Export</button>
+      <label class="btn sm" for="importFile" tabindex="0">Import</label><input type="file" id="importFile" accept="application/json,.json" hidden></div></section>
+    </div></div></div>`;
+  setTimeout(()=>{const c=$("#setSheet [data-act=close]");c&&c.focus()},0);
+}
 function updSheet(){
   const U=updInfo||{},cur=esc(U.current||"");let body;
   if(updBusy)body=`<p>Asking GitHub…</p>`;

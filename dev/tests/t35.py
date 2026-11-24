@@ -21,8 +21,9 @@ async def main():
         chk("Atmosphere says what it is",at.strip()=='Atmosphere',at); chk("…the theme in its title",'Candlelit tavern' in tt,tt)
         chk("…and as three colour dots",await dm.locator('#atmoBtn .atsw b').count()==3)
         await dm.click('#setBtn'); await asyncio.sleep(.5)
-        chk("settings button opens Settings and files",await T(dm,"document.querySelector('.panel[data-k=more]').open"))
-        chk("light screen switch lives there",await dm.locator('.panel[data-k=more] #dmLightBtn').count()==1)
+        chk("settings button opens Settings and files",await dm.locator('#setSheet').is_visible())   # 1.7: a window
+        chk("light screen switch lives in the header",await dm.locator('#dm>.bar .themetog [data-act=dmtheme]').count()==2)
+        await T(dm,"closeSheet()"); await asyncio.sleep(.2)
         # ---- rows: players without HP on the phone get a placeholder in the HP column
         await T(dm,"state.list=EXAMPLE();commit()"); await asyncio.sleep(.5)
         pcs=await T(dm,"state.list.filter(c=>c.kind==='pc'&&!c.php).length")
@@ -94,7 +95,7 @@ async def main():
         u=await dm.locator('#sbDrawer .sbunder').inner_text(); chk("drawer says a roll call waits",'Roll call 0 of 1 in' in u,u)
         await dm.click('#sbDrawer .sbunder'); await asyncio.sleep(.3)
         chk("clicking it closes the drawer",await T(dm,"sbViewId")==None)
-        chk("the roll call shows its progress",'0 of 1 in' in await dm.inner_text('#callStrip'))
+        chk("the roll call shows its progress",'0 of 1 in' in await dm.inner_text('#side .panel[data-k=call]'))   # 1.7: in the section's title
         # ---- 1.1.2: fitting a laptop
         await T(dm,f"state.effects=[{{id:'e1',name:'Bless',by:'{pid}',targets:['{pid}']}}];commit()"); await asyncio.sleep(.3)
         await dm.click(f'#roster .row[data-id="{mons[0]}"] [data-act=sbview]'); await asyncio.sleep(.4)
@@ -114,7 +115,9 @@ async def main():
         n=await dm.evaluate("()=>[...document.querySelectorAll('.barright>*:not([hidden])')].map(e=>{const r=e.getBoundingClientRect();return Math.round(r.top+r.height/2)})")
         chk("narrower: the right side wraps as one block",max(n)-min(n)<6,n)
         await dm.set_viewport_size({'width':1440,'height':900}); await asyncio.sleep(.3)
-        heads=await dm.locator('.setpanel .sethead').all_inner_texts(); chk("Settings in four groups (1.6: Dice on the screens)",len(heads)==4,heads)
+        await dm.click('#setBtn'); await asyncio.sleep(.3)   # 1.7: Settings and files is a window
+        heads=await dm.locator('#setSheet .sethead').all_inner_texts(); chk("Settings in four groups (1.6: Dice on the screens)",len(heads)==4,heads)
+        await T(dm,"closeSheet()"); await asyncio.sleep(.2)
         chk("no errors",not errs,errs)
         await b.close()
 asyncio.run(main()); print("ALL OK" if ok else "SOME FAILED")

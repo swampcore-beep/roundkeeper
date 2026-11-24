@@ -3229,9 +3229,6 @@ html:root[data-dmlook=tool] .toast{top:calc(var(--barh,64px) + 6px);bottom:auto;
 html:root[data-dmlook=tool] .side .panel{border-radius:10px}
 html:root[data-dmlook=tool] .side .panel>summary{font-size:var(--fs15);font-weight:600;padding:12px 16px}
 html:root[data-dmlook=tool] .side .panel>:not(summary){margin:0 16px 14px}
-/* Settings and files open from the gear in the header, on top of the panel; the panel puts first what this part of the fight needs */
-html:root[data-dmlook=tool] .side .panel[data-k=more]:not(.on){display:none}
-html:root[data-dmlook=tool] .side .panel[data-k=more].on{order:-1}
 html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=add]{order:1}
 html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=party]{order:2}
 html:root[data-dmlook=tool] #dm[data-phase=setup] .side .panel[data-k=enc]{order:3}
@@ -3550,6 +3547,112 @@ body:not(.shared) #player:not([hidden]) ~ .toast{top:calc(env(safe-area-inset-to
 .shfgo{display:flex;flex-wrap:wrap;gap:8px}.shfgo .btn{min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .shfgo .btn small{font-size:.72rem;font-weight:600;opacity:.8}
 .dmshfeat{grid-column:1/-1}
+/* ---- 1.7: the side panel in two tabs, on one surface; buttons that stand apart from the panel; light or dark in one click ---- */
+.vh{position:absolute!important;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;padding:0}
+/* buttons sit above the panel (lighter, with an edge of 3:1), fields sit below it (darker) */
+html:root[data-dmlook=tool]{--btnbg:#323238;--btnbd:#6a6a72;--btnbg-h:#3d3d44;--btnbd-h:#85858d;--fieldbd:#6a6a72}
+html:root[data-dmlook=tool][data-dm=light]{--btnbg:#ececf0;--btnbd:#8e8e96;--btnbg-h:#e1e1e7;--btnbd-h:#6c6c74;--fieldbd:#8e8e96}
+
+/* the panel: one surface with lines between the sections */
+html:root[data-dmlook=tool] #side{display:flex;flex-direction:column;gap:0;padding:0 0 2px;background:var(--panel);border-radius:12px;overflow:auto}
+html:root[data-dmlook=tool] #side>.panel{flex:none;background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none;padding:0}
+html:root[data-dmlook=tool] #side>.panel>summary,html:root[data-dmlook=tool] #side>.panel[open]>summary{min-height:44px;box-sizing:border-box;
+  padding:0 16px;margin:0;border:0;font-size:var(--fs15);font-weight:600}
+html:root[data-dmlook=tool] #side>.panel>:not(summary){margin:0 16px 14px;width:auto;min-width:0}
+html:root[data-dmlook=tool] #side .pmeta{font-size:var(--fs13);font-weight:500;color:var(--muted);margin-left:-2px}
+html:root[data-dmlook=tool] #side .pmeta:empty{display:none}
+html:root[data-dmlook=tool] #side>.panel.noitems>:not(summary){display:none}
+html:root[data-dmlook=tool] #side>.panel.noitems>summary::after{opacity:.35}
+
+/* the tabs; the phase picks one (#dm[data-tab]), the DM can pick the other */
+html:root[data-dmlook=tool] #side .sidetabs{flex:none;order:-10;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px;
+  margin:12px 16px 10px;border-radius:10px;background:var(--bg)}
+html:root[data-dmlook=tool] #side .sidetabs button{position:relative;height:32px;border-radius:7px;border:1px solid transparent;background:none;
+  color:var(--muted);font:600 var(--fs15)/1 var(--ui);cursor:pointer}
+html:root[data-dmlook=tool] #side .sidetabs button:hover{color:var(--fg)}
+html:root[data-dmlook=tool] #side .sidetabs button[aria-selected=true]{background:var(--btnbg);border-color:var(--btnbd);color:var(--fg)}
+html:root[data-dmlook=tool] #side .sidetabs button.dot::after{content:"";position:absolute;top:7px;right:10px;width:7px;height:7px;border-radius:50%;
+  background:var(--pc)}
+html:root[data-dmlook=tool] #dm[data-tab=fight] #side [data-tab=prep],html:root[data-dmlook=tool] #dm[data-tab=prep] #side [data-tab=fight]{
+  display:none!important}
+
+/* the foot of Fight: Add monsters and quick add, always in reach */
+html:root[data-dmlook=tool] #side .sidefoot{order:99;margin-top:auto;flex:none;border-top:1px solid var(--line);padding:12px 16px 12px}
+html:root[data-dmlook=tool] #side .sidefoot:empty{display:none}
+
+/* quick add (it moves between the foot and Add to combat): one row, the help behind ? */
+html:root[data-dmlook=tool] #side .quick{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border:0;padding:0;margin:0}
+html:root[data-dmlook=tool] #side .quick .sbbtn{order:-1;flex:1 0 100%;margin:0;text-align:left}
+html:root[data-dmlook=tool] #side .quick .field{flex:1 1 0;min-width:0}
+html:root[data-dmlook=tool] #side .quick .qhelp{flex:none;width:36px;padding:0;font-weight:700}
+html:root[data-dmlook=tool] #side .quick .qhint{display:none;flex-basis:100%}
+html:root[data-dmlook=tool] #side .quick.showhint .qhint{display:block}
+html:root[data-dmlook=tool] #side .quick.showhint .qhelp{background:var(--btnbg-h);border-color:var(--btnbd-h)}
+
+/* roll call: the question and Send in one row, who rolls below */
+html:root[data-dmlook=tool] #side #callForm{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+html:root[data-dmlook=tool] #side .callrow{display:flex;gap:8px;align-items:center}
+html:root[data-dmlook=tool] #side .callrow .field{flex:1 1 0;min-width:0}
+html:root[data-dmlook=tool] #side .callpick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+html:root[data-dmlook=tool] #side .callto{font-size:var(--fs12);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+  margin-right:4px}
+html:root[data-dmlook=tool] #side .callpick button{min-height:30px;padding:0 11px;font-size:var(--fs13);border:1px solid var(--line);background:transparent;
+  color:var(--muted);border-radius:999px}
+html:root[data-dmlook=tool] #side .callpick button[aria-pressed=true]{border-color:var(--pc);background:color-mix(in srgb,var(--pc) 16%,transparent);
+  color:var(--fg)}
+html:root[data-dmlook=tool] #side .callpick button[aria-pressed=true]::before{content:"✓";margin-right:5px;font-weight:700}
+html:root[data-dmlook=tool] #side .callin{display:none}
+html:root[data-dmlook=tool] #side .strip.call{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+
+/* battlefield: the field and Add in one row, the two bigger tools below */
+html:root[data-dmlook=tool] #side .strip.field{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+html:root[data-dmlook=tool] #side #fieldForm{display:flex;gap:8px;flex:1 0 100%;flex-wrap:nowrap}
+html:root[data-dmlook=tool] #side #fieldForm .field{flex:1 1 0;min-width:0}
+html:root[data-dmlook=tool] #side .fieldmore{display:flex;gap:8px;flex-wrap:wrap}
+html:root[data-dmlook=tool] #side .strip.field .clocks{flex-basis:100%}
+
+/* buttons and fields in the panel and in Settings */
+html:root[data-dmlook=tool] :is(#side,#setSheet) .btn:not(.primary):not(.byhandbtn){background:var(--btnbg);border:1px solid var(--btnbd);color:var(--fg)}
+html:root[data-dmlook=tool] :is(#side,#setSheet) .btn:not(.primary):not(.byhandbtn):hover{background:var(--btnbg-h);border-color:var(--btnbd-h)}
+html:root[data-dmlook=tool] :is(#side,#setSheet) .btn.primary{border:1px solid var(--accent)}
+html:root[data-dmlook=tool] :is(#side,#setSheet) .btn{min-height:36px;box-sizing:border-box}
+html:root[data-dmlook=tool] :is(#side,#setSheet) .btn.sm{min-height:32px;padding:0 11px;font-size:var(--fs13)}
+html:root[data-dmlook=tool] #side .byhandbtn{background:transparent;border:1px solid transparent;color:var(--muted)}
+html:root[data-dmlook=tool] #side .byhandbtn:hover{color:var(--fg);background:var(--btnbg)}
+html:root[data-dmlook=tool] :is(#side,#setSheet) :is(input,select,textarea).field{background:var(--bg);border:1px solid var(--fieldbd);border-radius:6px}
+html:root[data-dmlook=tool][data-dm=light] :is(#side,#setSheet) :is(input,select,textarea).field{background:#fff}
+html:root[data-dmlook=tool] :is(#side,#setSheet) :is(.acts,.handrow,.fieldmore,form){gap:8px}
+html:root[data-dmlook=tool] #side .pchip{border:1px solid var(--line)}
+
+/* Settings and files, a window */
+html:root[data-dmlook=tool] .setsheet{width:min(640px,100%)}
+.setsheet .sethd{display:flex;align-items:center;gap:12px;margin:-4px -8px 2px 0}.setsheet .sethd h2{flex:1;margin:0}
+.setsheet .setgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 28px}
+.setsheet .setsec{display:grid;gap:10px;align-content:start}
+.setsheet .setsec .acts{display:flex;flex-wrap:wrap}
+@media (max-width:640px){.setsheet .setgrid{grid-template-columns:minmax(0,1fr)}}
+
+/* the header: sun and moon switch the screen in one click; the gear has teeth */
+html:root[data-dmlook=tool] #dm>.bar .themetog{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:var(--bg)}
+html:root[data-dmlook=tool] #dm>.bar .themetog .icon-btn{width:32px;height:30px;min-width:0;min-height:0;padding:0;border:1px solid transparent;
+  border-radius:999px;background:transparent;color:var(--muted)}
+html:root[data-dmlook=tool] #dm>.bar .themetog .icon-btn:hover{color:var(--fg)}
+html:root[data-dmlook=tool] #dm>.bar .themetog .icon-btn[aria-pressed=true]{background:var(--btnbg);border-color:var(--btnbd);color:var(--fg)}
+html:root[data-dmlook=tool] #dm>.bar .themetog svg{width:16px;height:16px;fill:none}
+html:root[data-dmlook=tool] #dm>.bar #setBtn svg{fill:none}
+
+/* a narrow window: the drawer is the same one surface */
+@media (max-width:1100px){html:root[data-dmlook=tool] #side{padding:0;background:var(--panel)}}
+/* rows that must not spill out of the panel */
+html:root[data-dmlook=tool] #side :is(#fieldForm,#partyForm,#encForm){display:flex;flex-wrap:nowrap;gap:8px;min-width:0;width:100%;align-items:center}
+html:root[data-dmlook=tool] #side :is(#fieldForm,#partyForm,#encForm) .field{flex:1 1 0;min-width:0;width:auto}
+html:root[data-dmlook=tool] #side #partyForm #pCls{flex:0 0 96px}
+html:root[data-dmlook=tool] #side #partyForm .ac{flex:0 0 56px}
+html:root[data-dmlook=tool] #side :is(#fieldForm,#partyForm,#encForm) .btn{flex:none}
+.setsheet .setopt{align-items:flex-start}.setsheet .setopt input[type=checkbox]{margin-top:2px}
+.setsheet .setopt small{display:block;flex-basis:auto;padding:0;margin:2px 0 0}
+.setsheet label.btn{display:inline-flex;align-items:center;justify-content:center}
+.setsheet .setopt[for=timerSecs]{align-items:center}
 </style>
 </head>
 <body>
@@ -3575,7 +3678,8 @@ body:not(.shared) #player:not([hidden]) ~ .toast{top:calc(env(safe-area-inset-to
       <div class="hgroup">
         <button class="icon-btn lg" id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg viewBox="0 0 24 24"><path d="M12.5 8c-2.65 0-5.05 1-6.9 2.6L2 7v9h9l-3.62-3.62A7.95 7.95 0 0112.5 10c3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 10.53 17.15 8 12.5 8z"/></svg></button>
         <button class="icon-btn lg" id="redoBtn" type="button" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg viewBox="0 0 24 24"><path d="M11.5 8c2.65 0 5.05 1 6.9 2.6L22 7v9h-9l3.62-3.62A7.95 7.95 0 0011.5 10c-3.54 0-6.55 2.31-7.6 5.5l-2.37-.78C2.92 10.53 6.85 8 11.5 8z"/></svg></button>
-        <button class="icon-btn lg" id="setBtn" type="button" data-act="settingsopen" title="Settings and files" aria-label="Settings and files"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+        <div class="themetog" role="group" aria-label="Screen"><button class="icon-btn" type="button" data-act="dmtheme" data-v="light" aria-pressed="false" title="Light screen (this laptop)" aria-label="Light screen"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button class="icon-btn" type="button" data-act="dmtheme" data-v="dark" aria-pressed="true" title="Dark screen (this laptop)" aria-label="Dark screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 019.5 4a7 7 0 1010.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button></div>
+        <button class="icon-btn lg" id="setBtn" type="button" data-act="settingsopen" title="Settings and files" aria-label="Settings and files" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.3 9.9L21.8 9.9L21.8 14.1L19.3 14.1L18.6 15.7L20.4 17.4L17.4 20.4L15.7 18.6L14.1 19.3L14.1 21.8L9.9 21.8L9.9 19.3L8.3 18.6L6.6 20.4L3.6 17.4L5.4 15.7L4.7 14.1L2.2 14.1L2.2 9.9L4.7 9.9L5.4 8.3L3.6 6.6L6.6 3.6L8.3 5.4L9.9 4.7L9.9 2.2L14.1 2.2L14.1 4.7L15.7 5.4L17.4 3.6L20.4 6.6L18.6 8.3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
       </div>
       </div>
     </div>
@@ -3603,7 +3707,8 @@ body:not(.shared) #player:not([hidden]) ~ .toast{top:calc(env(safe-area-inset-to
     </div>
    </div>
    <aside class="side" id="side" aria-label="Tools">
-    <details class="panel" data-k="add" open><summary>Add to combat</summary>
+    <div class="sidetabs" role="tablist" aria-label="Panel"><button type="button" role="tab" id="tabFight" data-act="sidetab" data-v="fight" aria-selected="false" aria-controls="side">Fight</button><button type="button" role="tab" id="tabPrep" data-act="sidetab" data-v="prep" aria-selected="false" aria-controls="side">Prep</button></div>
+    <details class="panel" data-k="add" data-tab="prep" open><summary>Add to combat</summary>
     <form class="add" id="addForm" autocomplete="off">
       <button type="button" class="btn byhandbtn" data-act="byhand" aria-expanded="false">Add by hand <span aria-hidden="true">▾</span></button>
       <label class="wide fname"><span>Name</span><input class="field" id="fName" placeholder="e.g. Goblin" required></label>
@@ -3619,41 +3724,18 @@ body:not(.shared) #player:not([hidden]) ~ .toast{top:calc(env(safe-area-inset-to
         <label><input type="checkbox" id="fBoss"> Boss</label>
         <span>Several of the same get letters A, B, C.</span>
       </div>
-      <div class="quick"><label for="qAdd">Quick add</label><input class="field" id="qAdd" placeholder="Goblin 14 hp7, Orc x2 12 ac13 hp15 h, Astrea 18" autocomplete="off"><button type="button" class="btn" data-act="qadd">Add</button>
+      <div class="quick"><label for="qAdd" class="vh">Quick add</label><input class="field" id="qAdd" placeholder="Quick add: Goblin 14 hp7, Orc x2 12" autocomplete="off"><button type="button" class="btn qhelp" data-act="qhelp" aria-expanded="false" aria-controls="qHint" title="How quick add works" aria-label="How quick add works">?</button><button type="button" class="btn" data-act="qadd">Add</button>
         <button type="button" class="btn sbbtn" data-act="sbopen" title="Search the SRD and your data files, or drop a statblock .md, or paste one (Ctrl+V)">Add monsters… <small style="font-weight:500;color:var(--muted)">search, library, .md file or paste</small></button>
-        <span class="qhint">name, initiative, then optional <b>x3</b> (count), <b>ac15</b>, <b>hp45</b>, <b>h</b> (hidden), <b>boss</b>, <b>ally</b>. Player names just get their initiative.</span></div>
+        <span class="qhint" id="qHint">name, initiative, then optional <b>x3</b> (count), <b>ac15</b>, <b>hp45</b>, <b>h</b> (hidden), <b>boss</b>, <b>ally</b>. Player names just get their initiative.</span></div>
     </form>
     </details>
-    <details class="panel" data-k="log" open><summary>Player activity <span class="pcount" id="logCount" hidden></span></summary><div class="actlog" id="actLog"></div></details>
-    <details class="panel" data-k="call" open><summary>Roll call</summary><section class="strip call" id="callStrip" aria-label="Roll call"></section></details>
-    <details class="panel" data-k="field" open><summary>Battlefield</summary><section class="strip field" id="fieldStrip" aria-label="Battlefield effects"></section></details>
-    <details class="panel" data-k="hand"><summary>Handouts <span class="pcount" id="handOn" hidden>on</span></summary><section class="strip hand" id="handStrip" aria-label="Handouts"></section></details>
-    <details class="panel" data-k="party" open><summary>Party</summary><section class="strip party" id="party" aria-label="Party"></section><div id="partyTbl"></div></details>
-    <details class="panel" data-k="enc"><summary>Encounters</summary><section class="strip enc" id="enc" aria-label="Saved encounters"></section></details>
-    <details class="panel" data-k="more"><summary>Settings and files</summary>
-    <div class="foot tools2 side-tools setpanel">
-      <div class="sethead">During combat</div>
-      <label class="setopt" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="30" style="width:5em"> seconds</label>
-      <label class="setopt"><input type="checkbox" id="autoTimer"> <span>Start the hourglass on every player's turn</span></label>
-      <label class="setopt" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"> <span>Roll monsters' Concentration saves for me</span> <small>otherwise the app asks</small></label>
-      <div class="sethead">Dice on the screens</div>
-      <div class="tvev diceset" id="diceSet"></div>
-      <div class="sethead">This laptop</div>
-      <div class="setrow"><button class="btn pebox" id="dmLightBtn" type="button" data-act="dmlight" title="Light or dark screen (this laptop only)" aria-label="Light or dark screen"></button></div>
-      <div class="acts">
-        <button class="btn sm" type="button" data-act="dmdev">DM devices</button>
-        <button class="btn sm" type="button" data-act="updates">Updates</button>
-        <button class="btn sm" type="button" data-act="keys">Shortcuts (?)</button>
-      </div>
-      <div class="sethead">Data and files</div>
-      <div class="acts">
-        <button class="btn sm" type="button" data-act="gdata">Game data</button>
-        <button class="btn sm" type="button" data-act="pics">Pictures</button>
-        <button class="btn sm" type="button" data-act="export">Export</button>
-        <label class="btn sm" for="importFile" tabindex="0">Import</label><input type="file" id="importFile" accept="application/json,.json" hidden>
-      </div>
-    </div>
-    </details>
+    <details class="panel" data-k="log" data-tab="fight" open><summary>Player activity <span class="pcount" id="logCount" hidden></span><span class="pmeta" data-meta="log"></span></summary><div class="actlog" id="actLog"></div></details>
+    <details class="panel" data-k="call" data-tab="fight" open><summary>Roll call<span class="pmeta" data-meta="call"></span></summary><section class="strip call" id="callStrip" aria-label="Roll call"></section></details>
+    <details class="panel" data-k="field" data-tab="fight" open><summary>Battlefield<span class="pmeta" data-meta="field"></span></summary><section class="strip field" id="fieldStrip" aria-label="Battlefield effects"></section></details>
+    <details class="panel" data-k="hand" data-tab="fight"><summary>Handouts<span class="pmeta" data-meta="hand"></span></summary><section class="strip hand" id="handStrip" aria-label="Handouts"></section></details>
+    <details class="panel" data-k="party" data-tab="prep" open><summary>Players<span class="pmeta" data-meta="party"></span></summary><section class="strip party" id="party" aria-label="Party"></section><div id="partyTbl"></div></details>
+    <details class="panel" data-k="enc" data-tab="prep"><summary>Encounters<span class="pmeta" data-meta="enc"></span></summary><section class="strip enc" id="enc" aria-label="Saved encounters"></section></details>
+    <div class="sidefoot" id="sideFoot" data-tab="fight"></div>
    </aside>
   </main>
 </div>
@@ -6084,8 +6166,7 @@ const SUN='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r
 function dmLookApply(){if(MODE!=="dm"||PREVIEW)return;document.documentElement.dataset.dmlook="tool"}
 function dmLightApply(){if(MODE!=="dm"||PREVIEW)return;const on=!!ls.get("dmLight",false),d=document.documentElement.dataset;if(on)d.dm="light";
   else delete d.dm;
-  const b=document.getElementById("dmLightBtn");if(b){b.textContent="Light screen";
-    b.title=on?"Switch to the dark screen":"Switch to the light screen";b.setAttribute("aria-pressed",String(on))}}
+  document.querySelectorAll('[data-act="dmtheme"]').forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.v==="light")===on)))}
 const themeOf=k=>THEMES.find(t=>t[0]===k)||THEMES[0];
 /* what the tablet shows: the theme's parts, with the DM's own picks over them */
 function lookOf(st){const th=themeOf(st.theme||"tavern"),L=st.look||{};return {pal:L.pal||th[0],rows:L.rows||th[0],font:L.font||th[3],tfont:L.tfont||th[4],
@@ -6125,6 +6206,7 @@ const SVGI={
   castle:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V9h2V5h2v2h2V5h4v2h2V5h2v4h2v12h-6v-5a2 2 0 00-4 0v5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
   search:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
   book:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 5v16M8 7h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>',
+  hourglass:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   spark:
     '<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z" fill="currentColor"/></svg>',
   reload:'<svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 11-2.3-5.6M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -6600,11 +6682,44 @@ function renderLog(){
   el.innerHTML=actLog.length?actLog.map(e=>`<div class="le${e.done?" undone":""}${e.fresh?" fresh":""}"><span class="lt">${new Date(e.at).toLocaleTimeString([],
     {hour:"2-digit",minute:"2-digit",hourCycle:"h23"})}</span><span class="lx">${esc(e.text)}</span>${e.inv&&!e.done?
     `<button class="btn sm" type="button" data-act="logundo" data-l="${e.id}">Undo</button>`:"<span></span>"}</div>`).join("")
-    :`<p class="strip-empty" style="margin:0">Nothing from the phones yet.</p>`;
+    :"";
   actLog.forEach(e=>e.fresh=false);
   const pn=document.querySelector('.panel[data-k="log"]'),cnt=$("#logCount");if(!pn||!cnt)return;
+  pn.classList.toggle("noitems",!actLog.length);sideMetaSet("log",actLog.length?"":"nothing yet");
   if(pn.open){logSeen=Date.now();cnt.hidden=true}else{const n=actLog.filter(e=>e.at>logSeen).length;cnt.hidden=!n;cnt.textContent=n}
+  sideTabDot();
 }
+/* 1.7: the side panel has two tabs. Fight holds what a turn needs (roll call, battlefield, player activity, handouts, quick add at the
+   foot); Prep holds what comes before (add to combat, players, encounters). The phase picks the tab; a tab the DM picks (or a roll
+   call sent from a statblock) stays until the phase changes. Each title says what is in it, so a closed section still tells. */
+let sideTabPick=null,sideTabWas=null;
+function sideTabAuto(){return state.turn?"fight":"prep"}
+function sideTabApply(){
+  const d=$("#dm");if(!d||MODE!=="dm")return;const auto=sideTabAuto();
+  if(auto!==sideTabWas){sideTabWas=auto;sideTabPick=null}
+  const tab=sideTabPick||auto;
+  if(d.dataset.tab!==tab){d.dataset.tab=tab;
+    document.querySelectorAll("#side .sidetabs [role=tab]").forEach(b=>{const on=b.dataset.v===tab;b.setAttribute("aria-selected",String(on));
+      b.tabIndex=on?0:-1});
+    const q=$("#side .quick"),to=tab==="fight"?$("#sideFoot"):$("#addForm");
+    if(q&&to&&q.parentNode!==to&&!q.contains(document.activeElement))to.appendChild(q)}
+  sideMeta();sideTabDot();
+}
+function sideMetaSet(k,t){const m=document.querySelector(`#side [data-meta="${k}"]`);if(m)m.textContent=t?"· "+t:""}
+function sideMeta(){
+  const call=state.call;let ct="";
+  if(call){const pcs=state.list.filter(c=>c.kind==="pc"&&!c.hidden),to=(call.to&&call.to.length?call.to:pcs.map(c=>c.id)).filter(byId),
+    a=call.answers||{},n=to.filter(id=>a[id]!=null).length;ct=n===to.length?"all in":`${n} of ${to.length} in`}
+  sideMetaSet("call",ct);
+  const area=state.effects.filter(e=>e.area).length,cl=(state.clocks||[]).length;
+  sideMetaSet("field",[area?`${area} active`:"",cl?`${cl} countdown${cl>1?"s":""}`:""].filter(Boolean).join(", ")||"none");
+  const H=state.handouts||[];sideMetaSet("hand",state.handout?"on the table":H.length?`${H.length} saved`:"none");
+  sideMetaSet("party",state.party.length?`${state.party.length} saved`:"");
+  sideMetaSet("enc",state.encounters.length?`${state.encounters.length} saved`:"");
+}
+/* a dot on the Fight tab while the DM is on Prep and something there wants a look */
+function sideTabDot(){const f=$("#tabFight");if(!f)return;const d=$("#dm"),n=actLog.filter(e=>e.at>logSeen).length;
+  f.classList.toggle("dot",!!(d&&d.dataset.tab==="prep"&&(state.call||n)))}
 function undoLog(id){
   const e=actLog.find(x=>x.id===id);if(!e||e.done||!e.inv)return;const v=e.inv,c=byId(v.cid),cn=x=>x.n||x;
   if(v.t==="init"&&c)c.init=v.prev;
@@ -7088,6 +7203,7 @@ function renderDM(){
   $("#endedNote").hidden=!state.ended;
   {const tb=$("#turnBox");if(tb)tb.innerHTML=turnTiles()}
   {const d=$("#dm");if(d)d.dataset.phase=state.turn?"fight":"setup"}
+  sideTabApply();
   const base=sorted(),list=withLair(base);const R=$("#roster");
   if(!list.length){R.innerHTML=
     `<div class="empty"><strong>Nobody in the order yet</strong><span>Add the party and some enemies, or drop in a saved encounter.</span><div class="acts">${
@@ -7245,16 +7361,17 @@ function renderCall(){
   if(!call){
     const keep=$("#callText")?$("#callText").value:"";
     el.innerHTML=`<span class="strip-label">Roll call</span>
-      <form id="callForm" autocomplete="off"><input class="field wide" id="callText" list="callList" placeholder="Dexterity save DC 15" aria-label="What to roll" value="${
+      <form id="callForm" autocomplete="off"><div class="callrow"><input class="field wide" id="callText" list="callList" placeholder="Dexterity save DC 15" aria-label="What to roll" value="${
         esc(keep)}">
       <datalist id="callList">${["Dexterity save DC 15","Constitution save DC 13","Wisdom save DC 14","Strength save DC 12","Perception check","Stealth check",
         "Initiative"].map(x=>`<option value="${x}">`).join("")}</datalist>
-      ${pcs.length>1?`<div class="chipgrid callpick" role="group" aria-label="Who rolls">${pcs.map(c=>
-        `<button type="button" data-act="callpick" data-id="${esc(c.id)}" aria-pressed="${!callSkip.has(c.id)}">${esc(c.name)}</button>`).join("")}</div>`:""}
-      ${(()=>{const n=callTargets().length;return `<button class="btn${n?" primary":""}" type="submit">${!n?"Send":n===pcs.length?
-        "Send to all players":`Send to ${n} player${n>1?"s":""}`}</button>${n?"":
-          `<span class="fixhint" role="status">Pick at least one player above</span>`}`})()}</form>
-      <span class="strip-empty">Phones buzz and ask for the total; you see every result here.</span>`;
+      ${(()=>{const n=callTargets().length,to=!n?"Send":n===pcs.length?"Send to all players":`Send to ${n} player${n>1?"s":""}`;
+        return `<button class="btn${n?" primary":""}" type="submit" aria-label="${to}" title="${
+          to}: phones buzz and ask for the total; you see every result here">Send</button></div>${
+        pcs.length>1?`<div class="chipgrid callpick" role="group" aria-label="Who rolls"><span class="callto" aria-hidden="true">To</span>${pcs.map(c=>
+        `<button type="button" data-act="callpick" data-id="${esc(c.id)}" aria-pressed="${!callSkip.has(c.id)}">${esc(c.name)}</button>`).join(
+          "")}</div>`:""}${n?"":
+          `<span class="fixhint" role="status">Pick at least one player</span>`}`})()}</form>`;
     return;
   }
   const to=(call.to&&call.to.length?call.to:pcs.map(c=>c.id)).map(byId).filter(Boolean),ans=call.answers||{};
@@ -7280,8 +7397,8 @@ function renderHand(){
       esc(h.id)}">${on&&on.id===h.id?"Shown":"Show"}</button><button type="button" class="btn sm" data-act="handedit" data-id="${esc(
         h.id)}">Edit</button><button type="button" class="icon-btn sm" data-act="handdel" data-id="${
       esc(h.id)}" aria-label="Delete ${esc(h.title||"this handout")}" title="Delete (click twice)">${I.x}</button></div>`).join("")}</div>`
-      :`<p class="strip-empty" style="margin:0">A note, a letter, a wanted poster or a page of lore, shown on the table.</p>`)
-    +`<button type="button" class="btn sm" data-act="handnew">New handout…</button>`;
+      :"")
+    +`<button type="button" class="btn sm" data-act="handnew" title="A note, a letter, a wanted poster or a page of lore, shown on the table">New handout…</button>`;
 }
 function handShow(h){const d=state.handoutWhere||{};state.handout={id:h.id,style:h.style||"parch",title:h.title||"",body:h.body||"",sign:h.sign||"",
   where:d.where||"both",phones:!!d.phones,at:Date.now()};commit()}
@@ -7327,12 +7444,13 @@ function renderField(){
   $("#fieldStrip").innerHTML=`<span class="strip-label">Battlefield</span>${area.map(e=>{const c=byId(e.by);
     return `<span class="pchip">✦ ${esc(e.name)}${c?` <small>${esc(c.name)}</small>`:
     ""}<button type="button" class="x" data-act="effrm" data-e="${esc(e.id)}" aria-label="Remove ${esc(e.name)}">${I.x}</button></span>`}).join("")||
-    '<span class="strip-empty">Area effects everyone should see: Fog Cloud, Darkness, Wall of Fire…</span>'}
-    <span class="spacer"></span><form id="fieldForm" autocomplete="off"><input class="field wide" id="fieldName" list="fieldList" maxlength="30" placeholder="Fog Cloud" aria-label="Battlefield effect">
+    ''}
+    <span class="spacer"></span><form id="fieldForm" autocomplete="off"><input class="field wide" id="fieldName" list="fieldList" maxlength="30" placeholder="Fog Cloud, Darkness…" aria-label="Battlefield effect" title="Area effects everyone should see: Fog Cloud, Darkness, Wall of Fire…">
     <datalist id="fieldList">${["Fog Cloud","Darkness","Spirit Guardians","Wall of Fire","Web","Entangle","Silence","Stinking Cloud","Sleet Storm",
       "Spike Growth","Difficult terrain","Dim light","Heavy rain"].map(x=>`<option value="${x}">`).join("")}</datalist>
-    <button class="btn" type="submit">Add</button></form><button class="btn" type="button" data-act="deffnew" title="A spell on players or monsters, with who cast it">${
-      ic("spark")} Spell effect…</button><button class="btn" type="button" data-act="clocknew" title="Goes down by one each round">⏳ Countdown…</button>${
+    <button class="btn" type="submit">Add</button></form><span class="fieldmore"><button class="btn sm" type="button" data-act="deffnew" title="A spell on players or monsters, with who cast it">${
+      ic("spark")} Spell effect…</button><button class="btn sm" type="button" data-act="clocknew" title="Goes down by one each round">${ic(
+        "hourglass")} Countdown…</button></span>${
       clocksHtml()}`;
 }
 function partyStats(name){return state.party.find(p=>p.name.toLowerCase()===String(name).toLowerCase())}
@@ -8655,9 +8773,8 @@ function renderParty(){
     ` <small>AC ${esc(p.ac)}</small>`:""}<button type="button" class="x" data-act="prm" data-i="${i}" aria-label="Remove ${esc(p.name)} from the party">${
     I.x}</button></span>`).join("");
   const pcsInFight=state.list.filter(c=>c.kind==="pc").length;
-  $("#party").innerHTML=`<span class="strip-label">Party</span>${chips||
-    '<span class="strip-empty">Enter the players once and they stay saved for every combat.</span>'}
-    <form id="partyForm" autocomplete="off"><input class="field" id="pName" placeholder="Player name" aria-label="Player name"><select class="field" id="pCls" aria-label="Class">${
+  $("#party").innerHTML=`<span class="strip-label">Party</span>${chips}
+    <form id="partyForm" autocomplete="off" title="Enter the players once and they stay saved for every combat"><input class="field" id="pName" placeholder="Player name" aria-label="Player name"><select class="field" id="pCls" aria-label="Class">${
       typeOptions(CLASSES,"",
       "Class")}</select><input class="field ac" id="pAc" type="number" placeholder="AC" aria-label="AC"><button class="btn" type="submit">Add</button></form>
     <span class="spacer"></span>
@@ -8665,7 +8782,7 @@ function renderParty(){
     ${party.length?`<button class="btn" type="button" data-act="ptoggle" aria-pressed="${showPartyTable}">Passives and DCs</button>`:""}
     ${party.length?'<button class="btn primary" type="button" data-act="pload">Add party to combat</button>':""}
     <label class="chk surpchk" title="Phones tell the players to roll initiative with disadvantage. Turns off by itself when turns start."><input type="checkbox" id="partySurp" ${
-      state.surprise?"checked":""}> Party is surprised (initiative with disadvantage)</label>`;
+      state.surprise?"checked":""}> Party is surprised</label>`;
   const ae=document.activeElement;if(!(ae&&$("#partyTbl").contains(ae)))$("#partyTbl").innerHTML=partyTable();
 }
 function renderEnc(){
@@ -8675,10 +8792,9 @@ function renderEnc(){
     esc(e.name)} <small>${e.foes.length}×</small></button><button type="button" class="x" data-act="erm" data-i="${i}" aria-label="Delete encounter ${esc(
     e.name)}">${I.x}</button></span>`).join("");
   const keep=$("#eName")?$("#eName").value:"";
-  $("#enc").innerHTML=`<span class="strip-label">Encounters</span>${chips||
-    '<span class="strip-empty">Set up enemies in a combat and save them as an encounter for later.</span>'}
+  $("#enc").innerHTML=`<span class="strip-label">Encounters</span>${chips}
     <span class="spacer"></span>
-    <form id="encForm" autocomplete="off"><input class="field wide" id="eName" placeholder="Name, e.g. Goblin ambush" aria-label="Encounter name" value="${esc(
+    <form id="encForm" autocomplete="off"><input class="field wide" id="eName" placeholder="Name, e.g. Goblin ambush" aria-label="Encounter name" title="Set up enemies in a combat and save them as an encounter for later" value="${esc(
       keep)}"><button class="btn" type="submit" ${foes?"":"disabled"}>Save enemies from combat</button></form>`;
 }
 function loadParty(){
@@ -12102,7 +12218,36 @@ async function updCheck(force){
   catch(e){updInfo={error:"server"}}
   updBusy=false;updMark();if($("#updSheet"))updSheet();return updInfo}
 function updMark(){const on=!!(updInfo&&updInfo.newer);
-  document.querySelectorAll('[data-k="more"]>summary,[data-act="updates"]').forEach(el=>el.classList.toggle("upddot",on))}
+  document.querySelectorAll('#setBtn,[data-act="updates"]').forEach(el=>el.classList.toggle("upddot",on))}
+/* 1.7: Settings and files open in a window from the gear, like Devices, so the side panel stays as it was. Light or dark is the
+   sun and moon in the header now. renderDM fills the fields that follow the state. */
+function setSheet(){
+  const upd=updInfo&&updInfo.newer?" upddot":"";
+  $("#overlay").innerHTML=
+    `<div class="scrim" data-act="close"><div class="sheet setsheet setpanel" id="setSheet" role="dialog" aria-modal="true" aria-label="Settings and files">
+    <div class="sethd"><h2>Settings and files</h2><button class="icon-btn" type="button" data-act="close" aria-label="Close">${I.x}</button></div>
+    <div class="setgrid">
+    <section class="setsec" aria-label="During combat"><div class="sethead">During combat</div>
+      <label class="setopt" for="timerSecs">Hourglass <input class="field" id="timerSecs" type="number" min="5" max="300" value="${
+        state.timerSecs||30}" style="width:5em"> seconds</label>
+      <label class="setopt"><input type="checkbox" id="autoTimer"${state.autoTimer?" checked":
+        ""}> <span>Start the hourglass on every player's turn</span></label>
+      <label class="setopt" title="When a monster you track takes damage while Concentrating"><input type="checkbox" id="concAuto"${ls.get("concAuto",false)?
+        " checked":""}> <span>Roll monsters' Concentration saves for me <small>otherwise the app asks</small></span></label></section>
+    <section class="setsec" aria-label="Dice on the screens"><div class="sethead">Dice on the screens</div><div class="tvev diceset" id="diceSet">${
+      diceSetHtml()}</div></section>
+    <section class="setsec" aria-label="This laptop"><div class="sethead">This laptop</div><div class="acts">
+      <button class="btn sm" type="button" data-act="dmdev">DM devices</button>
+      <button class="btn sm${upd}" type="button" data-act="updates">Updates</button>
+      <button class="btn sm" type="button" data-act="keys">Shortcuts (?)</button></div></section>
+    <section class="setsec" aria-label="Data and files"><div class="sethead">Data and files</div><div class="acts">
+      <button class="btn sm" type="button" data-act="gdata">Game data</button>
+      <button class="btn sm" type="button" data-act="pics">Pictures</button>
+      <button class="btn sm" type="button" data-act="export">Export</button>
+      <label class="btn sm" for="importFile" tabindex="0">Import</label><input type="file" id="importFile" accept="application/json,.json" hidden></div></section>
+    </div></div></div>`;
+  setTimeout(()=>{const c=$("#setSheet [data-act=close]");c&&c.focus()},0);
+}
 function updSheet(){
   const U=updInfo||{},cur=esc(U.current||"");let body;
   if(updBusy)body=`<p>Asking GitHub…</p>`;
@@ -12408,11 +12553,11 @@ document.addEventListener("click",e=>{
     case "turnmenu": turnMenuOn=!turnMenuOn;renderDM();break;
     case "footmore": footMenu(!$("#footMenu").hidden?false:true);break;
     case "sidetoggle":{const d=$("#dm"),on=!d.classList.contains("sideon");d.classList.toggle("sideon",on);t.setAttribute("aria-expanded",String(on));break}
-    case "settingsopen":{if(matchMedia("(max-width:1100px)").matches)$("#dm").classList.add("sideon");if(sbViewId){sbViewId=null;
-      renderDM()}const pn=document.querySelector('.panel[data-k="more"]');
-      if(pn){if(pn.classList.contains("on")&&pn.open){pn.open=false;pn.classList.remove("on");break}
-      pn.classList.add("on");pn.open=true;if(!pn.dataset.tw){pn.dataset.tw="1";pn.addEventListener("toggle",()=>{if(!pn.open)pn.classList.remove("on")})}
-      pn.scrollIntoView({block:"nearest",behavior:"smooth"});pn.classList.remove("ping");void pn.offsetWidth;pn.classList.add("ping")}break}
+    case "settingsopen": if($("#setSheet"))closeSheet();else setSheet();break;
+    case "dmtheme":{const want=t.dataset.v==="light";if(!!ls.get("dmLight",false)!==want){ls.set("dmLight",want);dmLightApply()}break}
+    case "sidetab": sideTabPick=t.dataset.v;sideTabApply();break;
+    case "qhelp":{const q=t.closest(".quick"),on=!q.classList.contains("showhint");q.classList.toggle("showhint",on);t.setAttribute("aria-expanded",
+      String(on));break}
     case "sbopen": sbItems=[];libQ="";libArmed=null;sbSheet();setTimeout(()=>{const q=$("#fetQ")||$("#libQ");q&&q.focus()},0);
       fetRefresh().then(fetRedraw);break;
     case "fetpick": fetPick(t.dataset.id);break;
@@ -12465,7 +12610,8 @@ document.addEventListener("click",e=>{
     case "sbaskno": sbSaveAsk=null;renderSbDrawer();break;
     case "sbasksend":{if(!sbSaveAsk||!sbSaveAsk.to.length)break;const a=sbSaveAsk,src=byId(sbViewId);sbSpend(src,a.n);
       state.call={id:uid(),text:`${a.ab} save DC ${a.dc}${a.n?" · "+a.n:""}`,dc:a.dc,at:Date.now(),to:a.to.slice(),answers:{}};sbSaveAsk=null;commit();
-      toast(`Roll call sent: ${a.ab} save DC ${a.dc}`);const pn=document.querySelector('#side details.panel[data-k="call"]');if(pn)pn.open=true;break}
+      toast(`Roll call sent: ${a.ab} save DC ${a.dc}`);const pn=document.querySelector('#side details.panel[data-k="call"]');if(pn)pn.open=true;
+      sideTabPick="fight";sideTabApply();break}
     case "sbdrop": sbItems.splice(Number(t.dataset.i),1);sbSheet();break;
     case "sbinit":{const x=sbItems[Number(t.dataset.i)];if(x){x.im=t.dataset.m;sbInitMode=t.dataset.m;ls.set("initMode",sbInitMode);sbSheet()}break}
     case "sbcount":{const x=sbItems[Number(t.dataset.i)];if(x){x.count=Math.max(1,Math.min(12,x.count+Number(t.dataset.d)));sbSheet()}break}
