@@ -194,8 +194,15 @@ document.addEventListener("click",e=>{
     case "deffpick": dEffPick(t.dataset.n,t.dataset.s);break;
     case "deffname": dEffPick(dEff.q.trim(),"");break;
     case "deffchg": dEff.name="";dEff.src="";dEffRender(true);break;
-    case "deffby": dEff.by=t.dataset.id;{const x=dEff.name&&spellFind(dEff.name,dEff.src);if(!dEff.by)dEff.conc=false;
-      else if(x)dEff.conc=!!x[2]}dEffRender();break;
+    case "deffsv": dEff.sv.ab=t.dataset.v;dEff.touched.ab=true;dEffRender();break;
+    case "deffwin": dEff.sv.on=t.dataset.v;dEff.touched.on=true;dEffRender();break;
+    case "defflv": dEff.lvl=Number(t.dataset.v);dEff.touched.lvl=true;dEff.lvlNote="";if(!dEff.touched.dmg&&dEff.dmg.base)dEff.dmg.d=dEffDiceAt(dEff.dmg.base,
+      dEff.dmg.inc,dEff.lvl0,dEff.lvl);dEffRender();break;
+    case "deffall":{const side=t.dataset.v==="pc",ids=state.list.filter(k=>k.kind!=="lair"&&dEffPcSide(k)===side).map(k=>k.id),all=ids.every(id=>
+      dEff.targets.has(id));
+      ids.forEach(id=>all?dEff.targets.delete(id):dEff.targets.add(id));dEffRender();break}
+    case "deffong": dEff.showOng=true;dEffRender();{const d=$("#dEffOngD");d&&d.focus()}break;
+    case "deffroll": dEffRoll();break;
     case "defftgt": dEff.targets.has(t.dataset.id)?dEff.targets.delete(t.dataset.id):dEff.targets.add(t.dataset.id);dEffRender();break;
     case "deffadd": dEffAdd();break;
     case "psphb": spHb=!spHb;ls.set("spHb",spHb);if(dEff&&$("#dEffList"))$("#dEffList").innerHTML=dEffListHtml();break;

@@ -117,6 +117,7 @@ if(MODE==="player"){
           else if(a.action==="answer"&&state.call&&state.call.id===a.call){state.call.answers=Object.assign({},state.call.answers,{[c.id]:a.value});
             if(mtOn&&mt.callId===a.call&&mtSel.has(c.id)){const ok=Number(a.value)>=Number(state.call.dc);mt.rolls[c.id]={tot:a.value,ok,pc:true};
               mt.modes[c.id]=ok?(mt.on==="half"?"half":"none"):"full";setTimeout(mtTargets,0)}L(`${c.name}: rolled ${a.value} (${state.call.text})`);
+            effSaved(state.call,c,a.value,L);
             const cc=state.call.cond;if(cc&&cc.id===c.id&&state.call.dc!=null&&a.value>=state.call.dc&&c.conds.some(x=>cn(x)===cc.n)){c.conds=c.conds.filter(x=>
               cn(x)!==cc.n);if(c.cdur)delete c.cdur[cc.n];L(`${c.name}: saved, ${cc.n} ends`,{t:"cond",cond:cc.n,on:false});
               clogPush(`${c.name}: ${cc.n} ends (save ${a.value} vs DC ${state.call.dc})`)}

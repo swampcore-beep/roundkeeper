@@ -1,5 +1,5 @@
 /* ---------- players on their own phones: "Who are you?", button bar, own conditions ---------- */
-let meName=ls.get("meName",null);      // character name; "*" = shared screen (Tablet)
+let meName=MODE==="player"?ls.get("meName",null):null;      // character name; "*" = shared screen (Tablet). 1.7: only the players' page reads it
 let pSheet=null;                       // "who" | "init" | "conds" | "effs" | "res" | "hp" | "dice" | "call"
 const meChar=()=>meName&&meName!=="*"?state.list.find(c=>c.kind==="pc"&&!c.hidden&&c.name.toLowerCase()===meName.toLowerCase()):null;
 const canEdit=()=>state.playerEdits!==false;

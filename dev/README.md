@@ -75,6 +75,7 @@ Never commit those files.
 | t43 | 1.6: dice on the screens: shared rolls carry their dice and the server keeps only real ones, the DM's 3D / Light / Off for the TV, the tablet and the phones and a player's own choice on their phone, 3D dice that land on the rolled faces (WebGL in software), Light without WebGL and in the TV's Light mode, Off with reduced motion |
 | t44 | 1.7: the side panel: Fight and Prep tabs by the phase and by hand, quick add at the foot of Fight, titles that say what is in each section, a fight that fits 1536×864, Settings and files in a window, the sun and moon switch, button edges of 3:1 in both themes |
 | t45 | 1.7: one look per role on the DM screen: toolbar, header, turn bar and statblock buttons with an edge of 3:1, End combat red, Players can edit a toggle, the picked attack roll and Statblock/Picture raised, quiet row icons at 4.5:1, the statblock hint behind ?, HP's edge under the mouse, in both themes |
+| t46 | 1.7: the Spell effect window with a saving throw (SRD): Fireball from a statblock prefilled (level 6, 11d6 fire, DEX, DC 20, half) and handed to Hit several with saves rolled and a roll call; Hold Person keeps only those who fail, its DC remembered for a player, saved again at the end of a turn or on the phone; Bless without a save; the DM loads the spells despite a tablet mark in the browser; a spell card near the bottom stays inside the window |
 | ui, hov | the monster search sheet; hover cards for spells and rules |
 
 ## Media for the README
