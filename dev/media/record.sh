@@ -6,6 +6,7 @@
 #   gifs       the four GIFs                                  -> gifs/*.gif
 #   four       the four-screens video                         -> roundkeeper-four-screens.mp4
 #   dm table phone   the three tours                          -> roundkeeper-<name>.mp4
+#   home       the README's video at the top: one fight, four screens, ~2.5 min  -> roundkeeper-home.mp4
 #   videos     four dm table phone;   all   everything
 # Everything is made in dev/.work/media as before. The finished files are also gathered in dev/.work/media/out:
 # out/readme holds what dev/media/publish.py would put in media/ (README names and sizes), out/videos the mp4s,
@@ -16,7 +17,7 @@ want=" ${*:-stills pictures} "
 want=${want// all / stills pictures gifs videos }
 want=${want// videos / four dm table phone }
 for w in $want; do
-  case $w in stills|pictures|gifs|four|dm|table|phone) ;; *) echo "record: unknown part '$w' (stills pictures gifs four dm table phone videos all)"; exit 1;; esac
+  case $w in stills|pictures|gifs|four|dm|table|phone|home) ;; *) echo "record: unknown part '$w' (stills pictures gifs four dm table phone home videos all)"; exit 1;; esac
 done
 has(){ case "$want" in *" $1 "*) return 0;; esac; return 1; }
 step(){ echo "record: $*"; }
@@ -40,6 +41,7 @@ fi
 if has dm; then for s in dm tablet phone; do step "DM tour: $s"; fresh; run dev/media/video_dm_rec.py "$s"; done; run dev/media/video_make.py dm; vid roundkeeper-dm.mp4; fi
 if has table; then for s in tablet tv; do step "table tour: $s"; fresh; run dev/media/video_table_rec.py "$s"; done; run dev/media/video_make.py table; vid roundkeeper-table.mp4; fi
 if has phone; then for s in phone tablet; do step "phone tour: $s"; fresh; run dev/media/video_phone_rec.py "$s"; done; run dev/media/video_make.py phone; vid roundkeeper-phone.mp4; fi
+if has home; then for s in dm tablet tv phone; do step "home video: $s"; fresh; run dev/media/video_home_rec.py "$s"; done; run dev/media/video_home.py; vid roundkeeper-home.mp4; fi
 bash dev/serve.sh stop > /dev/null 2>&1
 
 # gather: publish.py writes into media/, so give it a copy of the repo's media/ and keep only what it changed

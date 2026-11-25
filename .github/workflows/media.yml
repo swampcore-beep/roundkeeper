@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       what:
-        description: "What to make: stills pictures gifs four dm table phone, or videos, or all"
+        description: "What to make: stills pictures gifs four dm table phone home, or videos, or all"
         default: "stills pictures"
         required: true
   pull_request:
