@@ -52,7 +52,7 @@ async def main():
         await S("state.diceView={tv:'off',tab:'off',ph:'off'};commit()")   # the other 3D roll is Gregori's own, on his phone
         # --- the DM's laptop
         mark()
-        await pause(2.4)
+        await pause(3.0)
         mark()
         await go('#tabPrep',dur=.45);await pause(.5)
         await go('[data-act=sbopen]',dur=.4);await pause(.5)
@@ -69,15 +69,14 @@ async def main():
         await go('#sbDrawer .sbbody button:has-text("+14")');await pause(1.0)
         await go('#sbDrawer .sbbody button:has-text("1d10 + 8")');await pause(1.3)
         mark()
-        await dm.add_style_tag(content=".refcard{display:none!important}")   # hover cards would cover the roll call box
-        await go('#sbDrawer [data-act=sbsave]');await pause(.7)
-        await go('#sbDrawer [data-act=sbasksend]');await pause(1.0)
+        # the dragon is still hidden, so its Fire Breath can't be the save: the roll call comes from the Fight tab
+        await go('#sbDrawer .sbheadb [data-act=sbclose]',dur=.35);await pause(.4)
+        await go('#callText',dur=.4);await typ('#callText','Dexterity save DC 15',.05);await pause(.3)
+        await go('#callForm button[type=submit]',dur=.35);await pause(1.0)
         await T(ph,"Math.random=()=>0.62");await tap('[data-act=pcallroll]',.6);await T(ph,"Math.random=window.__r")
         for k,v in (('i',23),('s',12),('a',19)): await S(f"state.call.answers=Object.assign({{}},state.call.answers,{{{k}:{v}}});commit()",.45)
-        await pause(1.6)
-        await go('#sbDrawer .sbheadb [data-act=sbclose]',dur=.35);await pause(.2)
+        await pause(1.8)
         await S("delete state.call;state.turn=Object.assign({},state.turn,{id:'gr',init:8});commit()",.6)
-        await dm.evaluate("()=>{for(const s of document.querySelectorAll('style'))if(s.textContent.includes('.refcard{display:none'))s.remove()}")
         mark()
         await go('[data-act=mtstart]',dur=.4);await pause(.4)
         for g in ('g1','g2','g3'): await go(f'.row[data-id="{g}"] [data-act=mttoggle]',dur=.25)
@@ -100,8 +99,9 @@ async def main():
         await tap('.sx[data-act=pclose]',.5)
         mark()
         await tap('.ptop[data-act=pres]',.8)
-        await tap(ph.locator('.rcard').nth(2).locator('.rpip.on').first,1.0)
-        await tap(ph.locator('.rcard').nth(0).locator('.rpip.on').first,1.1)
+        await tap(ph.locator('.rcard',has_text='level 3').locator('.rpip.on').first,1.2)
+        await tap(ph.locator('.rcard',has_text='level 1').locator('.rpip.on').first,1.3)
+        print('slots',await ph.eval_on_selector_all('.rcard .rct',"e=>e.map(x=>x.textContent).join(' ')"),flush=True)
         await tap('.sx[data-act=pclose]',.5)
         mark()
         await tap('.pdock [data-act=php]',.6)
@@ -112,8 +112,9 @@ async def main():
         # --- the tablet and the TV
         mark()
         await S("{const d=state.list.find(c=>c.name==='Adult Red Dragon');d.hidden=false;d.introAt=Date.now()};commit()",5.6)
-        # the dragon opens round 3: the TV shows the new round now, so it has made way by the death saves
-        await S("state.turn={round:3,id:state.list.find(c=>c.name==='Adult Red Dragon').id,init:22};commit()",3.2)
+        # the dragon opens round 3: the TV shows the new round with what happened in round 2, and has made way by the death saves
+        await S("state.rsum={r:2,lines:['Gregori\\'s Fireball drops three goblins','Styx rolls a natural 20','The Adult Red Dragon appears']};"
+                "state.turn={round:3,id:state.list.find(c=>c.name==='Adult Red Dragon').id,init:22};commit()",3.0)
         mark()
         await S("const c=byId('i');c.down=true;c.ds={s:1,f:2};state.turn={round:3,id:'i',init:19};commit()",4.8)
         mark()
@@ -123,7 +124,7 @@ async def main():
         mark()
         await S("for(const k of ['g1','g2','g3']){const g=byId(k);g.hp=0;g.down=true};"
                 "state.cstat={Gregori:{d:84,k:2,top:{n:28,w:'fire',t:'Goblin A'}},Styx:{d:41,k:1,top:{n:21,w:'piercing',t:'Adult Red Dragon'}},Isandros:{d:63,k:1,top:{n:31,w:'radiant',t:'Adult Red Dragon'}}};"
-                "state.nstat={s:{n20:1,n1:0}};state.hdywt=null;state.fightAt=Date.now()-38*60000;endFight();commit()",6.0)
+                "state.nstat={s:{n20:1,n1:0}};state.hdywt=null;state.turn=null;state.fightAt=Date.now()-38*60000;endFight();commit()",6.5)
         R.mark("end")
         await pause(.5)
         R.save(dsf=dsf)

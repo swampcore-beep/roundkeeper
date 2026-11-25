@@ -105,7 +105,7 @@ def main_frame(t):
 if __name__=='__main__':
     INTRO=look.card("Roundkeeper",["One fight, four screens:","the DM's laptop, a tablet on the table, a TV and the players' phones."],kicker="A combat tracker for 5e at the table")
     OUTRO=look.card("Roundkeeper",["Free and open source, for Windows, Mac and Linux.","No accounts, no internet: it runs on your own Wi-Fi."],foot="github.com/swampcore-beep/roundkeeper")
-    IN,OUTD,XF=2.4*PACE,3.5*PACE,0.5
+    IN,OUTD,XF=3.4,4.0,0.5   # the cards don't stretch with the pace: the outro read as a freeze
     total=IN+TEND+OUTD;print('home length',round(total,1),'s, CRF',CRF)
     ff=subprocess.Popen(['ffmpeg','-loglevel','error','-y','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-',
         '-c:v','libx264','-preset','veryfast','-crf',CRF,'-pix_fmt','yuv420p','-movflags','+faststart',OUT],stdin=subprocess.PIPE)
