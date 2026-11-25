@@ -108,7 +108,7 @@ function sheetSync(){   // 79: a player's sheet is their statblock in the DM's d
     const md=shMd(sh,c.name);if(!c.sb||c.sb.pc){if(!c.sb||c.sb.raw!==md)c.sb={raw:md,uses:[],rech:[],know:[],pc:1}}
     const C=shCalc(sh);if(c.ac==null&&sh.ac)c.ac=Number(sh.ac);c.pst={ac:Number(sh.ac)||c.ac||10,pp:C.pp,pi:C.pi,pv:C.pv,dc:C.dc||0,at:sh.v||0}})}
 function finish(){
-  if(MODE==="dm")sheetSync();
+  if(MODE==="dm"){sheetSync();invSync()}
   const nList=state.list.length;if(lastListLen===0&&nList>0)state.fightAt=Date.now();lastListLen=nList;   // the table goes from empty to a fight
   state.rev=Math.max(Date.now(),(state.rev||0)+1);
   state.vanish=(state.vanish||[]).filter(v=>Date.now()-v.at<60000);

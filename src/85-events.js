@@ -169,6 +169,7 @@ document.addEventListener("click",e=>{
     case "complvl": compD.lvl=Math.max(1,Math.min(9,compD.lvl+Number(t.dataset.d)));compSheet();break;
     case "compadd": compAdd();break;
     case "party": partySheet();break;
+    case "dinv": dinvAct(t);break;
     case "revpvagain": revealPreview.play&&revealPreview.play();break;
     case "revpvgo":{const c2=byId(t.dataset.id);closeSheet();if(c2){c2.hidden=false;commit();toast(`${c2.name} revealed`)}break}
     case "titleedit2": titleSheet(t.dataset.id);break;
@@ -372,7 +373,8 @@ document.addEventListener("click",e=>{
     case "pbookopen":{const n=t.dataset.n,src=t.dataset.s||"",from=t.dataset.from||(pSheet==="spell"&&spView?spView.from:"book");
       spView={n,s:src,from};pSheet="spell";renderPSheet();
       refGet("spell",n,src,true).then(d=>{if(!spView||spView.n!==n||spView.s!==src)return;spView.d=d;if(pSheet==="spell")renderPSheet()});break}
-    case "pbookback": pSheet=spView&&spView.from==="effs"?"effs":spView&&spView.from==="sheet"?"sheet":"book";renderPSheet();break;
+    case "pbookback": pSheet=spView&&spView.from==="effs"?"effs":spView&&spView.from==="sheet"?"sheet":spView&&spView.from==="inv"&&invItem(invView)?"invitem":
+      "book";renderPSheet();break;
     case "pspfx": pSend({action:"spfx",n:t.dataset.n||"",t:t.dataset.t||""});toast("✨ "+(t.dataset.n||"Your spell")+" on the table");break;
     case "pbookeff":{const x=spellFind(spView&&spView.n,spView&&spView.s);if(!x)break;
       effDraft={name:x[0].slice(0,30),src:x[7]||"",conc:!!x[2],area:!!x[3],targets:new Set(),custom:false};pSheet="effs";renderPSheet();break}
@@ -480,7 +482,9 @@ document.addEventListener("click",e=>{
       else if(k==="spatk")shRoll("Spell attack",C.atk||0);else if(k==="init")shRoll("Initiative",C.init);else{const at=(sh.att||[])[Number(t.dataset.i)];
         if(at){if(k==="hit")shRoll(`${at.n} to hit`,Number(at.hit)||0);else shDmg(at.n,at.dmg)}}
       renderPSheet();break}
-    case "shtab": shTab=t.dataset.v||"main";ls.set("shTab",shTab);renderPSheet();{const b=$(".psheet .sbody");if(b)b.scrollTop=0}break;
+    case "shtab": if(t.dataset.v==="items"){pSheet="inv";invPull(true);renderPSheet();{const b=$(".psheet .sbody");if(b)b.scrollTop=0}break}
+      shTab=t.dataset.v||"main";ls.set("shTab",shTab);if(pSheet!=="sheet")pSheet="sheet";renderPSheet();{const b=$(".psheet .sbody");if(b)b.scrollTop=0}break;
+    case "inv": invAct(t);break;
     case "shsec":{const o=shOpen(),k=t.dataset.s;o[k]=!o[k];ls.set("shOpen",o);renderPSheet();break}
     case "shpool":{const r=resGet(),x=r[Number(t.dataset.i)];if(!x)break;x.cur=Math.max(0,Math.min(x.max,x.cur+Number(t.dataset.d)));resSet(r);
       renderPSheet();break}
@@ -560,10 +564,11 @@ document.addEventListener("click",e=>{
         if(rs==="short")return Object.assign(x,{cur:x.max});
         if(rs==="shortOne")return Object.assign(x,{cur:Math.min(x.max,x.cur+1)});return x});
       resSet(r);
-      let exNote="";
+      let exNote="";const chg=invRest(kind);if(chg.length)exNote+=" · "+chg.join(", ");
       if(kind==="long"){const hp=hpGet();if(hp.max){hp.cur=hp.max;hp.temp=0;hpSet(hp);hpReport()}
         const ex=myExh();if(ex){pSend({action:"exh",level:ex-1});exNote=ex>1?` · Exhaustion ${ex}→${ex-1}`:" · Exhaustion gone"}}
-      renderPlayer();renderPSheet();toast(kind==="long"?"Long rest: resources and HP restored"+exNote:"Short rest: short-rest resources restored");break}
+      renderPlayer();renderPSheet();toast(kind==="long"?"Long rest: resources and HP restored"+exNote:"Short rest: short-rest resources restored"+exNote,exNote?
+        5000:0);break}
     case "rreset": resDraft.reset=t.dataset.r;t.parentElement.querySelectorAll("[data-act=rreset]").forEach(b=>b.setAttribute("aria-pressed",
       String(b===t)));break;
     case "presadd":{const name=resDraft.name.trim(),max=parseInt(padVal,10);
@@ -586,6 +591,8 @@ document.addEventListener("input",e=>{
   if(t.id==="pSpellQ"){spellQ=t.value;const l=$("#pSpellList");if(l)l.innerHTML=spellListHtml(meChar());return}
   if(t.id==="pcFeatQ"){pcFeatQ=t.value;const l=$("#pcFeatList");if(l)l.innerHTML=pcFeatListHtml();return}
   if(t.id==="pBookQ"){bookQ=t.value;const l=$("#pBookList");if(l)l.innerHTML=bookListHtml(meChar());return}
+  if(t.id==="pItemQ"){invQ=t.value;const l=$("#pItemList");if(l)l.innerHTML=invAddListHtml();return}
+  if(t.id==="invOwnN"||t.id==="invOwnD"){if(invOwn)invOwn[t.id==="invOwnN"?"n":"d"]=t.value;return}
   if(t.id==="pEffName"){effDraft.name=t.value;const x=spellFind(t.value);if(x){effDraft.conc=!!x[2];const c=$("#pEffConc");if(c)c.checked=effDraft.conc}}
   if(t.id==="pEffConc")effDraft.conc=t.checked;
   if(t.id==="pResName"){resDraft.name=t.value;const rs=RES_PRESETS[t.value.trim()];if(rs){resDraft.reset=rs;

@@ -41,6 +41,9 @@ function surfaceMoments(first){
     `<span class="mo-sig sig"></span><div class="mo-big">${esc(h.name)},</div><div class="mo-q">how do you want to do this?</div><div class="mo-eb">${esc(
     h.boss)} falls</div>`,Math.max(4000,14000-(now-h.at)))}
   if(!h&&pv.hd&&$("#moment.hd"))$("#moment").remove();
+  const f=state.itemFx;if(f&&f.id!==pv.itemFx){pv.itemFx=f.id;if(!first&&now-f.at<20000)momentShow("item",
+    `<div class="mo-eb">${esc(f.who)} finds</div><div class="mo-big">${esc(
+    f.n)}</div>`,6000)}
 }
 const TV_MODES=[["auto","Auto"],["scene","Scene"],["spot","Spotlight"],["order","Order"],["mirror","Mirror"]];
 function tvModeNow(list){const T=state.tv||{},m=T.mode||"auto",paused=T.pause&&T.pause.until>dmNow();

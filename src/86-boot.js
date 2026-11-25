@@ -85,6 +85,7 @@ if(MODE==="player"){
           if(a.action==="chp"){if(c.owner&&c.hpMax!=null){hpDo(c,a.kind,a.n,"from the phone");
             notes.push([`${c.name}: ${a.kind==="dmg"?"−":a.kind==="heal"?"+":"temp "}${a.n}`,null])}return}
           if(c.kind!=="pc")return;const cn=x=>x.n||x;const L=(text,inv)=>notes.push([text,inv?Object.assign({cid:c.id},inv):null]);
+          if(INV_ACTS.has(a.action)){invApply(a,c,t=>notes.push([t,null]));quiet=true;return}   // items and coins
           if(a.nat)natAdd(c.id,a.nat);
           if(a.action==="init"){const prev=c.init;c.init=a.value;freshIds.add(c.id);L(`${c.name}: initiative ${a.value}`,{t:"init",prev})}
           else if(a.action==="cond"){const has=c.conds.some(x=>cn(x)===a.cond);

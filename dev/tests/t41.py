@@ -81,7 +81,7 @@ async def main():
                 "ls.set('shOpen',{});shTab='main';shLast=null;document.activeElement&&document.activeElement.blur();shDraft=null;pSheet='sheet';renderPSheet()",.8)
         txt=await ph.locator('.psheet').inner_text()
         tabs=await P("[...document.querySelectorAll('.shtabs button')].map(b=>b.dataset.v).join(',')")
-        chk("Phone sheet: band, tabs Main · Spells · Features",'Isandros' in txt and tabs=='main,spells,feat',tabs)
+        chk("Phone sheet: band, tabs Main · Spells · Features · Items",'Isandros' in txt and tabs=='main,spells,feat,items',tabs)
         chk("Phone sheet: AC, HP with temp, initiative, speed, proficiency, passive Perception",all(x in txt for x in ['18','44','/ 52','+5 temp','30 ft','PASSIVE PERC.']),'')
         n=await ph.locator('.shsec').count(); op_=await ph.locator('.shsec.open').count()
         chk("Phone sheet: four sections, Abilities open by default",n==4 and op_==1 and await ph.locator('.shsec.open .shab1').count()==6,[n,op_])

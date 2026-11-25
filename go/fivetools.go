@@ -58,6 +58,8 @@ type fetDB struct {
 	lgroups   map[string]json.RawMessage // legendary groups: lair actions and regional effects
 	spells    []byte                     // the spell list the phones get
 	refIndex  []byte                     // every rule, spell, item… by name, for Ctrl+K
+	items     []byte                     // items for the DM's Give an item: everything
+	itemsPub  []byte                     // and for the phones' Add an item: the official books and the SRD
 	pcCls     map[string]map[string]any  // classes: only their tables, for a phone's own trackers
 	pcSub     map[string]map[string]any  // subclasses: the same
 	pcData    []byte
@@ -650,6 +652,121 @@ func fetBuildRefIndex(db *fetDB, sig string) {
 	db.refIndex = encode(map[string]any{"sig": sig, "list": rows})
 }
 
+// what kind of thing an item is, for the lists' filters and the item's line ("Wand, uncommon")
+func fetItemKind(raw json.RawMessage) string {
+	var x struct {
+		Type, WeaponCategory string
+		Weapon, Armor        bool
+		Wondrous             bool
+	}
+	json.Unmarshal(raw, &x)
+	t := strings.ToUpper(strings.Split(x.Type, "|")[0])
+	switch {
+	case x.Weapon || x.WeaponCategory != "" || t == "M" || t == "R":
+		return "weapon"
+	case t == "S":
+		return "shield"
+	case x.Armor || t == "LA" || t == "MA" || t == "HA":
+		return "armor"
+	case t == "P":
+		return "potion"
+	case t == "RG":
+		return "ring"
+	case t == "WD":
+		return "wand"
+	case t == "ST":
+		return "staff"
+	case t == "RD":
+		return "rod"
+	case t == "SC":
+		return "scroll"
+	case t == "A" || t == "AF":
+		return "ammo"
+	case x.Wondrous:
+		return "wondrous"
+	case strings.HasPrefix(t, "$"):
+		return "treasure"
+	case t == "T" || t == "AT" || t == "INS" || t == "GS":
+		return "tool"
+	case t == "VEH" || t == "MNT" || t == "SHP" || t == "AIR" || t == "SPC":
+		return ""
+	}
+	return "gear"
+}
+
+// the SRD's list has no flags on plain weapons and armor (Dagger, Chain Mail), so their names say it
+var srdWeaponArmor = map[string]string{"club": "weapon", "dagger": "weapon", "greatclub": "weapon", "handaxe": "weapon", "javelin": "weapon",
+	"light hammer": "weapon", "mace": "weapon", "quarterstaff": "weapon", "sickle": "weapon", "spear": "weapon", "dart": "weapon", "light crossbow": "weapon",
+	"shortbow": "weapon", "sling": "weapon", "battleaxe": "weapon", "flail": "weapon", "glaive": "weapon", "greataxe": "weapon", "greatsword": "weapon",
+	"halberd": "weapon", "lance": "weapon", "longsword": "weapon", "maul": "weapon", "morningstar": "weapon", "pike": "weapon", "rapier": "weapon",
+	"scimitar": "weapon", "shortsword": "weapon", "trident": "weapon", "warhammer": "weapon", "war pick": "weapon", "whip": "weapon", "blowgun": "weapon",
+	"hand crossbow": "weapon", "heavy crossbow": "weapon", "longbow": "weapon", "musket": "weapon", "pistol": "weapon", "padded armor": "armor",
+	"leather armor": "armor", "studded leather armor": "armor", "hide armor": "armor", "chain shirt": "armor", "scale mail": "armor", "breastplate": "armor",
+	"half plate armor": "armor", "ring mail": "armor", "chain mail": "armor", "splint armor": "armor", "plate armor": "armor", "shield": "shield"}
+
+// fetBuildItems: one row per item, the newest printing only: name, source, book, kind, rarity, attunement, group, price in cp
+func fetBuildItems(db *fetDB, sig string) {
+	all, pub := [][]any{}, [][]any{}
+	for k, raw := range db.refs {
+		t := k[:strings.Index(k, "|")]
+		if t != "item" && t != "baseitem" {
+			continue
+		}
+		var x struct {
+			Name, Source, Rarity string
+			ReqAttune            json.RawMessage `json:"reqAttune"`
+			Value                float64
+		}
+		if json.Unmarshal(raw, &x) != nil || x.Name == "" {
+			continue
+		}
+		if n, s, ok := fetReprintOf(raw); ok { // a 2014 item with its 2024 printing among the files
+			newer := false
+			for _, tt := range []string{"item", "baseitem"} {
+				if _, ok := db.refs[tt+"|"+fetKey(n, s)]; ok {
+					newer = true
+				}
+			}
+			if newer {
+				continue
+			}
+		}
+		kind := fetItemKind(raw)
+		if kind == "" {
+			continue
+		}
+		if k2 := srdWeaponArmor[strings.ToLower(strings.TrimSpace(x.Name))]; kind == "gear" && k2 != "" {
+			kind = k2
+		}
+		att := 0
+		if len(x.ReqAttune) > 0 && string(x.ReqAttune) != "false" && string(x.ReqAttune) != "null" {
+			att = 1
+		}
+		rar := strings.ToLower(x.Rarity)
+		if rar == "none" || rar == "unknown" {
+			rar = ""
+		} else if rar == "unknown (magic)" {
+			rar = "magic"
+		}
+		g := db.refGroup[k]
+		if g == "" {
+			g = "off"
+		}
+		row := []any{x.Name, x.Source, db.refLabel[k], kind, rar, att, g, int64(x.Value)}
+		all = append(all, row)
+		if g == "off" {
+			pub = append(pub, row)
+		}
+	}
+	less := func(l [][]any) func(i, j int) bool {
+		return func(i, j int) bool { return strings.ToLower(l[i][0].(string)) < strings.ToLower(l[j][0].(string)) }
+	}
+	sort.Slice(all, less(all))
+	sort.Slice(pub, less(pub))
+	db.items = encode(map[string]any{"sig": sig, "list": all})
+	db.itemsPub = encode(map[string]any{"sig": sig, "list": pub})
+}
+
 // "Name|SOURCE" from 5e.tools' reprintedAs, which points at the newest printing (the 2024 books)
 func fetReprintOf(raw json.RawMessage) (string, string, bool) {
 	var x struct {
@@ -951,6 +1068,7 @@ func fetLoad(sig string) {
 	db.index = encode(map[string]any{"sig": sig, "list": list})
 	fetBuildSpells(db, sig)
 	fetBuildRefIndex(db, sig)
+	fetBuildItems(db, sig)
 	fetReadImgDir(db, filepath.Join(here, "5etools", "img", "bestiary")) // pictures in the 5etools folder, whatever form the data has
 	fetBuildPC(db, sig)
 	fetMu.Lock()
@@ -1699,7 +1817,7 @@ func fetFindMonster(name, source string) int {
 
 // the one thing phones may read from the 5e.tools files: spells, for their spell list
 func fetPublic(w http.ResponseWriter, r *http.Request, path string) bool {
-	if path != "/spells" && path != "/spell" && path != "/pc" && path != "/pcref" {
+	if path != "/spells" && path != "/spell" && path != "/pc" && path != "/pcref" && path != "/items" && path != "/item" {
 		return false
 	}
 	fetStatus()
@@ -1716,6 +1834,29 @@ func fetPublic(w http.ResponseWriter, r *http.Request, path string) bool {
 	}
 	if path == "/pc" { // phones may also read classes, feats and class options, to build their own trackers
 		reply(w, 200, db.pcData, "")
+		return true
+	}
+	if path == "/items" { // the item list: phones see the official books and the SRD, the DM everything
+		if isLocal(r) {
+			reply(w, 200, db.items, "")
+		} else {
+			reply(w, 200, db.itemsPub, "")
+		}
+		return true
+	}
+	if path == "/item" { // one item; a homebrew item is the DM's to give
+		q := r.URL.Query()
+		raw, ty := fetRefExact("item", q.Get("n"), q.Get("s"))
+		var x struct{ Name, Source string }
+		if raw != nil {
+			json.Unmarshal(raw, &x)
+		}
+		k := ty + "|" + fetKey(x.Name, x.Source)
+		if raw == nil || (ty != "item" && ty != "baseitem") || (!isLocal(r) && db.refGroup[k] != "" && db.refGroup[k] != "off") {
+			reply(w, 404, []byte("{}"), "")
+			return true
+		}
+		reply(w, 200, encode(map[string]any{"t": ty, "item": json.RawMessage(raw), "label": db.refLabel[k]}), "")
 		return true
 	}
 	if path == "/pcref" {
