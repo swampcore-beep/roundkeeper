@@ -15,7 +15,7 @@ A free, offline combat tracker for in-person 5e (2024 rules). The DM runs it on 
 | `media/` | README pictures and GIFs (regenerate with `dev/media/`) |
 | `dev/` | Test servers, test suites, media scripts: see `dev/README.md` |
 | `.github/workflows/release.yml` | A `v*` tag builds the Windows exe, the Mac program (universal, joined by `tools/makefat.py`), and the Linux programs, and attaches them to the release |
-| `.github/workflows/media.yml` | Record media: README pictures, GIFs and videos made on GitHub with `dev/media/record.sh`, returned as an artifact (run it by hand or with `gh api …/dispatches`) |
+| `.github/workflows/media.yml` | Record media: README pictures, GIFs and videos made on GitHub with `dev/media/record.sh`, returned as an artifact (run it by hand or with `gh api …/dispatches`); its `preview` job writes key frames, contact sheets and smaller pictures to the `media-preview` branch (no history, rewritten by each run), which a session reads with `git fetch --depth 1 origin media-preview` since it can't download the artifact |
 | `.github/workflows/check.yml` | Every pull request: `initiative.html` must match `src/`, the Windows program must build with its resources, and all SRD test suites must pass (`dev/test.sh -j 4`) |
 | `.claude/agents/` | The helper agents (see Models and helpers) |
 | `dev/tools/testmap.py` | Which test suites cover a file (`--changed`: what differs from `origin/main`) |

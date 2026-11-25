@@ -14,8 +14,11 @@ Rules:
 - Write output under `dev/.work/media/` (or where the brief says).
 - Videos and full sets are made on GitHub, not here: start the Record media workflow
   (`gh api -X POST repos/swampcore-beep/roundkeeper/actions/workflows/media.yml/dispatches -f ref=<branch> -f "inputs[what]=<parts>"`),
-  wait for the run (`gh run list --workflow media.yml -L 1`, `gh run watch <id>`), then `gh run download <id> -n media -D dev/.work/media-ci`.
-  The download comes from `*.blob.core.windows.net`; if the session's network refuses that host, say so in one line and stop.
+  wait for the run and its `preview` job (`gh run list --workflow media.yml -L 1`, `gh run watch <id>`), then read the `media-preview` branch:
+  `git fetch --depth 1 origin media-preview && git worktree add -f dev/.work/media-preview FETCH_HEAD` (or `git -C dev/.work/media-preview checkout -f FETCH_HEAD`
+  if it exists). Its README.md says which run made each folder; check that it is the run you started. Look at `videos/<name>/sheet-NN.jpg` first
+  (24 frames, 4 s apart) and open single frames (`NNN.jpg`, every 3 s) only where a sheet shows a problem. The artifact itself
+  comes from `*.blob.core.windows.net`, which the session's network refuses, so don't try `gh run download`.
   Make single screenshots here with `dev/media/record.sh stills` or a short script on `dev/serve.sh go`.
 
 How to look:

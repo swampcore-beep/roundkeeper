@@ -5,6 +5,8 @@ name: Record media
 # Start it in Actions → Record media → Run workflow, or from a session:
 #   gh api -X POST repos/swampcore-beep/roundkeeper/actions/workflows/media.yml/dispatches -f ref=main -f inputs[what]="stills pictures"
 # A pull request that changes this file or dev/media/ makes the stills and pictures, so a change to the scripts is tried here first.
+# The preview job then writes key frames of the run to the media-preview branch, for Claude's sessions, which can't download
+# artifacts (they come from *.blob.core.windows.net): git fetch --depth 1 origin media-preview. See its README.md.
 
 on:
   workflow_dispatch:
@@ -50,3 +52,58 @@ jobs:
           path: dev/.work/media/out/
           retention-days: 14
           if-no-files-found: warn
+
+  # Key frames of the videos and smaller copies of the pictures, on a branch with no history that each run rewrites.
+  # Only this job may write, and it runs nothing from the app: it downloads the artifact, runs ffmpeg and pushes.
+  # A run of one part keeps what the branch has for the others. Not for pull requests from forks.
+  preview:
+    needs: record
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    concurrency:
+      group: media-preview
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: media
+          path: in
+      - name: Key frames
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          WHAT: ${{ github.event_name == 'workflow_dispatch' && inputs.what || 'stills pictures' }}
+          REF: ${{ github.head_ref || github.ref_name }}
+        run: |
+          set -eu
+          sudo apt-get update -q && sudo apt-get install -yq ffmpeg > /dev/null
+          URL="https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+          RUN="${{ github.server_url }}/${REPO}/actions/runs/${{ github.run_id }}"
+          STAMP="$RUN ($(date -u '+%Y-%m-%d %H:%M UTC'), parts: ${WHAT}, branch ${REF})"
+          if git ls-remote --exit-code "$URL" refs/heads/media-preview > /dev/null; then
+            git clone -q --depth 1 -b media-preview "$URL" pv && rm -rf pv/.git
+          else mkdir pv; fi
+          for v in in/videos/*.mp4; do
+            [ -f "$v" ] || continue; n=$(basename "$v" .mp4); d=pv/videos/$n; rm -rf "$d"; mkdir -p "$d"
+            ffmpeg -loglevel error -i "$v" -vf "fps=1/3,scale=1280:-2" -q:v 5 "$d/%03d.jpg"
+            ffmpeg -loglevel error -i "$v" -vf "fps=1/4,scale=480:-2,tile=4x6" -q:v 4 "$d/sheet-%02d.jpg"
+            dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$v")
+            { echo "$STAMP"; echo "${n}.mp4: ${dur%.*} s, $(du -k "$v" | cut -f1) KB."
+              echo "NNN.jpg is the frame at (NNN-1)*3 s; each sheet-NN.jpg holds 24 frames 4 s apart, left to right."; } > "$d/run.txt"
+          done
+          if ls in/stills/*.png > /dev/null 2>&1; then rm -rf pv/stills; mkdir -p pv/stills
+            for p in in/stills/*.png; do ffmpeg -loglevel error -i "$p" -vf "scale='min(1280,iw)':-2" -q:v 4 "pv/stills/$(basename "$p" .png).jpg"; done
+            echo "$STAMP" > pv/stills/run.txt; fi
+          if [ -d in/readme ]; then rm -rf pv/readme; cp -r in/readme pv/readme; echo "$STAMP" > pv/readme/run.txt; fi
+          cd pv
+          { echo "# media-preview"; echo
+            echo "Key frames and pictures from the Record media workflow, for review; nothing here goes in the README."
+            echo "Each run rewrites this branch (no history) and replaces only the folders it made."; echo
+            echo "Last run: $STAMP"; echo
+            for r in videos/*/run.txt stills/run.txt readme/run.txt; do if [ -f "$r" ]; then echo "- \`$(dirname "$r")\`: $(head -1 "$r")"; fi; done
+          } > README.md
+          git init -q -b media-preview && git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -qm "Preview of run ${{ github.run_id }}"
+          git push -qf "$URL" media-preview
