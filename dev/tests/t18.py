@@ -10,7 +10,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(2)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(2)
         await T(dm,"state.list=[newCombatant({id:'b',name:'Bram',kind:'pc',cls:'paladin',init:15}),newCombatant({id:'m',name:'Mira',kind:'pc',cls:'wizard',init:12}),newCombatant({id:'g',name:'Goblin',kind:'enemy',init:10}),Object.assign(newCombatant({id:'h',name:'Cultist',kind:'enemy',init:8}),{hidden:true})];state.turn={round:1,id:'b',init:15};commit()"); await asyncio.sleep(.5)
         # from the + on Bram's row
         await T(dm,"condSheet('b')"); await asyncio.sleep(.2)

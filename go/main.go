@@ -49,10 +49,15 @@ import (
 	"time"
 )
 
-const (
-	port      = 8765
-	httpsPort = 8766
-)
+// The ports. ROUNDKEEPER_PORT is for the tests, which run several servers at once (https takes the next port).
+var port, httpsPort = ports()
+
+func ports() (int, int) {
+	if p, err := strconv.Atoi(os.Getenv("ROUNDKEEPER_PORT")); err == nil && p > 0 && p < 65535 {
+		return p, p + 1
+	}
+	return 8765, 8766
+}
 
 //go:embed assets
 var assets embed.FS

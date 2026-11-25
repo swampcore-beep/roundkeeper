@@ -14,10 +14,10 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.2)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.2)
         await T(dm,LIST+"commit()"); await asyncio.sleep(.5)
         tv=await (await b.new_context(viewport={'width':1280,'height':720})).new_page(); tv.on("pageerror",lambda e:errs.append(str(e)))
-        await tv.goto('http://127.0.0.1:8765/players?shared=1&screen=tv'); await asyncio.sleep(2.5)
+        await tv.goto(rk.DM+'/players?shared=1&screen=tv'); await asyncio.sleep(2.5)
         # TV13
         chk("initiative screen while a player hasn't rolled",await tv.locator('#tvLayer .tvini').count()==1)
         chk("the hidden enemy isn't a card",'Lurking' not in await tv.inner_text('#tvLayer'))

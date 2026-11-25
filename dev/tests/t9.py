@@ -9,7 +9,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']);errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on('pageerror',lambda e:errs.append('dm '+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1)
         await T(dm,"state.list=[['Styx','pc','bard',20],['Gregori','pc','cleric',18],['Lich','enemy','',21]].map(([n,k,c,i],j)=>({...newCombatant({kind:k}),id:'c'+j,name:n,cls:c,init:i}));state.turn=null;state.effects=[];commit()")
         ctx=await b.new_context(viewport={'width':390,'height':844},device_scale_factor=2,is_mobile=True,has_touch=True)
         await ctx.add_init_script("localStorage.setItem('it.meName','\"Styx\"')")

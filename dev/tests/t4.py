@@ -9,7 +9,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/')
+        await dm.goto(rk.DM+'/')
         await T(dm,"state.party=[];state.list=[{id:'a',name:'Sydon',kind:'enemy',init:22,conds:[],ds:{s:0,f:0}},{id:'b',name:'Medusa',kind:'pc',cls:'cleric',init:17,conds:[],ds:{s:0,f:0}},{id:'c',name:'Styx',kind:'pc',cls:'fighter',init:14,conds:[],ds:{s:0,f:0}}];state.ended=null;commit()")
         pc=await b.new_context(viewport={'width':390,'height':844},has_touch=True,is_mobile=True,device_scale_factor=2)
         await pc.add_init_script("""localStorage.setItem('it.meName','"Medusa"')""")

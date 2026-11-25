@@ -11,7 +11,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5)
         # ---- header
         pill=await dm.inner_text('#joinPill'); chk("Devices pill has no TV dot",'Tablet' in pill and 'TV' not in pill,pill)
         chk("one Table group: devices, TV, atmosphere",await T(dm,"(()=>{const g=document.getElementById('tableLbl').parentElement;"

@@ -9,7 +9,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(2)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(2)
         idx=(await dm.evaluate("fetch('/5et/index').then(r=>r.json())"))['list']; lich=next(e[0] for e in idx if e[1]=='Lich' and e[2]=='XMM')
         await T(dm,"sbSheet()"); await T(dm,f"fetPick({lich})"); await asyncio.sleep(.8); await T(dm,"sbAdd()"); await asyncio.sleep(.4)
         await T(dm,"state.list.push(Object.assign(newCombatant({id:'g1',name:'Goblin A',kind:'enemy',init:15}),{hp:12,hpMax:12}),Object.assign(newCombatant({id:'g2',name:'Goblin B',kind:'enemy',init:14}),{hp:7,hpMax:7}),newCombatant({id:'m',name:'Mira',kind:'pc',cls:'wizard',init:12}),newCombatant({id:'b',name:'Bram',kind:'pc',cls:'paladin',init:10}));commit()"); await asyncio.sleep(.3)

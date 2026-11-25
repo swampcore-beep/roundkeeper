@@ -5,7 +5,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1280,'height':900})).new_page(); dm.on('pageerror',lambda e:errs.append('dm '+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await dm.wait_for_timeout(800)
+        await dm.goto(rk.DM+'/'); await dm.wait_for_timeout(800)
         for n,cl,ac in [('Styx','bard','16'),('Gregori','cleric','18'),('Isandros','fighter','21'),('Astrea','druid','17')]:
             await dm.fill('#pName',n); await dm.select_option('#pCls',cl); await dm.fill('#pAc',ac); await dm.press('#pAc','Enter'); await dm.wait_for_timeout(120)
         await dm.click('#party [data-act=pload]'); await dm.wait_for_timeout(200)
@@ -36,8 +36,8 @@ async def main():
         # Bless from Styx on Gregori via server
         import json,urllib.request
         op=urllib.request.build_opener(urllib.request.ProxyHandler({}))
-        st=json.loads(op.open('http://127.0.0.1:8765/state').read()); ids={c['name']:c['id'] for c in st['list']}
-        op.open(urllib.request.Request('http://127.0.0.1:8765/player',data=json.dumps({'id':ids['Styx'],'action':'effect_add','name':'Bless','targets':[ids['Gregori'],ids['Isandros']],'conc':True}).encode(),headers={'Content-Type':'application/json'}))
+        st=json.loads(op.open(rk.DM+'/state').read()); ids={c['name']:c['id'] for c in st['list']}
+        op.open(urllib.request.Request(rk.DM+'/player',data=json.dumps({'id':ids['Styx'],'action':'effect_add','name':'Bless','targets':[ids['Gregori'],ids['Isandros']],'conc':True}).encode(),headers={'Content-Type':'application/json'}))
         await ph.wait_for_timeout(2200); await ph.screenshot(path='/tmp/u_6bar.png')
         print('my chips:', await ph.locator('.mystat').inner_text())
         # tap-to-remove Prone

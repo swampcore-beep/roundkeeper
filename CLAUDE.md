@@ -43,7 +43,7 @@ What players may see is decided in `publicView`, and player actions in `playerAc
 
 ## Working on it
 
-- Start a test server with `dev/serve.sh go`. Run tests with `dev/test.sh` (one line per suite); run just the suites you touched while working, and all of `dev/test.sh` before a pull request.
+- Start a test server with `dev/serve.sh go`. Run tests with `dev/test.sh` (one line per suite); while working run just the suites you touched. Every pull request's Check runs all SRD suites (`dev/test.sh -j 4`, logs as an artifact when it fails), so wait for it there instead of running the whole set locally; `dev/test.sh -j 2` runs the whole set here when you need it.
 - Never put the string `ti-linux` in a shell command line together with the serve or test scripts: they stop the server with `pkill`, which would match your own shell.
 - Work on a branch and open a pull request with `gh api repos/swampcore-beep/roundkeeper/pulls`; never push to `main` (it is protected). Merge only when the owner says so (`gh api -X PUT …/pulls/N/merge -f merge_method=merge`). Tags, releases, repo settings and branch deletion are done by the owner in the GitHub UI.
 - Commit as the owner with the Claude committer so commits show as Verified and no personal email appears:

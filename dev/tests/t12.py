@@ -9,7 +9,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']);errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on('pageerror',lambda e:errs.append('dm '+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1)
         await T(dm,"state.list=[['Styx','pc','bard',20],['Gregori','pc','cleric',18],['Isandros','pc','fighter',15],['Astrea','pc','druid',12],['Medusa','pc','rogue',16],['Lich','enemy','',21]].map(([n,k,c,i],j)=>({...newCombatant({kind:k}),id:'c'+j,name:n,cls:c,init:i}));state.call=null;commit()")
         await asyncio.sleep(.5)
         await dm.click('#tabFight'); await asyncio.sleep(.2)   # 1.7: roll calls are on the Fight tab

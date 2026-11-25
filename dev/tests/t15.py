@@ -12,7 +12,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']);errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on('pageerror',lambda e:errs.append('dm '+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1); await T(dm,SET); await asyncio.sleep(.4)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1); await T(dm,SET); await asyncio.sleep(.4)
         chk("save bonus from the ability table",await T(dm,"sbSaveMod(byId('c3').sb.raw,'Wis')")==-1)
         chk("save bonus from a Saving Throws line",await T(dm,"sbSaveMod('- **Saving Throws** Dex +6, Wis +4','Wis')")==4)
         chk("save bonus from a 2024 table",await T(dm,"sbSaveMod('| Wis | 14 | +2 | +5 |','Wis')")==5)

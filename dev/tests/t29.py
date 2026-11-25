@@ -20,8 +20,8 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append('dm '+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5); await T(dm,SETUP)
-        st=json.loads(get('http://127.0.0.1:8765/5et/status')[1])
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5); await T(dm,SETUP)
+        st=json.loads(get(rk.DM+'/5et/status')[1])
         chk("no data folder: the SRD is there",st['state']=='ready' and st['counts'].get('srd')==331 and st['counts'].get('srd_spells')==339,st)
         # monster search
         await dm.click('[data-act=sbopen]'); await asyncio.sleep(1.2)
@@ -69,7 +69,7 @@ async def main():
         await dm.set_input_files('#gdFile',HB); await asyncio.sleep(4)
         g=await dm.locator('.gdsheet').inner_text()
         chk("import: added with what it holds",'t29_hag.json' in g and '1 monsters' in g and '1 spells' in g,g)
-        st=json.loads(get('http://127.0.0.1:8765/5et/status')[1])
+        st=json.loads(get(rk.DM+'/5et/status')[1])
         chk("…and read with the rest",st['counts'].get('own')==1 and 't29_hag.json' in st['imported'],st)
         await T(dm,"closeSheet();fetQ='bog';sbItems=[];sbSheet()"); await asyncio.sleep(1.5); await T(dm,"fetRedraw()"); await asyncio.sleep(.3)
         rows=await dm.locator('#fetList .fetrow').all_inner_texts()
@@ -86,7 +86,7 @@ async def main():
         await dm.click('[data-act=gdrm][data-n="t29_hag.json"]'); await asyncio.sleep(.3)
         chk("remove asks once more",'Remove it?' in await dm.locator('.gdsheet').inner_text())
         await dm.click('[data-act=gdrm][data-n="t29_hag.json"]'); await asyncio.sleep(3)
-        st=json.loads(get('http://127.0.0.1:8765/5et/status')[1])
+        st=json.loads(get(rk.DM+'/5et/status')[1])
         chk("…and it's gone",not st['imported'] and not st['counts'].get('own'),st)
         try:
             urllib.request.urlopen(urllib.request.Request(rk.PL+'/5et/import?name=x.json',data=b'{"monster":[{"name":"X"}]}',method='POST'),timeout=5);code=200
