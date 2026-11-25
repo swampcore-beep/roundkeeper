@@ -92,7 +92,7 @@ dev/media/record.sh                 # stills and pictures
 dev/media/record.sh gifs dm         # parts: stills pictures gifs four dm table phone, or videos, or all
 ```
 
-The **Record media** workflow runs the same on GitHub (Actions → Record media → Run workflow, with the parts in "what"), so it costs no time here; the files come back as the run's `media` artifact for 14 days. From a session: `gh api -X POST repos/swampcore-beep/roundkeeper/actions/workflows/media.yml/dispatches -f ref=main -f "inputs[what]=stills pictures"`, then `gh run download <run id> -n media -D dev/.work/media-ci`. A pull request that changes `dev/media/` runs the stills and pictures there.
+The **Record media** workflow runs the same on GitHub (Actions → Record media → Run workflow, with the parts in "what"), so it costs no time here; the files come back as the run's `media` artifact for 14 days. From a session: `gh api -X POST repos/swampcore-beep/roundkeeper/actions/workflows/media.yml/dispatches -f ref=main -f "inputs[what]=stills pictures"`, then `gh run download <run id> -n media -D dev/.work/media-ci` (the file comes from `*.blob.core.windows.net`, which a cloud session's network may refuse). A pull request that changes `dev/media/` runs the stills and pictures there.
 
 The scripts one by one, against `dev/serve.sh go` (SRD only, so no setting names or non-free monsters appear):
 
