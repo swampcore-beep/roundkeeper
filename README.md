@@ -57,7 +57,7 @@ The turn order is one row per creature, and the statblock opens beside it, so yo
 
 <table>
 <tr>
-<td width="50%"><img src="media/hit-several.jpg" width="100%" alt="Hit several: Gregori's Fireball on three goblins, with their Dexterity saves rolled"><br><sub><b>Hit several:</b> 28 fire on three goblins; two saved for half.</sub></td>
+<td width="50%"><img src="media/hit-several.jpg" width="100%" alt="Hit several: Gregori's Fireball on three goblins, with their Dexterity saves rolled"><br><sub><b>Hit several:</b> 28 fire on three goblins, each Dexterity save rolled, half on a success.</sub></td>
 <td width="50%"><img src="media/rules.jpg" width="100%" alt="Ctrl+K rules lookup showing the Fireball card"><br><sub><b>Ctrl+K:</b> any spell, condition, rule or item.</sub></td>
 </tr>
 <tr>

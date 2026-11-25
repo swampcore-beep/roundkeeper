@@ -72,7 +72,7 @@ state.list=[
  Object.assign(newCombatant({{id:'s',name:'Styx',kind:'pc',cls:'bard',init:15}}),{{ac:14}}),
  Object.assign(newCombatant({{id:'g2',name:'Goblin B',base:'Goblin Warrior',kind:'enemy',ctype:'fey',init:12}}),{{hp:10,hpMax:10,ac:15,sb:SBD({json.dumps(GOBLIN)})}}),
  Object.assign(newCombatant({{id:'a',name:'Astrea',kind:'pc',cls:'druid',init:11,conds:['Concentrating']}}),{{ac:16}}),
- Object.assign(newCombatant({{id:'gr',name:'Gregori',kind:'pc',cls:'wizard',init:8}}),{{ac:13}}),
+ Object.assign(newCombatant({{id:'gr',name:'Gregori',kind:'pc',cls:'wizard',init:8}}),{{ac:12}}),
  Object.assign(newCombatant({{id:'g3',name:'Goblin C',base:'Goblin Warrior',kind:'enemy',ctype:'fey',init:6}}),{{hp:10,hpMax:10,ac:15,sb:SBD({json.dumps(GOBLIN)})}})];
 state.effects=[{{id:'e1',name:'Bless',by:'s',targets:['i','s','gr'],conc:false,area:false,r0:1}},{{id:'e2',name:'Spike Growth',by:'a',targets:[],conc:true,area:true,r0:1}}];
 state.turn={{round:2,id:'{turn}',init:19}};state.theme={json.dumps(theme)};state.scene={json.dumps(scene)};state.look={{}};state.showQr=false;commit()"""
