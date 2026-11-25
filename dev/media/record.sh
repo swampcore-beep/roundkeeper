@@ -53,3 +53,8 @@ cp -r "$tmp/before/." media/; rm -rf "$tmp"   # media/ in the working tree stays
 has stills && cp "$M"/stills/*.png "$OUT/stills/" 2>/dev/null
 for d in readme videos stills; do rmdir "$OUT/$d" 2>/dev/null; done
 step "done:"; (cd "$OUT" && find . -type f ! -name publish.txt | sort | sed 's|^\./|  |')
+# a README video goes up as a comment attachment: 10 MB at most on a free GitHub plan
+for v in "$OUT"/videos/*.mp4; do
+  [ -f "$v" ] || continue; b=$(stat -c %s "$v")
+  echo "record: $(basename "$v") $(awk -v b="$b" 'BEGIN{printf "%.1f MB",b/1048576}')$( [ "$b" -gt 10485760 ] && echo ' — over the 10 MB limit')"
+done

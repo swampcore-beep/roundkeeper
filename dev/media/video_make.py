@@ -1,8 +1,10 @@
 import sys as _sys,os as _os;_sys.path.insert(0,_os.path.dirname(_os.path.abspath(__file__)));_sys.path.insert(0,_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))));import rk  # dev/rk.py
 # Put the passes of one README video together: python3 dev/media/video_make.py dm|table|phone
 # Screens in device bodies on the table surface (look.py), lined up by their caption marks, with captions, the DM's
-# cursor and keys, and the phone's taps. Intro and outro cards; the whole video stays under a minute.
+# cursor and keys, and the phone's taps. Intro and outro cards; the whole video stays under 100 s, and at CRF 23 under
+# GitHub's 10 MB for a video on a free plan.
 import json,subprocess,bisect,sys
+from vrec import PACE
 from PIL import Image,ImageDraw
 import look
 V=sys.argv[1];D=rk.MEDIA+f'/{V}-video/'
@@ -96,10 +98,10 @@ if __name__=='__main__':
     ti,lines=L['intro']
     INTRO=look.card(ti,lines,kicker="Roundkeeper")
     OUTRO=look.card("Roundkeeper",["Free and open source, for Windows, Mac and Linux.","No accounts, no internet: it runs on your own Wi-Fi."],foot="github.com/swampcore-beep/roundkeeper")
-    IN,OUTD,X=2.2,3.0,0.5
-    total=IN+TEND+OUTD;print(V,'length',round(total,1),'s');assert total<=60,"over a minute"
+    IN,OUTD,X=2.2*PACE,3.0*PACE,0.5
+    total=IN+TEND+OUTD;print(V,'length',round(total,1),'s');assert total<=100,"over 100 s"
     ff=subprocess.Popen(['ffmpeg','-loglevel','error','-y','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-',
-        '-c:v','libx264','-preset','veryfast','-crf','20','-pix_fmt','yuv420p','-movflags','+faststart',OUT],stdin=subprocess.PIPE)
+        '-c:v','libx264','-preset','veryfast','-crf','23','-pix_fmt','yuv420p','-movflags','+faststart',OUT],stdin=subprocess.PIPE)
     n=int(TEND*FPS);first=main_frame(0);last=main_frame(TEND)
     for i in range(int(IN*FPS)): ff.stdin.write(Image.blend(INTRO,first,max(0,min(1,(i/FPS-(IN-X))/X))).tobytes())
     for i in range(n):
