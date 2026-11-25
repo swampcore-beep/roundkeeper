@@ -39,7 +39,10 @@ The server treats this computer (127.0.0.1) as the DM. Tests open player pages (
 dev/test.sh              # every suite that needs only the repo, on the Go server
 dev/test.sh t29 t4       # just some suites
 dev/test.sh -j 2         # two suites at once, each on its own server (ports 8771, 8781, …)
+dev/test.sh $(python3 dev/tools/testmap.py --changed)   # just the suites that cover what you changed
 ```
+
+`dev/tools/testmap.py` works out which suites cover a file from the code itself: the names a part of `src/` defines (functions, data-act values, ids, CSS classes) that a suite uses. `--why` shows the names. It is a guide for picking suites while working; the pull request's Check still runs them all.
 
 One line per suite (`go t4: ok`). A failing suite shows its first FAIL lines and the path to its full log in `dev/.work/out/`.
 

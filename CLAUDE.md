@@ -15,7 +15,9 @@ A free, offline combat tracker for in-person 5e (2024 rules). The DM runs it on 
 | `media/` | README pictures and GIFs (regenerate with `dev/media/`) |
 | `dev/` | Test servers, test suites, media scripts: see `dev/README.md` |
 | `.github/workflows/release.yml` | A `v*` tag builds the Windows exe, the Mac program (universal, joined by `tools/makefat.py`), and the Linux programs, and attaches them to the release |
-| `.github/workflows/check.yml` | Every pull request: `initiative.html` must match `src/`, and the Windows program must build with its resources |
+| `.github/workflows/check.yml` | Every pull request: `initiative.html` must match `src/`, the Windows program must build with its resources, and all SRD test suites must pass (`dev/test.sh -j 4`) |
+| `.claude/agents/` | The helper agents (see Models and helpers) |
+| `dev/tools/testmap.py` | Which test suites cover a file (`--changed`: what differs from `origin/main`) |
 
 ### Inside the app (`src/`)
 
@@ -43,7 +45,7 @@ What players may see is decided in `publicView`, and player actions in `playerAc
 
 ## Working on it
 
-- Start a test server with `dev/serve.sh go`. Run tests with `dev/test.sh` (one line per suite); while working run just the suites you touched. Every pull request's Check runs all SRD suites (`dev/test.sh -j 4`, logs as an artifact when it fails), so wait for it there instead of running the whole set locally; `dev/test.sh -j 2` runs the whole set here when you need it.
+- Start a test server with `dev/serve.sh go`. Run tests with `dev/test.sh` (one line per suite); while working run just the suites that cover what you changed: `dev/test.sh $(python3 dev/tools/testmap.py --changed)`. Every pull request's Check runs all SRD suites (`dev/test.sh -j 4`, logs as an artifact when it fails), so wait for it there instead of running the whole set locally; `dev/test.sh -j 2` runs the whole set here when you need it.
 - Never put the string `ti-linux` in a shell command line together with the serve or test scripts: they stop the server with `pkill`, which would match your own shell.
 - Work on a branch and open a pull request with `gh api repos/swampcore-beep/roundkeeper/pulls`; never push to `main` (it is protected). Merge only when the owner says so (`gh api -X PUT …/pulls/N/merge -f merge_method=merge`). Tags, releases, repo settings and branch deletion are done by the owner in the GitHub UI.
 - Commit as the owner with the Claude committer so commits show as Verified and no personal email appears:
@@ -52,6 +54,22 @@ What players may see is decided in `publicView`, and player actions in `playerAc
 
 ## Models and helpers
 
-The owner has given standing permission (10. 11. 2026) to hand routine work to helper agents on a cheaper model (Sonnet or Haiku) without asking each time: running `dev/test.sh` and summarising failures, searching the code, regenerating media with `dev/media/`, and drafting text. Give the helper a short, exact brief, then review its diff and test results yourself before any pull request. Keep design decisions, hard bugs, changes across `initiative.html`, anything about what players may see, and licensing questions for the main session. Say briefly in the reply what was handed off.
+The owner has given standing permission (10. 11. 2026, widened 25. 11. 2026) to hand routine work to the helper agents below without asking each time. Say briefly in the reply what was handed off.
+
+Order of preference: a script or CI first (no tokens, same result every time: the tests run in Check, `dev/tools/testmap.py` picks suites), then a helper, then the main session. Hand work to a helper only when its brief is shorter than the work and its answer is short; do small things yourself.
+
+| Agent | Model | Tools | For | Answers with |
+|---|---|---|---|---|
+| `rk-search` | Haiku | read only | where something is, what calls what, which suite covers it | up to 15 `path:line` lines |
+| `rk-media` | Sonnet | shell, pictures | screenshots and videos with `dev/media/` on the SRD server, and looking at them | the files, what looks wrong, at most 2 to look at |
+| `rk-writer` | Sonnet | read only | release notes (English, for users), PR descriptions, project notes (Croatian) | the text, ready to use |
+| `rk-review` | Opus | read only | a fresh review of the diff before a PR: what players receive, licensing, names, new bugs | problems with `path:line`, or "Clean." |
+
+- Their instructions are in `.claude/agents/<name>.md`. If the session lists the agent type, use it with a one- or two-sentence brief. If it does not (agents load when a session starts), start a general-purpose agent with that model and the brief "Follow `.claude/agents/<name>.md` (skip its front matter). Task: …".
+- Pictures are the costliest thing in the main session's context: let `rk-media` look at them and read its text; open a picture yourself only for a design decision or the final check.
+- Run helpers in the background while you go on. Two independent helpers can run at once.
+- `rk-review` reviews every change to `go/main.go`, `publicView`, `playerAction` or anything sent to players, and any change larger than about 200 lines, before the pull request.
+- Helpers never commit, push or open pull requests. Review a helper's work (diff, text, report) before you use it.
+- Keep design decisions, hard bugs, what players may see, and licensing questions in the main session. If a helper fails twice at the same thing, do it yourself.
 
 If a task looks too hard for the model this session runs on, or a helper's result isn't good enough, ask the owner to switch to a stronger model instead of pushing on.
