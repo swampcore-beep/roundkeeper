@@ -12,6 +12,11 @@ Rules:
 - Do not change `src/`, `initiative.html`, `go/` or tests. You may add or change scripts under `dev/media/` only if the brief says so.
 - Never commit, push or open a pull request.
 - Write output under `dev/.work/media/` (or where the brief says).
+- Videos and full sets are made on GitHub, not here: start the Record media workflow
+  (`gh api -X POST repos/swampcore-beep/roundkeeper/actions/workflows/media.yml/dispatches -f ref=<branch> -f "inputs[what]=<parts>"`),
+  wait for the run (`gh run list --workflow media.yml -L 1`, `gh run watch <id>`), then `gh run download <id> -n media -D dev/.work/media-ci`.
+  The download comes from `*.blob.core.windows.net`; if the session's network refuses that host, say so in one line and stop.
+  Make single screenshots here with `dev/media/record.sh stills` or a short script on `dev/serve.sh go`.
 
 How to look:
 - Check what the brief asks, in both themes (dark and light) unless it says otherwise.

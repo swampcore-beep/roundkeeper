@@ -1,6 +1,6 @@
 # Developer tools
 
-Everything here is for working on Roundkeeper, not for running it at the table. You need Python 3 with Playwright (`pip install playwright pillow fonttools brotli`, then `playwright install chromium`), Go 1.24, ffmpeg (for the media) and curl.
+Everything here is for working on Roundkeeper, not for running it at the table. You need Python 3 with Playwright (`pip install playwright pillow numpy fonttools brotli`, then `playwright install chromium`), Go 1.24, ffmpeg (for the media) and curl.
 
 All output goes to `dev/.work/`, which git ignores.
 
@@ -85,7 +85,16 @@ Never commit those files.
 
 ## Media for the README
 
-Run these against `dev/serve.sh go` (SRD only, so no setting names or non-free monsters appear):
+The quickest way is one command, which starts a fresh SRD-only server for each part and gathers the results in `dev/.work/media/out` (`readme/` ready for `media/`, `videos/`, `stills/`); `media/` itself is left alone:
+
+```bash
+dev/media/record.sh                 # stills and pictures
+dev/media/record.sh gifs dm         # parts: stills pictures gifs four dm table phone, or videos, or all
+```
+
+The **Record media** workflow runs the same on GitHub (Actions → Record media → Run workflow, with the parts in "what"), so it costs no time here; the files come back as the run's `media` artifact for 14 days. From a session: `gh api -X POST repos/swampcore-beep/roundkeeper/actions/workflows/media.yml/dispatches -f ref=main -f "inputs[what]=stills pictures"`, then `gh run download <run id> -n media -D dev/.work/media-ci` (the file comes from `*.blob.core.windows.net`, which a cloud session's network may refuse). A pull request that changes `dev/media/` runs the stills and pictures there.
+
+The scripts one by one, against `dev/serve.sh go` (SRD only, so no setting names or non-free monsters appear):
 
 ```bash
 python3 dev/media/stills.py        # screenshots -> dev/.work/media/stills
