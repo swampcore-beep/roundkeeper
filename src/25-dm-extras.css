@@ -101,6 +101,14 @@ html:root ol.plist li.turn .turnmark::before{content:"NOW";background:var(--acce
 html:root ol.plist li.next .turnmark{box-shadow:inset 0 0 0 .07em color-mix(in srgb,var(--accent) 75%,transparent)}
 html:root ol.plist li.next .turnmark::before{content:"NEXT";background:color-mix(in srgb,var(--accent) 22%,var(--panel));color:var(--fg)}
 html:root ol.plist li.turn{background:color-mix(in srgb,var(--accent) 14%,var(--panel))}
+/* where the AC sits at the top right (portrait tablet, two columns, phones), the NOW / NEXT tab covered it: the shield moves down
+   under the tab without changing the row's height, and the badges below keep clear of it */
+html:root ol.plist:is(.port,.stack,.compact) li:is(.turn,.next) .acw{position:relative}
+html:root ol.plist.port li:is(.turn,.next) .acw{top:1.05em}
+html:root ol.plist.stack li:is(.turn,.next) .acw{top:1.45em}
+html:root ol.plist.compact li:is(.turn,.next) .acw{top:1.75em}
+html:root ol.plist:is(.port,.compact) li:is(.turn,.next):has(.acw) .ic{padding-right:2.4em}
+html:root ol.plist.stack li:is(.turn,.next):has(.acw) .ic{padding-right:2.6em}
 /* S2 the round, readable from across the table */
 html:root #player:not(.has-bar) .p-title{font-size:clamp(1.5rem,3.8vw,3.1rem)}
 html:root .p-round{font-family:var(--display);font-size:.72em;letter-spacing:.1em;color:var(--fg);border:.08em solid var(--accent);border-radius:.35em;
