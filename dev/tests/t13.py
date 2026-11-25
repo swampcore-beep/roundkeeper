@@ -10,7 +10,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']);errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on('pageerror',lambda e:errs.append('dm '+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1)
         await T(dm,"localStorage.removeItem('it.initMode');sbInitMode='group';state.list=[];commit()")
         await T(dm,f"sbItems=[{GOB}];sbSheet()"); await asyncio.sleep(.3)
         chk("three choices for a group",await dm.locator('.sbinit button').count()==3)

@@ -24,7 +24,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append('dm '+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5); await T(dm,SETUP)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5); await T(dm,SETUP)
         ph=await (await b.new_context(viewport={'width':390,'height':844})).new_page(); ph.on("pageerror",lambda e:errs.append('ph '+str(e)))
         await ph.goto(rk.PL+'/players'); await asyncio.sleep(1.2); await ph.click('[data-act=pickme][data-n=Mira]'); await asyncio.sleep(1)
         # paste on the phone

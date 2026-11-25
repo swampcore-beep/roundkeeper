@@ -10,7 +10,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5)
         await dm.click('[data-act=sbopen]'); await dm.wait_for_selector('#fetQ'); await dm.fill('#fetQ','lich'); await asyncio.sleep(.2)
         await dm.click('#fetList .fetrow:has-text("MM24") >> nth=0'); await asyncio.sleep(.6)
         await dm.click('[data-act=sbadd]'); await asyncio.sleep(.4)

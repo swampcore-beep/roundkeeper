@@ -11,7 +11,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5)
         # ---- Add monsters: a click doesn't jump to the top, the button counts, a new card is lit
         await dm.click('[data-act=sbopen]'); await asyncio.sleep(1.5)
         for q in ['goblin','wolf','skeleton','zombie']:
@@ -53,7 +53,7 @@ async def main():
         chk("someone else's roll still shows",vis2>0,vis2)
         # ---- TV pause in 24-hour time
         tv=await (await b.new_context(viewport={'width':1280,'height':720},locale='en-US')).new_page(); tv.on("pageerror",lambda e:errs.append(str(e)))
-        await tv.goto('http://127.0.0.1:8765/players?shared=1&screen=tv'); await asyncio.sleep(2)
+        await tv.goto(rk.DM+'/players?shared=1&screen=tv'); await asyncio.sleep(2)
         await T(dm,"state.tv=Object.assign({},state.tv,{pause:{until:Date.now()+600000,msg:''}});commit()"); await asyncio.sleep(1.5)
         s=await tv.evaluate("()=>(document.querySelector('.tvpz .s')||{}).textContent||''")
         chk("pause time has no AM/PM",s and 'AM' not in s and 'PM' not in s,s)

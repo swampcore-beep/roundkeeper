@@ -10,7 +10,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context()).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5)
         await T(dm,"state.list=[newCombatant({id:'d',name:'Astrea',kind:'pc',cls:'druid',init:12}),newCombatant({id:'w',name:'Mira',kind:'pc',cls:'wizard',init:10}),newCombatant({id:'p',name:'Bram',kind:'pc',cls:'paladin',init:8}),newCombatant({id:'g',name:'Goblin',kind:'enemy',init:14})];commit()"); await asyncio.sleep(.5)
         async def phone(name):
             ctx=await b.new_context(viewport={'width':390,'height':844},is_mobile=True,has_touch=True)

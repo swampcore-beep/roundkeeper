@@ -12,7 +12,7 @@ async def main():
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         ctx=await b.new_context(viewport={'width':1440,'height':900},permissions=['clipboard-read','clipboard-write'])
         dm=await ctx.new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/')
+        await dm.goto(rk.DM+'/')
         await T(dm,"state.party=[];state.list=[{id:'p',name:'Medusa',kind:'pc',cls:'rogue',init:17,conds:[],ds:{s:0,f:0}}];commit()")
         gy=open(D+'gyreguard.md').read(); li=open(D+'lich.md').read(); pl=open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),'plain.txt')).read()
         r=json.loads(await dm.evaluate("(t)=>JSON.stringify(__t('parseStatblock')(t))",gy)); print(r)

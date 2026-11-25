@@ -11,7 +11,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(.6)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(.6)
         await T(dm,"state.party=[];state.list=[{id:'p',name:'Medusa',kind:'pc',cls:'rogue',init:17,conds:[],ds:{s:0,f:0}},{id:'q',name:'Styx',kind:'pc',cls:'cleric',init:12,conds:['Burning'],ds:{s:0,f:0}},{id:'h',name:'Shadow',kind:'enemy',init:15,hidden:true,conds:[],ds:{s:0,f:0}},{id:'g',name:'Goblin',kind:'enemy',init:9,down:true,conds:[],ds:{s:0,f:0}}];commit()")
         await dm.click('[data-act=sbopen]'); await dm.set_input_files('#sbFile',[D+'lich.md']); await asyncio.sleep(.3); await dm.click('[data-act=sbadd]'); await asyncio.sleep(.4)
         await T(dm,"const L=state.list.find(c=>c.name==='Lich');L.init=20;L.sb.la.used=2;L.sb.rech[0].ready=false;commit()")
@@ -33,7 +33,7 @@ async def main():
         chk("Medusa told she's next",any("next" in x for x in await T(ph,"window.__toasts")))
         await sf.screenshot(path='turn_sf.png')
         # Medusa casts Bless on round 1
-        post=lambda b_:op.open(urllib.request.Request('http://127.0.0.1:8765/player',data=json.dumps(b_).encode(),headers={'Content-Type':'application/json'}))
+        post=lambda b_:op.open(urllib.request.Request(rk.DM+'/player',data=json.dumps(b_).encode(),headers={'Content-Type':'application/json'}))
         await dm.click('[data-act=tnext]'); await asyncio.sleep(1.4)   # Medusa
         chk("phone shows your turn",await ph.locator('.yourturn').count()==1)
         await ph.screenshot(path='turn_phone.png')

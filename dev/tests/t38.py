@@ -11,7 +11,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5)
         await T(dm,"""state.list=EXAMPLE();state.list.forEach((c,i)=>{if(typeof c.init!=='number')c.init=20-i});
           state.list.push({id:'gob',kind:'enemy',name:'Goblin',init:1,hpMax:7,hp:7,hidden:true,conds:[]});commit()"""); await asyncio.sleep(.5)
         pcs=await T(dm,"state.list.filter(c=>c.kind==='pc').map(c=>({id:c.id,name:c.name}))")

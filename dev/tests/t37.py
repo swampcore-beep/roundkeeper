@@ -23,7 +23,7 @@ async def main():
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         for w,h in [(1920,1080),(1536,864)]:
             dm=await (await b.new_context(viewport={'width':w,'height':h})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-            await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5)
+            await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5)
             await T(dm,FIGHT); await asyncio.sleep(.5); await dm.click('[data-act=tnext]'); await asyncio.sleep(.5)
             g=await dm.evaluate("""()=>{const r=e=>e.getBoundingClientRect();const foot=r(document.querySelector('.dmmain>.foot')),
               tools=r(document.querySelector('.dmtools')),ros=document.querySelector('#roster'),R=r(ros),

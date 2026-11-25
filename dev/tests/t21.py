@@ -10,7 +10,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append("dm:"+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5)
         await T(dm,"state.list.push(newCombatant({id:'m',name:'Mira',kind:'pc',cls:'wizard',init:12}),Object.assign(newCombatant({id:'g',name:'Goblin',kind:'enemy',init:9}),{hidden:true}));commit()"); await asyncio.sleep(.3)
         sf=await (await b.new_context(viewport={'width':912,'height':1368})).new_page(); sf.on("pageerror",lambda e:errs.append("sf:"+str(e)))
         await sf.goto(rk.PL+'/players?shared=1'); await asyncio.sleep(2)

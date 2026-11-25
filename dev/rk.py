@@ -9,7 +9,8 @@ import os, socket
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WORK = os.path.join(ROOT, "dev", ".work")          # ignored by git
 OUT = os.path.join(WORK, "out")                     # screenshots and logs from tests
-SRV = os.path.join(WORK, "srv")                     # the test server's folder
+PORT = int(os.environ.get("RK_PORT") or 8765)       # dev/test.sh -j runs several servers, each on its own port
+SRV = os.path.join(WORK, "srv" if PORT == 8765 else f"srv-{PORT}")   # the test server's folder
 MEDIA = os.path.join(WORK, "media")                 # media script output
 PRIV = os.environ.get("RK_PRIVATE", os.path.join(WORK, "private"))  # non-free fixtures, never committed
 FIVE = os.environ.get("RK_5ETOOLS", "")             # a 5e.tools data folder, never committed
@@ -29,8 +30,8 @@ def _lan():
         s.close()
 
 LAN = _lan()
-DM = "http://127.0.0.1:8765"      # the DM's view
-PL = f"http://{LAN}:8765"         # a player's / the tablet's view
+DM = f"http://127.0.0.1:{PORT}"   # the DM's view
+PL = f"http://{LAN}:{PORT}"       # a player's / the tablet's view
 
 def font(name, size):
     """A PIL font from the app's own fonts folder: 'cinzel', 'sans' or 'sansbold'."""

@@ -9,7 +9,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/')
+        await dm.goto(rk.DM+'/')
         await T(dm,"state.party=[];state.list=[{id:'a',name:'Sydon',kind:'enemy',boss:true,title:'God of Storms',init:22,conds:[],ds:{s:0,f:0}},{id:'b',name:'Medusa',kind:'pc',cls:'rogue',init:17,conds:[],ds:{s:0,f:0}},{id:'c',name:'Styx',kind:'pc',cls:'cleric',init:14,conds:['Poisoned'],ds:{s:0,f:0}},{id:'d',name:'Gregori',kind:'pc',cls:'fighter',init:11,conds:[],ds:{s:0,f:0}},{id:'e',name:'Ghoul',kind:'enemy',init:9,conds:[],ds:{s:0,f:0}}];state.ended=null;commit()")
         sfs={}
         for tag,(w,h) in {'portrait':(912,1368),'landscape':(1368,912)}.items():

@@ -11,7 +11,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5)
         await T(dm,"state.list=EXAMPLE();state.list.forEach((c,i)=>{if(typeof c.init!=='number')c.init=20-i});commit()"); await asyncio.sleep(.5)
         # ---- the tool look is the default; the turn lives in the bottom bar as tiles
         chk("tool look by default",await T(dm,"document.documentElement.dataset.dmlook")=="tool")
@@ -39,7 +39,7 @@ async def main():
         chk("three phases saved",await T(dm,f"byId('{bid}').phases")==['The wyrm awakens','The skies burn','Last stand'])
         await T(dm,f"state.turn={{round:2,id:'{bid}',init:byId('{bid}').init}};commit()"); await asyncio.sleep(.3)
         tv=await (await b.new_context(viewport={'width':1280,'height':720})).new_page(); tv.on("pageerror",lambda e:errs.append("tv: "+str(e)))
-        await tv.goto('http://127.0.0.1:8765/players?shared=1&screen=tv'); await asyncio.sleep(2.5)
+        await tv.goto(rk.DM+'/players?shared=1&screen=tv'); await asyncio.sleep(2.5)
         await T(dm,"state.tv={mode:'spot'};commit()"); await asyncio.sleep(1.5)
         chk("TV: a phase bar with three segments",await tv.locator('.tvsp .phbar i').count()==3)
         chk("TV: the first one is lit",await tv.locator('.tvsp .phbar i.now').count()==1 and 'Phase I ' in await tv.locator('.tvsp .phname').text_content())

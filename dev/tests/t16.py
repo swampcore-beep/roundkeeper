@@ -10,7 +10,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.2)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.2)
         # ---- 24 lair
         idx=(await dm.evaluate("fetch('/5et/index').then(r=>r.json())"))['list']
         lich14=next(e[0] for e in idx if e[1]=='Lich' and e[2]=='MM')

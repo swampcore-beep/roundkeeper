@@ -23,7 +23,7 @@ async def shot(b,dm,name,theme,scene,css,skin,vp={'width':912,'height':1368}):
 async def main(jobs):
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server','--host-resolver-rules=MAP phone.test '+rk.LAN])
-        dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5)
+        dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5)
         for j in jobs: await shot(b,dm,*j)
         await b.close()
 if __name__=="__main__":

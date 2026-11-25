@@ -2,14 +2,14 @@ import sys as _sys,os as _os;_sys.path.insert(0,_os.path.dirname(_os.path.abspat
 import asyncio,json,urllib.request
 from playwright.async_api import async_playwright
 op=urllib.request.build_opener(urllib.request.ProxyHandler({}))
-def st(): return json.loads(op.open('http://127.0.0.1:8765/state').read())
-def post(b): op.open(urllib.request.Request('http://127.0.0.1:8765/player',data=json.dumps(b).encode(),headers={'Content-Type':'application/json'}))
+def st(): return json.loads(op.open(rk.DM+'/state').read())
+def post(b): op.open(urllib.request.Request(rk.DM+'/player',data=json.dumps(b).encode(),headers={'Content-Type':'application/json'}))
 def me(n): return [c for c in st()['list'] if c['name']==n][0]
 async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1536,'height':864})).new_page(); dm.on('pageerror',lambda e:errs.append('dm '+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await dm.wait_for_timeout(800)
+        await dm.goto(rk.DM+'/'); await dm.wait_for_timeout(800)
         for n in ['Styx','Gregori']:
             await dm.fill('#pName',n); await dm.fill('#pAc','15'); await dm.press('#pAc','Enter'); await dm.wait_for_timeout(120)
         await dm.click('#party [data-act=pload]'); await dm.fill('#qAdd','Medusa 16 hp60'); await dm.press('#qAdd','Enter'); await dm.wait_for_timeout(300)

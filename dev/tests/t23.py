@@ -14,9 +14,9 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append("dm "+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(2)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(2)
         # ---- 31 pairing
-        code=json.loads(req('http://127.0.0.1:8765/dm-pair',{"name":"Laptop"})[1])['code']
+        code=json.loads(req(rk.DM+'/dm-pair',{"name":"Laptop"})[1])['code']
         chk("pairing code made on the host",len(code)==8)
         chk("a phone can't make pairing codes",req(rk.PL+'/dm-pair',{"name":"x"})[0]==403)
         lap=await b.new_context(viewport={'width':1440,'height':900}); lp=await lap.new_page(); lp.on("pageerror",lambda e:errs.append("lap "+str(e)))
@@ -28,7 +28,7 @@ async def main():
         cookie=f"ti_dm={ck[0]['value']}"
         chk("the code works once",req(f'{rk.PL}/pair/{code}')[0]==410)
         await T(lp,"state.list.push(newCombatant({id:'m',name:'Mira',kind:'pc',cls:'wizard',init:12}),Object.assign(newCombatant({id:'h',name:'Hidden Imp',kind:'enemy',init:3}),{hidden:true}));commit()"); await asyncio.sleep(1.5)
-        st=json.loads(req('http://127.0.0.1:8765/state')[1]); chk("the paired laptop changes the state",any(c['name']=='Mira' for c in st['list']))
+        st=json.loads(req(rk.DM+'/state')[1]); chk("the paired laptop changes the state",any(c['name']=='Mira' for c in st['list']))
         chk("…and sees hidden ones",any(c['name']=='Hidden Imp' for c in json.loads(req(rk.PL+'/state',cookie=cookie)[1])['list']))
         chk("…and reads 5e.tools",req(rk.PL+'/5et/status',cookie=cookie)[0]==200)
         chk("a phone still can't",req(rk.PL+'/5et/status')[0]==403 and not any(c['name']=='Hidden Imp' for c in json.loads(req(rk.PL+'/state')[1])['list']))

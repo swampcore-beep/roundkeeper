@@ -20,7 +20,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append('dm '+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5); await T(dm,SETUP)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5); await T(dm,SETUP)
         sf=await (await b.new_context(viewport={'width':1368,'height':912})).new_page(); sf.on("pageerror",lambda e:errs.append('sf '+str(e)))
         await sf.goto(rk.PL+'/players?shared=1'); await asyncio.sleep(2.5)
         # B1–B15
@@ -110,7 +110,7 @@ async def main():
         # TV light mode skips it all
         tv=await (await b.new_context(viewport={'width':1920,'height':1080})).new_page(); tv.on("pageerror",lambda e:errs.append('tv '+str(e)))
         await T(dm,"state.tv=Object.assign({},state.tv,{look:{same:false,theme:'tavern',look:{},scene:'storm',bg:'',bgDim:.45,mfont:'B',lite:true,weather:'rain',tod:'night',tune:{}}});commit()")
-        await tv.goto('http://127.0.0.1:8765/players?shared=1&screen=tv'); await asyncio.sleep(2.5)
+        await tv.goto(rk.DM+'/players?shared=1&screen=tv'); await asyncio.sleep(2.5)
         await T(dm,"state.spfx={id:'x10',at:Date.now(),n:'Fireball',t:'fire',from:null,to:[]};commit()"); await asyncio.sleep(1.5)
         chk("TV Light mode: no scene, no weather, no spells",await T(tv,"Scene.kind")=='none' and await T(tv,"Scene.weather")=='none' and await T(tv,"Scene.fx.length+Scene.SP.length")==0)
         # reduced motion

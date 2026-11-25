@@ -29,7 +29,7 @@ dev/serve.sh go data     # with a 5e.tools data folder: RK_5ETOOLS=/path/to/5eto
 dev/serve.sh go srd keep # keep state.json and library.json from the last run
 ```
 
-Each run stops whatever is on port 8765 and starts fresh in `dev/.work/srv`. The page gets a test hook, `window.__t(js)`, which runs code inside the app, so tests can set up a fight in one call.
+Each run stops the server it started before (on 8765 also any older copy) and starts fresh in `dev/.work/srv`. `RK_PORT` picks another port; the folder is then `dev/.work/srv-<port>` (`dev/test.sh -j` uses this). `dev/serve.sh build` only builds, `dev/serve.sh stop` stops the server on `RK_PORT`. The server takes its port from `ROUNDKEEPER_PORT` (https on the next one), which only the tests set. The page gets a test hook, `window.__t(js)`, which runs code inside the app, so tests can set up a fight in one call.
 
 The server treats this computer (127.0.0.1) as the DM. Tests open player pages (the tablet, phones) on this computer's LAN address, which `dev/rk.py` works out. Set `RK_LAN` if it guesses wrong.
 
@@ -38,6 +38,7 @@ The server treats this computer (127.0.0.1) as the DM. Tests open player pages (
 ```bash
 dev/test.sh              # every suite that needs only the repo, on the Go server
 dev/test.sh t29 t4       # just some suites
+dev/test.sh -j 2         # two suites at once, each on its own server (ports 8771, 8781, …)
 ```
 
 One line per suite (`go t4: ok`). A failing suite shows its first FAIL lines and the path to its full log in `dev/.work/out/`.

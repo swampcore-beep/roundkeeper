@@ -11,7 +11,7 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/')
+        await dm.goto(rk.DM+'/')
         await T(dm,"state.party=[];state.list=[{id:'a',name:'Lich',kind:'enemy',init:22,conds:[],ds:{s:0,f:0},sb:{raw:'',lr:{max:3,used:0},la:{max:3,used:0},uses:[],rech:[]}},{id:'b',name:'Mira',kind:'pc',cls:'sorcerer',init:17,conds:[],ds:{s:0,f:0}}];state.ended=null;commit()")
         await asyncio.sleep(.4)
         # ---- DM statblock pips

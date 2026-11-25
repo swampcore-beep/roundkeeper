@@ -14,8 +14,8 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append(str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(2)
-        pics=json.loads(get('http://127.0.0.1:8765/5et/pics')[1]); chk("pictures from the test zip",pics['count']==1 and pics['from']==['5etools-img-test.zip'],pics)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(2)
+        pics=json.loads(get(rk.DM+'/5et/pics')[1]); chk("pictures from the test zip",pics['count']==1 and pics['from']==['5etools-img-test.zip'],pics)
         chk("phones can't ask",get(rk.PL+'/5et/pics')[0]==403)
         await T(dm,"picsSheet()"); await asyncio.sleep(.5)
         t=await dm.locator('.sheet').inner_text(); chk("Pictures sheet: count and where to put them",'1 monster pictures' in t and 'img/bestiary' in t and 'doesn\'t download' not in t,t[:300])
@@ -23,8 +23,8 @@ async def main():
         d=os.path.join(F,'5etools','img','bestiary','MM'); os.makedirs(d,exist_ok=True)
         im=Image.new('RGB',(200,140),(30,60,120)); im.save(os.path.join(d,'Lich.webp'),'WEBP')
         await dm.click('[data-act=picscheck]'); await asyncio.sleep(6)
-        pics=json.loads(get('http://127.0.0.1:8765/5et/pics')[1]); chk("the folder is read after Check again",pics['count']==2 and '5etools/img/bestiary' in pics['from'],pics)
-        chk("…and served to the DM",get('http://127.0.0.1:8765/5et/img?p=bestiary/mm/lich.webp')[0]==200)
+        pics=json.loads(get(rk.DM+'/5et/pics')[1]); chk("the folder is read after Check again",pics['count']==2 and '5etools/img/bestiary' in pics['from'],pics)
+        chk("…and served to the DM",get(rk.DM+'/5et/img?p=bestiary/mm/lich.webp')[0]==200)
         await dm.keyboard.press('Escape')
         # own picture, remembered for the next one of that monster
         await T(dm,"state.list.push(Object.assign(newCombatant({id:'g',name:'Goblin A',base:'Goblin',kind:'enemy',init:9}),{sb:{raw:'## Goblin\\n**Armor Class** 15',uses:[],rech:[],know:[]}}));commit()")

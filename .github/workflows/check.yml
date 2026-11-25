@@ -1,5 +1,6 @@
 name: Check
-# On every pull request: initiative.html must be the file tools/build.py puts together from src/, and the Windows program must build.
+# On every pull request: initiative.html must be the file tools/build.py puts together from src/, the Windows program must build,
+# and the browser tests that need nothing but the repo (dev/test.sh, the SRD suites) must pass.
 on:
   pull_request:
   push:
@@ -33,3 +34,28 @@ jobs:
       - name: Build Roundkeeper.exe
         working-directory: go
         run: GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-X main.version=check" -o Roundkeeper.exe .
+  tests:
+    # dev/test.sh -j 4: the SRD suites, four at a time, each on its own server. Suites that need 5e.tools or private files are skipped.
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Playwright and Chromium
+        run: |
+          pip install playwright pillow
+          python -m playwright install --with-deps chromium
+      - name: Run the tests
+        run: bash dev/test.sh -j 4
+      - name: Logs and screenshots of a failed run
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: dev/.work/out/
+          retention-days: 7

@@ -14,9 +14,9 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server']); errs=[]
         dm=await (await b.new_context(viewport={'width':1440,'height':900})).new_page(); dm.on("pageerror",lambda e:errs.append('dm '+str(e)))
-        await dm.goto('http://127.0.0.1:8765/'); await asyncio.sleep(1.5); await T(dm,SETUP)
+        await dm.goto(rk.DM+'/'); await asyncio.sleep(1.5); await T(dm,SETUP)
         tv=await (await b.new_context(viewport={'width':1920,'height':1080})).new_page(); tv.on("pageerror",lambda e:errs.append('tv '+str(e)))
-        await tv.goto('http://127.0.0.1:8765/players?shared=1&screen=tv'); await asyncio.sleep(2.5)
+        await tv.goto(rk.DM+'/players?shared=1&screen=tv'); await asyncio.sleep(2.5)
         # 83: animations land on the TV's cards
         await T(dm,"byId('m').conds.push('Prone');commit()"); await asyncio.sleep(1.4)
         r=await tv.evaluate("(()=>{const m=document.querySelector('#moments .mo'),c=document.querySelector('#tvLayer [data-tid=m]');if(!m||!c)return null;const a=m.getBoundingClientRect(),b=c.getBoundingClientRect();return Math.abs(a.left-b.left)<3&&Math.abs(a.top-b.top)<3})()")
@@ -39,7 +39,7 @@ async def main():
         chk("HP reaches the DM even when changes are locked",await T(dm,"JSON.stringify(byId('m').php&&[byId('m').php.cur,byId('m').php.max,byId('m').php.temp])")=='[23,32,5]')
         chk("DM row shows it",'23/32' in (await dm.evaluate("document.querySelector('#roster .pchp')?.innerText||''")))
         pub=get(rk.PL+'/state'); chk("players' state never has it",'"php"' not in pub)
-        tvs=get('http://127.0.0.1:8765/state?pub=1&screen=tv'); chk("TV's state never has it",'"php"' not in tvs)
+        tvs=get(rk.DM+'/state?pub=1&screen=tv'); chk("TV's state never has it",'"php"' not in tvs)
         await T(ph,"pSheet='hp';renderPSheet()"); await asyncio.sleep(.3); await ph.click('#pHpShare'); await asyncio.sleep(3)
         chk("turning sharing off removes it",not await T(dm,"!!byId('m').php"))
         await T(ph,"pSheet=null;renderPSheet()")
