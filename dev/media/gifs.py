@@ -56,7 +56,7 @@ async def main():
             await asyncio.sleep(1.5)
             await S("state.call={id:'c'+Date.now(),text:'Dexterity save DC 21 · Fire Breath',dc:21,at:Date.now(),to:['i','s','a','gr'],answers:{}};commit()",2.6)
             await pg.click('[data-act=pcallroll]');await asyncio.sleep(2.2)
-            await pg.click('.tile[data-act=php]');await asyncio.sleep(1)
+            await pg.click('.pdock [data-act=php]');await asyncio.sleep(1)
             for k in "30": await pg.click(f'#overlay [data-k="{k}"]') if await pg.query_selector(f'#overlay [data-k="{k}"]') else None;await asyncio.sleep(.35)
             await asyncio.sleep(.5)
             if await pg.query_selector('[data-act=phpdo][data-hp=dmg]'): await pg.click('[data-act=phpdo][data-hp=dmg]')

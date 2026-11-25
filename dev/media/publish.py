@@ -19,6 +19,6 @@ if os.path.exists(S+'g_party.png'): save(Image.open(S+'g_party.png'),'party.jpg'
 if os.path.exists(S+'g_devices.png'): save(Image.open(S+'g_devices.png'),'devices.jpg',1000)  # the Devices window only (an element shot)
 if os.path.exists(rk.MEDIA+'/four.png'): save(Image.open(rk.MEDIA+'/four.png'),'four-screens.jpg',1600)
 if os.path.exists(rk.MEDIA+'/social-preview.png'): shutil.copy(rk.MEDIA+'/social-preview.png',os.path.join(D,'social-preview.png'));print('media/social-preview.png')
-for g in ['boss']:   # the tablet, TV and phone GIFs gave way to the three videos
+for g in ['boss','tablet','tv']:   # back in the README sections, now the one video sits at the top (phone.gif: its sheet doesn't match the row)
     f=rk.MEDIA+'/gifs/'+g+'.gif'
     if os.path.exists(f): shutil.copy(f,os.path.join(D,g+'.gif'));print('media/'+g+'.gif')

@@ -23,9 +23,9 @@
   &nbsp;·&nbsp; <a href="#faq">FAQ</a>
 </p>
 
-https://github.com/user-attachments/assets/71eb6c39-75f3-4886-8ee0-8c130f92571c
+https://github.com/user-attachments/assets/5c44bd7f-69f3-4e3c-bbb6-5dcdeb8b5bc0
 
-<p align="center"><sub>One fight on all four screens at once (50 seconds, no sound).</sub></p>
+<p align="center"><sub>One fight from start to finish: all four screens, then the DM's laptop, a player's phone, and the tablet and the TV (2½ minutes, no sound).</sub></p>
 
 <table>
 <tr>
@@ -44,10 +44,6 @@ https://github.com/user-attachments/assets/71eb6c39-75f3-4886-8ee0-8c130f92571c
 
 ## The DM's laptop
 
-https://github.com/user-attachments/assets/ad0e8f23-1c19-4388-82c5-350a6e711e61
-
-<p align="center"><sub>Monsters from the SRD, the statblock, a roll call, Hit several, conditions and the rules lookup (under a minute, no sound).</sub></p>
-
 <img src="media/dm.jpg" width="100%" alt="The DM screen: the turn order with the Adult Red Dragon's turn, HP, AC and conditions in each row, and its statblock open on the right">
 
 The turn order is one row per creature, and the statblock opens beside it, so you never lose your place.
@@ -61,7 +57,7 @@ The turn order is one row per creature, and the statblock opens beside it, so yo
 
 <table>
 <tr>
-<td width="50%"><img src="media/hit-several.jpg" width="100%" alt="Hit several: Gregori's Fireball on three goblins, with their Dexterity saves rolled"><br><sub><b>Hit several:</b> 28 fire on three goblins; two saved for half.</sub></td>
+<td width="50%"><img src="media/hit-several.jpg" width="100%" alt="Hit several: Gregori's Fireball on three goblins, with their Dexterity saves rolled"><br><sub><b>Hit several:</b> 28 fire on three goblins, each Dexterity save rolled, half on a success.</sub></td>
 <td width="50%"><img src="media/rules.jpg" width="100%" alt="Ctrl+K rules lookup showing the Fireball card"><br><sub><b>Ctrl+K:</b> any spell, condition, rule or item.</sub></td>
 </tr>
 <tr>
@@ -99,9 +95,12 @@ The turn order is one row per creature, and the statblock opens beside it, so yo
 
 ## The tablet and the TV
 
-https://github.com/user-attachments/assets/7bbb1381-49c6-4f52-a0d2-d8d31fed4937
-
-<p align="center"><sub>The tablet on the table and the TV across the room, side by side through one fight (under a minute, no sound).</sub></p>
+<table>
+<tr>
+<td width="50%"><img src="media/tablet.gif" width="100%" alt="The tablet's turn order through a round: the turn moves from Isandros to Goblin A to Styx, Goblin B becomes Bloodied, and Styx rolls a natural 20"><br><sub><b>On the table:</b> the turn moves, a goblin is Bloodied, a natural 20.</sub></td>
+<td width="50%"><img src="media/tv.gif" width="100%" alt="The TV's spotlight through the same turns: whose turn it is, its conditions, who's next and what happened this round"><br><sub><b>On the TV:</b> whose turn it is, who's next, and the round so far.</sub></td>
+</tr>
+</table>
 
 <table>
 <tr>
@@ -149,10 +148,6 @@ Pick a theme and change any part of it: colours, fonts, an animated scene or you
 ---
 
 ## On the players' phones
-
-https://github.com/user-attachments/assets/f4a58735-5e70-4614-bb3c-cf1cf5d98993
-
-<p align="center"><sub>A player's phone with the tablet beside it: joining, initiative, a spell, resources, the character sheet, a roll call and death saves (under a minute, no sound).</sub></p>
 
 <table>
 <tr>

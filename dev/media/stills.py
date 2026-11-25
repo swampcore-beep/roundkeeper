@@ -48,7 +48,7 @@ async def main():
             await dm.keyboard.press('Control+k');await asyncio.sleep(1.2);await dm.keyboard.type('fireball');await asyncio.sleep(1.2)
             await dm.screenshot(path=O+'g_ctrlk.png');await dm.keyboard.press('Escape');await asyncio.sleep(.3)
         if want('party'):
-            await S("byId('i').pst={ac:18,pp:11,pi:13,pv:9,dc:14,at:Date.now()};byId('s').pst={ac:14,pp:12,pi:14,pv:11,dc:15,at:Date.now()};byId('a').pst={ac:15,pp:15,pi:15,pv:10,dc:14,at:Date.now()};byId('gr').pst={ac:12,pp:11,pi:11,pv:14,dc:15,at:Date.now()};commit();partySheet()",1)
+            await S("byId('i').pst={ac:20,pp:11,pi:13,pv:9,dc:14,at:Date.now()};byId('s').pst={ac:14,pp:12,pi:14,pv:11,dc:15,at:Date.now()};byId('a').pst={ac:16,pp:15,pi:15,pv:10,dc:14,at:Date.now()};byId('gr').pst={ac:12,pp:11,pi:11,pv:14,dc:15,at:Date.now()};commit();partySheet()",1)
             await dm.locator('.sheet:visible').last.screenshot(path=O+'g_party.png');await S("closeSheet()",.3)
         if want('cond'):
             await S("byId('g1').conds.push('Restrained');byId('s').conds.push('Frightened');byId('i').conds.push('Prone');commit()",2.2)
@@ -74,7 +74,7 @@ async def main():
             await S("state.ended=null;delete state.hdywt;state.cstat={};state.nstat={};for(const k of ['d','g1','g2','g3']){const g=byId(k);g.hp=g.hpMax;g.down=false};commit()",2)
         if want('devices'):
             import vrec;vrec.present();await asyncio.sleep(2.5)
-            await S("devSheet()",2.5);bb=await dm.locator('.sheet:visible').last.bounding_box();await dm.screenshot(path=O+'g_devices.png',clip=bb)   # (it redraws as phones check in);await S("closeSheet()",.3)
+            await S("devSheet()",2.5);bb=await dm.locator('.sheet:visible').last.bounding_box();await dm.screenshot(path=O+'g_devices.png',clip=bb);await S("closeSheet()",.3)   # (it redraws as phones check in)
         if want('spells'):
             await T(ph,"pSheet='book';spellScope='all';bookQ='';renderPSheet()");await asyncio.sleep(2.5);await ph.screenshot(path=O+'g_spells.png')
             await T(ph,"spView={n:'Fireball',s:'SRD52',from:'book'};pSheet='spell';renderPSheet();refGet('spell','Fireball','SRD52',true).then(d=>{spView.d=d;renderPSheet()})");await asyncio.sleep(1.5);await ph.screenshot(path=O+'g_spell.png')
