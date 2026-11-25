@@ -3,13 +3,14 @@ import sys as _sys,os as _os;_sys.path.insert(0,_os.path.dirname(_os.path.abspat
 # (SRD-only server). Each page is captured with a CDP screencast; frames + event marks go to reddit/raw.
 import asyncio,sys,os,json,time,base64,shutil
 from scene import setup
+from vrec import pause
 from playwright.async_api import async_playwright
 TGT=sys.argv[1]
 O=rk.MEDIA+'/four-video/raw_'+TGT+'/'
 shutil.rmtree(O,ignore_errors=True);os.makedirs(O)
 async def T(pg,js): return await pg.evaluate("(js)=>__t(js)",js)
 TH,SC="tavern","avernus"
-BASE=(";state.ended=null;state.hdywt=null;state.rsum=null;state.clocks=[];state.call=null;state.roll=null;state.tv={mode:'auto'};state.weather='none';state.tod='none';state.tune={};state.sceneFx={};state.sceneReact=true;state.layout='landscape';"
+BASE=(";state.diceView={tv:'3d',tab:'3d',ph:'off'};state.ended=null;state.hdywt=null;state.rsum=null;state.clocks=[];state.call=null;state.roll=null;state.tv={mode:'auto'};state.weather='none';state.tod='none';state.tune={};state.sceneFx={};state.sceneReact=true;state.layout='landscape';"
       "byId('i').php={cur:44,max:52,temp:0,at:Date.now()};byId('a').php={cur:21,max:38,temp:5,at:Date.now()};commit()")
 marks=[];frames={}
 async def cast(ctx,pg,name,q=88):
@@ -27,8 +28,8 @@ async def main():
     async with async_playwright() as p:
         b=await p.chromium.launch(args=['--no-proxy-server','--use-gl=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist'])
         dmc=await b.new_context(viewport={'width':1536,'height':864});dm=await dmc.new_page()
-        await dm.goto(rk.DM+'/');await asyncio.sleep(1.5)
-        async def S(js,w=0): await T(dm,js);await asyncio.sleep(w)
+        await dm.goto(rk.DM+'/');await pause(1.5)
+        async def S(js,w=0): await T(dm,js);await pause(w)
         st=setup(TH,SC,True,"i")+BASE
         await S(st,.8)
         tb=tv=ph=None
@@ -40,23 +41,25 @@ async def main():
             await tv.goto(rk.DM+'/players?shared=1&screen=tv')
         if TGT=='phone':
             phc=await b.new_context(viewport={'width':390,'height':844},has_touch=True);ph=await phc.new_page()
-            await ph.goto(rk.PL+'/players');await asyncio.sleep(1.5)
-            await ph.click('[data-act=pickme][data-n=Isandros]');await asyncio.sleep(1)
+            await ph.goto(rk.PL+'/players');await pause(1.5)
+            await ph.click('[data-act=pickme][data-n=Isandros]');await pause(1)
             await T(ph,"hpSet({cur:44,max:52,temp:0,auto:true});renderPlayer()")
-        await asyncio.sleep(3)
+        await pause(3)
+        for x in (tb,tv):
+            if x: await T(x,"Dice3D.get().then(()=>1,()=>0)")   # load the 3D dice before the first roll
         c,pg={'dm':(dmc,dm),'tablet':(tb and tbc,tb),'tv':(tv and tvc,tv),'phone':(ph and phc,ph)}[TGT]
         await cast(c,pg,TGT)
-        await asyncio.sleep(1.5)
+        await pause(1.5)
         nxt=lambda: dm.click('[data-act=tnext]')
         mark("start")
-        mark("Next turn on the laptop, and every screen follows");await asyncio.sleep(2.2)
-        await nxt();await asyncio.sleep(2.0)
-        await nxt();await asyncio.sleep(1.4)
+        mark("Next turn on the laptop, and every screen follows");await pause(2.2)
+        await nxt();await pause(2.0)
+        await nxt();await pause(1.4)
         mark("A natural 20 lights up the table")
         await S("state.roll={id:uid(),at:Date.now(),kind:'nat20',by:'Styx',text:'Attack: d20 (20) + 7',total:27,dice:[[20,20]]};commit()",5.6)
-        await nxt();await asyncio.sleep(1.2);await nxt();await asyncio.sleep(1.2);await nxt()
+        await nxt();await pause(1.2);await nxt();await pause(1.2);await nxt()
         if tv: await T(tv,"{const e=$('#tvDice');if(e){e.classList.add('out');Dice3D.hide();setTimeout(()=>e.remove(),650)}}")   # the nat 20 card makes way for the Fireball
-        await asyncio.sleep(1.0)
+        await pause(1.0)
         mark("Fireball on three goblins")
         await S("state.spfx={id:uid(),at:Date.now(),n:'Fireball',t:'fire',from:'gr',to:['g1','g2','g3']};commit()",2.6)
         await S("for(const k of ['g1','g3']){const g=byId(k);g.hp=0;g.down=true};const h=byId('g2');h.hp=3;h.bloodied=true;commit()",2.4)
@@ -66,32 +69,34 @@ async def main():
         mark("Fire Breath: the players roll the save on their phones")
         await S("state.call={id:'c'+Date.now(),text:'Dexterity save DC 21 · Fire Breath',dc:21,at:Date.now(),to:['i','s','a','gr'],answers:{}};commit()",1.6)
         if ph:
-            for k in "23": await ph.click(f'[data-act=pkey][data-k="{k}"]');await asyncio.sleep(.35)
-            await ph.click('[data-act=pcallsend]');await asyncio.sleep(.6)
+            for k in "23": await ph.click(f'[data-act=pkey][data-k="{k}"]');await pause(.35)
+            await ph.click('[data-act=pcallsend]');await pause(.6)
         else:
-            await asyncio.sleep(.7);await S("state.call.answers=Object.assign({},state.call.answers,{i:23});commit()",.6)
+            await pause(.7);await S("state.call.answers=Object.assign({},state.call.answers,{i:23});commit()",.6)
         await S("state.call.answers=Object.assign({},state.call.answers,{s:12});commit()",.7)
         await S("state.call.answers=Object.assign({},state.call.answers,{a:19});commit()",.7)
         await S("state.call.answers=Object.assign({},state.call.answers,{gr:8});commit()",2.4)
         await S("delete state.call;commit()",.4)
         mark("Players keep their own HP")
         if ph:
-            await ph.click('.pdock [data-act=php]');await asyncio.sleep(.8)
+            await ph.click('.pdock [data-act=php]');await pause(.8)
             for k in "30":
                 q=f'#overlay [data-k="{k}"]'
                 if await ph.query_selector(q): await ph.click(q)
-                await asyncio.sleep(.4)
-            await asyncio.sleep(.4)
+                await pause(.4)
+            await pause(.4)
             if await ph.query_selector('[data-act=phpdo][data-hp=dmg]'): await ph.click('[data-act=phpdo][data-hp=dmg]')
-            await asyncio.sleep(1.3)
+            await pause(1.3)
             await T(ph,"pSheet=null;renderPSheet()")
-            await asyncio.sleep(.9)
-        else: await asyncio.sleep(4.4)
+            await pause(.9)
+        else: await pause(4.4)
         await S("state.turn={round:3,id:'i',init:19};commit()",1.4)
         mark("The dragon falls")
+        await S("state.roll={id:uid(),at:Date.now(),kind:'roll',by:'Isandros',text:'Longsword + Divine Smite: 1d8 + 4d8 radiant + 4',total:36,"
+                "dice:[[8,6],[8,7],[8,5],[8,8],[8,6]]};commit()",4.2)
         await S("byId('d').hp=0;byId('d').down=true;state.hdywt={id:uid(),pc:'i',name:'Isandros',cls:'paladin',boss:'Adult Red Dragon',at:Date.now()};commit()",5.0)
         mark("end")
-        await asyncio.sleep(.5)
+        await pause(.5)
         json.dump({'marks':marks,'frames':frames},open(O+'index.json','w'))
         print({k:len(v) for k,v in frames.items()})
         for cdp in []: pass

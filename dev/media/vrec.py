@@ -3,6 +3,10 @@ import sys as _sys,os as _os;_sys.path.insert(0,_os.path.dirname(_os.path.abspat
 # Each pass records one screen with a CDP screencast. The script does the same steps in every pass and logs
 # the caption marks, so video_make.py can line the passes up afterwards.
 import asyncio,os,json,time,base64,shutil,threading,urllib.request
+# PACE stretches every pause, mouse move and keypress of the recordings (and the intro and outro cards), so the
+# videos can be slowed down with one number: RK_PACE=1.5 by default, RK_PACE=1 for the old tempo.
+PACE=float(os.environ.get('RK_PACE','1.5'))
+async def pause(s): await asyncio.sleep(s*PACE)
 def present(ids=('i','s','a','gr'),tv=True,tablet=True):
     # make the DM's Devices window and header show the tablet, the TV and the phones as connected, without opening them all
     op=urllib.request.build_opener(urllib.request.ProxyHandler({}))
@@ -37,15 +41,15 @@ class Rec:
     async def go(self,pg,loc,click=True,dur=.5,dx=0,dy=0):
         loc=pg.locator(loc).first if isinstance(loc,str) else loc
         await loc.scroll_into_view_if_needed();bb=await loc.bounding_box()
-        x,y=bb['x']+bb['width']/2+dx,bb['y']+bb['height']/2+dy
+        x,y=bb['x']+bb['width']/2+dx,bb['y']+bb['height']/2+dy;dur*=PACE
         t0=time.time();self.mouse.append(('move',t0,self.pos[0],self.pos[1],x,y,dur))
         await pg.mouse.move(x,y,steps=8);rest=dur-(time.time()-t0)
         if rest>0: await asyncio.sleep(rest)
         self.pos[0],self.pos[1]=x,y
-        if click: self.mouse.append(('click',time.time(),x,y));await pg.mouse.click(x,y);await asyncio.sleep(.22)
+        if click: self.mouse.append(('click',time.time(),x,y));await pg.mouse.click(x,y);await pause(.22)
     async def typ(self,pg,sel,txt,d=.07):
         await pg.locator(sel).first.focus()
-        for ch in txt: await pg.keyboard.type(ch);await asyncio.sleep(d)
+        for ch in txt: await pg.keyboard.type(ch);await pause(d)
     async def key(self,pg,k,label):
         self.keys.append((time.time(),label));await pg.keyboard.press(k)
     # a finger on the phone: logs the spot for the drawn touch
@@ -54,6 +58,6 @@ class Rec:
         await loc.wait_for(state='visible',timeout=8000)
         bb=await loc.bounding_box();vh=pg.viewport_size['height']
         if bb['y']<0 or bb['y']+bb['height']>vh:   # (no Playwright scrolling: it waits for animation frames a page that isn't recorded may not give)
-            await loc.evaluate("e=>e.scrollIntoView({block:'center'})");await asyncio.sleep(.15);bb=await loc.bounding_box()
+            await loc.evaluate("e=>e.scrollIntoView({block:'center'})");await pause(.15);bb=await loc.bounding_box()
         x,y=bb['x']+bb['width']/2,bb['y']+bb['height']/2
-        self.taps.append((time.time(),x,y));await pg.mouse.click(x,y);await asyncio.sleep(wait)
+        self.taps.append((time.time(),x,y));await pg.mouse.click(x,y);await pause(wait)
