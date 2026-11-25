@@ -15,6 +15,7 @@ A free, offline combat tracker for in-person 5e (2024 rules). The DM runs it on 
 | `media/` | README pictures and GIFs (regenerate with `dev/media/`) |
 | `dev/` | Test servers, test suites, media scripts: see `dev/README.md` |
 | `.github/workflows/release.yml` | A `v*` tag builds the Windows exe, the Mac program (universal, joined by `tools/makefat.py`), and the Linux programs, and attaches them to the release |
+| `.github/workflows/media.yml` | Record media: README pictures, GIFs and videos made on GitHub with `dev/media/record.sh`, returned as an artifact (run it by hand or with `gh api …/dispatches`) |
 | `.github/workflows/check.yml` | Every pull request: `initiative.html` must match `src/`, the Windows program must build with its resources, and all SRD test suites must pass (`dev/test.sh -j 4`) |
 | `.claude/agents/` | The helper agents (see Models and helpers) |
 | `dev/tools/testmap.py` | Which test suites cover a file (`--changed`: what differs from `origin/main`) |
@@ -61,7 +62,7 @@ Order of preference: a script or CI first (no tokens, same result every time: th
 | Agent | Model | Tools | For | Answers with |
 |---|---|---|---|---|
 | `rk-search` | Haiku | read only | where something is, what calls what, which suite covers it | up to 15 `path:line` lines |
-| `rk-media` | Sonnet | shell, pictures | screenshots and videos with `dev/media/` on the SRD server, and looking at them | the files, what looks wrong, at most 2 to look at |
+| `rk-media` | Sonnet | shell, pictures | screenshots and videos (the Record media workflow, or `dev/media/record.sh`), and looking at them | the files, what looks wrong, at most 2 to look at |
 | `rk-writer` | Sonnet | read only | release notes (English, for users), PR descriptions, project notes (Croatian) | the text, ready to use |
 | `rk-review` | Opus | read only | a fresh review of the diff before a PR: what players receive, licensing, names, new bugs | problems with `path:line`, or "Clean." |
 

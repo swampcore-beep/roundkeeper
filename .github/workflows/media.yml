@@ -1,0 +1,52 @@
+name: Record media
+# Makes the README pictures, GIFs and videos on GitHub's computer instead of the owner's, with dev/media/record.sh
+# on the SRD-only test server. Nothing is committed: the files come back as the run's "media" artifact
+# (out/readme: ready for media/ with the README's names; out/videos: the mp4s; out/stills: the screenshots).
+# Start it in Actions → Record media → Run workflow, or from a session:
+#   gh api -X POST repos/swampcore-beep/roundkeeper/actions/workflows/media.yml/dispatches -f ref=main -f inputs[what]="stills pictures"
+# A pull request that changes this file or dev/media/ makes the stills and pictures, so a change to the scripts is tried here first.
+
+on:
+  workflow_dispatch:
+    inputs:
+      what:
+        description: "What to make: stills pictures gifs four dm table phone, or videos, or all"
+        default: "stills pictures"
+        required: true
+  pull_request:
+    paths:
+      - .github/workflows/media.yml
+      - dev/media/**
+
+permissions:
+  contents: read
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Playwright, Chromium, ffmpeg
+        run: |
+          pip install playwright pillow numpy fonttools brotli
+          python -m playwright install --with-deps chromium
+          sudo apt-get update -q && sudo apt-get install -yq ffmpeg
+      - name: Record
+        env:
+          WHAT: ${{ github.event_name == 'workflow_dispatch' && inputs.what || 'stills pictures' }}
+        run: bash dev/media/record.sh $WHAT
+      - name: The files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: media
+          path: dev/.work/media/out/
+          retention-days: 14
+          if-no-files-found: warn
