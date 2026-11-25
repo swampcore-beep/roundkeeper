@@ -72,13 +72,14 @@ async def main():
         chk("…the goblins rolled: those who saved are off it",('Goblin A saved' in tl or (e and 'g1' in e['targets'])) and ('Goblin B saved' in tl or (e and 'g2' in e['targets'])),tl)
         chk("…the effect keeps its save, to repeat",e is None or (e['save']=={'ab':'Wis','dc':15,'again':True} and e['conc']),e)
         chk("…Gregori concentrates",await T(dm,"byId('gr').conds.some(x=>(x.n||x)==='Concentrating')"))
-        # the end of a held goblin's turn: a success ends it on that one
+        # the end of a held goblin's turn: a success ends it on that one. The d20 is fixed (20, then 1): with a real roll a goblin
+        # (Wis -1) rolling a 1 makes 0 and fails even DC 1, so the check failed about one run in twenty
         await T(dm,"state.effects=state.effects.filter(e=>e.name!=='Hold Person');state.effects.push({id:'hp1',name:'Hold Person',by:'gr',targets:['g1','g2'],conc:true,area:false,"
                    "save:{ab:'Wis',dc:1,again:true}});commit()");await asyncio.sleep(.2)
-        msgs=json.loads(await T(dm,"(()=>{const m=[];effTurnEnd(byId('g1'),m);commit();return JSON.stringify(m)})()"))
+        msgs=json.loads(await T(dm,"(()=>{const m=[],r=Math.random;Math.random=()=>.99;try{effTurnEnd(byId('g1'),m)}finally{Math.random=r}commit();return JSON.stringify(m)})()"))
         chk("…a monster's save at the end of its turn ends it on that one",await T(dm,"JSON.stringify(state.effects.find(e=>e.id==='hp1').targets)")=='["g2"]',msgs)
         await T(dm,"state.effects.find(e=>e.id==='hp1').save.dc=99;commit()")
-        msgs=json.loads(await T(dm,"(()=>{const m=[];effTurnEnd(byId('g2'),m);commit();return JSON.stringify(m)})()"))
+        msgs=json.loads(await T(dm,"(()=>{const m=[],r=Math.random;Math.random=()=>0;try{effTurnEnd(byId('g2'),m)}finally{Math.random=r}commit();return JSON.stringify(m)})()"))
         chk("…a failed one keeps it",await T(dm,"JSON.stringify(state.effects.find(e=>e.id==='hp1').targets)")=='["g2"]' and 'still under Hold Person' in ' '.join(msgs),msgs)
         # a player's answer on the phone
         await T(dm,"state.effects.push({id:'hp2',name:'Hold Person',by:'g1',targets:['s'],conc:false,area:false,save:{ab:'Wis',dc:12,again:true}});"
