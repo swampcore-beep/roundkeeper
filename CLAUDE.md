@@ -21,13 +21,9 @@ A free, offline combat tracker for in-person 5e (2024 rules). The DM runs it on 
 
 ### Inside the app (`src/`)
 
-`python3 tools/build.py` joins `src/*` in the order of their numbers into `initiative.html` (`--check` only compares). `dev/serve.sh` and `dev/test.sh` build first, so a test always runs the current `src/`. Commit the built `initiative.html` together with the `src/` change. The parts are pieces of one file, not modules: `00-head.html` opens the page and the `<style>`, `10-`…`30-` are the CSS (DM, tablet, phone, status effects, frames, themes, TV…), `40-body.html` is the markup, `50-qrcode.js` the QR code library (MIT, leave it as it is), and `60-`…`86-` are the app, one IIFE from `(function(){` (first line of `60-data.js`; `dev/serve.sh` adds the test hook there) to `})();` at the end of `86-boot.js`. A new part takes a free number between its neighbours. Keep lines under about 160 characters (long HTML strings and data URIs may run over); `node dev/wrap/wrap.js` breaks long ones where whitespace means nothing and proves the JS tree and CSS rules didn't change. Find things by name with Grep in `src/`:
+`python3 tools/build.py` joins `src/*` in number order into `initiative.html` (`--check` only compares); `dev/serve.sh` and `dev/test.sh` build first. Commit the built `initiative.html` with the `src/` change. The parts are pieces of one file, not modules: `00-head.html` opens the page, `10-`…`39-` are the CSS (later parts override earlier ones; the DM screen's rules start `html:root[data-dmlook=tool]`), `40-body.html` the markup, `50-qrcode.js` the QR library (MIT, leave it), and `60-`…`86-` one IIFE from `(function(){` in `60-data.js` (`dev/serve.sh` adds the test hook there) to `})();` in `86-boot.js`. A new part takes a free number between its neighbours. Keep lines under about 160 characters; `node dev/wrap/wrap.js` breaks long ones and proves the JS and CSS did not change.
 
-- Mode and sync: `const MODE` ("dm" or "player"), `meName` ("*" on the tablet/TV), `commit()` → `finish()` → POST /state. Phones send actions to POST /player.
-- DM screen: `renderDM`, statblocks `parseStatblock` / `sbSheet`, Hit several `mtStart` / `mtRender`, Ctrl+K `qkLoad` / `qk…`, Atmosphere `atmoSheet`, conditions `condSheet`, Game data `gdSheet`, monster search `fetBoxHtml` / `fetRedraw`, rules cards `refGet`.
-- Tablet and phones: `renderPlayer`; phone sheets `renderPSheet`; spells `spLoad`; class data `pcLoad`.
-- TV: `tvRender`. Scenes: `SCENES`, `THEMES`, the `Scene` engine, `sceneReact`.
-- One delegated click handler in `85-events.js`: `document.addEventListener('click'`, keyed by `data-act` (search for `case "name"` or the name in quotes).
+Names to start from (`rk-search` finds the rest): `MODE` ("dm" or "player"), `meName` ("*" on the tablet/TV), `commit()` → POST /state, phones → POST /player; `renderDM`, `renderPlayer`, `tvRender`; clicks go through one handler in `85-events.js`, keyed by `data-act` (`case "name"`).
 
 ### Server
 
@@ -46,10 +42,14 @@ What players may see is decided in `publicView`, and player actions in `playerAc
 ## Working on it
 
 - Start a test server with `dev/serve.sh go`. Run tests with `dev/test.sh` (one line per suite); while working run just the suites that cover what you changed: `dev/test.sh $(python3 dev/tools/testmap.py --changed)`. Every pull request's Check runs all SRD suites (`dev/test.sh -j 4`, logs as an artifact when it fails), so wait for it there instead of running the whole set locally; `dev/test.sh -j 2` runs the whole set here when you need it.
-- Never put the string `ti-linux` in a shell command line together with the serve or test scripts: they stop the server with `pkill`, which would match your own shell.
+- Never put the string `ti-linux` in a shell command line together with the serve or test scripts: on port 8765 they also stop an older server copy with `pkill`, which would match your own shell.
 - Work on a branch and open a pull request with `gh api repos/swampcore-beep/roundkeeper/pulls`; never push to `main` (it is protected). Merge only when the owner says so (`gh api -X PUT …/pulls/N/merge -f merge_method=merge`). Tags, releases, repo settings and branch deletion are done by the owner in the GitHub UI.
 - Commit as the owner with the Claude committer so commits show as Verified and no personal email appears:
   `GIT_AUTHOR_NAME=swampcore-beep GIT_AUTHOR_EMAIL=swampcore-beep@users.noreply.github.com git -c user.name=Claude -c user.email=noreply@anthropic.com commit …`
+- Before pushing to a branch, check that its pull request is still open (`gh api …/pulls/N --jq .state`); once it is merged, start a new branch and pull request.
+- Before fixing something that looks wrong, look for the same fault elsewhere and say where, so the fix covers all of it.
+- A CSS change on the DM screen is checked in both themes and with a statblock open (`body.sbopen` rules often out-rank new ones); `t47` checks that every button reacts to the mouse.
+- Write a version number (in comments, tests or notes) only once the owner has named the version.
 - When the owner asks a question, answer it; build only when asked.
 
 ## Models and helpers
@@ -65,10 +65,10 @@ Order of preference: a script or CI first (no tokens, same result every time: th
 | `rk-writer` | Sonnet | read only | release notes (English, for users), PR descriptions, project notes (Croatian) | the text, ready to use |
 | `rk-review` | Opus | read only | a fresh review of the diff before a PR: what players receive, licensing, names, new bugs | problems with `path:line`, or "Clean." |
 
-- Their instructions are in `.claude/agents/<name>.md`. If the session lists the agent type, use it with a one- or two-sentence brief. If it does not (agents load when a session starts), start a general-purpose agent with that model and the brief "Follow `.claude/agents/<name>.md` (skip its front matter). Task: …".
+- Their instructions are in `.claude/agents/<name>.md`; give them a one- or two-sentence brief. (A session started before an agent was added does not list it: then use a general-purpose agent with that model and "Follow `.claude/agents/<name>.md`. Task: …".)
 - Pictures are the costliest thing in the main session's context: let `rk-media` look at them and read its text; open a picture yourself only for a design decision or the final check.
 - Run helpers in the background while you go on. Two independent helpers can run at once.
-- `rk-review` reviews every change to `go/main.go`, `publicView`, `playerAction` or anything sent to players, and any change larger than about 200 lines, before the pull request.
+- `rk-review` reviews every change to `go/main.go`, `publicView`, `playerAction` or anything sent to players, and any change larger than about 200 lines (not counting `initiative.html`), before the pull request.
 - Helpers never commit, push or open pull requests. Review a helper's work (diff, text, report) before you use it.
 - Keep design decisions, hard bugs, what players may see, and licensing questions in the main session. If a helper fails twice at the same thing, do it yourself.
 
