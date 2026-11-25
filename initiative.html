@@ -3709,7 +3709,8 @@ html:root[data-dmlook=tool] #roster .sbline .sblair[aria-pressed=true]::before{c
 /* 2 · + Condition and the small + have an edge */
 html:root[data-dmlook=tool] #roster .chips .addc,html:root[data-dmlook=tool] body.sbopen #roster .chips .addc{box-shadow:inset 0 0 0 1px var(--btnbd)!important;
   color:var(--fg)!important}
-html:root[data-dmlook=tool] #roster .chips .addc:hover{background:var(--btnbg)!important;box-shadow:inset 0 0 0 1px var(--btnbd-h)!important}
+html:root[data-dmlook=tool] #roster .chips .addc:hover,html:root[data-dmlook=tool] body.sbopen #roster .chips .addc:hover{
+  background:color-mix(in srgb,var(--fg) 9%,transparent)!important;box-shadow:inset 0 0 0 1px var(--btnbd-h)!important}
 /* 5 · quiet icons: Bloodied, Down, Show AC; ⋯ keeps a visible ring */
 html:root[data-dmlook=tool] #roster .stat .tog:is(.blood,.downt):not([aria-pressed=true]),html:root[data-dmlook=tool] #roster .ac-wrap .tog{
   color:var(--qicon)!important;
@@ -3719,10 +3720,39 @@ html:root[data-dmlook=tool] #roster .stat .tog:is(.blood,.downt):not([aria-press
 html:root[data-dmlook=tool] #roster .ac-wrap .tog[aria-pressed=true]{color:var(--fg)!important}
 html:root[data-dmlook=tool] #roster .stat .morebtn2{border:1px solid var(--btnbd);color:var(--qicon)}
 html:root[data-dmlook=tool] #roster .stat .morebtn2:hover{background:var(--btnbg);border-color:var(--btnbd-h);color:var(--fg)}
-/* 6 · values you can change: a field's edge under the mouse */
-html:root[data-dmlook=tool] #roster .hexw .init-in:hover,html:root[data-dmlook=tool] #roster .hpw.hpb:hover,
+/* 6 · values you can change: a soft tint under the mouse, with even room around the value (1.7). The value itself does not move:
+   HP reaches 10px left of its column, so its number stays where the column starts, and its bar starts under the number.
+   AC keeps its shield (only the colour behind it changes). HP, which opens a window, shows a pencil. */
+html:root[data-dmlook=tool] #roster .row .tools>.hpw.hpb{margin-left:-10px;width:calc(100% + 10px);max-width:142px;border-radius:8px}
+html:root[data-dmlook=tool] #roster .hpw.hpb .hprow{padding:6px 28px 3px 10px}
+html:root[data-dmlook=tool] #roster .hpw.hpb .hpbar3{margin:0 10px 7px}
+html:root[data-dmlook=tool] #roster .hexw .init-in,html:root[data-dmlook=tool] #roster .ac-wrap input,
+  html:root[data-dmlook=tool] #roster .hpw.hpb{transition:background-color .12s}
+html:root[data-dmlook=tool] #roster .hexw .init-in,html:root[data-dmlook=tool] #roster .ac-wrap input{border-radius:8px}
+html:root[data-dmlook=tool] #roster .hexw .init-in:hover,html:root[data-dmlook=tool] #roster .hpw.hpb:not(.pchp):hover,
   html:root[data-dmlook=tool] #roster .ac-wrap input:hover,
-html:root[data-dmlook=tool] #roster .row input[data-act=name]:hover{background:var(--bg)!important;box-shadow:inset 0 0 0 1px var(--btnbd)}
+html:root[data-dmlook=tool] #roster .row input[data-act=name]:hover{background-color:color-mix(in srgb,var(--fg) 9%,transparent)!important;box-shadow:none}
+html:root[data-dmlook=tool] #roster .hpw.hpb:not(.pchp)::after{content:"";position:absolute;right:10px;top:9px;width:13px;height:13px;
+  background:var(--muted);opacity:0;transition:opacity .12s;pointer-events:none;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L19 9l-4-4L4 16z'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L19 9l-4-4L4 16z'/%3E%3C/svg%3E") center/contain no-repeat}
+html:root[data-dmlook=tool] #roster .hpw.hpb:not(.pchp):hover::after,html:root[data-dmlook=tool] #roster .hpw.hpb:not(.pchp):focus-visible::after{opacity:1}
+/* the name: the same tint, its text where it was, 10px of room */
+html:root[data-dmlook=tool] #roster .row input[data-act=name]{margin-left:-6px;padding-left:10px;border-radius:8px;transition:background-color .12s}
+html:root[data-dmlook=tool] #roster .row input[data-act=name]:hover:not(:focus){border-color:transparent}
+
+/* 1.7: everything you can click answers the mouse. These had no change under it. */
+html:root[data-dmlook=tool] .tnav.primary:hover{background:color-mix(in srgb,var(--accent) 86%,var(--bg))}
+html:root[data-dmlook=tool] .dmtools .btn.pebox:not([aria-pressed=true]):hover,
+  html:root[data-dmlook=tool] #roster .sbline .sblair:not([aria-pressed=true]):hover,
+  html:root[data-dmlook=tool] #side .callpick button:not([aria-pressed=true]):hover{background:var(--btnbg);border-color:var(--btnbd-h);color:var(--fg)}
+html:root[data-dmlook=tool] .dmtools .btn.pebox[aria-pressed=true]:hover,
+  html:root[data-dmlook=tool] #roster .sbline .sblair[aria-pressed=true]:hover,
+  html:root[data-dmlook=tool] #side .callpick button[aria-pressed=true]:hover{background:color-mix(in srgb,var(--pc) 30%,transparent)}
+html:root[data-dmlook=tool] #sbDrawer .sbhelp:hover{background:var(--btnbg-h);border-color:var(--btnbd-h)}
+html:root[data-dmlook=tool] #side .btn.primary:hover{background:color-mix(in srgb,var(--accent) 86%,var(--bg))}
+html:root[data-dmlook=tool] #dm>.bar .themetog .icon-btn[aria-pressed=false]:hover{background:color-mix(in srgb,var(--fg) 9%,transparent);color:var(--fg)}
+html:root[data-dmlook=tool] #roster .sblink.on:hover{background-color:color-mix(in srgb,currentColor 20%,transparent)}
 
 /* the turn bar: previous and ⋯ are buttons; Next turn stays the one white button */
 html:root[data-dmlook=tool] .tnav:not(.primary),html:root[data-dmlook=tool] .turnmore .icon-btn{background:var(--btnbg);border:1px solid var(--btnbd);

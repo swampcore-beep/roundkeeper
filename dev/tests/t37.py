@@ -36,7 +36,7 @@ async def main():
             chk(f"{w}: the order ends above the turn row",g['rosterBottom']<=g['footTop'],g)
             chk(f"{w}: the page itself doesn't scroll",not g['pageScroll'])
             chk(f"{w}: the example fight fits without scrolling",g['fits'],g['rows'])
-            cols=await dm.evaluate("""()=>['.tools>.hpw','.tools>.ac-wrap','.tools>.stat'].map(s=>[...document.querySelectorAll('#roster .row:not(.k-lair) '+s)]
+            cols=await dm.evaluate("""()=>['.tools>.hpw.hpb .hpn,#roster .row:not(.k-lair) .tools>.hpw:not(.hpb)','.tools>.ac-wrap','.tools>.stat'].map(s=>[...document.querySelectorAll('#roster .row:not(.k-lair) '+s)]
               .map(e=>Math.round(e.getBoundingClientRect().left))).map(a=>new Set(a).size)""")
             chk(f"{w}: HP, AC and status line up from row to row",cols==[1,1,1],cols)
             heads=await dm.evaluate("()=>[...document.querySelectorAll('#rosterHead span')].map(e=>e.textContent)")

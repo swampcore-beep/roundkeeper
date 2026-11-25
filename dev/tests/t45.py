@@ -49,7 +49,7 @@ async def main():
                 chk("…and goes again",'Click a bonus' not in await dm.inner_text('#sbDrawer'))
                 chk("the toolbar's actions have icons",await dm.locator('.dmtools .fgrp .btn>svg').count()==5)
                 await dm.hover('#roster .hpw.hpb');await asyncio.sleep(.2)
-                r=await m("#roster .hpw.hpb");chk("HP shows a field's edge under the mouse",r and r['edge']>=3,r and r['edge'])
+                r=await m("#roster .hpw.hpb");chk("HP shows a tint under the mouse (1.7)",r and r['bg'] not in ('rgba(0, 0, 0, 0)','transparent'),r and r['bg'])
             await T(dm,"sbViewId=null;renderDM()");await asyncio.sleep(.3)
             if theme=="dark": await dm.click('[data-act=dmtheme][data-v=light]');await asyncio.sleep(.5)
         await dm.click('[data-act=dmtheme][data-v=dark]');await asyncio.sleep(.2)
