@@ -38,7 +38,7 @@ https://github.com/user-attachments/assets/5c44bd7f-69f3-4e3c-bbb6-5dcdeb8b5bc0
 </tr>
 </table>
 
-> **New in 1.6:** 3D dice. **In 1.5:** a real character sheet on the phone and the DM's screen, with feats. [What's changed](../../releases)
+> **New in 1.8:** items and coins. The DM hands out loot, and players carry, use, spend and give it on their phones. **Earlier:** 3D dice (1.6) and a real character sheet with feats (1.5). [What's changed](../../releases)
 
 ---
 
@@ -83,6 +83,7 @@ The turn order is one row per creature, and the statblock opens beside it, so yo
 - **Recap:** the fight's defeats, damage, natural 20s and 1s and turn times, saved for your notes.
 - **Devices:** the QR code and every connected screen and phone in one window.
 - **Light screen** for a bright room, and a narrow window turns the side panel into a drawer.
+- **Items and coins:** give items and gold from the SRD, your data files or your own, keep the party's loot, and see what each player carries.
 - **Your own homebrew:** paste or drop statblocks, or import a JSON file.
 
 </details>
@@ -161,7 +162,8 @@ Players scan a QR code and tap their character. Nothing to install.
 - **HP and death saves**, with big buttons and the app's own keypad.
 - **Your turn:** what's on them in plain words, who cast it, and their reaction.
 - **Spellbook** with full spell cards, and spell slots and class resources as boxes to tap.
-- **Roll calls and Concentration saves** with one tap, Bless and Bane added by themselves.
+- **Items and coins:** drink a potion, attack with a weapon, use a wand's charges, spend or give coins, and take a share of the party's loot.
+- **Roll calls and Concentration saves** with one tap, Bless and Bane added by themselves, and **dice** they can share with the table.
 - **Simple mode** for players who keep the rest on paper: just their HP.
 
 </td>
@@ -173,7 +175,7 @@ Players scan a QR code and tap their character. Nothing to install.
 <td width="25%"><img src="media/phone-sheet-spells.jpg" width="100%" alt="The Spells tab: spellcasting numbers, spell slots, and prepared spells with casting time and range"><br><sub>Spells: slots, time and range.</sub></td>
 <td width="25%"><img src="media/phone-spell.jpg" width="100%" alt="The Fireball card on a phone"><br><sub>A full spell card.</sub></td>
 <td width="25%"><img src="media/phone-conc.jpg" width="100%" alt="A Concentration save asked on a phone"><br><sub>A Concentration save.</sub></td>
-<td width="25%"><img src="media/phone-dice.jpg" width="100%" alt="The dice roller on a phone"><br><sub>Dice, shared with the table if they like.</sub></td>
+<td width="25%"><img src="media/phone-items.jpg" width="100%" alt="Gregori's items and coins on a phone: gold, silver and copper, a dagger to attack with, a wand with 5 of 7 charges, an attuned Pearl of Power, two healing potions, and the party's loot"><br><sub>Items, coins and the party's loot.</sub></td>
 </tr>
 </table>
 
@@ -210,7 +212,7 @@ I haven't tested it on many Macs yet. If it doesn't start, please [open an issue
 - **Built in:** the SRD 5.2.1, in the monster search and Ctrl+K from the first start, with spell cards on the phones too.
 - **Your statblocks:** paste or drop a monster's statblock as text and its attacks, damage and saves become clickable. It stays in your library.
 - **Your homebrew:** **Settings → Game data → Import a JSON file** adds monsters, spells, items, conditions or rules in the common community format.
-- **More data (optional):** put JSON files in that format in a folder named `5etools` next to the app. They add their monsters, spells, items and rules; class features, subclasses and resources on the phones; feats on the sheet; weapon properties for attacks; and monster pictures from that folder. Nothing appears twice.
+- **More data (optional):** put JSON files in that format in a folder named `5etools` next to the app. They add their monsters, spells, items and rules; class features, subclasses and resources on the phones; feats on the sheet; weapon properties for attacks; items to give and to look up on the phones; and monster pictures from that folder. Nothing appears twice.
 - **Nothing is downloaded.** The app only reads files already on your computer.
 
 ---
