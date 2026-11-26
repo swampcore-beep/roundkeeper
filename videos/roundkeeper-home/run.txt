@@ -1,0 +1,3 @@
+https://github.com/swampcore-beep/roundkeeper/actions/runs/45684567899 (2026-11-25 19:37 UTC, parts: home, branch home-video)
+roundkeeper-home.mp4: 148 s, 8156 KB.
+NNN.jpg is the frame at (NNN-1)*3 s; each sheet-NN.jpg holds 24 frames 4 s apart, left to right.
