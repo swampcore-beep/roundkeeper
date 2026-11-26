@@ -88,6 +88,22 @@ async def main():
             await T(pg,"pSheet='sheet';shLast=null;shTab='main';ls.set('shOpen',{ab:true,wp:true});renderPSheet()");await asyncio.sleep(.8)
             await pg.screenshot(path=O+'g_sheet.png')
             await T(pg,"shTab='spells';renderPSheet()");await asyncio.sleep(1.5);await pg.screenshot(path=O+'g_sheet_spells.png')
+        if want('items'):   # Gregori's phone: Items and coins, with something in the party's loot
+            old="Date.now()-3600000"
+            await S("state.inv={gregori:{c:{gp:143,sp:28,cp:15},v:3,it:["
+                    "{id:'it1',n:'Dagger',q:1,wpn:true,eq:true,from:'loot',got:"+old+"},"
+                    "{id:'it2',n:'Wand of Magic Missiles',q:1,ch:{m:7,c:5,re:'dawn',amt:'1d6+1'},sp:['Magic Missile'],from:'the DM',got:"+old+"},"
+                    "{id:'it3',n:'Pearl of Power',q:1,att:true,at:true,ch:{m:1,c:1,re:'dawn'},from:'the DM',got:"+old+"},"
+                    "{id:'it4',n:'Potion of Healing',q:2,heal:'2d4+2',from:'Styx',got:"+old+"},"
+                    "{id:'it5',n:'Spell Scroll (Shield)',q:1,from:'loot',got:"+old+"}]}};"
+                    "state.loot={c:{gp:60},it:[{id:'l1',n:'Silvered Shortsword',q:1},{id:'l2',n:'Bag of Holding',q:1}]};"
+                    "state.invv={gregori:3};commit()",1)
+            pi=await (await b.new_context(viewport={'width':390,'height':844},device_scale_factor=2)).new_page()
+            await pi.goto(rk.PL+'/players');await asyncio.sleep(1.2);await pi.click('[data-act=pickme][data-n=Gregori]');await asyncio.sleep(1)
+            await T(pi,"hpSet({cur:27,max:32,temp:0,auto:true});ls.set(shKey(),"+SH+");ls.set('invSeen:gregori',Date.now());renderPlayer()")
+            await asyncio.sleep(4.5)   # the "sheet is back" toast from the DM's copy
+            await T(pi,"pSheet='inv';invPull(true);renderPSheet()");await asyncio.sleep(1.5)
+            await pi.screenshot(path=O+'g_items.png')
         if want('pccard'):
             await dm.set_viewport_size({'width':1536,'height':1500})
             await S("sbViewId='gr';sbLoreOn=false;renderDM();renderSbDrawer()",.8)

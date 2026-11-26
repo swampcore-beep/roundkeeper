@@ -7,7 +7,7 @@ JPG={  # README name: (still, width)
  'dm':('s_dm',1600),'atmosphere':('g_atmo',1200),'hit-several':('g_hit',1200),'rules':('g_ctrlk',1200),
  'roll-call':('g_rollcall',1000),'conditions':('g_cond',1000),'how-do-you-want':('g_hdywt',1000),
  'tv-title':('g_tvtitle',1000),'tv-roll-call':('g_tvcall',1000),'tv-end':('g_tvend',1000),'tv-break':('g_tvpause',1000),
- 'phone-spells':('g_spells',500),'phone-spell':('g_spell',500),'phone-conc':('g_conc',500),'phone-dice':('g_dice',500),'phone-sheet':('g_sheet',500),'phone-sheet-spells':('g_sheet_spells',500),'dm-card':('g_pccard',700)}
+ 'phone-spells':('g_spells',500),'phone-spell':('g_spell',500),'phone-conc':('g_conc',500),'phone-dice':('g_dice',500),'phone-items':('g_items',500),'phone-sheet':('g_sheet',500),'phone-sheet-spells':('g_sheet_spells',500),'dm-card':('g_pccard',700)}
 def save(im,name,w=None,crop=None):
     im=im.convert('RGB')
     if crop: im=im.crop(crop)
