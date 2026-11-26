@@ -56,7 +56,8 @@ function invApply(a,c,note){
     case "item_drop":{if(!it)return;const q=Math.min(a.q,it.q);it.q-=q;if(it.q<1)e.it=e.it.filter(x=>x!==it);invBump(e);note(`${c.name} drops ${it.n}`);return}
     case "loot_take":{const L=lootGet(),x=L.it.find(y=>y.id===a.iid);
       if(!x){const w=lootTaken[a.iid];e.cn={at:Date.now(),t:w?`${w.by} took ${w.n} first`:"That's no longer in the loot"};invBump(e);return}
-      lootTaken[a.iid]={by:c.name,n:x.n};L.it=L.it.filter(y=>y!==x);x.from="loot";delete x.got;e.it.push(x);invBump(e);
+      lootTaken[a.iid]={by:c.name,n:x.unk?x.un||"Unknown item":x.n};   /* an unidentified one only by its cover */
+      L.it=L.it.filter(y=>y!==x);x.from="loot";delete x.got;e.it.push(x);invBump(e);
         note(`${c.name} takes ${x.n} from the loot`);
       return}
   }}

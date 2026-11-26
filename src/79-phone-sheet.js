@@ -75,7 +75,8 @@ async function shWeaponNote(name){
 function shCalc(sh){
   const lvl=Math.max(1,Math.min(20,Number(sh.lvl)||1)),pb=sh.prof!=null?Number(sh.prof):2+Math.floor((lvl-1)/4),m={};
     SH_AB.forEach(a=>m[a]=shMod((sh.ab||{})[a]));
-  const sv={},sk={};SH_AB.forEach(a=>sv[a]=m[a]+((sh.sv||[]).includes(a)?pb:0));SH_SK.forEach(([k,,a])=>sk[k]=m[a]+pb*(Number((sh.sk||{})[k])||0));
+  const svI=shItemSv(sh),sv={},sk={};SH_AB.forEach(a=>sv[a]=m[a]+((sh.sv||[]).includes(a)?pb:0)+svI);
+    SH_SK.forEach(([k,,a])=>sk[k]=m[a]+pb*(Number((sh.sk||{})[k])||0));
   const sa=sh.sa||"",fx=shFeatFx(sh);
   return {lvl,pb,m,sv,sk,init:sh.init!=null?Number(sh.init):m.dex+(fx.initPB?pb:0)+(fx.init||0),pp:10+sk.perception+(fx.pass5?5:0),pi:10+sk.insight,
     pv:10+sk.investigation+(fx.pass5?5:0),dc:sh.dc!=null?Number(sh.dc):sa?8+pb+m[sa]:null,atk:sh.atk!=null?Number(sh.atk):sa?pb+m[sa]:null,
@@ -240,7 +241,8 @@ function shView2Html(me,sh){
         []).includes(a);
         return `<div class="shab1${pf?" pf":""}"><span class="k">${SH_AB3[a]}</span>${R("ab",a,shS(C.m[a]),"m",SH_ABN[a]+
           " check")}<span class="sc">${(sh.ab||{})[a]||
-          10}</span>${R("sv",a,`${pf?"● ":""}save ${shS(C.sv[a])}`,"sv",SH_ABN[a]+" save")}</div>`}).join("")}</div>`)}
+          10}</span>${R("sv",a,`${pf?"● ":""}save ${shS(C.sv[a])}`,"sv",SH_ABN[a]+" save")}</div>`}).join("")}</div>${shItemSv(sh)?
+          `<p class="psub">Saving throws include ${shS(shItemSv(sh))} from your items.</p>`:""}`)}
       ${sec("sk","Skills",prof.length?prof.map(x=>`${x.l} ${shS(x.v)}`).join(" · "):"No proficient skills",`<div class="shsk2">${sks.map(x=>R("sk",x.k,
         `<span class="d">${x.lv===2?"◆":x.lv?"●":"○"}</span><span class="n">${esc(x.l)} <small>${SH_AB3[x.a]}</small></span><b>${shS(x.v)}</b>`,x.lv?"pf":"",
         x.l)).join("")}</div><div class="shpas2"><span>Passive Insight <b>${C.pi}</b></span><span>Passive Investigation <b>${C.pv}</b></span></div>`)}

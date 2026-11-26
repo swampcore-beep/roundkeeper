@@ -132,6 +132,8 @@ if(MODE==="player"){
             if(!c.gifts.length)delete c.gifts;if(g)L(`${c.name} uses ${g.n}${a.roll?`: ${g.die} → ${a.roll}`:""}`)}
           else if(a.action==="sheet"&&a.sheet&&a.sheet.ab){state.sheets=Object.assign({},state.sheets);const k=c.name.toLowerCase(),was=state.sheets[k];
             state.sheets[k]=Object.assign({},a.sheet,{name:c.name,by:"phone",only:false,v:Math.max(Number(a.sheet.v)||0,was&&was.v?was.v+1:0)||Date.now()});
+            {const o=was&&Number(was.ac),n=Number(a.sheet.ac);if(n&&(c.ac==null||c.ac===""||(o&&Number(c.ac)===
+              o)))c.ac=n}   // AC follows the sheet, unless you changed it by hand
             if(!was)notes.push([`${c.name} added a character sheet`,null]);else quiet=true}
           else if(a.action==="pmode"){if(a.simple)c.psimple=true;else delete c.psimple;quiet=true}
           else if(a.action==="spfx"){const last=(pv.spfxBy||(pv.spfxBy={}))[c.id]||0;

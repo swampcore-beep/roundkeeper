@@ -105,16 +105,18 @@ const itemRowLine=r=>[[ITEM_KIND[r[3]]||"",r[4]].filter(Boolean).join(", "),r[5]
 async function itemGet(n,s){try{const r=await fetch(`/item?n=${encodeURIComponent(n)}&s=${encodeURIComponent(s||"")}`,{cache:"no-store"});
   if(r.ok)return itemFromRef((await r.json()).item)}catch(e){}return null}
 
+/* bonuses from items on the sheet: saving throws count by themselves; AC is the player's number, so the phone asks (sh.ib: ac and sv by item, no = said no) */
+const shItemSv=sh=>Object.values(sh&&sh.ib&&sh.ib.sv||{}).reduce((a,v)=>a+(Number(v)||0),0);
 /* ---------- the phone: Items and coins ---------- */
 let invMe=null,invFor=null,invLastV=null,invSeq=0,invView=null,invQ="",invKind="all",invPick=null,invOwn=null,invGive=null,invCoin="gp",invUseN=1,
-  invGot=[],invRowsShown=null;
+  invGot=[],invRowsShown=null,invBonus=null;
 const invKey=()=>(meName||"").toLowerCase();
 function invPull(force){
   if(MODE!=="player"||!served||PREVIEW||!meName||meName==="*")return;
   if(invFor!==invKey()){invFor=invKey();invMe=null;invLastV=null}
   const v=(state.invv||{})[invKey()]??0;if(!force&&invMe&&v===invLastV)return;invLastV=v;const seq=++invSeq;
   fetch("/inv?n="+encodeURIComponent(invKey()),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(!d||seq!==invSeq||invFor!==invKey())return;
-    invMe={c:coinsOf(d.c),it:Array.isArray(d.it)?d.it:[],v:d.v||0,cn:d.cn||null};invNews();
+    invMe={c:coinsOf(d.c),it:Array.isArray(d.it)?d.it:[],v:d.v||0,cn:d.cn||null};invNews();invBonusCheck();
     if(pSheet&&String(pSheet).startsWith("inv"))renderPSheet()}).catch(()=>{invLastV=null})}
 /* something new from the DM or another player: the newest shows as a card (or a note, when another window is open) */
 function invNews(){const k="invSeen:"+invKey(),seen=ls.get(k,null),now=dmNow(),it=invMe.it;
@@ -129,10 +131,25 @@ function invNews(){const k="invSeen:"+invKey(),seen=ls.get(k,null),now=dmNow(),i
     renderPSheet()}   // not over a roll call or a keypad
   else toast(fresh.length>1?`${fresh.length} new items: More → Items and coins`:`${fresh[0].n}: in your items`,5000)}
 const invItem=id=>invMe&&invMe.it.find(x=>x.id===id);
+/* an item's bonus counts while the player has it, or, when it needs attunement, while attuned */
+const invOn=it=>!!it&&!it.unk&&!String(it.id).startsWith("new")&&(it.att?!!it.at:true);
+function invBonusCheck(){
+  if(invBonus&&pSheet!=="invbonus")invBonus=null;   // closed without an answer: asked again later
+  const sh=shLocal();if(!sh||!invMe||MODE!=="player")return;const ib=sh.ib=Object.assign({ac:{},sv:{},no:{}},sh.ib),on={};let save=false;const notes=[];
+  invMe.it.forEach(it=>{if(invOn(it))on[it.id]=it});
+  Object.values(on).forEach(it=>{if(it.svb&&ib.sv[it.id]==null){ib.sv[it.id]=it.svb;save=true;notes.push(`${it.n}: ${shS(it.svb)} to your saving throws`)}});
+  Object.keys(ib.sv).forEach(id=>{if(!on[id]){const it=invItem(id);delete ib.sv[id];save=true;notes.push(`${it?it.n:"An item"} is off: saving throws back`)}});
+  Object.keys(ib.no).forEach(id=>{if(!on[id]){delete ib.no[id];save=true}});
+  if(save){shSave(sh,true);toast(notes.join(" · "),5000)}
+  if(invBonus||(pSheet&&pSheet!=="inv"&&pSheet!=="invitem"))return;   // one question at a time, and never over a roll call or a keypad
+  const add=Object.values(on).find(it=>it.acb&&ib.ac[it.id]==null&&!ib.no[it.id]),gone=Object.keys(ib.ac).find(id=>!on[id]);
+  if(add)invBonus={id:add.id,n:add.n,v:add.acb,add:true,back:pSheet};
+  else if(gone){const it=invItem(gone);invBonus={id:gone,n:it?it.n:"An item",v:ib.ac[gone],add:false,back:pSheet}}
+  if(invBonus){pSheet="invbonus";renderPSheet()}}
 const invAttuned=()=>invMe?invMe.it.filter(x=>x.at).length:0;
 /* a weapon on the sheet: the attack with the same name, if the player has one */
 const invAtkOf=it=>{const sh=shLocal();if(!sh||!it)return -1;const n=it.n.toLowerCase();return (sh.att||[]).findIndex(a=>a&&a.n&&a.n.trim().toLowerCase()===n)};
-async function invSend(body,local){const ok=await pSend(body);if(ok&&local&&invMe){local(invMe);renderPSheet()}
+async function invSend(body,local){const ok=await pSend(body);if(ok&&local&&invMe){local(invMe);renderPSheet();invBonusCheck()}
   if(ok)setTimeout(()=>invPull(true),1600);return ok}
 function invItemRow(it){
   if(String(it.id).startsWith("new"))return `<div class="invrow"><span class="invn"><b>${esc(it.n)}${it.q>1?` <i>×${it.q}</i>`:
@@ -165,7 +182,7 @@ function invSheetHtml(me){
         ${M.it.length?M.it.map(invItemRow).join(""):`<p class="invnote">Nothing yet. What the DM gives you shows up here.</p>`}</section>
       ${loot.length?`<button type="button" class="invloot" data-act="inv" data-op="loot"><b>The party's loot</b><small>${loot.length} item${loot.length>1?"s":
         ""} to take${coinCp(state.loot.c)?" · "+coinTxt(state.loot.c):""}</small></button>`:""}
-      <button type="button" class="invadd" data-act="inv" data-op="add">+ Add an item</button></div>`}
+      <button type="button" class="invadd" data-act="inv" data-op="add">+ Find or add an item</button></div>`}
   if(pSheet==="invitem"){
     const it=invItem(invView);if(!it)return `<h2>Item</h2><p class="psub">This item isn't in your items any more.</p>
       <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="back">Back to Items</button></div>`;
@@ -197,6 +214,9 @@ function invSheetHtml(me){
           " ")[0])}</button>`:""}</div>`:sh?`<button class="btn invbtn" type="button" data-act="inv" data-op="toatk" data-id="${esc(
           it.id)}">Add to my attacks</button>`:`<button class="btn invbtn" type="button" data-act="inv" data-op="dmg" data-id="${esc(it.id)}">Roll damage ${esc(
           diceRead(it.wpn.dmg))}${it.wpn.b?` + ${it.wpn.b}`:""}</button>`):""}
+      ${sh&&sh.ib&&(sh.ib.ac[it.id]!=null||sh.ib.sv[it.id]!=null)?`<p class="psub">On your sheet: ${[sh.ib.ac[it.id]!=null?shS(sh.ib.ac[it.id])+" AC":"",
+        sh.ib.sv[it.id]!=null?shS(sh.ib.sv[it.id])+" to saving throws":""].filter(Boolean).join(" · ")}</p>`:it.att&&!it.at&&(it.acb||it.svb)?
+        `<p class="psub">Its bonus counts once you attune to it.</p>`:""}
       <div class="invtog"><button type="button" class="btn" data-act="inv" data-op="eq" data-id="${esc(it.id)}" aria-pressed="${!!it.eq}">${it.eq?"✓ Equipped":
         "Equip"}</button>${it.att||it.at?`<button type="button" class="btn" data-act="inv" data-op="at" data-id="${esc(it.id)}" aria-pressed="${
           !!it.at}">${it.at?
@@ -204,6 +224,16 @@ function invSheetHtml(me){
       <div class="hpbtns">${others.length?`<button class="btn" type="button" data-act="inv" data-op="give" data-id="${esc(it.id)}">Give to…</button>`:
         ""}<button class="btn" type="button" data-act="inv" data-op="drop" data-id="${esc(it.id)}">${it.q>1?"Drop one":"Drop it"}</button></div>
       <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="back">Back to Items</button></div></div>`}
+  if(pSheet==="invbonus"){const q=invBonus;if(!q||!sh)return `<h2>Items</h2><p class="psub">Nothing to change.</p>`;const ac=Number(sh.ac)||10;
+    return `<h2>${esc(q.n)}</h2><div class="shv inv"><section class="invcard">${q.add?`<div class="invh"><b>${shS(q.v)} AC</b></div>
+        <p class="invd">Add ${shS(q.v)} to the AC on your sheet? <b>${ac} → ${ac+q.v}</b></p>
+        <small class="invnote">Say no if it doesn't count now (some items need no armor or no shield), or if your AC already has it.</small>`:
+        `<div class="invh"><b>${shS(q.v)} AC</b></div><p class="invd">${esc(q.n)} isn't giving you its bonus any more. Take ${shS(
+          q.v)} off your AC? <b>${ac} → ${
+        ac-q.v}</b></p>`}</section>
+      <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="bonusno">${q.add?"No":
+        "Keep my AC"}</button><button class="btn primary" type="button" data-act="inv" data-op="bonusyes">${
+        q.add?`Add ${shS(q.v)}`:`Take ${shS(q.v)} off`}</button></div></div>`}
   if(pSheet==="invcoin"){const k=invCoin,L=(COINS.find(x=>x[0]===k)||COINS[0])[1];
     return `<h2>${L} · ${M.c[k].toLocaleString("en")} ${k}</h2>
       <div class="seg2">${COINS.map(([kk,LL])=>`<button type="button" data-act="inv" data-op="coin" data-k="${kk}" aria-pressed="${kk===
@@ -265,11 +295,11 @@ function invSheetHtml(me){
             gpTxt(p.price)}</b><button class="btn" type="button" data-act="inv" data-op="payd" data-d="1" aria-label="Raise the price">+</button></div>
             <small class="psub">${price?`Listed at ${gpTxt(price)} each. `:""}You have ${gpTxt(coinCp(M.c))}${coinPay(M.c,p.price)?
               `, ${gpTxt(coinCp(M.c)-p.price)} after`:": not enough"}.</small>`:""}</div>
-        <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="pickno">Back</button><button class="btn primary" type="button" data-act="inv" data-op="pickadd"${
+        <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="pickno">Back to the list</button><button class="btn primary" type="button" data-act="inv" data-op="pickadd"${
           it?"":" disabled"}>Add${p.q>1?" "+p.q:""}</button></div>`}
-    return `<h2>Add an item</h2>
+    return `<h2>Find an item</h2>
       <div class="psec"><input class="field big" id="pItemQ" type="text" data-kb="text" inputmode="none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search items" value="${
-        esc(invQ)}" aria-label="Search items"></div>
+        esc(invQ)}" aria-label="Search items"><p class="psub">Tap an item to read what it does. Add puts it in your items.</p></div>
       <div class="seg2 invkinds">${[["all","All"],["gear","Gear"],["weapon","Weapons"],["armor","Armor"],["magic","Magic"],["potion","Potions"]].map(([k,l])=>
         `<button type="button" data-act="inv" data-op="kind" data-k="${k}" aria-pressed="${invKind===k}">${l}</button>`).join("")}</div>
       <div id="pItemList">${invAddListHtml()}</div>
@@ -298,7 +328,7 @@ function invRest(kind){if(!invMe)return [];const out=[];
 function invAct(t){
   const op=t.dataset.op,me=meChar();if(!me)return;const it=t.dataset.id?invItem(t.dataset.id):null;
   switch(op){
-    case "items": invPick=null;invOwn=null;pSheet="inv";invPull(true);renderPSheet();break;
+    case "items": invPick=null;invOwn=null;pSheet="inv";invPull(true);renderPSheet();invBonusCheck();break;
     case "back": if(pSheet==="invgive"&&invGive&&invGive.id){invView=invGive.id;pSheet="invitem"}else pSheet="inv";invGive=null;renderPSheet();break;
     case "open": if(!it)break;invView=it.id;invUseN=1;pSheet="invitem";renderPSheet();{const b=$(".psheet .sbody");if(b)b.scrollTop=0}break;
     case "usen": invUseN=Math.max(1,invUseN+Number(t.dataset.d));renderPSheet();break;
@@ -352,7 +382,14 @@ function invAct(t){
     case "loot": pSheet="invloot";renderPSheet();break;
     case "take":{const x=state.loot&&(state.loot.it||[]).find(y=>y.id===t.dataset.id);if(!x)break;t.disabled=true;
       pSend({action:"loot_take",iid:x.id}).then(ok=>{if(ok){toast(`Taking ${x.n}…`);setTimeout(()=>invPull(true),1600)}else t.disabled=false});break}
-    case "gotok": invGot=[];pSheet=null;renderPSheet();break;
+    case "gotok": invGot=[];pSheet=null;renderPSheet();invBonusCheck();break;
+    case "bonusyes":case "bonusno":{const q=invBonus,sh=shLocal();invBonus=null;pSheet=q&&q.back&&q.back!=="invbonus"?q.back:null;
+      if(q&&sh){const ib=sh.ib=Object.assign({ac:{},sv:{},no:{}},sh.ib),ac=Number(sh.ac)||10;
+        if(q.add&&op==="bonusyes"){sh.ac=ac+q.v;ib.ac[q.id]=q.v;toast(`AC ${ac} → ${sh.ac}`)}
+        else if(q.add)ib.no[q.id]=true;
+        else{if(op==="bonusyes"){sh.ac=ac-q.v;toast(`AC ${ac} → ${sh.ac}`)}delete ib.ac[q.id]}
+        shSave(sh,true)}
+      renderPSheet();invBonusCheck();break}
     case "add": invPick=null;invOwn=null;if(itemRows&&Date.now()-itemRowsAt>60000)itemRows=null;pSheet="invadd";renderPSheet();break;
     case "kind": invKind=t.dataset.k||"all";t.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b===t)));
       {const l=$("#pItemList");if(l)l.innerHTML=invAddListHtml()}break;
