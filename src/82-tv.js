@@ -317,8 +317,25 @@ async function compAdd(){
 /* 46: the party's numbers, from their phones */
 function partySheet(){
   const pcs=sorted().filter(c=>c.kind==="pc"),dc=Number(partyDC)||0;
+  const tabs=
+    `<div class="seg2 ptabs2" role="group" aria-label="Party"><button type="button" data-act="dinv" data-op="tab" data-v="num" aria-pressed="${partyTab!==
+    "inv"}">Numbers</button><button type="button" data-act="dinv" data-op="tab" data-v="inv" aria-pressed="${partyTab==="inv"}">Gold and items</button></div>`;
+  if(partyTab==="inv"){
+    $(
+      "#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet partysheet pinv" role="dialog" aria-modal="true" aria-label="Party"><div class="ihead"><h2>Party</h2>${
+      tabs}<span class="sp"></span><button class="btn primary" type="button" data-act="dinv" data-op="givenew">Give an item…</button></div>
+      <p class="psub">Coins and items each player carries. They change them on their phones; only you see everyone's.</p>
+      ${invPartyHtml()}<div style="display:flex;justify-content:flex-end"><button class="btn" type="button" data-act="close">Close</button></div></div></div>`;
+    const n=$("#dShareN"),k=$("#dShareK"),pv=()=>{dShare.n=n.value;dShare.k=k.value;const N=sorted().filter(c=>c.kind==="pc").length,v=parseInt(dShare.n,10)||0,
+      each=N?Math.floor(v/N):0,rest=N?v-each*N:0,el=$("#dSharePrev");if(el&&N)el.innerHTML=`between all ${N}${v?`: <b>${each} ${dShare.k} each</b>${rest?
+        `, ${rest} ${dShare.k} go to the party's loot`:""}`:""}`};
+    if(n&&k){n.addEventListener("input",pv);k.addEventListener("change",pv);n.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();
+      invShare("new")}})}
+    return}
   const cell=(c,k)=>{const v=c.pst&&c.pst[k];return v?`<td class="${dc&&k!=="ac"&&k!=="dc"?(v>=dc?"ok":"no"):""}">${v}</td>`:`<td class="psub">–</td>`};
-  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true" aria-label="Party"><h2>Party numbers</h2>
+  $(
+    "#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet partysheet" role="dialog" aria-modal="true" aria-label="Party"><div class="ihead"><h2>Party numbers</h2>${
+    tabs}</div>
     <p class="psub">Each player sends these from their phone (Resources → Set up from my class → Your numbers for the DM). Only you see this page.</p>
     <label class="rangerow">Passive check DC <input class="field" id="partyDC" type="number" min="0" max="40" value="${dc||
       ""}" style="width:5em" aria-label="Passive check DC"> <small class="psub">type a DC: who notices turns green</small></label>

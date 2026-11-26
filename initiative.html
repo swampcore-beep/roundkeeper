@@ -3401,6 +3401,110 @@ body:not(.shared) #player:not([hidden]) ~ .toast{top:calc(env(safe-area-inset-to
 .padsec .hpcrit small{font-size:.8rem;font-weight:600;opacity:.85}
 .psheet .shadv{margin:4px 0 8px}.psheet .shadv button{flex:1;min-height:40px}
 .psheet .shcrit{margin:0 0 8px;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--save) 16%,transparent);font-weight:700;font-size:.92rem}
+/* ---------- items and coins: the phone's Items (inside the sheet's look), the DM's Give an item and Party → Gold and items ---------- */
+.shv.inv .invcard{border:1.5px solid #c0682a;border-radius:10px;background:#fbf6ec;color:#1f1b16;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.shv.inv .invh{display:flex;align-items:center;gap:8px}
+.shv.inv .invh>b{font-family:var(--display);font-weight:800;font-size:1.1rem;color:#7a200d}
+.shv.inv .sp,.ihead .sp,.ifoot .sp,.ishare .sp{flex:1}
+.shv.inv .invh .pb,.shv.inv .invq{padding:7px 12px;min-height:40px;font-size:.92rem;border:1.5px solid #c9a27c;background:#fffaf0;color:#1f1b16;
+  border-radius:10px}
+.shv.inv .invcoins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.shv.inv .coin{display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 0;border-radius:10px;border:1.5px solid;color:#1f1b16;min-height:58px}
+.shv.inv .coin b{font-size:1.4rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.shv.inv .coin small{font-size:.66rem;font-weight:800;letter-spacing:.07em}
+.shv.inv .coin.gp{background:#fdebc8;border-color:#d69a4a}.shv.inv .coin.gp small{color:#7a4a0a}
+.shv.inv .coin.sp{background:#efede8;border-color:#a8a8b0}.shv.inv .coin.sp small{color:#4f4f58}
+.shv.inv .coin.cp{background:#f7e3d6;border-color:#c98a63}.shv.inv .coin.cp small{color:#7a3a1a}
+.shv.inv .invnote{font-size:.84rem;color:#5c5246;margin:0}
+.shv.inv .invatt{font-size:.8rem;font-weight:800;color:#3d2470;background:#efe8fb;border-radius:999px;padding:3px 10px}
+.shv.inv .invrow{display:flex;align-items:center;gap:8px;border-top:1px solid #eadcc3;padding-top:8px}
+.shv.inv .invh+.invrow,.shv.inv .invcard>.invrow:first-child{border-top:0;padding-top:0}
+.shv.inv .invcard .btn:not(.primary){background:#fffaf0;border:1.5px solid #c9a27c;color:#1f1b16}
+.shv.inv .invcard .btn:disabled{opacity:.45}
+.shv.inv .invn{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;text-align:left;border:0;background:none;color:inherit;padding:4px 0;
+  min-height:44px;
+  justify-content:center}
+.shv.inv .invn b{font-size:1rem}.shv.inv .invn b i{font-style:normal;font-weight:600;color:#6b5f50}
+.shv.inv .invn small{font-size:.8rem;color:#6b5f50}
+.shv.inv .invrow.unk .invn b{color:#8a4a0a}
+.shv.inv .invline{font-style:italic;color:#4a3f33}
+.shv.inv .invfx,.invgot .invfx{display:flex;flex-wrap:wrap;gap:6px}
+.shv.inv .invfx span,.invgot .invfx span{font-size:.8rem;font-weight:700;background:#efe0c8;color:#3a2c1c;border-radius:999px;padding:3px 10px}
+.shv.inv .invd{margin:0;font-size:.92rem;line-height:1.4;color:#2a2219}
+.shv.inv .invd.clip{max-height:9.5em;overflow:auto}
+.shv.inv .invbig{font-size:1.25rem}.shv.inv .invbig i{font-style:normal;font-weight:500;color:#6b5f50;font-size:1rem}
+.invpips{display:flex;flex-wrap:wrap;gap:5px}
+.invpips i{width:12px;height:12px;border-radius:50%;border:2px solid #9a86d8;box-sizing:border-box}
+.invpips i.on{background:#5a45c0;border-color:#5a45c0}
+.invpips.big i{width:24px;height:24px}
+.invuse{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.invuse>b{min-width:1.6em;text-align:center;font-size:1.2rem}
+.invuse .btn.primary{flex:1}
+.shv.inv .invfix{display:flex;align-items:center;justify-content:center;gap:14px;font-size:.84rem;color:#5c5246}
+.shv.inv .invfix .linkbtn{color:#5c5246;font-weight:800;min-width:44px;min-height:36px}
+.invbtn{width:100%}
+.invtog{display:flex;gap:8px}.invtog .btn{flex:1}
+.invtog .btn[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--fc0,var(--accent))}
+.shv.inv .invloot,.shv.inv .invadd{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:50px;padding:10px 14px;border-radius:12px;
+  text-align:left;
+  border:1.5px dashed var(--line);background:transparent;color:var(--fg);font-weight:700}
+.shv.inv .invloot{border-style:solid;border-color:#c9a14a;background:color-mix(in srgb,#c9a14a 14%,transparent)}
+.shv.inv .invloot small{font-weight:500;color:var(--muted)}
+.invgot{display:flex;flex-direction:column;gap:10px}
+.invgotc{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:14px;background:#fbf4e6;border:2px solid #e0a35a;color:#2a1c12}
+.invgotc b{font-family:var(--display);font-weight:800;font-size:1.45rem;line-height:1.1;color:#8b2a1a}
+.invgotc small{color:#5a4030}.invgotc .invd{font-size:.95rem}
+.invpay .invpayrow{display:flex;align-items:center;gap:10px;margin-top:8px}.invpay .invpayrow b{min-width:6em;text-align:center}
+.invkinds{margin:0 0 4px}
+/* the laptop */
+.ihead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.ihead h2{margin:0}
+.sheet.itemsheet{width:min(1100px,96vw);max-height:92vh;display:flex;flex-direction:column;gap:12px}
+.sheet.partysheet.pinv{width:min(1240px,96vw)}
+.itemsheet .ibody{display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:18px;min-height:0;flex:1;overflow:hidden}
+.itemsheet .ileft,.itemsheet .iright{display:flex;flex-direction:column;gap:10px;min-height:0;overflow:auto;padding:2px}
+.itemsheet .ilist{display:flex;flex-direction:column;gap:2px;min-height:120px}
+.itemsheet .ires{display:flex;flex-direction:column;gap:2px;text-align:left;padding:8px 10px;border-radius:8px;border:1px solid transparent;background:none;
+  color:var(--fg);
+  font-weight:700}
+.itemsheet .ires small{font-weight:400;color:var(--muted);font-size:.8rem}
+.itemsheet .ires:hover{background:color-mix(in srgb,var(--fg) 7%,transparent)}
+.itemsheet .ires.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.ifoot{display:flex;gap:10px;align-items:center}
+.irow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.irow>b{min-width:1.6em;text-align:center}
+.irow2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:10px;padding-left:28px}
+.irow2 label,.ifl{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ifl .field,.irow2 .field{width:100%;box-sizing:border-box}
+.ilbl{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.itog[aria-pressed=true]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--fg)}
+.imake{display:flex;flex-direction:column;gap:10px}
+.igrid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:end}
+.ifs{border:1px solid var(--line);border-radius:10px;padding:8px 12px 10px;margin:0;display:flex;flex-direction:column;gap:10px}
+.ichk{align-self:end;margin:0 0 8px}
+.ibase{font-size:.86rem;color:var(--muted)}
+.icard{background:#fbf5e8;border:2px solid #e0a35a;border-radius:10px;padding:12px 16px;color:#2a1c12;font-family:"Alegreya","Palatino Linotype",Georgia,serif;
+  display:flex;flex-direction:column;gap:6px}
+.icard .icn{font-family:"Alegreya SC","Palatino Linotype",Georgia,serif;font-weight:800;font-size:1.35rem;color:#8b2a1a;line-height:1.1}
+.icard .icl{font-style:italic}.icard p{margin:0;line-height:1.45;max-height:16em;overflow:auto}
+.icard small{color:#7a5a3a;font-family:var(--ui,inherit)}
+.icard.unk{border-style:dashed}.icard .iq{font-size:.8rem;border:1.5px dashed #e0a35a;border-radius:999px;padding:0 8px;color:#8a4a0a}
+.icard .ifx{display:flex;flex-wrap:wrap;gap:6px}.icard .ifx span{font:700 .8rem var(--ui,sans-serif);background:#efe0c8;border-radius:999px;padding:3px 10px}
+.ipv{display:flex;flex-direction:column;gap:8px}
+.ierr{margin:0;color:var(--fail,#d9534f);font-weight:700}
+.ishare .field{flex:none;width:auto;min-width:0}.ishare select.field{width:auto}
+.ishare{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--fg) 6%,transparent)}
+.invt td{vertical-align:top}.invt .icoins{white-space:nowrap;font-variant-numeric:tabular-nums}
+.invt .iact{white-space:nowrap;text-align:right}.invt .iact .btn{margin-left:4px}
+.ichips{display:flex;flex-wrap:wrap;gap:6px}
+.ichip{border:1px solid var(--line);background:color-mix(in srgb,var(--fg) 6%,transparent);color:var(--fg);border-radius:999px;padding:4px 10px;
+  font-size:.84rem;
+  font-weight:600;text-align:left}
+.ichip small{color:var(--muted);font-weight:500}
+.ichip.mag{border-color:#8f7fe0}.ichip.unk{border-style:dashed;border-color:#e0a35a}
+.ichip[aria-expanded=true]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.imenu,.icoined{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px;padding:8px 10px;border-radius:8px;
+  background:color-mix(in srgb,var(--fg) 6%,transparent)}
+.icoined label{display:flex;align-items:center;gap:4px;font-weight:700;font-size:.85rem}.icoined .field{width:6.5em}
+.invt .iloot td{border-top:2px solid var(--line)}
 /* ---------- 1.5: the player's sheet as a card in the DM's drawer (pcCardHtml) ---------- */
 :root #sbDrawer .sbbody.pccbody,:root[data-dmlook] #sbDrawer .sbbody.pccbody{padding:0;overflow:auto}
 .pcc{--fc0:var(--fc,#c9a14a);font-family:"Alegreya","Palatino Linotype",Georgia,serif;font-size:.96rem;color:#1f1b16;line-height:1.35}
@@ -6795,7 +6899,7 @@ function sheetSync(){   // 79: a player's sheet is their statblock in the DM's d
     const md=shMd(sh,c.name);if(!c.sb||c.sb.pc){if(!c.sb||c.sb.raw!==md)c.sb={raw:md,uses:[],rech:[],know:[],pc:1}}
     const C=shCalc(sh);if(c.ac==null&&sh.ac)c.ac=Number(sh.ac);c.pst={ac:Number(sh.ac)||c.ac||10,pp:C.pp,pi:C.pi,pv:C.pv,dc:C.dc||0,at:sh.v||0}})}
 function finish(){
-  if(MODE==="dm")sheetSync();
+  if(MODE==="dm"){sheetSync();invSync()}
   const nList=state.list.length;if(lastListLen===0&&nList>0)state.fightAt=Date.now();lastListLen=nList;   // the table goes from empty to a fight
   state.rev=Math.max(Date.now(),(state.rev||0)+1);
   state.vanish=(state.vanish||[]).filter(v=>Date.now()-v.at<60000);
@@ -9095,7 +9199,7 @@ function renderPlayer(){
   callStamps(P,first);
   fxAfter(P,list,prev,first);
   tcardRender();handoutRender();surfaceMoments(first);if(TV)tvRender(list,first);else if(meName==="*")phaseMoment(list,first);
-    if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull()}
+    if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull();invPull()}
   if(reduced||first||dealing)return afterRender(list,prev,first);   // a new fight: no ghosts of the old one, no sliding
   // defeated and hidden: a ghost of the old row stays in place and fades
   if(tvCover())leaving.forEach(id=>{
@@ -10541,6 +10645,426 @@ function pcStatsHtml(){const S=statsGet(),row=(k,l,def)=>`<div class="pclvl"><sp
   def}</b><button type="button" class="btn" data-act="pstat" data-k="${k}" data-d="1">+</button></div>`;
   return row("ac","Armor Class",10)+row("pp","Passive Perception",10)+row("pi","Passive Insight",10)+row("pv","Passive Investigation",10)+row("dc",
     "Spell save DC (0 = none)",0)+`<button type="button" class="btn" data-act="pstatsend">Send to the DM</button>`}
+/* ---------- items and coins: the DM gives them, players carry, use, spend and give them (both sides use the helpers here) ---------- */
+const COINS=[["gp","Gold","GOLD"],["sp","Silver","SILVER"],["cp","Copper","COPPER"]];
+const coinsOf=c=>({gp:Math.max(0,Math.floor(Number(c&&c.gp)||0)),sp:Math.max(0,Math.floor(Number(c&&c.sp)||0)),cp:Math.max(0,Math.floor(Number(c&&
+  c.cp)||0))});
+const coinCp=c=>{const x=coinsOf(c);return x.gp*100+x.sp*10+x.cp};
+const coinTxt=c=>{const x=coinsOf(c),L=COINS.filter(([k])=>x[k]).map(([k])=>`${x[k].toLocaleString("en")} ${k}`);return L.length?L.join(" · "):"no coins"};
+const gpTxt=cp=>(Math.round(cp)/100).toLocaleString("en",{maximumFractionDigits:2})+" gp";
+/* paying a price (in cp) from a purse: the biggest coins that fit first, then change from one bigger coin when needed; null when it isn't enough */
+function coinPay(have,price){
+  let {gp,sp,cp}=coinsOf(have),need=Math.max(0,Math.round(price));if(gp*100+sp*10+cp<need)return null;
+  const g=Math.min(gp,Math.floor(need/100));gp-=g;need-=g*100;
+  const s=Math.min(sp,Math.floor(need/10));sp-=s;need-=s*10;
+  const t=Math.min(cp,need);cp-=t;need-=t;
+  if(need>0&&sp>0&&need<10){sp--;cp+=10-need;need=0}
+  if(need>0&&gp>0&&need<100){gp--;const ch=100-need;sp+=Math.floor(ch/10);cp+=ch%10;need=0}
+  return need>0?null:{gp,sp,cp}}
+const ITEM_KIND={weapon:"Weapon",armor:"Armor",shield:"Shield",potion:"Potion",ring:"Ring",wand:"Wand",staff:"Staff",rod:"Rod",scroll:"Scroll",
+  ammo:"Ammunition",wondrous:"Wondrous item",treasure:"Treasure",tool:"Tool",gear:"Gear"};
+const ITEM_RARITY=["","common","uncommon","rare","very rare","legendary","artifact"];
+const ITEM_RE={dawn:"at dawn",long:"on a long rest",short:"on a short rest"};
+/* the SRD 5.2.1 weapons (CC BY 4.0): damage, type, F finesse / R ranged; the SRD's item list has no numbers for them */
+const SRD_WEAPONS={club:["1d4","bludgeoning",""],dagger:["1d4","piercing","F"],greatclub:["1d8","bludgeoning",""],handaxe:["1d6","slashing",""],
+  javelin:["1d6","piercing",""],"light hammer":["1d4","bludgeoning",""],mace:["1d6","bludgeoning",""],quarterstaff:["1d6","bludgeoning",""],
+  sickle:["1d4","slashing",""],spear:["1d6","piercing",""],dart:["1d4","piercing","F"],"light crossbow":["1d8","piercing","R"],shortbow:["1d6","piercing","R"],
+  sling:["1d4","bludgeoning","R"],battleaxe:["1d8","slashing",""],flail:["1d8","bludgeoning",""],glaive:["1d10","slashing",""],greataxe:["1d12","slashing",""],
+  greatsword:["2d6","slashing",""],halberd:["1d10","slashing",""],lance:["1d10","piercing",""],longsword:["1d8","slashing",""],maul:["2d6","bludgeoning",""],
+  morningstar:["1d8","piercing",""],pike:["1d10","piercing",""],rapier:["1d8","piercing","F"],scimitar:["1d6","slashing","F"],shortsword:["1d6","piercing","F"],
+  trident:["1d8","piercing",""],warhammer:["1d8","bludgeoning",""],"war pick":["1d8","piercing",""],whip:["1d4","slashing","F"],blowgun:["1","piercing","R"],
+  "hand crossbow":["1d6","piercing","R"],"heavy crossbow":["1d10","piercing","R"],longbow:["1d8","piercing","R"],musket:["1d12","piercing","R"],
+  pistol:["1d10","piercing","R"]};
+/* dice as the app rolls them ("1d6+1"), and as people read them ("1d6 + 1") */
+const diceNorm=s=>String(s??"").replace(/\s+/g,"").replace(/[−–]/g,"-");
+const diceOk=s=>/^\d{1,2}(d\d{1,3})?([+-]\d{1,3})?$/.test(diceNorm(s));
+const diceRead=s=>diceNorm(s).replace(/([+-])/g," $1 ");
+/* the SRD's list has no flags on plain weapons and armor (Dagger, Chain Mail), so their names say it */
+const SRD_ARMOR=new Set(["padded armor","leather armor","studded leather armor","hide armor","chain shirt","scale mail","breastplate","half plate armor",
+  "ring mail",
+  "chain mail","splint armor","plate armor"]);
+function itemKindOf(raw){const k=itemKindOf0(raw),n=String(raw&&raw.name||"").trim().toLowerCase();
+  return k!=="gear"?k:SRD_WEAPONS[n]?"weapon":SRD_ARMOR.has(n)?"armor":k}
+function itemKindOf0(raw){const t=String(raw&&raw.type||"").split("|")[0].toUpperCase();
+  if(raw.weapon||raw.weaponCategory||t==="M"||t==="R")return "weapon";if(t==="S"||/^shield$/i.test(String(raw.name||"")))return "shield";
+  if(raw.armor||t==="LA"||t==="MA"||t==="HA")return "armor";
+  return {P:"potion",RG:"ring",WD:"wand",ST:"staff",RD:"rod",SC:"scroll",A:"ammo",AF:"ammo"}[t]||(raw.wondrous?"wondrous":t[0]==="$"?"treasure":
+    ["T","AT","INS","GS"].includes(t)?"tool":"gear")}
+const itemBaseWeapon=name=>{const n=String(name||"").toLowerCase();let best="";
+  Object.keys(SRD_WEAPONS).forEach(k=>{if(k.length>best.length&&new RegExp(`\\b${k}\\b`).test(n))best=k});return best};
+/* one item from the game data, in the shape the app keeps: what it does is read from its fields, or from its words in the SRD */
+function itemFromRef(raw){
+  raw=raw||{};const kind=itemKindOf(raw),txt=fetEntries(raw.entries).map(x=>pcTxt(x)).join("\n").trim();
+  const rar=String(raw.rarity||"").toLowerCase(),it={n:String(raw.name||"Item").slice(0,60),ty:ITEM_KIND[kind]||"Gear",q:1};
+  if(rar&&rar!=="none"&&rar!=="unknown")it.r=rar==="unknown (magic)"?"magic":rar;
+  if(raw.reqAttune)it.att=true;if(txt)it.d=txt.slice(0,3000);if(raw.source)it.src=String(raw.source).slice(0,20);
+  const chM=Number(raw.charges)||Number((txt.match(/\bhas (\d{1,2}) charges\b/i)||[])[1])||0;
+  if(chM>0&&chM<=99){const rc=String(raw.recharge||"");
+    const re=/restShort/i.test(rc)?"short":/restLong/i.test(rc)?"long":/dawn|dusk|midnight/i.test(rc)||
+      /\bcharges? (?:daily )?at dawn\b|\bdaily at dawn\b/i.test(
+      txt)?"dawn":"";
+    let amt=diceNorm(pcTxt(String(raw.rechargeAmount||"")));
+    if(!amt){const m=txt.match(/regains? (?:up to )?(\d+d\d+(?:\s*[+−-]\s*\d+)?|\d+)\s+(?:expended )?charges/i);amt=m?diceNorm(m[1]):""}
+    if(amt&&!diceOk(amt))amt="";it.ch={m:chM,c:chM,re,amt}}
+  if(kind==="potion"){const m=txt.match(/regains? (\d+d\d+(?:\s*[+−-]\s*\d+)?) Hit Points/i);if(m&&diceOk(m[1]))it.heal=diceNorm(m[1])}
+  if(kind==="weapon"){const base=itemBaseWeapon(String(raw.baseItem||"").split("|")[0])||itemBaseWeapon(raw.name),W=SRD_WEAPONS[base];
+    const dmg=diceNorm(raw.dmg1||(W&&W[0])||""),props=fetArr(raw.property).map(p=>String(p&&p.uid||p).split("|")[0].toUpperCase());
+    const b=parseInt(raw.bonusWeapon,10)||parseInt((String(raw.name).match(/\+(\d)\b/)||[])[1],10)||0;
+    if(dmg&&diceOk(dmg)){it.wpn={dmg,dt:String(DMG_T[String(raw.dmgType||"").toUpperCase()]||(W&&W[1])||"").toLowerCase()};
+      if(props.includes("F")||(W&&W[2]==="F"))it.wpn.f=true;
+      if(String(raw.type||"").split("|")[0].toUpperCase()==="R"||(W&&W[2]==="R"))it.wpn.rg=true;if(b)it.wpn.b=b}}
+  const acb=parseInt(raw.bonusAc,10)||parseInt((txt.match(/\+(\d) bonus to (?:your )?Armor Class/i)||[])[1],10)||0;if(acb)it.acb=acb;
+  const svb=parseInt(raw.bonusSavingThrow,10)||parseInt((txt.match(/\+(\d) bonus to (?:your )?(?:Armor Class and )?saving throws/i)||[])[1],10)||0;
+  if(svb)it.svb=svb;
+  const sp=[];const add=s=>{s=pcTxt(String(s||"").split("|")[0]).replace(/\b\w/g,c=>c.toUpperCase()).trim();if(s&&s.length<=40&&!sp.includes(s)&&sp.length<4)
+    sp.push(s)};
+  (function walk(x){if(typeof x==="string")add(x);else if(Array.isArray(x))x.forEach(walk);else if(x&&typeof x==="object")Object.values(x).forEach(walk)})(
+    raw.attachedSpells);
+  if(!sp.length)(txt.match(/\bcast (?:the )?([A-Z][A-Za-z'’]+(?: [A-Z][A-Za-z'’]+){0,3})(?: spell)? from (?:it|the)/g)||[]).forEach(m=>add(m.replace(
+    /^cast (?:the )?/i,"").replace(/(?: spell)? from (?:it|the)$/i,"")));
+  if(sp.length)it.sp=sp;
+  return it}
+const itemLine=it=>[[it.ty,it.r].filter(Boolean).join(", "),it.att?"attunement":""].filter(Boolean).join(" · ");
+function itemFx(it){const L=[];
+  if(it.ch)L.push(`${it.ch.m} charge${it.ch.m===1?"":"s"}${it.ch.re?` · ${it.ch.amt?diceRead(it.ch.amt):"all"} back ${ITEM_RE[it.ch.re]}`:""}`);
+  if((it.sp||[]).length)L.push("Casts "+it.sp.join(", "));
+  if(it.heal)L.push("Heals "+diceRead(it.heal));
+  if(it.wpn)L.push(`${diceRead(it.wpn.dmg)}${it.wpn.b?` + ${it.wpn.b}`:""} ${it.wpn.dt||"damage"}${it.wpn.b?` · +${it.wpn.b} to hit`:""}`);
+  if(it.acb)L.push(`${shS(it.acb)} AC`);if(it.svb)L.push(`${shS(it.svb)} to saving throws`);
+  return L}
+/* the item list from the laptop: phones get the official books and the SRD, the DM everything */
+let itemRows=null,itemRowsAt=0,itemRowsBusy=false;
+async function itemsLoad(){if(itemRows&&Date.now()-itemRowsAt<60000)return itemRows;
+  try{const r=await fetch("/items",{cache:"no-store"});if(r.ok){itemRows=(await r.json()).list||[];itemRowsAt=Date.now()}}catch(e){}return itemRows||[]}
+/* a list that needs the items: one request at a time, and again after 4 s while the laptop is still reading its game data (paint stops when the list is gone) */
+function itemsWant(paint){if(itemRows||itemRowsBusy)return;itemRowsBusy=true;
+  itemsLoad().then(()=>{itemRowsBusy=false;if(itemRows)paint();else setTimeout(paint,4000)})}
+/* dice the phone rolls: "2d4+2", or a flat number ("1", "10") */
+function invDice(expr){const e=diceNorm(expr);if(/d/.test(e))return sbDice(e,false);const m=e.match(/^(\d+)([+-]\d+)?$/);
+  return m?{rolls:[],add:Number(m[2]||0),tot:Number(m[1])+Number(m[2]||0),n:0,d:0}:null}
+const ITEM_FILTER={all:()=>true,gear:r=>["gear","tool","ammo","treasure"].includes(r[3]),weapon:r=>r[3]==="weapon",armor:r=>r[3]==="armor"||r[3]==="shield",
+  magic:r=>!!r[4],potion:r=>r[3]==="potion",ring:r=>r[3]==="ring",wand:r=>["wand","staff","rod"].includes(r[3]),wondrous:r=>r[3]==="wondrous"};
+function itemSearch(rows,q,f){q=String(q||"").trim().toLowerCase();const ok=ITEM_FILTER[f]||ITEM_FILTER.all;
+  const L=(rows||[]).filter(r=>ok(r)&&(!q||String(r[0]).toLowerCase().includes(q)));
+  if(q)L.sort((a,b)=>(String(b[0]).toLowerCase().startsWith(q)-String(a[0]).toLowerCase().startsWith(q))||String(a[0]).localeCompare(String(b[0])));
+  return L}
+const itemRowLine=r=>[[ITEM_KIND[r[3]]||"",r[4]].filter(Boolean).join(", "),r[5]?"attunement":""].filter(Boolean).join(" · ");
+async function itemGet(n,s){try{const r=await fetch(`/item?n=${encodeURIComponent(n)}&s=${encodeURIComponent(s||"")}`,{cache:"no-store"});
+  if(r.ok)return itemFromRef((await r.json()).item)}catch(e){}return null}
+
+/* bonuses from items on the sheet: saving throws count by themselves; AC is the player's number, so the phone asks (sh.ib: ac and sv by item, no = said no) */
+const shItemSv=sh=>Object.values(sh&&sh.ib&&sh.ib.sv||{}).reduce((a,v)=>a+(Number(v)||0),0);
+/* ---------- the phone: Items and coins ---------- */
+let invMe=null,invFor=null,invLastV=null,invSeq=0,invView=null,invQ="",invKind="all",invPick=null,invOwn=null,invGive=null,invCoin="gp",invUseN=1,
+  invGot=[],invRowsShown=null,invBonus=null;
+const invKey=()=>(meName||"").toLowerCase();
+function invPull(force){
+  if(MODE!=="player"||!served||PREVIEW||!meName||meName==="*")return;
+  if(invFor!==invKey()){invFor=invKey();invMe=null;invLastV=null}
+  const v=(state.invv||{})[invKey()]??0;if(!force&&invMe&&v===invLastV)return;invLastV=v;const seq=++invSeq;
+  fetch("/inv?n="+encodeURIComponent(invKey()),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{if(!d||seq!==invSeq||invFor!==invKey())return;
+    invMe={c:coinsOf(d.c),it:Array.isArray(d.it)?d.it:[],v:d.v||0,cn:d.cn||null};invNews();invBonusCheck();
+    if(pSheet&&String(pSheet).startsWith("inv"))renderPSheet()}).catch(()=>{invLastV=null})}
+/* something new from the DM or another player: the newest shows as a card (or a note, when another window is open) */
+function invNews(){const k="invSeen:"+invKey(),seen=ls.get(k,null),now=dmNow(),it=invMe.it;
+  const at=x=>Math.max(Number(x.got)||0,Number(x.rv)||0),top=it.reduce((a,x)=>Math.max(a,at(x)),0);
+  const since=seen==null?now-180000:seen,fresh=it.filter(x=>at(x)>since);
+  if(top>(seen||0))ls.set(k,top);
+  const ck="invCn:"+invKey(),cs=ls.get(ck,null),cn=invMe.cn;
+  if(cn&&cn.at>(cs==null?now-180000:cs)){ls.set(ck,cn.at);if(!fresh.length)toast(cn.t,5000)}
+  else if(cn&&cs==null)ls.set(ck,cn.at);
+  if(!fresh.length)return;
+  if(!pSheet||pSheet==="invgot"||pSheet==="inv"||pSheet==="invitem"){invGot=fresh.slice(-6);pSheet="invgot";
+    renderPSheet()}   // not over a roll call or a keypad
+  else toast(fresh.length>1?`${fresh.length} new items: More → Items and coins`:`${fresh[0].n}: in your items`,5000)}
+const invItem=id=>invMe&&invMe.it.find(x=>x.id===id);
+/* an item's bonus counts while the player has it, or, when it needs attunement, while attuned */
+const invOn=it=>!!it&&!it.unk&&!String(it.id).startsWith("new")&&(it.att?!!it.at:true);
+function invBonusCheck(){
+  if(invBonus&&pSheet!=="invbonus")invBonus=null;   // closed without an answer: asked again later
+  const sh=shLocal();if(!sh||!invMe||MODE!=="player")return;const ib=sh.ib=Object.assign({ac:{},sv:{},no:{}},sh.ib),on={};let save=false;const notes=[];
+  invMe.it.forEach(it=>{if(invOn(it))on[it.id]=it});
+  Object.values(on).forEach(it=>{if(it.svb&&ib.sv[it.id]==null){ib.sv[it.id]=it.svb;save=true;notes.push(`${it.n}: ${shS(it.svb)} to your saving throws`)}});
+  Object.keys(ib.sv).forEach(id=>{if(!on[id]){const it=invItem(id);delete ib.sv[id];save=true;notes.push(`${it?it.n:"An item"} is off: saving throws back`)}});
+  Object.keys(ib.no).forEach(id=>{if(!on[id]){delete ib.no[id];save=true}});
+  if(save){shSave(sh,true);toast(notes.join(" · "),5000)}
+  if(invBonus||(pSheet&&pSheet!=="inv"&&pSheet!=="invitem"))return;   // one question at a time, and never over a roll call or a keypad
+  const add=Object.values(on).find(it=>it.acb&&ib.ac[it.id]==null&&!ib.no[it.id]),gone=Object.keys(ib.ac).find(id=>!on[id]);
+  if(add)invBonus={id:add.id,n:add.n,v:add.acb,add:true,back:pSheet};
+  else if(gone){const it=invItem(gone);invBonus={id:gone,n:it?it.n:"An item",v:ib.ac[gone],add:false,back:pSheet}}
+  if(invBonus){pSheet="invbonus";renderPSheet()}}
+const invAttuned=()=>invMe?invMe.it.filter(x=>x.at).length:0;
+/* a weapon on the sheet: the attack with the same name, if the player has one */
+const invAtkOf=it=>{const sh=shLocal();if(!sh||!it)return -1;const n=it.n.toLowerCase();return (sh.att||[]).findIndex(a=>a&&a.n&&a.n.trim().toLowerCase()===n)};
+async function invSend(body,local){const ok=await pSend(body);if(ok&&local&&invMe){local(invMe);renderPSheet();invBonusCheck()}
+  if(ok)setTimeout(()=>invPull(true),1600);return ok}
+function invItemRow(it){
+  if(String(it.id).startsWith("new"))return `<div class="invrow"><span class="invn"><b>${esc(it.n)}${it.q>1?` <i>×${it.q}</i>`:
+    ""}</b><small>Adding…</small></span></div>`;
+  const sub=[],ai=it.wpn?invAtkOf(it):-1;
+  if(it.unk)sub.push("Not yet known");if(it.eq)sub.push("Equipped");if(it.at)sub.push("Attuned");if(it.heal)sub.push("Heals "+diceRead(it.heal));
+  if(it.ch)sub.push(`${it.ch.c} / ${it.ch.m} charges`);if(it.from&&it.from!=="loot")sub.push("from "+it.from);
+  const act=ai>=0?`<button class="pb invq" type="button" data-act="inv" data-op="atk" data-id="${esc(it.id)}">Attack</button>`:it.heal&&!it.ch?
+    `<button class="pb invq" type="button" data-act="inv" data-op="drink" data-id="${esc(it.id)}">Drink</button>`:it.ch&&it.ch.c>0?
+    `<button class="pb invq" type="button" data-act="inv" data-op="open" data-id="${esc(it.id)}">Use</button>`:"";
+  return `<div class="invrow${it.unk?" unk":""}"><button type="button" class="invn" data-act="inv" data-op="open" data-id="${esc(it.id)}"><b>${esc(it.n)}${it.q>
+    1?` <i>×${it.q}</i>`:""}</b>${sub.length?`<small>${esc(sub.join(" · "))}</small>`:""}</button>${act}</div>`}
+function invPips(ch,big){return `<span class="invpips${big?" big":""}" aria-label="${ch.c} of ${ch.m} charges left">${Array.from({length:Math.min(ch.m,
+  30)},(_,i)=>`<i class="${i<ch.c?"on":""}"></i>`).join("")}</span>`}
+function invSheetHtml(me){
+  if(!invMe){invPull(true);return `<h2>Items and coins</h2><p class="psub">Reading your items from the laptop…</p>`}
+  const fk=me&&me.kind==="pc"?frameKey(me):"",sh=shLocal(),M=invMe,others=state.list.filter(x=>x.kind==="pc"&&!x.hidden&&x.id!==me.id);
+  if(pSheet==="inv"){
+    const nav=sh?`<nav class="shtabs" aria-label="Sheet sections">${[["main","Main"],["spells","Spells"],["feat","Features"],["items","Items"]].map(([k,l])=>
+      `<button type="button" data-act="shtab" data-v="${k}" aria-pressed="${k==="items"}">${l}</button>`).join("")}</nav>`:"";
+    const att=M.it.some(x=>x.att||x.at),loot=state.loot&&Array.isArray(state.loot.it)?state.loot.it:[];
+    return `<h2>${sh?"Your sheet":"Items and coins"}</h2><div class="shv inv${fk?" fr-"+fk:""}">${nav}
+      <section class="invcard"><div class="invh"><b>Coins</b><span class="sp"></span>${others.length&&coinCp(M.c)>0?
+        `<button class="pb" type="button" data-act="inv" data-op="givecoins">Give…</button>`:""}</div>
+        <div class="invcoins">${COINS.map(([k,,L])=>`<button type="button" class="coin ${k}" data-act="inv" data-op="coin" data-k="${k}"><b>${M.c[
+          k].toLocaleString(
+          "en")}</b><small>${L}</small></button>`).join("")}</div>
+        <small class="invnote">Tap a coin to add or spend. ${gpTxt(coinCp(M.c))} in all.</small></section>
+      <section class="invcard"><div class="invh"><b>Items</b><span class="sp"></span>${att?`<span class="invatt">Attuned ${invAttuned()} / 3</span>`:""}</div>
+        ${M.it.length?M.it.map(invItemRow).join(""):`<p class="invnote">Nothing yet. What the DM gives you shows up here.</p>`}</section>
+      ${loot.length?`<button type="button" class="invloot" data-act="inv" data-op="loot"><b>The party's loot</b><small>${loot.length} item${loot.length>1?"s":
+        ""} to take${coinCp(state.loot.c)?" · "+coinTxt(state.loot.c):""}</small></button>`:""}
+      <button type="button" class="invadd" data-act="inv" data-op="add">+ Find or add an item</button></div>`}
+  if(pSheet==="invitem"){
+    const it=invItem(invView);if(!it)return `<h2>Item</h2><p class="psub">This item isn't in your items any more.</p>
+      <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="back">Back to Items</button></div>`;
+    const fx=it.unk?[]:itemFx(it),ai=it.wpn?invAtkOf(it):-1,a=ai>=0?sh.att[ai]:null,ch=it.ch,mx=ch?Math.min(ch.c,10):0;
+    if(invUseN>mx)invUseN=Math.max(1,mx);
+    const spOk=n=>Array.isArray(spRows)&&spRows.some(r=>String(r[0]).toLowerCase()===n.toLowerCase());
+    return `<h2>${esc(it.n)}</h2><div class="shv inv${fk?" fr-"+fk:""}">
+      <section class="invcard"><div class="invline">${esc(it.unk?"Not yet known · the DM will tell you what it does":itemLine(it)||"Item")}${it.q>1?
+        ` · ×${it.q}`:""}</div>
+        ${fx.length?`<div class="invfx">${fx.map(x=>`<span>${esc(x)}</span>`).join("")}</div>`:""}
+        ${it.d?`<p class="invd">${esc(it.d).replace(/\n/g,"<br>")}</p>`:""}</section>
+      ${ch?`<section class="invcard"><div class="invh"><b>Charges</b><span class="sp"></span><b class="invbig">${ch.c} <i>/ ${ch.m}</i></b></div>
+        ${invPips(ch,true)}<small class="invnote">${ch.re?`${ch.amt?diceRead(ch.amt):"All"} come back ${ITEM_RE[ch.re]}${ch.re==="dawn"?
+          " (with your long rest)":""}.`:"They don't come back by themselves."}</small>
+        ${ch.c>0?`<div class="invuse"><button class="btn" type="button" data-act="inv" data-op="usen" data-d="-1" aria-label="One less"${invUseN<=1?" disabled":
+          ""}>−</button><b>${invUseN}</b><button class="btn" type="button" data-act="inv" data-op="usen" data-d="1" aria-label="One more"${invUseN>=mx?
+            " disabled":
+          ""}>+</button><button class="btn primary" type="button" data-act="inv" data-op="use" data-id="${esc(it.id)}">Use ${invUseN} charge${invUseN>1?"s":
+          ""}</button></div>`:`<p class="invnote">No charges left.</p>`}
+        <div class="invfix"><button class="linkbtn" type="button" data-act="inv" data-op="chfix" data-d="-1" data-id="${esc(it.id)}">−1</button>
+          <span>Fix the count</span><button class="linkbtn" type="button" data-act="inv" data-op="chfix" data-d="1" data-id="${esc(it.id)}">+1</button></div>
+        ${(it.sp||[]).filter(spOk).map(n=>`<button class="btn" type="button" data-act="pbookopen" data-n="${esc(n)}" data-s="" data-from="inv">Open ${esc(
+          n)}</button>`).join("")}</section>`:""}
+      ${it.heal&&!it.unk?`<button class="btn primary invbtn" type="button" data-act="inv" data-op="drink" data-id="${esc(it.id)}"${it.ch&&it.ch.c<1?" disabled":
+        ""}>${it.ch?"Heal":"Drink it · heal"} ${esc(diceRead(it.heal))}${it.ch?" · 1 charge":""}</button>`:""}
+      ${it.wpn&&!it.unk?(a?`<div class="hpbtns"><button class="btn primary" type="button" data-act="inv" data-op="atk" data-id="${esc(it.id)}">Attack ${shS(
+        Number(a.hit)||0)}</button>${a.dmg?`<button class="btn" type="button" data-act="inv" data-op="dmg" data-id="${esc(it.id)}">Damage ${esc(String(
+          a.dmg).split(
+          " ")[0])}</button>`:""}</div>`:sh?`<button class="btn invbtn" type="button" data-act="inv" data-op="toatk" data-id="${esc(
+          it.id)}">Add to my attacks</button>`:`<button class="btn invbtn" type="button" data-act="inv" data-op="dmg" data-id="${esc(it.id)}">Roll damage ${esc(
+          diceRead(it.wpn.dmg))}${it.wpn.b?` + ${it.wpn.b}`:""}</button>`):""}
+      ${sh&&sh.ib&&(sh.ib.ac[it.id]!=null||sh.ib.sv[it.id]!=null)?`<p class="psub">On your sheet: ${[sh.ib.ac[it.id]!=null?shS(sh.ib.ac[it.id])+" AC":"",
+        sh.ib.sv[it.id]!=null?shS(sh.ib.sv[it.id])+" to saving throws":""].filter(Boolean).join(" · ")}</p>`:it.att&&!it.at&&(it.acb||it.svb)?
+        `<p class="psub">Its bonus counts once you attune to it.</p>`:""}
+      <div class="invtog"><button type="button" class="btn" data-act="inv" data-op="eq" data-id="${esc(it.id)}" aria-pressed="${!!it.eq}">${it.eq?"✓ Equipped":
+        "Equip"}</button>${it.att||it.at?`<button type="button" class="btn" data-act="inv" data-op="at" data-id="${esc(it.id)}" aria-pressed="${
+          !!it.at}">${it.at?
+        "✓ Attuned":"Attune"}</button>`:""}</div>
+      <div class="hpbtns">${others.length?`<button class="btn" type="button" data-act="inv" data-op="give" data-id="${esc(it.id)}">Give to…</button>`:
+        ""}<button class="btn" type="button" data-act="inv" data-op="drop" data-id="${esc(it.id)}">${it.q>1?"Drop one":"Drop it"}</button></div>
+      <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="back">Back to Items</button></div></div>`}
+  if(pSheet==="invbonus"){const q=invBonus;if(!q||!sh)return `<h2>Items</h2><p class="psub">Nothing to change.</p>`;const ac=Number(sh.ac)||10;
+    return `<h2>${esc(q.n)}</h2><div class="shv inv"><section class="invcard">${q.add?`<div class="invh"><b>${shS(q.v)} AC</b></div>
+        <p class="invd">Add ${shS(q.v)} to the AC on your sheet? <b>${ac} → ${ac+q.v}</b></p>
+        <small class="invnote">Say no if it doesn't count now (some items need no armor or no shield), or if your AC already has it.</small>`:
+        `<div class="invh"><b>${shS(q.v)} AC</b></div><p class="invd">${esc(q.n)} isn't giving you its bonus any more. Take ${shS(
+          q.v)} off your AC? <b>${ac} → ${
+        ac-q.v}</b></p>`}</section>
+      <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="bonusno">${q.add?"No":
+        "Keep my AC"}</button><button class="btn primary" type="button" data-act="inv" data-op="bonusyes">${
+        q.add?`Add ${shS(q.v)}`:`Take ${shS(q.v)} off`}</button></div></div>`}
+  if(pSheet==="invcoin"){const k=invCoin,L=(COINS.find(x=>x[0]===k)||COINS[0])[1];
+    return `<h2>${L} · ${M.c[k].toLocaleString("en")} ${k}</h2>
+      <div class="seg2">${COINS.map(([kk,LL])=>`<button type="button" data-act="inv" data-op="coin" data-k="${kk}" aria-pressed="${kk===
+        k}">${LL}</button>`).join(
+        "")}</div>
+      <div class="psec padsec">${padHtml(`How many ${
+        k}`)}<div class="hpbtns"><button class="btn heal" type="button" data-act="inv" data-op="coinadd">Add</button>
+        <button class="btn dmg" type="button" data-act="inv" data-op="coinspend">Spend</button></div></div>
+      <p class="psub">Spending more ${k} than you have takes change from your other coins.</p>
+      <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="back">Back to Items</button></div>`}
+  if(pSheet==="invgive"){const g=invGive||{},it=g.id?invItem(g.id):null;
+    if(g.id&&!it)return `<h2>Give</h2><p class="psub">This item isn't in your items any more.</p>`;
+    return `<h2>Give ${it?esc(it.n):"coins"}</h2>
+      ${it?(it.q>1?
+        `<div class="invuse"><button class="btn" type="button" data-act="inv" data-op="giveq" data-d="-1" aria-label="One less">−</button><b>${g.q}</b>
+        <button class="btn" type="button" data-act="inv" data-op="giveq" data-d="1" aria-label="One more">+</button><span class="psub">of ${
+          it.q}</span></div>`:""):
+        `<div class="seg2">${COINS.map(([kk,LL])=>`<button type="button" data-act="inv" data-op="givek" data-k="${kk}" aria-pressed="${kk===
+          g.k}">${LL}</button>`).join(
+          "")}</div><div class="psec padsec">${padHtml(`How many ${g.k}`)}</div>`}
+      <div class="eyebrow2">To</div><div class="chipgrid">${others.map(x=>`<button type="button" class="btn" data-act="inv" data-op="giveto" data-to="${esc(
+        x.id)}">${esc(x.name)}</button>`).join("")}</div>
+      <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="back">Back</button></div>`}
+  if(pSheet==="invloot"){const L=state.loot&&Array.isArray(state.loot.it)?state.loot.it:[];
+    return `<h2>The party's loot</h2><p class="psub">Take what you want: it goes into your items. ${coinCp(state.loot&&state.loot.c)?
+      `The DM shares the coins (${esc(coinTxt(state.loot.c))}).`:""}</p>
+      <div class="shv inv"><section class="invcard">${L.length?L.map(x=>`<div class="invrow"><span class="invn"><b>${esc(x.n)}${x.q>1?` <i>×${x.q}</i>`:
+        ""}</b><small>${esc(x.unk?"Not yet known":itemLine(x)||
+          "Item")}</small></span><button class="pb invq" type="button" data-act="inv" data-op="take" data-id="${
+        esc(x.id)}">Take</button></div>`).join(""):`<p class="invnote">Nothing left.</p>`}</section></div>
+      <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="back">Back to Items</button></div>`}
+  if(pSheet==="invgot"){const L=invGot.map(x=>invItem(x.id)||x);
+    return `<div class="invgot"><div class="eyebrow2">${L.some(x=>x.rv&&x.rv>=(x.got||0))?"Now you know":"You got"}</div>
+      ${L.map(x=>`<div class="invgotc"><b>${esc(x.n)}${x.q>1?` ×${x.q}`:""}</b><small>${esc(x.unk?"Not yet known":itemLine(x))}${x.from&&x.from!=="loot"?
+        ` · from ${esc(x.from)}`:""}</small>${!x.unk&&itemFx(x).length?`<span class="invfx">${itemFx(x).map(f=>`<span>${esc(f)}</span>`).join("")}</span>`:
+        x.unk&&x.d?`<span class="invd">${esc(x.d)}</span>`:""}</div>`).join("")}
+      <button class="btn primary invbtn" type="button" data-act="inv" data-op="gotok">Nice!</button>
+      <button class="btn invbtn" type="button" data-act="inv" data-op="items">Open my items</button></div>`}
+  if(pSheet==="invadd"){
+    if(invOwn)return `<h2>Write your own</h2><form id="invOwnForm" class="psec" autocomplete="off">
+        <label class="fl">Name<input class="field big" id="invOwnN" type="text" data-kb="text" inputmode="none" maxlength="60" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="50 feet of rope" value="${
+          esc(invOwn.n||"")}"></label>
+        <label class="fl">A note (optional)<input class="field" id="invOwnD" type="text" data-kb="text" inputmode="none" maxlength="200" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="From the blacksmith in Millford" value="${
+          esc(invOwn.d||"")}"></label></form>
+      <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="ownno">Back</button><button class="btn primary" type="button" data-act="inv" data-op="ownadd">Add it</button></div>`;
+    if(invPick){const p=invPick,it=p.it,price=p.row?Number(p.row[7])||0:0;
+      return `<h2>${esc(p.row?p.row[0]:"Item")}</h2>
+        ${it?`<div class="shv inv"><section class="invcard"><div class="invline">${esc(itemLine(it)||"Item")}</div>
+          ${itemFx(it).length?`<div class="invfx">${itemFx(it).map(x=>`<span>${esc(x)}</span>`).join("")}</div>`:""}
+          ${it.d?`<p class="invd clip">${esc(it.d).replace(/\n/g,"<br>")}</p>`:""}</section></div>`:p.it===null?
+          `<p class="psub">Couldn't read this item from the laptop.</p>`:`<p class="psub">Loading…</p>`}
+        <div class="invuse"><button class="btn" type="button" data-act="inv" data-op="pickq" data-d="-1" aria-label="One less"${p.q<=1?" disabled":
+          ""}>−</button><b>${
+          p.q}</b><button class="btn" type="button" data-act="inv" data-op="pickq" data-d="1" aria-label="One more">+</button><span class="psub">how many</span></div>
+        <div class="psec invpay"><label class="chk"><input type="checkbox" id="invPay"${p.pay?" checked":
+          ""} data-act="inv" data-op="paytog"> Bought it? Pay from my coins</label>
+          ${p.pay?
+            `<div class="invpayrow"><button class="btn" type="button" data-act="inv" data-op="payd" data-d="-1" aria-label="Lower the price">−</button><b>${
+            gpTxt(p.price)}</b><button class="btn" type="button" data-act="inv" data-op="payd" data-d="1" aria-label="Raise the price">+</button></div>
+            <small class="psub">${price?`Listed at ${gpTxt(price)} each. `:""}You have ${gpTxt(coinCp(M.c))}${coinPay(M.c,p.price)?
+              `, ${gpTxt(coinCp(M.c)-p.price)} after`:": not enough"}.</small>`:""}</div>
+        <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="pickno">Back to the list</button><button class="btn primary" type="button" data-act="inv" data-op="pickadd"${
+          it?"":" disabled"}>Add${p.q>1?" "+p.q:""}</button></div>`}
+    return `<h2>Find an item</h2>
+      <div class="psec"><input class="field big" id="pItemQ" type="text" data-kb="text" inputmode="none" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search items" value="${
+        esc(invQ)}" aria-label="Search items"><p class="psub">Tap an item to read what it does. Add puts it in your items.</p></div>
+      <div class="seg2 invkinds">${[["all","All"],["gear","Gear"],["weapon","Weapons"],["armor","Armor"],["magic","Magic"],["potion","Potions"]].map(([k,l])=>
+        `<button type="button" data-act="inv" data-op="kind" data-k="${k}" aria-pressed="${invKind===k}">${l}</button>`).join("")}</div>
+      <div id="pItemList">${invAddListHtml()}</div>
+      <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="own">Not in the list? Write your own</button></div>
+      <div class="hpbtns"><button class="btn" type="button" data-act="inv" data-op="back">Back to Items</button></div>`}
+  return ""}
+function invAddListHtml(){
+  if(!itemRows){itemsWant(()=>{const l=$("#pItemList");if(l)l.innerHTML=invAddListHtml()});return `<p class="psub">Loading the items…</p>`}
+  const L=itemSearch(itemRows,invQ,invKind);invRowsShown=L.slice(0,40);
+  if(!L.length)return `<p class="psub">${itemRows.length?"Nothing with that name.":"The laptop has no item list right now."}</p>`;
+  return `<div class="shv inv"><section class="invcard">${invRowsShown.map((r,i)=>
+    `<div class="invrow"><button type="button" class="invn" data-act="inv" data-op="pick" data-i="${
+    i}"><b>${esc(r[0])}</b><small>${esc(itemRowLine(r)||"Item")}</small></button><button class="pb invq" type="button" data-act="inv" data-op="pick" data-i="${
+    i}">Add</button></div>`).join("")}</section></div>${L.length>40?`<p class="psub">${L.length-40} more: type more of the name.</p>`:""}`}
+/* the dice for a heal, a charge or a weapon, shared with the table like the sheet's rolls */
+function invRoll(label,expr){const r=invDice(expr);if(!r)return null;if(!r.rolls.length)return r;   // a flat number: nothing to roll
+  const text=`${label}: ${r.n}d${r.d} [${r.rolls.join(", ")}]${r.add?(r.add>0?" + ":" − ")+Math.abs(r.add):""}`,dd=r.rolls.map(v=>[r.d,v]);
+  if(dice.share)pSend({action:"roll",kind:"roll",text:text.slice(0,40),total:r.tot,dice:dd});myDice(dd,r.tot,"roll");return r}
+/* a long or short rest gives charges back */
+function invRest(kind){if(!invMe)return [];const out=[];
+  invMe.it.forEach(it=>{const ch=it.ch;if(!ch||!ch.re||ch.c>=ch.m)return;if(kind!=="long"&&ch.re!=="short")return;
+    let add=ch.m;if(ch.amt){const r=invDice(ch.amt);add=r?r.tot:0}
+    const c=Math.min(ch.m,ch.c+Math.max(0,add));if(c===ch.c)return;
+    out.push(`${it.n} +${c-ch.c}`);pSend({action:"item_ch",iid:it.id,c});ch.c=c});
+  if(out.length)setTimeout(()=>invPull(true),1600);return out}
+function invAct(t){
+  const op=t.dataset.op,me=meChar();if(!me)return;const it=t.dataset.id?invItem(t.dataset.id):null;
+  switch(op){
+    case "items": invPick=null;invOwn=null;pSheet="inv";invPull(true);renderPSheet();invBonusCheck();break;
+    case "back": if(pSheet==="invgive"&&invGive&&invGive.id){invView=invGive.id;pSheet="invitem"}else pSheet="inv";invGive=null;renderPSheet();break;
+    case "open": if(!it)break;invView=it.id;invUseN=1;pSheet="invitem";renderPSheet();{const b=$(".psheet .sbody");if(b)b.scrollTop=0}break;
+    case "usen": invUseN=Math.max(1,invUseN+Number(t.dataset.d));renderPSheet();break;
+    case "use":{if(!it||!it.ch)break;const n=Math.min(invUseN,it.ch.c);if(n<1)break;
+      invSend({action:"item_use",iid:it.id,n},()=>{it.ch.c=Math.max(0,it.ch.c-n)}).then(ok=>{if(ok){toast(`${it.n}: ${n} charge${n>1?"s":
+        ""} used, ${it.ch.c} left`);
+        invUseN=1}});break}
+    case "chfix":{if(!it||!it.ch)break;const c=Math.max(0,Math.min(it.ch.m,it.ch.c+Number(t.dataset.d)));if(c===it.ch.c)break;
+      invSend({action:"item_ch",iid:it.id,c},()=>{it.ch.c=c});break}
+    case "drink":{if(!it||!it.heal)break;if(it.ch&&it.ch.c<1){toast("No charges left");break}const r=invRoll(it.n,it.heal);if(!r)break;
+      invSend({action:"item_use",iid:it.id,n:1},()=>{if(it.ch){it.ch.c-=1;return}it.q-=1;if(it.q<1){invMe.it=invMe.it.filter(x=>x!==it);
+        if(pSheet==="invitem")pSheet="inv"}}).then(ok=>{
+        if(!ok)return;const hp=hpGet();if(hp.max){hpChange("heal",r.tot);toast(`${it.n}: +${r.tot} HP`,5000)}
+        else toast(`${it.n}: ${r.tot}. Set your max HP and the phone heals you itself next time`,6000)});break}
+    case "atk":{if(!it)break;const i=invAtkOf(it),sh=shLocal();if(i<0)break;const a=sh.att[i];shRoll(`${a.n} to hit`,Number(a.hit)||0);
+      toast(`${shLast.tot}: ${shLast.how}`,5000);renderPSheet();break}
+    case "dmg":{if(!it)break;const i=invAtkOf(it),sh=shLocal();
+      if(i>=0&&sh.att[i].dmg){shDmg(sh.att[i].n,sh.att[i].dmg);toast(`${shLast.tot}: ${shLast.how}`,5000);renderPSheet();break}
+      if(!it.wpn)break;const r=invRoll(it.n+" damage",diceNorm(it.wpn.dmg)+(it.wpn.b?"+"+it.wpn.b:""));if(r)toast(`${it.n}: ${r.tot} damage`,5000);break}
+    case "toatk":{const sh=shLocal();if(!it||!it.wpn||!sh)break;const C=shCalc(sh),w=it.wpn,b=Number(w.b)||0;
+      const m=w.rg?C.m.dex:w.f?Math.max(C.m.str,C.m.dex):C.m.str,dm=m+b;
+      sh.att=(sh.att||[]).filter(a=>a&&a.n);sh.att.push({n:it.n,hit:C.pb+m+b,dmg:`${diceNorm(w.dmg)}${dm?(dm>0?"+":"")+dm:""}${w.dt?" "+w.dt:""}`});
+      shSave(sh,true);toast(`${it.n} is in your attacks (${shS(C.pb+m+b)}). Change it in Edit sheet if it's different`,6000);renderPSheet();break}
+    case "eq": if(!it)break;invSend({action:"item_set",iid:it.id,eq:!it.eq},()=>{it.eq=!it.eq});break;
+    case "at":{if(!it)break;if(!it.at&&invAttuned()>=3){toast("You can be attuned to 3 items at most: end one first");break}
+      invSend({action:"item_set",iid:it.id,at:!it.at},()=>{it.at=!it.at});break}
+    case "give": if(!it)break;invGive={id:it.id,q:1};pSheet="invgive";renderPSheet();break;
+    case "givecoins": invGive={k:"gp"};padVal="";pSheet="invgive";renderPSheet();break;
+    case "giveq": if(invGive&&invItem(invGive.id)){invGive.q=Math.max(1,Math.min(invItem(invGive.id).q,invGive.q+Number(t.dataset.d)));renderPSheet()}break;
+    case "givek": if(invGive){invGive.k=t.dataset.k;renderPSheet()}break;
+    case "giveto":{const g=invGive,to=byId(t.dataset.to);if(!g||!to)break;
+      if(g.id){const x=invItem(g.id);if(!x)break;const q=Math.min(g.q||1,x.q);
+        invSend({action:"item_give",iid:x.id,to:to.id,q},()=>{x.q-=q;if(x.q<1)invMe.it=invMe.it.filter(y=>y!==x)}).then(ok=>{if(ok){toast(`${to.name} got ${
+          x.n}${q>1?" ×"+q:""}`);invGive=null;pSheet="inv";renderPSheet()}})}
+      else{const n=parseInt(padVal,10);if(!(n>0)){toast("Type how many first");break}const left=coinPay(invMe.c,n*{gp:100,sp:10,cp:1}[g.k]);
+        if(!left){toast("You don't have that much");break}
+        invSend({action:"coins",to:to.id,d:{[g.k]:n}},M=>{M.c=left}).then(ok=>{if(ok){toast(`${to.name} got ${n} ${g.k}`);padVal="";invGive=null;pSheet="inv";
+          renderPSheet()}})}
+      break}
+    case "drop":{if(!it)break;if(!t.classList.contains("armed")){t.classList.add("armed");t.textContent="Tap again to drop it";
+      setTimeout(()=>{if(t.isConnected){t.classList.remove("armed");t.textContent=it.q>1?"Drop one":"Drop it"}},3500);break}
+      invSend({action:"item_drop",iid:it.id,q:1},()=>{it.q-=1;if(it.q<1){invMe.it=invMe.it.filter(x=>x!==it);
+        pSheet="inv"}}).then(ok=>{if(ok)toast(`${it.n} dropped`)});
+      break}
+    case "coin": invCoin=t.dataset.k||"gp";padVal="";pSheet="invcoin";renderPSheet();break;
+    case "coinadd":case "coinspend":{const n=parseInt(padVal,10),k=invCoin;if(!(n>0)){toast("Type how many first");break}
+      if(op==="coinspend"){const left=coinPay(invMe.c,n*{gp:100,sp:10,cp:1}[k]);if(!left){toast(`You have ${gpTxt(coinCp(invMe.c))} in all: not enough`);break}
+        invSend({action:"coins",d:{[k]:-n}},M=>{M.c=left}).then(ok=>{if(ok){padVal="";toast(`Spent ${n} ${k}`);pSheet="inv";renderPSheet()}})}
+      else invSend({action:"coins",d:{[k]:n}},M=>{M.c[k]+=n}).then(ok=>{if(ok){padVal="";toast(`+${n} ${k}`);pSheet="inv";renderPSheet()}});
+      break}
+    case "loot": pSheet="invloot";renderPSheet();break;
+    case "take":{const x=state.loot&&(state.loot.it||[]).find(y=>y.id===t.dataset.id);if(!x)break;t.disabled=true;
+      pSend({action:"loot_take",iid:x.id}).then(ok=>{if(ok){toast(`Taking ${x.n}…`);setTimeout(()=>invPull(true),1600)}else t.disabled=false});break}
+    case "gotok": invGot=[];pSheet=null;renderPSheet();invBonusCheck();break;
+    case "bonusyes":case "bonusno":{const q=invBonus,sh=shLocal();invBonus=null;pSheet=q&&q.back&&q.back!=="invbonus"?q.back:null;
+      if(q&&sh){const ib=sh.ib=Object.assign({ac:{},sv:{},no:{}},sh.ib),ac=Number(sh.ac)||10;
+        if(q.add&&op==="bonusyes"){sh.ac=ac+q.v;ib.ac[q.id]=q.v;toast(`AC ${ac} → ${sh.ac}`)}
+        else if(q.add)ib.no[q.id]=true;
+        else{if(op==="bonusyes"){sh.ac=ac-q.v;toast(`AC ${ac} → ${sh.ac}`)}delete ib.ac[q.id]}
+        shSave(sh,true)}
+      renderPSheet();invBonusCheck();break}
+    case "add": invPick=null;invOwn=null;if(itemRows&&Date.now()-itemRowsAt>60000)itemRows=null;pSheet="invadd";renderPSheet();break;
+    case "kind": invKind=t.dataset.k||"all";t.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b===t)));
+      {const l=$("#pItemList");if(l)l.innerHTML=invAddListHtml()}break;
+    case "pick":{const r=invRowsShown&&invRowsShown[Number(t.dataset.i)];if(!r)break;const price=Number(r[7])||0;
+      invPick={row:r,it:undefined,q:1,pay:false,price,each:price};rrPSheet();
+      itemGet(r[0],r[1]).then(x=>{if(invPick&&invPick.row===r){invPick.it=x;if(pSheet==="invadd")renderPSheet()}});break}
+    case "pickq": if(invPick){invPick.q=Math.max(1,Math.min(99,invPick.q+Number(t.dataset.d)));if(invPick.each)invPick.price=invPick.each*invPick.q;
+      renderPSheet()}break;
+    case "paytog": if(invPick){invPick.pay=!!t.checked;renderPSheet()}break;
+    case "payd": if(invPick){const d=Number(t.dataset.d),p=invPick.price,st=d>0?(p>=10000?1000:p>=100?100:10):(p>10000?1000:p>100?100:10);
+      invPick.price=Math.max(0,p+d*st);renderPSheet()}break;
+    case "pickno": invPick=null;rrPSheet();break;
+    case "pickadd":{const p=invPick;if(!p||!p.it)break;const item=Object.assign({},p.it,{q:p.q}),body={action:"item_add",item};let left=null;
+      if(p.pay&&p.price>0){left=coinPay(invMe.c,p.price);if(!left){toast("Not enough coins for that price");break}
+        body.pay=coinSplit(p.price)}
+      invSend(body,M=>{M.it.push(Object.assign({id:"new"+Date.now()},item));if(left)M.c=left}).then(ok=>{if(ok){toast(`${item.n}: in your items`);invPick=null;
+        pSheet="inv";renderPSheet()}});break}
+    case "own": invOwn={n:"",d:""};rrPSheet();setTimeout(()=>{const i=$("#invOwnN");i&&i.focus()},50);break;
+    case "ownno": invOwn=null;rrPSheet();break;
+    case "ownadd":{const n=($("#invOwnN")||{}).value||invOwn&&invOwn.n||"",d=($("#invOwnD")||{}).value||invOwn&&invOwn.d||"";
+      if(!n.trim()){toast("Give it a name");break}const item={n:n.trim().slice(0,60),ty:"Gear",q:1,...(d.trim()?{d:d.trim().slice(0,200)}:{})};
+      invSend({action:"item_add",item},M=>{M.it.push(Object.assign({id:"new"+Date.now()},item))}).then(ok=>{if(ok){toast(`${item.n}: in your items`);
+        invOwn=null;
+        pSheet="inv";renderPSheet()}});break}
+  }
+}
+/* a price in cp as the fewest coins, for the laptop to take from the purse (it makes change itself) */
+const coinSplit=cp=>{cp=Math.max(0,Math.round(cp));return {gp:Math.floor(cp/100),sp:Math.floor(cp%100/10),cp:cp%10}};
 /* ---------- 79: the character sheet. The player fills it in on the phone (or the DM on the laptop); it's kept on the laptop,
    the DM sees it like a statblock, and the phone rolls with the real bonuses. Paper players never need it. ---------- */
 const SH_AB=["str","dex","con","int","wis","cha"],SH_AB3={str:"STR",dex:"DEX",con:"CON",int:"INT",wis:"WIS",cha:"CHA"},SH_ABN={str:"Strength",dex:"Dexterity",
@@ -10618,7 +11142,8 @@ async function shWeaponNote(name){
 function shCalc(sh){
   const lvl=Math.max(1,Math.min(20,Number(sh.lvl)||1)),pb=sh.prof!=null?Number(sh.prof):2+Math.floor((lvl-1)/4),m={};
     SH_AB.forEach(a=>m[a]=shMod((sh.ab||{})[a]));
-  const sv={},sk={};SH_AB.forEach(a=>sv[a]=m[a]+((sh.sv||[]).includes(a)?pb:0));SH_SK.forEach(([k,,a])=>sk[k]=m[a]+pb*(Number((sh.sk||{})[k])||0));
+  const svI=shItemSv(sh),sv={},sk={};SH_AB.forEach(a=>sv[a]=m[a]+((sh.sv||[]).includes(a)?pb:0)+svI);
+    SH_SK.forEach(([k,,a])=>sk[k]=m[a]+pb*(Number((sh.sk||{})[k])||0));
   const sa=sh.sa||"",fx=shFeatFx(sh);
   return {lvl,pb,m,sv,sk,init:sh.init!=null?Number(sh.init):m.dex+(fx.initPB?pb:0)+(fx.init||0),pp:10+sk.perception+(fx.pass5?5:0),pi:10+sk.insight,
     pv:10+sk.investigation+(fx.pass5?5:0),dc:sh.dc!=null?Number(sh.dc):sa?8+pb+m[sa]:null,atk:sh.atk!=null?Number(sh.atk):sa?pb+m[sa]:null,
@@ -10753,7 +11278,7 @@ function shView2Html(me,sh){
     ""}>${inner}</button>`;
   const head=`<div class="shband"><div class="shbn"><b>${esc(sh.name||me.name)}</b>${line1?`<span class="l1">${esc(line1)}</span>`:""}${line2?
     `<span class="l2">${esc(line2)}</span>`:""}</div><span class="shlvl"><b>${C.lvl}</b><small>LEVEL</small></span></div>
-    <nav class="shtabs" aria-label="Sheet sections">${[["main","Main"],["spells","Spells"],["feat","Features"]].map(([k,l])=>
+    <nav class="shtabs" aria-label="Sheet sections">${[["main","Main"],["spells","Spells"],["feat","Features"],["items","Items"]].map(([k,l])=>
       `<button type="button" data-act="shtab" data-v="${k}" aria-pressed="${shTab===k}">${l}</button>`).join("")}</nav>
     ${shLast?`<div class="dresult ${shLast.n}"><b>${shLast.tot}</b><small>${esc(shLast.how)}</small></div>`:""}`;
   const advRow=`${shAdvHtml()}${
@@ -10783,7 +11308,8 @@ function shView2Html(me,sh){
         []).includes(a);
         return `<div class="shab1${pf?" pf":""}"><span class="k">${SH_AB3[a]}</span>${R("ab",a,shS(C.m[a]),"m",SH_ABN[a]+
           " check")}<span class="sc">${(sh.ab||{})[a]||
-          10}</span>${R("sv",a,`${pf?"● ":""}save ${shS(C.sv[a])}`,"sv",SH_ABN[a]+" save")}</div>`}).join("")}</div>`)}
+          10}</span>${R("sv",a,`${pf?"● ":""}save ${shS(C.sv[a])}`,"sv",SH_ABN[a]+" save")}</div>`}).join("")}</div>${shItemSv(sh)?
+          `<p class="psub">Saving throws include ${shS(shItemSv(sh))} from your items.</p>`:""}`)}
       ${sec("sk","Skills",prof.length?prof.map(x=>`${x.l} ${shS(x.v)}`).join(" · "):"No proficient skills",`<div class="shsk2">${sks.map(x=>R("sk",x.k,
         `<span class="d">${x.lv===2?"◆":x.lv?"●":"○"}</span><span class="n">${esc(x.l)} <small>${SH_AB3[x.a]}</small></span><b>${shS(x.v)}</b>`,x.lv?"pf":"",
         x.l)).join("")}</div><div class="shpas2"><span>Passive Insight <b>${C.pi}</b></span><span>Passive Investigation <b>${C.pv}</b></span></div>`)}
@@ -11160,7 +11686,8 @@ function renderPSheet(){
     const me=meChar();if(me&&!me.down&&pSheet!=="dsave")dsLast=null;
     const padKeyNow=pSheet+(hpEditMax?":max":"");if(padFor!==padKeyNow){padFor=padKeyNow;padVal=""}
     const free=pSheet==="res"||pSheet==="resedit"||pSheet==="pcset"||pSheet==="pcfeat"||pSheet==="give"||pSheet==="comphp"||pSheet==="compsb"||pSheet==="hp"||
-      pSheet==="dice"||pSheet==="more"||pSheet==="turn"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||(pSheet==="spell"&&(!spView||
+      pSheet==="dice"||pSheet==="more"||pSheet==="turn"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||String(pSheet).startsWith("inv")||(pSheet===
+        "spell"&&(!spView||
         spView.from!=="effs"));
     if(!me||(!canEdit()&&!free&&pSheet!=="call")){pSheet=null;return renderPSheet()}
     if(pSheet==="dsave"){
@@ -11205,6 +11732,9 @@ function renderPSheet(){
         <button class="pcline" type="button" data-act="psheet">${shLocal()?`<b>My character sheet</b><small>${esc(shLocal().cls||
           "Your sheet")} · tap to roll, or edit</small>`:
           `<b>My character sheet</b><small>Add it once: the DM sees it, and your phone rolls with your real bonuses</small>`}</button>
+        <button class="pcline" type="button" data-act="inv" data-op="items"><b>Items and coins</b><small>${invMe?
+          `${esc(coinTxt(invMe.c))} · ${invMe.it.length} item${
+          invMe.it.length===1?"":"s"}`:"What you carry, and what the DM gives you"}</small></button>
         <button class="btn" type="button" data-act="pwho">Not ${esc(me.name)}? Change character</button>
         <button class="btn" type="button" data-act="fs">${fsLabel()}</button>
         <button class="btn" type="button" data-act="plight" aria-pressed="${!!ls.get("pLight",false)}">${ls.get("pLight",false)?MOON+" Dark screen":SUN+
@@ -11220,6 +11750,8 @@ function renderPSheet(){
         <p class="psub">Tap a status in the bar at the bottom twice to remove it. The light or dark screen is only on this phone.</p>`;
     }else if(pSheet==="sheet"){
       body=`<h2>${shLocal()?"Your sheet":esc(me.name)}</h2>${shViewHtml(me)}`;
+    }else if(String(pSheet).startsWith("inv")){
+      body=invSheetHtml(me);
     }else if(pSheet==="shed"){
       if(!shDraft){pSheet="sheet";return renderPSheet()}
       body=`<h2>Character sheet · ${esc(me.name)}</h2>${shStepHtml()}`;
@@ -11338,7 +11870,7 @@ function renderPSheet(){
         `<p class="psub">Loading…</p>`}</div>
         ${older||newer?`<button type="button" class="linkbtn" data-act="pbookopen" data-n="${esc(v.n)}" data-s="${esc((older||
           newer)[7])}" data-from="${esc(v.from||"book")}">${older?"The older printing":"The newer printing"} (${esc(srcName((older||newer)[6]))})</button>`:""}
-        ${v.from==="effs"?"":(()=>{const a=alwOf(v.n);
+        ${v.from==="effs"||v.from==="inv"?"":(()=>{const a=alwOf(v.n);
           if(a&&a.auto)return `<div class="spalwbox"><span>🔒 <b>Always prepared</b> · ${esc(a.from)}${a.have?"":
             ` · from level ${a.lvl}`}</span><small>It doesn't count toward your prepared spells.</small></div>`;
           if(a)return `<div class="spalwbox"><span>🔒 <b>Always prepared</b> · ${esc(a.from)}${a.lvl>1?` · from level ${a.lvl}`:
@@ -11356,7 +11888,8 @@ function renderPSheet(){
               <div class="hpbtns"><button class="btn" type="button" data-act="palwno">Cancel</button><button class="btn primary" type="submit">Save</button></div></form>`:""}`})()}
         ${v.from!=="effs"&&state.playerEdits!==false&&sfx("spells")&&spellFxKnown(v.n,spDmgType(v.d))?
           `<button type="button" class="btn spshow" data-act="pspfx" data-n="${esc(v.n)}" data-t="${esc(spDmgType(v.d))}">✨ Show it on the table</button>`:""}
-        <div class="spacts"><button class="btn" type="button" data-act="pbookback">${v.from==="effs"?"Back to the effect":"Back to the list"}</button>
+        <div class="spacts"><button class="btn" type="button" data-act="pbookback">${v.from==="effs"?"Back to the effect":v.from==="inv"?"Back to the item":
+          "Back to the list"}</button>
           ${x&&x[4]!=="Instant"&&v.from!=="effs"&&state.playerEdits!==false?
             `<button class="btn primary" type="button" data-act="pbookeff">${ic("spark")} Add as an effect</button>`:""}</div>`;
     }else if(pSheet==="give"){
@@ -11609,6 +12142,9 @@ function surfaceMoments(first){
     `<span class="mo-sig sig"></span><div class="mo-big">${esc(h.name)},</div><div class="mo-q">how do you want to do this?</div><div class="mo-eb">${esc(
     h.boss)} falls</div>`,Math.max(4000,14000-(now-h.at)))}
   if(!h&&pv.hd&&$("#moment.hd"))$("#moment").remove();
+  const f=state.itemFx;if(f&&f.id!==pv.itemFx){pv.itemFx=f.id;if(!first&&now-f.at<20000)momentShow("item",
+    `<div class="mo-eb">${esc(f.who)} finds</div><div class="mo-big">${esc(
+    f.n)}</div>`,6000)}
 }
 const TV_MODES=[["auto","Auto"],["scene","Scene"],["spot","Spotlight"],["order","Order"],["mirror","Mirror"]];
 function tvModeNow(list){const T=state.tv||{},m=T.mode||"auto",paused=T.pause&&T.pause.until>dmNow();
@@ -11962,8 +12498,25 @@ async function compAdd(){
 /* 46: the party's numbers, from their phones */
 function partySheet(){
   const pcs=sorted().filter(c=>c.kind==="pc"),dc=Number(partyDC)||0;
+  const tabs=
+    `<div class="seg2 ptabs2" role="group" aria-label="Party"><button type="button" data-act="dinv" data-op="tab" data-v="num" aria-pressed="${partyTab!==
+    "inv"}">Numbers</button><button type="button" data-act="dinv" data-op="tab" data-v="inv" aria-pressed="${partyTab==="inv"}">Gold and items</button></div>`;
+  if(partyTab==="inv"){
+    $(
+      "#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet partysheet pinv" role="dialog" aria-modal="true" aria-label="Party"><div class="ihead"><h2>Party</h2>${
+      tabs}<span class="sp"></span><button class="btn primary" type="button" data-act="dinv" data-op="givenew">Give an item…</button></div>
+      <p class="psub">Coins and items each player carries. They change them on their phones; only you see everyone's.</p>
+      ${invPartyHtml()}<div style="display:flex;justify-content:flex-end"><button class="btn" type="button" data-act="close">Close</button></div></div></div>`;
+    const n=$("#dShareN"),k=$("#dShareK"),pv=()=>{dShare.n=n.value;dShare.k=k.value;const N=sorted().filter(c=>c.kind==="pc").length,v=parseInt(dShare.n,10)||0,
+      each=N?Math.floor(v/N):0,rest=N?v-each*N:0,el=$("#dSharePrev");if(el&&N)el.innerHTML=`between all ${N}${v?`: <b>${each} ${dShare.k} each</b>${rest?
+        `, ${rest} ${dShare.k} go to the party's loot`:""}`:""}`};
+    if(n&&k){n.addEventListener("input",pv);k.addEventListener("change",pv);n.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();
+      invShare("new")}})}
+    return}
   const cell=(c,k)=>{const v=c.pst&&c.pst[k];return v?`<td class="${dc&&k!=="ac"&&k!=="dc"?(v>=dc?"ok":"no"):""}">${v}</td>`:`<td class="psub">–</td>`};
-  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet" role="dialog" aria-modal="true" aria-label="Party"><h2>Party numbers</h2>
+  $(
+    "#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet partysheet" role="dialog" aria-modal="true" aria-label="Party"><div class="ihead"><h2>Party numbers</h2>${
+    tabs}</div>
     <p class="psub">Each player sends these from their phone (Resources → Set up from my class → Your numbers for the DM). Only you see this page.</p>
     <label class="rangerow">Passive check DC <input class="field" id="partyDC" type="number" min="0" max="40" value="${dc||
       ""}" style="width:5em" aria-label="Passive check DC"> <small class="psub">type a DC: who notices turns green</small></label>
@@ -12263,6 +12816,325 @@ async function pSend(body){
   }catch(e){toast("Couldn't send, check the Wi-Fi");return false}
 }
 
+/* ---------- items and coins on the laptop: who carries what, giving items, the party's loot, and what the phones send ---------- */
+const INV_ACTS=new Set(["coins","item_add","item_set","item_use","item_ch","item_give","item_drop","loot_take"]);
+const COIN_CP={gp:100,sp:10,cp:1};
+const invK=n=>String(n||"").trim().toLowerCase();
+function invGet(name){if(!state.inv||typeof state.inv!=="object"||Array.isArray(state.inv))state.inv={};const k=invK(name);let e=state.inv[k];
+  if(!e||typeof e!=="object")e=state.inv[k]={c:{gp:0,sp:0,cp:0},it:[],v:0};e.c=coinsOf(e.c);if(!Array.isArray(e.it))e.it=[];return e}
+const invPeek=name=>{const e=state.inv&&state.inv[invK(name)];return e&&typeof e==="object"?e:null};
+const lootTaken={};   // who took what from the loot, for a second player who taps Take on it
+const invBump=e=>{e.v=Math.max(Date.now(),(Number(e.v)||0)+1)};
+function lootGet(){let l=state.loot;if(!l||typeof l!=="object")l=state.loot={c:{gp:0,sp:0,cp:0},it:[]};l.c=coinsOf(l.c);
+  if(!Array.isArray(l.it))l.it=[];return l}
+/* phones learn whose items changed (each fetches only its own, from /inv) */
+function invSync(){const I=state.inv&&typeof state.inv==="object"?state.inv:{};
+  state.invv=Object.fromEntries(Object.entries(I).filter(([,e])=>e&&typeof e==="object").map(([k,e])=>[k,Number(e.v)||0]));
+  if(MODE==="dm"&&partyTab==="inv"&&$("#overlay .partysheet")){const a=document.activeElement;if(!a||!a.closest||!a.closest("#overlay input,#overlay select"))
+    setTimeout(()=>{if(partyTab==="inv"&&$("#overlay .partysheet"))partySheet()},0)}}
+/* an item as the app keeps it: only these fields, each checked */
+function itemNorm(x){if(!x||typeof x!=="object")return null;const n=String(x.n||"").trim().slice(0,60);if(!n)return null;
+  const it={n,q:Math.max(1,Math.min(999,Math.floor(Number(x.q)||1)))};
+  [["ty",30],["r",20],["d",3000],["src",20],["un",60],["ud",400]].forEach(([k,m])=>{if(x[k]!=null&&String(x[k]).trim())it[k]=String(x[k]).trim().slice(0,m)});
+  if(x.att)it.att=true;if(x.unk)it.unk=true;
+  if(x.ch&&Number(x.ch.m)>0){const m=Math.min(99,Math.floor(Number(x.ch.m))),c=x.ch.c==null||x.ch.c===""?m:Math.floor(Number(x.ch.c))||0;
+    it.ch={m,c:Math.max(0,Math.min(m,c)),re:ITEM_RE[x.ch.re]?x.ch.re:"",amt:x.ch.amt&&diceOk(x.ch.amt)?diceNorm(x.ch.amt):""}}
+  if(x.heal&&diceOk(x.heal))it.heal=diceNorm(x.heal);
+  if(x.wpn&&diceOk(x.wpn.dmg)){it.wpn={dmg:diceNorm(x.wpn.dmg),dt:String(x.wpn.dt||"").trim().slice(0,15)};if(x.wpn.f)it.wpn.f=true;if(x.wpn.rg)it.wpn.rg=true;
+    const b=Math.max(-5,Math.min(10,parseInt(x.wpn.b,10)||0));if(b)it.wpn.b=b}
+  ["acb","svb"].forEach(k=>{const v=Math.max(-5,Math.min(10,parseInt(x[k],10)||0));if(v)it[k]=v});
+  const sp=(Array.isArray(x.sp)?x.sp:[]).map(s=>String(s).trim().slice(0,40)).filter(Boolean).slice(0,4);if(sp.length)it.sp=sp;
+  return it}
+/* what a phone sent, done on the laptop (the server already checked it is that player's own item, the loot's, or someone in the fight) */
+function invApply(a,c,note){
+  const e=invGet(c.name),it=a.iid?e.it.find(x=>x.id===a.iid):null;
+  switch(a.action){
+    case "coins":{const d=a.d||{},plus={};let neg=0;COINS.forEach(([k])=>{const v=Number(d[k])||0;if(v>0)plus[k]=v;else if(v<0)neg+=-v*COIN_CP[k]});
+      if(a.to){const to=byId(a.to);if(!to||to.kind!=="pc"||to.id===c.id||neg)return;const left=coinPay(e.c,coinCp(plus));
+        if(!left){note(`${c.name} wanted to give ${to.name} ${coinTxt(plus)}, but doesn't have it`);return}
+        e.c=left;const te=invGet(to.name);COINS.forEach(([k])=>te.c[k]+=plus[k]||0);te.cn={at:Date.now(),t:`${coinTxt(plus)} from ${c.name}`};invBump(e);
+          invBump(te);
+        note(`${c.name} gives ${to.name} ${coinTxt(plus)}`);return}
+      COINS.forEach(([k])=>e.c[k]+=plus[k]||0);
+      if(neg){const left=coinPay(e.c,neg);if(!left){invBump(e);note(`${c.name} can't pay ${gpTxt(neg)}: not enough coins`);return}e.c=left}
+      invBump(e);note(`${c.name}: ${Object.keys(plus).length?"+ "+coinTxt(plus):`− ${gpTxt(neg)}`} → ${coinTxt(e.c)}`);return}
+    case "item_add":{const x=itemNorm(a.item);if(!x)return;delete x.unk;delete x.un;delete x.ud;x.id=uid();e.it.push(x);let paid="";
+      if(a.pay){const price=coinCp(a.pay),left=coinPay(e.c,price);if(left){e.c=left;paid=` for ${gpTxt(price)}`}else paid=` (couldn't pay ${gpTxt(price)})`}
+      invBump(e);note(`${c.name} adds ${x.n}${x.q>1?" ×"+x.q:""}${paid}`);return}
+    case "item_set":{if(!it)return;if(a.eq!=null){if(a.eq)it.eq=true;else delete it.eq}
+      if(a.at!=null){if(a.at&&!it.at&&e.it.filter(x=>x.at).length>=3)return;if(a.at)it.at=true;else delete it.at}invBump(e);return}
+    case "item_use":{if(!it)return;
+      if(it.ch){it.ch.c=Math.max(0,(Number(it.ch.c)||0)-a.n);note(`${c.name} uses ${it.n}: ${a.n} charge${a.n>1?"s":""}, ${it.ch.c} left`)}
+      else{const q=Math.min(a.n,it.q);it.q-=q;if(it.q<1)e.it=e.it.filter(x=>x!==it);note(`${c.name} ${it.heal?"drinks":"uses"} ${it.n}`)}
+      invBump(e);return}
+    case "item_ch":{if(!it||!it.ch)return;it.ch.c=Math.max(0,Math.min(it.ch.m,a.c));invBump(e);return}
+    case "item_give":{if(!it)return;const to=byId(a.to);if(!to||to.kind!=="pc"||to.id===c.id)return;const q=Math.min(a.q,it.q),te=invGet(to.name);
+      const moved=Object.assign(JSON.parse(JSON.stringify(it)),{id:uid(),q,from:c.name,got:Date.now()});delete moved.eq;delete moved.at;delete moved.rv;
+      it.q-=q;if(it.q<1)e.it=e.it.filter(x=>x!==it);te.it.push(moved);invBump(e);invBump(te);note(`${c.name} gives ${to.name} ${it.n}${q>1?" ×"+q:""}`);return}
+    case "item_drop":{if(!it)return;const q=Math.min(a.q,it.q);it.q-=q;if(it.q<1)e.it=e.it.filter(x=>x!==it);invBump(e);note(`${c.name} drops ${it.n}`);return}
+    case "loot_take":{const L=lootGet(),x=L.it.find(y=>y.id===a.iid);
+      if(!x){const w=lootTaken[a.iid];e.cn={at:Date.now(),t:w?`${w.by} took ${w.n} first`:"That's no longer in the loot"};invBump(e);return}
+      lootTaken[a.iid]={by:c.name,n:x.unk?x.un||"Unknown item":x.n};   /* an unidentified one only by its cover */
+      L.it=L.it.filter(y=>y!==x);x.from="loot";delete x.got;e.it.push(x);invBump(e);
+        note(`${c.name} takes ${x.n} from the loot`);
+      return}
+  }}
+/* the DM gives an item: to players (each gets one, with a note on the phone), or to the party's loot */
+function dmGive(targets,base,o){
+  const names=[];let n=0;
+  targets.forEach(tg=>{const x=itemNorm(Object.assign({},base,{q:o.q}));if(!x)return;delete x.unk;delete x.un;delete x.ud;x.id=uid();
+    if(o.unk){x.unk=true;x.un=String(o.un||"").trim().slice(0,60)||"Unknown item";const ud=String(o.ud||"").trim().slice(0,400);if(ud)x.ud=ud}
+    if(tg==="loot"){lootGet().it.push(x);names.push("the party's loot");n++;return}
+    const c=byId(tg);if(!c||c.kind!=="pc")return;x.from="the DM";x.got=Date.now();const e=invGet(c.name);e.it.push(x);invBump(e);names.push(c.name);n++});
+  if(!n)return false;
+  const pcs=names.filter(x=>x!=="the party's loot"),shown=o.unk?String(o.un||"").trim()||"Unknown item":String(base.n);
+  if(o.tv&&pcs.length)state.itemFx={id:uid(),at:Date.now(),who:pcs.join(", "),n:shown};
+  /* not in the combat recap: its lines reach the TV's round summary */
+  commit();toast(`${base.n}${o.q>1?" ×"+o.q:""} → ${names.join(", ")}`);return true}
+
+/* ---------- Party → Gold and items ---------- */
+let partyTab="num",dShare={n:"",k:"gp"},dCoinEd=null,dItemMenu=null;
+function invPartyHtml(){
+  const pcs=sorted().filter(c=>c.kind==="pc"),L=lootGet(),N=pcs.length,n=parseInt(dShare.n,10)||0,each=N?Math.floor(n/N):0,rest=N?n-each*N:0;
+  const chip=(owner,x)=>`<button type="button" class="ichip${x.unk?" unk":x.r||x.ch||x.att?" mag":
+    ""}" data-act="dinv" data-op="menu" data-n="${esc(owner)}" data-id="${
+    esc(x.id)}" aria-expanded="${!!(dItemMenu&&dItemMenu.id===x.id)}" title="${esc(x.unk?`Shown to the player as “${x.un||"Unknown item"}”`:
+      itemLine(x))}">${esc(
+    x.n)}${x.q>1?` <small>×${x.q}</small>`:""}${x.ch?` <small>${x.ch.c}/${x.ch.m}</small>`:""}${x.at?" <small>attuned</small>":x.eq?
+      " <small>equipped</small>":""}${x.unk?
+    ` <small>unidentified</small>`:""}</button>`;
+  const menu=(owner,list)=>{const x=dItemMenu&&dItemMenu.n===owner&&list.find(y=>y.id===dItemMenu.id);if(!x)return "";const loot=owner==="__loot";
+    return `<div class="imenu"><b>${esc(x.n)}</b><span class="psub">${esc(x.unk?`the player sees “${x.un||"Unknown item"}”`:itemLine(x)||"Item")}</span>
+      ${x.unk&&!loot?`<button type="button" class="btn sm" data-act="dinv" data-op="reveal" data-n="${esc(owner)}" data-id="${esc(
+        x.id)}">Reveal it</button>`:""}
+      ${loot?pcs.map(c=>`<button type="button" class="btn sm" data-act="dinv" data-op="lootto" data-to="${esc(c.id)}" data-id="${esc(x.id)}">To ${esc(
+        c.name)}</button>`).join(
+        ""):`<button type="button" class="btn sm" data-act="dinv" data-op="toloot" data-n="${esc(owner)}" data-id="${esc(x.id)}">Move to the loot</button>`}
+      <button type="button" class="btn sm" data-act="dinv" data-op="rm" data-n="${esc(owner)}" data-id="${esc(
+        x.id)}" title="Click twice">Remove</button></div>`};
+  const coinEd=nm=>dCoinEd===nm?`<div class="icoined">${COINS.map(([k])=>
+    `<label>${k}<input class="field" type="number" min="0" max="999999" inputmode="numeric" id="dCoin-${
+    k}" aria-label="${k}"></label>`).join("")}<button type="button" class="btn sm" data-act="dinv" data-op="coinadd" data-n="${esc(
+    nm)}">Add</button><button type="button" class="btn sm" data-act="dinv" data-op="cointake" data-n="${esc(
+      nm)}">Take</button><button type="button" class="btn sm" data-act="dinv" data-op="coined" data-n="">Done</button></div>`:"";
+  return `<div class="ishare"><span class="ilbl">Share coins</span><input class="field" id="dShareN" type="number" min="1" max="999999" inputmode="numeric" value="${esc(
+    dShare.n)}" aria-label="How many coins" style="width:7em"><select class="field" id="dShareK" aria-label="Which coin">${COINS.map(([k,l])=>
+      `<option value="${k}"${
+    dShare.k===k?" selected":""}>${l} (${k})</option>`).join("")}</select><span id="dSharePrev" class="psub">${N?`between all ${N}${n?
+      `: <b>${each} ${dShare.k} each</b>${
+    rest?`, ${rest} ${dShare.k} go to the party's loot`:""}`:""}`:
+      "Add the characters to the fight first"}</span><span class="sp"></span><button type="button" class="btn" data-act="dinv" data-op="share"${
+    N?"":" disabled"}>Share</button></div>
+    ${N?`<table class="partyt invt"><thead><tr><th>Character</th><th>Coins</th><th>Attuned</th><th>Items</th><th></th></tr></thead><tbody>${pcs.map(c=>{
+      const e=invPeek(c.name),
+      its=e&&Array.isArray(e.it)?e.it:[];
+      return `<tr><td><b>${esc(c.name)}</b>${LABEL[c.cls]?`<small class="psub"> ${LABEL[c.cls]}</small>`:""}</td><td class="icoins">${esc(coinTxt(e&&
+        e.c))}</td><td>${
+        its.filter(x=>x.at).length} / 3</td><td><div class="ichips">${its.map(x=>chip(c.name,x)).join("")||
+          `<span class="psub">nothing yet</span>`}</div>${menu(c.name,
+        its)}${coinEd(c.name)}</td><td class="iact"><button type="button" class="btn sm" data-act="dinv" data-op="coined" data-n="${esc(
+          c.name)}">± Coins</button>
+        <button type="button" class="btn sm" data-act="dinv" data-op="givenew" data-to="${esc(c.id)}">Give…</button></td></tr>`}).join("")}
+      <tr class="iloot"><td><b>The party's loot</b><small class="psub"> players take from it on their phones</small></td><td class="icoins">${esc(coinTxt(
+        L.c))}${coinCp(L.c)&&N?
+        `<button type="button" class="linkbtn" data-act="dinv" data-op="sharel">Share these</button>`:""}</td><td></td><td><div class="ichips">${L.it.map(x=>
+          chip("__loot",
+        x)).join("")||`<span class="psub">empty</span>`}</div>${menu("__loot",
+          L.it)}</td><td class="iact"><button type="button" class="btn sm" data-act="dinv" data-op="givenew" data-to="loot">Add…</button></td></tr>
+      </tbody></table>`:""}`}
+function invShare(src){const pcs=sorted().filter(c=>c.kind==="pc");if(!pcs.length)return;const L=lootGet(),got={};
+  if(src==="loot"){COINS.forEach(([k])=>{const n=L.c[k],each=Math.floor(n/pcs.length);if(!each)return;got[k]=each;L.c[k]=n-each*pcs.length})}
+  else{const n=Math.max(0,Math.min(999999,parseInt(dShare.n,10)||0)),k=COIN_CP[dShare.k]?dShare.k:"gp";if(!n){toast("Type how many first");return}
+    const each=Math.floor(n/pcs.length);if(!each){toast(`Not enough for one ${k} each: nothing was shared`);return}L.c[k]+=n-each*pcs.length;got[k]=each}
+  if(!Object.keys(got).length){toast("Not enough in the loot for one coin each");return}
+  pcs.forEach(c=>{const e=invGet(c.name);COINS.forEach(([k])=>e.c[k]+=got[k]||0);e.cn={at:Date.now(),t:`${coinTxt(got)} from the DM`};invBump(e)});
+  if(src!=="loot")dShare.n="";commit();toast(`${coinTxt(got)} each`);partySheet()}
+function dinvAct(t){
+  const op=t.dataset.op,nm=t.dataset.n||"",loot=nm==="__loot",list=()=>loot?lootGet().it:invGet(nm).it,find=()=>list().find(x=>x.id===t.dataset.id);
+  switch(op){
+    case "tab": partyTab=t.dataset.v==="inv"?"inv":"num";dItemMenu=null;dCoinEd=null;partySheet();break;
+    case "menu": dItemMenu=dItemMenu&&dItemMenu.id===t.dataset.id?null:{n:nm,id:t.dataset.id};partySheet();break;
+    case "coined": dCoinEd=nm||null;partySheet();if(nm)setTimeout(()=>{const i=$("#dCoin-gp");i&&i.focus()},0);break;
+    case "coinadd":case "cointake":{const d={};COINS.forEach(([k])=>{const v=parseInt(($("#dCoin-"+k)||{}).value,10);if(v>0)d[k]=Math.min(999999,v)});
+      if(!Object.keys(d).length){toast("Type an amount first");break}const e=invGet(nm);
+      if(op==="coinadd")COINS.forEach(([k])=>e.c[k]+=d[k]||0);else{const left=coinPay(e.c,coinCp(d));if(!left){toast(`${nm} has only ${coinTxt(e.c)}`);
+        break}e.c=left}
+      e.cn={at:Date.now(),t:op==="coinadd"?`${coinTxt(d)} from the DM`:`The DM took ${coinTxt(d)}`};invBump(e);commit();partySheet();break}
+    case "share": invShare("new");break;
+    case "sharel": invShare("loot");break;
+    case "reveal":{const x=find();if(!x)break;delete x.unk;delete x.un;delete x.ud;x.rv=Date.now();invBump(invGet(nm));
+      dItemMenu=null;commit();toast(`${nm} now knows it is ${x.n}`);partySheet();break}
+    case "rm":{const x=find();if(!x)break;if(!t.classList.contains("armed")){t.classList.add("armed");t.textContent="Click again to remove";
+      setTimeout(()=>{if(t.isConnected){t.classList.remove("armed");t.textContent="Remove"}},3000);break}
+      if(loot)lootGet().it=lootGet().it.filter(y=>y!==x);else{const e=invGet(nm);e.it=e.it.filter(y=>y!==x);invBump(e)}
+      dItemMenu=null;commit();partySheet();break}
+    case "toloot":{const x=find();if(!x)break;const e=invGet(nm);e.it=e.it.filter(y=>y!==x);delete x.eq;delete x.at;delete x.got;delete x.rv;x.from="";
+      lootGet().it.push(x);invBump(e);dItemMenu=null;commit();partySheet();break}
+    case "lootto":{const L=lootGet(),x=L.it.find(y=>y.id===t.dataset.id),c=byId(t.dataset.to);if(!x||!c)break;L.it=L.it.filter(y=>y!==x);x.from="the DM";
+      x.got=Date.now();const e=invGet(c.name);e.it.push(x);invBump(e);dItemMenu=null;commit();toast(`${x.n} → ${c.name}`);partySheet();break}
+    case "givenew": itemSheet({to:t.dataset.to,back:"party"});break;
+    default: itemAct(t);
+  }}
+
+/* ---------- Give an item: from the game data or your own items, or one you make ---------- */
+let dI=null;
+const ITEM_MAKE0=()=>({n:"",ty:"Wondrous item",r:"",att:false,d:"",chm:"",chamt:"",chre:"dawn",heal:"",wd:"",wt:"",wb:"",acb:"",svb:"",sp:""});
+function itemSheet(o){o=o||{};dI={tab:"list",q:"",f:"all",sel:null,it:undefined,to:new Set(o.to?[o.to]:[]),qty:1,tv:true,unk:false,un:"",ud:"",make:
+  ITEM_MAKE0(),
+  back:o.back||""};if(itemRows&&Date.now()-itemRowsAt>60000)itemRows=null;itemSheetPaint();setTimeout(()=>{const i=$("#dItemQ");i&&i.focus()},30)}
+const itemLib=()=>Array.isArray(state.itemLib)?state.itemLib:[];
+function itemFromMake(m){const it={n:m.n.trim(),ty:m.ty,q:1};if(m.r)it.r=m.r;if(m.att)it.att=true;if(m.d.trim())it.d=m.d.trim();
+  const chm=parseInt(m.chm,10);if(chm>0)it.ch={m:Math.min(99,chm),c:Math.min(99,chm),re:m.chre||"",amt:diceNorm(m.chamt)};if(m.heal.trim())it.heal=m.heal;
+  if(m.wd.trim())it.wpn={dmg:m.wd,dt:m.wt.trim(),b:parseInt(m.wb,10)||0};if(parseInt(m.acb,10))it.acb=parseInt(m.acb,10);
+  if(parseInt(m.svb,10))it.svb=parseInt(m.svb,10);const sp=m.sp.split(",").map(s=>s.trim()).filter(Boolean);if(sp.length)it.sp=sp;return it}
+function itemMakeFrom(it){const m=ITEM_MAKE0();m.n=it.n||"";m.ty=Object.values(ITEM_KIND).includes(it.ty)?it.ty:"Gear";m.r=ITEM_RARITY.includes(it.r)?it.r:"";
+  m.att=!!it.att;m.d=it.d||"";if(it.ch){m.chm=String(it.ch.m);m.chamt=it.ch.amt||"";m.chre=it.ch.re||""}m.heal=it.heal||"";
+  if(it.wpn){m.wd=it.wpn.dmg||"";m.wt=it.wpn.dt||"";m.wb=it.wpn.b?String(it.wpn.b):""}m.acb=it.acb?String(it.acb):"";m.svb=it.svb?String(it.svb):"";
+  m.sp=(it.sp||[]).join(", ");return m}
+/* the dice fields of your own item must be dice the phone can roll */
+function itemMakeErr(m){if(!m.n.trim())return "Give it a name";for(const [k,l] of [["chamt","The charges that come back"],["heal","Heals"],["wd",
+  "Weapon damage"]])
+  if(m[k].trim()&&!diceOk(m[k]))return `${l}: write dice like 1d6+1`;if(m.chamt.trim()&&!(parseInt(m.chm,10)>
+    0))return "Write how many charges it has";return ""}
+function itemCardHtml(it,unk,un,ud){
+  if(unk)return `<div class="icard unk"><div class="icn">${esc(String(un||"").trim()||"Unknown item")} <span class="iq">?</span></div>${String(ud||"").trim()?
+    `<p>${esc(ud)}</p>`:""}<small>Not yet known. The DM will tell you what it does.</small></div>`;
+  const fx=itemFx(it);
+  return `<div class="icard"><div class="icn">${esc(it.n||"Item")}</div><div class="icl">${esc(itemLine(it)||"Item")}</div>${it.d?`<p>${esc(it.d).replace(/\n/g,
+    "<br>")}</p>`:""}${fx.length?`<div class="ifx">${fx.map(x=>`<span>${esc(x)}</span>`).join("")}</div>`:""}</div>`}
+function itemListPaint(){const el=$("#dItemList");if(!el||!dI)return;if(!itemRows)itemsWant(itemListPaint);const q=dI.q.trim().toLowerCase();
+  const lib=itemLib().map((x,i)=>({lib:i,x})).filter(o=>(dI.f==="all"||dI.f==="yours")&&(!q||o.x.n.toLowerCase().includes(q)));
+  const rows=dI.f==="yours"?[]:itemSearch(itemRows||[],dI.q,dI.f).slice(0,80);dI.rows=rows;
+  el.innerHTML=(lib.length?lib.map(o=>`<button type="button" class="ires${dI.sel&&dI.sel.lib===o.lib?" on":""}" data-act="dinv" data-op="sellib" data-i="${
+    o.lib}"><b>★ ${esc(o.x.n)}</b><small>Yours · ${esc(itemLine(o.x)||"Item")}</small></button>`).join(""):"")
+    +rows.map((r,i)=>`<button type="button" class="ires${dI.sel&&dI.sel.row===r?" on":
+      ""}" data-act="dinv" data-op="sel" data-i="${i}"><b>${esc(r[0])}</b><small>${esc(
+      itemRowLine(r)||"Item")}${r[6]!=="off"?" · homebrew":""}</small></button>`).join("")
+    +(!itemRows?`<p class="psub">Loading the items…</p>`:!lib.length&&!rows.length?`<p class="psub">Nothing with that name. Make your own instead.</p>`:"")}
+function itemTargetsHtml(){const pcs=sorted().filter(c=>c.kind==="pc"&&!c.hidden);
+  return `<div class="irow"><span class="ilbl">Give to</span>${pcs.map(c=>
+    `<button type="button" class="btn sm itog" data-act="dinv" data-op="to" data-to="${esc(
+    c.id)}" aria-pressed="${dI.to.has(c.id)}">${esc(c.name)}</button>`).join(
+      "")}<button type="button" class="btn sm itog" data-act="dinv" data-op="to" data-to="loot" aria-pressed="${
+    dI.to.has("loot")}">The party's loot</button>${pcs.length?"":`<span class="psub">No characters in the fight yet</span>`}</div>
+    <div class="irow"><span class="ilbl">How many</span><button type="button" class="btn sm" data-act="dinv" data-op="qty" data-d="-1" aria-label="One less"${dI.qty<=1?
+      " disabled":""}>−</button><b>${
+        dI.qty}</b><button type="button" class="btn sm" data-act="dinv" data-op="qty" data-d="1" aria-label="One more">+</button></div>
+    <label class="chk"><input type="checkbox" id="dItemTv"${dI.tv?" checked":""}> Show it on the tablet and the TV: “${esc([...dI.to].filter(x=>x!==
+      "loot").map(id=>
+      (byId(id)||{}).name).filter(Boolean).join(", ")||"Someone")} finds ${esc(dI.unk?dI.un.trim()||"Unknown item":(dI.tab==="make"?dI.make.n:dI.it&&dI.it.n)||
+        "…")}”</label>
+    <label class="chk"><input type="checkbox" id="dItemUnk"${dI.unk?" checked":
+      ""}> Unidentified: the player sees only this until you reveal it (Party → Gold and items)</label>
+    ${dI.unk?`<div class="irow2"><label>The player sees<input class="field" id="dItemUn" maxlength="60" value="${esc(
+      dI.un)}" placeholder="Tarnished silver ring"></label>
+      <label>And reads<input class="field" id="dItemUd" maxlength="400" value="${esc(dI.ud)}" placeholder="Heavy, with a worn crest."></label></div>`:""}`}
+function itemRightHtml(){
+  if(dI.tab==="make"){const m=dI.make,it=itemFromMake(m),err=itemMakeErr(m);
+    return `<div class="ipv"><span class="ilbl">${dI.unk?"The player sees now":"The player sees"}</span>${itemCardHtml(it,dI.unk,dI.un,dI.ud)}${dI.unk?
+      `<span class="ilbl">After you reveal it</span>${itemCardHtml(it)}`:""}</div>${itemTargetsHtml()}${err&&m.n.trim()?`<p class="ierr">${esc(err)}</p>`:""}`}
+  if(!dI.sel)return `<p class="psub">Pick an item on the left. Your own items (★) are at the top; make one in “Make your own…”.</p>`;
+  const it=dI.it;if(it===undefined)return `<p class="psub">Reading the item…</p>`;if(!it)return `<p class="psub">Couldn't read this item.</p>`;
+  const fx=itemFx(it);
+  return `${itemCardHtml(it)}${fx.length?"":`<p class="psub">Nothing to set up on the phone: the player reads it.</p>`}
+    <div class="irow"><button type="button" class="btn sm" data-act="dinv" data-op="copy">Change a copy…</button>${dI.sel.lib!=null?
+      `<button type="button" class="btn sm" data-act="dinv" data-op="libdel" title="Click twice">Delete from yours</button>`:""}</div>${itemTargetsHtml()}`}
+function itemSheetPaint(){if(!dI)return;const m=dI.make;
+  const left=dI.tab==="list"?`<label class="ifl"><span class="ilbl">Search items</span><input class="field" id="dItemQ" value="${esc(
+    dI.q)}" placeholder="Wand, potion, longsword…" autocomplete="off"></label>
+    <div class="irow">${[["all","All"],["yours","Yours"],["weapon","Weapons"],["armor","Armor"],["wand","Wands & staffs"],["potion","Potions"],["ring","Rings"],
+      ["wondrous",
+      "Wondrous"]].map(([k,l])=>`<button type="button" class="btn sm itog" data-act="dinv" data-op="f" data-f="${k}" aria-pressed="${dI.f===
+        k}">${l}</button>`).join("")}</div>
+    <div class="ilist" id="dItemList"></div>`
+    :`<form id="dMakeForm" class="imake" autocomplete="off">${dI.base?`<div class="ibase">Based on <b>${esc(dI.base)}</b></div>`:""}
+      <label class="ifl"><span class="ilbl">Name</span><input class="field" id="mk_n" maxlength="60" value="${esc(
+        m.n)}" placeholder="Grandfather's Signet"></label>
+      <div class="igrid3"><label class="ifl"><span class="ilbl">Kind</span><select class="field" id="mk_ty">${Object.values(ITEM_KIND).map(v=>`<option${m.ty===
+        v?" selected":
+        ""}>${v}</option>`).join("")}</select></label><label class="ifl"><span class="ilbl">Rarity</span><select class="field" id="mk_r">${ITEM_RARITY.map(v=>
+          `<option value="${
+        v}"${m.r===v?" selected":""}>${v||"none"}</option>`).join("")}</select></label><label class="chk ichk"><input type="checkbox" id="mk_att"${
+          m.att?" checked":
+        ""}> Needs attunement</label></div>
+      <label class="ifl"><span class="ilbl">Description</span><textarea class="field" id="mk_d" rows="3" maxlength="3000" placeholder="What it looks like and what it does">${esc(
+        m.d)}</textarea></label>
+      <fieldset class="ifs"><legend class="ilbl">What the phone sets up (all optional)</legend>
+        <div class="igrid3"><label class="ifl"><span class="ilbl">Charges</span><input class="field" id="mk_chm" type="number" min="0" max="99" value="${esc(
+          m.chm)}" placeholder="7"></label>
+          <label class="ifl"><span class="ilbl">Come back</span><input class="field" id="mk_chamt" maxlength="12" value="${esc(
+            m.chamt)}" placeholder="1d6+1 (empty: all)"></label>
+          <label class="ifl"><span class="ilbl">When</span><select class="field" id="mk_chre">${[["dawn","at dawn"],["long","long rest"],["short",
+            "short rest"],["",
+            "never"]].map(([k,l])=>`<option value="${k}"${m.chre===k?" selected":""}>${l}</option>`).join("")}</select></label></div>
+        <div class="igrid3"><label class="ifl"><span class="ilbl">Weapon damage</span><input class="field" id="mk_wd" maxlength="12" value="${esc(
+          m.wd)}" placeholder="1d8"></label>
+          <label class="ifl"><span class="ilbl">Damage type</span><input class="field" id="mk_wt" maxlength="15" value="${esc(
+            m.wt)}" placeholder="slashing"></label>
+          <label class="ifl"><span class="ilbl">Magic bonus</span><input class="field" id="mk_wb" type="number" min="-5" max="10" value="${esc(
+            m.wb)}" placeholder="+1"></label></div>
+        <div class="igrid3"><label class="ifl"><span class="ilbl">Heals</span><input class="field" id="mk_heal" maxlength="12" value="${esc(
+          m.heal)}" placeholder="2d4+2"></label>
+          <label class="ifl"><span class="ilbl">AC bonus</span><input class="field" id="mk_acb" type="number" min="-5" max="10" value="${esc(m.acb)}"></label>
+          <label class="ifl"><span class="ilbl">Saving throw bonus</span><input class="field" id="mk_svb" type="number" min="-5" max="10" value="${esc(
+            m.svb)}"></label></div>
+        <label class="ifl"><span class="ilbl">Casts (spell names, with commas)</span><input class="field" id="mk_sp" maxlength="160" value="${esc(
+          m.sp)}" placeholder="Magic Missile"></label>
+        <p class="psub">AC and saving throw bonuses show on the item; the player keeps them in their own numbers.</p></fieldset></form>`;
+  const foot=dI.tab===
+    "make"?`<button class="btn" type="button" data-act="dinv" data-op="libsave">Save to yours only</button><button class="btn primary" type="button" data-act="dinv" data-op="give">Give</button>`
+    :`<button class="btn primary" type="button" data-act="dinv" data-op="give"${dI.it?"":" disabled"}>Give</button>`;
+  $("#overlay").innerHTML=`<div class="scrim" data-act="close"><div class="sheet itemsheet" role="dialog" aria-modal="true" aria-label="Give an item">
+    <div class="ihead"><h2>Give an item</h2><div class="seg2" role="group" aria-label="Where the item comes from"><button type="button" data-act="dinv" data-op="tab2" data-v="list" aria-pressed="${
+      dI.tab==="list"}">From the list</button><button type="button" data-act="dinv" data-op="tab2" data-v="make" aria-pressed="${dI.tab===
+        "make"}">Make your own…</button></div></div>
+    <div class="ibody"><div class="ileft">${left}</div><div class="iright" id="dItemRight">${itemRightHtml()}</div></div>
+    <div class="ifoot">${dI.back==="party"?`<button class="btn" type="button" data-act="dinv" data-op="backparty">Back to Party</button>`:
+      `<button class="btn" type="button" data-act="close">Cancel</button>`}<span class="sp"></span>${foot}</div></div></div>`;
+  if(dI.tab==="list")itemListPaint();
+  const q=$("#dItemQ");if(q)q.addEventListener("input",()=>{dI.q=q.value;itemListPaint()});
+  const f=$("#dMakeForm");if(f){const rd=()=>{const g=id=>$("#"+id);Object.assign(m,{n:g("mk_n").value,ty:g("mk_ty").value,r:g("mk_r").value,att:
+    g("mk_att").checked,
+    d:g("mk_d").value,chm:g("mk_chm").value,chamt:g("mk_chamt").value,chre:g("mk_chre").value,wd:g("mk_wd").value,wt:g("mk_wt").value,wb:
+      g("mk_wb").value,heal:g(
+      "mk_heal").value,acb:g("mk_acb").value,svb:g("mk_svb").value,sp:g("mk_sp").value});itemRightPaint()};
+        f.addEventListener("input",rd);   // not on change: leaving a field would repaint the right side under the click
+    f.addEventListener("submit",e=>e.preventDefault())}
+  itemRightWire()}
+function itemRightPaint(){const r=$("#dItemRight");if(!r||!dI)return;r.innerHTML=itemRightHtml();itemRightWire();
+  const g=$(".itemsheet [data-op=give]");if(g)g.disabled=dI.tab==="list"&&!dI.it}
+function itemRightWire(){const r=$("#dItemRight");if(!r)return;
+  const tv=$("#dItemTv"),uk=$("#dItemUnk"),un=$("#dItemUn"),ud=$("#dItemUd");
+  if(tv)tv.addEventListener("change",()=>{dI.tv=tv.checked});
+  if(uk)uk.addEventListener("change",()=>{dI.unk=uk.checked;itemRightPaint();if(dI.unk)setTimeout(()=>{const i=$("#dItemUn");i&&i.focus()},0)});
+  const upd=()=>{if(dI.tab!=="make")return;const p=r.querySelector(".ipv");if(p){const it=itemFromMake(dI.make);
+    p.innerHTML=`<span class="ilbl">The player sees now</span>${itemCardHtml(it,true,dI.un,
+      dI.ud)}<span class="ilbl">After you reveal it</span>${itemCardHtml(it)}`}};
+  if(un)un.addEventListener("input",()=>{dI.un=un.value;upd()});if(ud)ud.addEventListener("input",()=>{dI.ud=ud.value;upd()})}
+function itemAct(t){if(!dI)return;const op=t.dataset.op;
+  switch(op){
+    case "tab2": dI.tab=t.dataset.v==="make"?"make":"list";itemSheetPaint();break;
+    case "f": dI.f=t.dataset.f||"all";t.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b===t)));itemListPaint();break;
+    case "sel":{const r=dI.rows&&dI.rows[Number(t.dataset.i)];if(!r)break;dI.sel={row:r};dI.it=undefined;itemListPaint();itemRightPaint();
+      itemGet(r[0],r[1]).then(x=>{if(dI&&dI.sel&&dI.sel.row===r){dI.it=x;itemRightPaint()}});break}
+    case "sellib":{const i=Number(t.dataset.i),x=itemLib()[i];if(!x)break;dI.sel={lib:i};dI.it=itemNorm(x);itemListPaint();itemRightPaint();break}
+    case "copy": if(!dI.it)break;dI.make=itemMakeFrom(dI.it);dI.base=dI.it.n;dI.tab="make";itemSheetPaint();break;
+    case "libdel":{if(dI.sel.lib==null)break;if(!t.classList.contains("armed")){t.classList.add("armed");t.textContent="Click again to delete";break}
+      state.itemLib=itemLib().filter((_,i)=>i!==dI.sel.lib);dI.sel=null;dI.it=undefined;commit();itemSheetPaint();break}
+    case "to":{const v=t.dataset.to;if(dI.to.has(v))dI.to.delete(v);else dI.to.add(v);itemRightPaint();break}
+    case "qty": dI.qty=Math.max(1,Math.min(99,dI.qty+Number(t.dataset.d)));itemRightPaint();break;
+    case "libsave":{const err=itemMakeErr(dI.make);if(err){toast(err);break}const x=itemNorm(itemFromMake(dI.make));if(!x)break;
+      const L=itemLib().filter(y=>y.n.toLowerCase()!==x.n.toLowerCase());L.unshift(x);state.itemLib=L.slice(0,200);commit();
+        toast(`${x.n}: saved to yours`);break}
+    case "give":{const base=dI.tab==="make"?itemFromMake(dI.make):dI.it;if(!base)break;
+      if(dI.tab==="make"){const err=itemMakeErr(dI.make);if(err){toast(err);break}}
+      if(!dI.to.size){toast("Pick who gets it");break}
+      if(dI.tab==="make"){const x=itemNorm(base);if(x){const L=itemLib().filter(y=>y.n.toLowerCase()!==x.n.toLowerCase());L.unshift(x);
+        state.itemLib=L.slice(0,200)}}
+      if(dmGive([...dI.to],base,{q:dI.qty,tv:dI.tv,unk:dI.unk,un:dI.un,ud:dI.ud})){const back=dI.back;dI=null;if(back==="party"){partyTab="inv";partySheet()}
+        else closeSheet()}break}
+    case "backparty": dI=null;partyTab="inv";partySheet();break;
+  }}
 /* ---------- sheets ---------- */
 function closeSheet(){$("#overlay").innerHTML=""}
 let condTarget=null;
@@ -12819,6 +13691,7 @@ document.addEventListener("click",e=>{
     case "complvl": compD.lvl=Math.max(1,Math.min(9,compD.lvl+Number(t.dataset.d)));compSheet();break;
     case "compadd": compAdd();break;
     case "party": partySheet();break;
+    case "dinv": dinvAct(t);break;
     case "revpvagain": revealPreview.play&&revealPreview.play();break;
     case "revpvgo":{const c2=byId(t.dataset.id);closeSheet();if(c2){c2.hidden=false;commit();toast(`${c2.name} revealed`)}break}
     case "titleedit2": titleSheet(t.dataset.id);break;
@@ -13022,7 +13895,8 @@ document.addEventListener("click",e=>{
     case "pbookopen":{const n=t.dataset.n,src=t.dataset.s||"",from=t.dataset.from||(pSheet==="spell"&&spView?spView.from:"book");
       spView={n,s:src,from};pSheet="spell";renderPSheet();
       refGet("spell",n,src,true).then(d=>{if(!spView||spView.n!==n||spView.s!==src)return;spView.d=d;if(pSheet==="spell")renderPSheet()});break}
-    case "pbookback": pSheet=spView&&spView.from==="effs"?"effs":spView&&spView.from==="sheet"?"sheet":"book";renderPSheet();break;
+    case "pbookback": pSheet=spView&&spView.from==="effs"?"effs":spView&&spView.from==="sheet"?"sheet":spView&&spView.from==="inv"&&invItem(invView)?"invitem":
+      "book";renderPSheet();break;
     case "pspfx": pSend({action:"spfx",n:t.dataset.n||"",t:t.dataset.t||""});toast("✨ "+(t.dataset.n||"Your spell")+" on the table");break;
     case "pbookeff":{const x=spellFind(spView&&spView.n,spView&&spView.s);if(!x)break;
       effDraft={name:x[0].slice(0,30),src:x[7]||"",conc:!!x[2],area:!!x[3],targets:new Set(),custom:false};pSheet="effs";renderPSheet();break}
@@ -13130,7 +14004,9 @@ document.addEventListener("click",e=>{
       else if(k==="spatk")shRoll("Spell attack",C.atk||0);else if(k==="init")shRoll("Initiative",C.init);else{const at=(sh.att||[])[Number(t.dataset.i)];
         if(at){if(k==="hit")shRoll(`${at.n} to hit`,Number(at.hit)||0);else shDmg(at.n,at.dmg)}}
       renderPSheet();break}
-    case "shtab": shTab=t.dataset.v||"main";ls.set("shTab",shTab);renderPSheet();{const b=$(".psheet .sbody");if(b)b.scrollTop=0}break;
+    case "shtab": if(t.dataset.v==="items"){pSheet="inv";invPull(true);renderPSheet();{const b=$(".psheet .sbody");if(b)b.scrollTop=0}break}
+      shTab=t.dataset.v||"main";ls.set("shTab",shTab);if(pSheet!=="sheet")pSheet="sheet";renderPSheet();{const b=$(".psheet .sbody");if(b)b.scrollTop=0}break;
+    case "inv": invAct(t);break;
     case "shsec":{const o=shOpen(),k=t.dataset.s;o[k]=!o[k];ls.set("shOpen",o);renderPSheet();break}
     case "shpool":{const r=resGet(),x=r[Number(t.dataset.i)];if(!x)break;x.cur=Math.max(0,Math.min(x.max,x.cur+Number(t.dataset.d)));resSet(r);
       renderPSheet();break}
@@ -13210,10 +14086,11 @@ document.addEventListener("click",e=>{
         if(rs==="short")return Object.assign(x,{cur:x.max});
         if(rs==="shortOne")return Object.assign(x,{cur:Math.min(x.max,x.cur+1)});return x});
       resSet(r);
-      let exNote="";
+      let exNote="";const chg=invRest(kind);if(chg.length)exNote+=" · "+chg.join(", ");
       if(kind==="long"){const hp=hpGet();if(hp.max){hp.cur=hp.max;hp.temp=0;hpSet(hp);hpReport()}
         const ex=myExh();if(ex){pSend({action:"exh",level:ex-1});exNote=ex>1?` · Exhaustion ${ex}→${ex-1}`:" · Exhaustion gone"}}
-      renderPlayer();renderPSheet();toast(kind==="long"?"Long rest: resources and HP restored"+exNote:"Short rest: short-rest resources restored");break}
+      renderPlayer();renderPSheet();toast(kind==="long"?"Long rest: resources and HP restored"+exNote:"Short rest: short-rest resources restored"+exNote,exNote?
+        5000:0);break}
     case "rreset": resDraft.reset=t.dataset.r;t.parentElement.querySelectorAll("[data-act=rreset]").forEach(b=>b.setAttribute("aria-pressed",
       String(b===t)));break;
     case "presadd":{const name=resDraft.name.trim(),max=parseInt(padVal,10);
@@ -13236,6 +14113,8 @@ document.addEventListener("input",e=>{
   if(t.id==="pSpellQ"){spellQ=t.value;const l=$("#pSpellList");if(l)l.innerHTML=spellListHtml(meChar());return}
   if(t.id==="pcFeatQ"){pcFeatQ=t.value;const l=$("#pcFeatList");if(l)l.innerHTML=pcFeatListHtml();return}
   if(t.id==="pBookQ"){bookQ=t.value;const l=$("#pBookList");if(l)l.innerHTML=bookListHtml(meChar());return}
+  if(t.id==="pItemQ"){invQ=t.value;const l=$("#pItemList");if(l)l.innerHTML=invAddListHtml();return}
+  if(t.id==="invOwnN"||t.id==="invOwnD"){if(invOwn)invOwn[t.id==="invOwnN"?"n":"d"]=t.value;return}
   if(t.id==="pEffName"){effDraft.name=t.value;const x=spellFind(t.value);if(x){effDraft.conc=!!x[2];const c=$("#pEffConc");if(c)c.checked=effDraft.conc}}
   if(t.id==="pEffConc")effDraft.conc=t.checked;
   if(t.id==="pResName"){resDraft.name=t.value;const rs=RES_PRESETS[t.value.trim()];if(rs){resDraft.reset=rs;
@@ -13570,6 +14449,7 @@ if(MODE==="player"){
           if(a.action==="chp"){if(c.owner&&c.hpMax!=null){hpDo(c,a.kind,a.n,"from the phone");
             notes.push([`${c.name}: ${a.kind==="dmg"?"−":a.kind==="heal"?"+":"temp "}${a.n}`,null])}return}
           if(c.kind!=="pc")return;const cn=x=>x.n||x;const L=(text,inv)=>notes.push([text,inv?Object.assign({cid:c.id},inv):null]);
+          if(INV_ACTS.has(a.action)){invApply(a,c,t=>notes.push([t,null]));quiet=true;return}   // items and coins
           if(a.nat)natAdd(c.id,a.nat);
           if(a.action==="init"){const prev=c.init;c.init=a.value;freshIds.add(c.id);L(`${c.name}: initiative ${a.value}`,{t:"init",prev})}
           else if(a.action==="cond"){const has=c.conds.some(x=>cn(x)===a.cond);
@@ -13616,6 +14496,8 @@ if(MODE==="player"){
             if(!c.gifts.length)delete c.gifts;if(g)L(`${c.name} uses ${g.n}${a.roll?`: ${g.die} → ${a.roll}`:""}`)}
           else if(a.action==="sheet"&&a.sheet&&a.sheet.ab){state.sheets=Object.assign({},state.sheets);const k=c.name.toLowerCase(),was=state.sheets[k];
             state.sheets[k]=Object.assign({},a.sheet,{name:c.name,by:"phone",only:false,v:Math.max(Number(a.sheet.v)||0,was&&was.v?was.v+1:0)||Date.now()});
+            {const o=was&&Number(was.ac),n=Number(a.sheet.ac);if(n&&(c.ac==null||c.ac===""||(o&&Number(c.ac)===
+              o)))c.ac=n}   // AC follows the sheet, unless you changed it by hand
             if(!was)notes.push([`${c.name} added a character sheet`,null]);else quiet=true}
           else if(a.action==="pmode"){if(a.simple)c.psimple=true;else delete c.psimple;quiet=true}
           else if(a.action==="spfx"){const last=(pv.spfxBy||(pv.spfxBy={}))[c.id]||0;

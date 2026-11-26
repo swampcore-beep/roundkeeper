@@ -75,7 +75,8 @@ async function shWeaponNote(name){
 function shCalc(sh){
   const lvl=Math.max(1,Math.min(20,Number(sh.lvl)||1)),pb=sh.prof!=null?Number(sh.prof):2+Math.floor((lvl-1)/4),m={};
     SH_AB.forEach(a=>m[a]=shMod((sh.ab||{})[a]));
-  const sv={},sk={};SH_AB.forEach(a=>sv[a]=m[a]+((sh.sv||[]).includes(a)?pb:0));SH_SK.forEach(([k,,a])=>sk[k]=m[a]+pb*(Number((sh.sk||{})[k])||0));
+  const svI=shItemSv(sh),sv={},sk={};SH_AB.forEach(a=>sv[a]=m[a]+((sh.sv||[]).includes(a)?pb:0)+svI);
+    SH_SK.forEach(([k,,a])=>sk[k]=m[a]+pb*(Number((sh.sk||{})[k])||0));
   const sa=sh.sa||"",fx=shFeatFx(sh);
   return {lvl,pb,m,sv,sk,init:sh.init!=null?Number(sh.init):m.dex+(fx.initPB?pb:0)+(fx.init||0),pp:10+sk.perception+(fx.pass5?5:0),pi:10+sk.insight,
     pv:10+sk.investigation+(fx.pass5?5:0),dc:sh.dc!=null?Number(sh.dc):sa?8+pb+m[sa]:null,atk:sh.atk!=null?Number(sh.atk):sa?pb+m[sa]:null,
@@ -210,7 +211,7 @@ function shView2Html(me,sh){
     ""}>${inner}</button>`;
   const head=`<div class="shband"><div class="shbn"><b>${esc(sh.name||me.name)}</b>${line1?`<span class="l1">${esc(line1)}</span>`:""}${line2?
     `<span class="l2">${esc(line2)}</span>`:""}</div><span class="shlvl"><b>${C.lvl}</b><small>LEVEL</small></span></div>
-    <nav class="shtabs" aria-label="Sheet sections">${[["main","Main"],["spells","Spells"],["feat","Features"]].map(([k,l])=>
+    <nav class="shtabs" aria-label="Sheet sections">${[["main","Main"],["spells","Spells"],["feat","Features"],["items","Items"]].map(([k,l])=>
       `<button type="button" data-act="shtab" data-v="${k}" aria-pressed="${shTab===k}">${l}</button>`).join("")}</nav>
     ${shLast?`<div class="dresult ${shLast.n}"><b>${shLast.tot}</b><small>${esc(shLast.how)}</small></div>`:""}`;
   const advRow=`${shAdvHtml()}${
@@ -240,7 +241,8 @@ function shView2Html(me,sh){
         []).includes(a);
         return `<div class="shab1${pf?" pf":""}"><span class="k">${SH_AB3[a]}</span>${R("ab",a,shS(C.m[a]),"m",SH_ABN[a]+
           " check")}<span class="sc">${(sh.ab||{})[a]||
-          10}</span>${R("sv",a,`${pf?"● ":""}save ${shS(C.sv[a])}`,"sv",SH_ABN[a]+" save")}</div>`}).join("")}</div>`)}
+          10}</span>${R("sv",a,`${pf?"● ":""}save ${shS(C.sv[a])}`,"sv",SH_ABN[a]+" save")}</div>`}).join("")}</div>${shItemSv(sh)?
+          `<p class="psub">Saving throws include ${shS(shItemSv(sh))} from your items.</p>`:""}`)}
       ${sec("sk","Skills",prof.length?prof.map(x=>`${x.l} ${shS(x.v)}`).join(" · "):"No proficient skills",`<div class="shsk2">${sks.map(x=>R("sk",x.k,
         `<span class="d">${x.lv===2?"◆":x.lv?"●":"○"}</span><span class="n">${esc(x.l)} <small>${SH_AB3[x.a]}</small></span><b>${shS(x.v)}</b>`,x.lv?"pf":"",
         x.l)).join("")}</div><div class="shpas2"><span>Passive Insight <b>${C.pi}</b></span><span>Passive Investigation <b>${C.pv}</b></span></div>`)}
@@ -617,7 +619,8 @@ function renderPSheet(){
     const me=meChar();if(me&&!me.down&&pSheet!=="dsave")dsLast=null;
     const padKeyNow=pSheet+(hpEditMax?":max":"");if(padFor!==padKeyNow){padFor=padKeyNow;padVal=""}
     const free=pSheet==="res"||pSheet==="resedit"||pSheet==="pcset"||pSheet==="pcfeat"||pSheet==="give"||pSheet==="comphp"||pSheet==="compsb"||pSheet==="hp"||
-      pSheet==="dice"||pSheet==="more"||pSheet==="turn"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||(pSheet==="spell"&&(!spView||
+      pSheet==="dice"||pSheet==="more"||pSheet==="turn"||pSheet==="conc"||pSheet==="dsave"||pSheet==="book"||String(pSheet).startsWith("inv")||(pSheet===
+        "spell"&&(!spView||
         spView.from!=="effs"));
     if(!me||(!canEdit()&&!free&&pSheet!=="call")){pSheet=null;return renderPSheet()}
     if(pSheet==="dsave"){
@@ -662,6 +665,9 @@ function renderPSheet(){
         <button class="pcline" type="button" data-act="psheet">${shLocal()?`<b>My character sheet</b><small>${esc(shLocal().cls||
           "Your sheet")} · tap to roll, or edit</small>`:
           `<b>My character sheet</b><small>Add it once: the DM sees it, and your phone rolls with your real bonuses</small>`}</button>
+        <button class="pcline" type="button" data-act="inv" data-op="items"><b>Items and coins</b><small>${invMe?
+          `${esc(coinTxt(invMe.c))} · ${invMe.it.length} item${
+          invMe.it.length===1?"":"s"}`:"What you carry, and what the DM gives you"}</small></button>
         <button class="btn" type="button" data-act="pwho">Not ${esc(me.name)}? Change character</button>
         <button class="btn" type="button" data-act="fs">${fsLabel()}</button>
         <button class="btn" type="button" data-act="plight" aria-pressed="${!!ls.get("pLight",false)}">${ls.get("pLight",false)?MOON+" Dark screen":SUN+
@@ -677,6 +683,8 @@ function renderPSheet(){
         <p class="psub">Tap a status in the bar at the bottom twice to remove it. The light or dark screen is only on this phone.</p>`;
     }else if(pSheet==="sheet"){
       body=`<h2>${shLocal()?"Your sheet":esc(me.name)}</h2>${shViewHtml(me)}`;
+    }else if(String(pSheet).startsWith("inv")){
+      body=invSheetHtml(me);
     }else if(pSheet==="shed"){
       if(!shDraft){pSheet="sheet";return renderPSheet()}
       body=`<h2>Character sheet · ${esc(me.name)}</h2>${shStepHtml()}`;
@@ -795,7 +803,7 @@ function renderPSheet(){
         `<p class="psub">Loading…</p>`}</div>
         ${older||newer?`<button type="button" class="linkbtn" data-act="pbookopen" data-n="${esc(v.n)}" data-s="${esc((older||
           newer)[7])}" data-from="${esc(v.from||"book")}">${older?"The older printing":"The newer printing"} (${esc(srcName((older||newer)[6]))})</button>`:""}
-        ${v.from==="effs"?"":(()=>{const a=alwOf(v.n);
+        ${v.from==="effs"||v.from==="inv"?"":(()=>{const a=alwOf(v.n);
           if(a&&a.auto)return `<div class="spalwbox"><span>🔒 <b>Always prepared</b> · ${esc(a.from)}${a.have?"":
             ` · from level ${a.lvl}`}</span><small>It doesn't count toward your prepared spells.</small></div>`;
           if(a)return `<div class="spalwbox"><span>🔒 <b>Always prepared</b> · ${esc(a.from)}${a.lvl>1?` · from level ${a.lvl}`:
@@ -813,7 +821,8 @@ function renderPSheet(){
               <div class="hpbtns"><button class="btn" type="button" data-act="palwno">Cancel</button><button class="btn primary" type="submit">Save</button></div></form>`:""}`})()}
         ${v.from!=="effs"&&state.playerEdits!==false&&sfx("spells")&&spellFxKnown(v.n,spDmgType(v.d))?
           `<button type="button" class="btn spshow" data-act="pspfx" data-n="${esc(v.n)}" data-t="${esc(spDmgType(v.d))}">✨ Show it on the table</button>`:""}
-        <div class="spacts"><button class="btn" type="button" data-act="pbookback">${v.from==="effs"?"Back to the effect":"Back to the list"}</button>
+        <div class="spacts"><button class="btn" type="button" data-act="pbookback">${v.from==="effs"?"Back to the effect":v.from==="inv"?"Back to the item":
+          "Back to the list"}</button>
           ${x&&x[4]!=="Instant"&&v.from!=="effs"&&state.playerEdits!==false?
             `<button class="btn primary" type="button" data-act="pbookeff">${ic("spark")} Add as an effect</button>`:""}</div>`;
     }else if(pSheet==="give"){

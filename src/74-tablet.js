@@ -96,7 +96,7 @@ function renderPlayer(){
   callStamps(P,first);
   fxAfter(P,list,prev,first);
   tcardRender();handoutRender();surfaceMoments(first);if(TV)tvRender(list,first);else if(meName==="*")phaseMoment(list,first);
-    if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull()}
+    if(MODE==="player"&&meName!=="*"){reactCheck(first);phpSync();pmodeSync();shPull();invPull()}
   if(reduced||first||dealing)return afterRender(list,prev,first);   // a new fight: no ghosts of the old one, no sliding
   // defeated and hidden: a ghost of the old row stays in place and fades
   if(tvCover())leaving.forEach(id=>{

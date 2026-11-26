@@ -10,7 +10,7 @@
 # Logs: dev/.work/out/<server>-<suite>.log
 cd "$(dirname "$0")/.." || exit 1
 ROOT=$PWD; OUT=$ROOT/dev/.work/out; mkdir -p "$OUT"
-SRD="verify t2 t4 t9 t10 t11 t12 t13 t14 t15 rulestest_v2 mob2_v2 t29 t30 t31 t32 t33 t34 t35 t36 t37 t38 t39 t40 t41 t43 t44 t45 t46 t47"
+SRD="verify t2 t4 t9 t10 t11 t12 t13 t14 t15 rulestest_v2 mob2_v2 t29 t30 t31 t32 t33 t34 t35 t36 t37 t38 t39 t40 t41 t43 t44 t45 t46 t47 t48"
 PRIVS="t5 t7 t8"; DATA="t16 t17 t18 t19 t20 t21 t22 t23 t24 t25 t26 t27 t28 t42 ui hov"
 jobs=1; if [ "$1" = -j ]; then jobs=${2:-1}; shift 2; fi
 which=${1:-go}; shift 2>/dev/null

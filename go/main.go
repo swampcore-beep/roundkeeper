@@ -554,7 +554,13 @@ func publicView(st map[string]any) map[string]any {
 		if k == "party" || k == "sheets" || k == "encounters" || k == "clog" || k == "cstat" || k == "tstat" || k == "nstat" || k == "handouts" || k == "handoutWhere" { // the combat recap, turn times, dice statistics and saved handouts are the DM's notes
 			continue
 		}
+		if k == "inv" || k == "itemLib" { // each player's items and coins come through /inv; the DM's own items stay with the DM
+			continue
+		}
 		out[k] = v
+	}
+	if l, ok := st["loot"].(map[string]any); ok { // the party's loot: what an unidentified item really is stays with the DM
+		out["loot"] = invOut(l)
 	}
 	var list []any
 	if l, ok := st["list"].([]any); ok {
@@ -640,6 +646,80 @@ func publicView(st map[string]any) map[string]any {
 		}
 	}
 	return out
+}
+
+// invItemOut: an item as a player gets it. An unidentified one shows only the name and the words the DM chose.
+func invItemOut(v any) any {
+	it, ok := v.(map[string]any)
+	if !ok {
+		return nil
+	}
+	if !truthy(it["unk"]) {
+		return it
+	}
+	out := map[string]any{"unk": true, "n": "Unknown item", "d": ""}
+	for _, k := range []string{"id", "q", "eq", "at", "from", "got"} {
+		if x, has := it[k]; has {
+			out[k] = x
+		}
+	}
+	if s, ok := it["un"].(string); ok && strings.TrimSpace(s) != "" {
+		out["n"] = s
+	}
+	if s, ok := it["ud"].(string); ok {
+		out["d"] = s
+	}
+	return out
+}
+
+// invOut: coins and items (a character's, or the party's loot) as players get them
+func invOut(e map[string]any) map[string]any {
+	out := map[string]any{"c": map[string]any{}, "it": []any{}, "v": 0}
+	if e == nil {
+		return out
+	}
+	if c, ok := e["c"].(map[string]any); ok {
+		out["c"] = c
+	}
+	for _, k := range []string{"v", "cn"} {
+		if x, has := e[k]; has {
+			out[k] = x
+		}
+	}
+	if l, ok := e["it"].([]any); ok {
+		its := []any{}
+		for _, x := range l {
+			if y := invItemOut(x); y != nil {
+				its = append(its, y)
+			}
+		}
+		out["it"] = its
+	}
+	return out
+}
+
+// invOf: one character's coins and items in the state, by name
+func invOf(st map[string]any, name string) map[string]any {
+	if st == nil {
+		return nil
+	}
+	all, _ := st["inv"].(map[string]any)
+	e, _ := all[strings.ToLower(strings.TrimSpace(name))].(map[string]any)
+	return e
+}
+
+// invHas: whether a list of items has one with this id
+func invHas(e map[string]any, iid string) bool {
+	if e == nil || iid == "" {
+		return false
+	}
+	l, _ := e["it"].([]any)
+	for _, x := range l {
+		if m, ok := x.(map[string]any); ok && str(m["id"]) == iid {
+			return true
+		}
+	}
+	return false
 }
 
 func asset(name string) ([]byte, error) {
@@ -804,6 +884,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			reply(w, 404, []byte("{}"), "")
 			return
 		}
+		reply(w, 200, body, "")
+	case path == "/inv": // a phone's own coins and items (an unidentified item shows only what the DM chose)
+		n := r.URL.Query().Get("n")
+		mu.Lock()
+		body := encode(invOut(invOf(state, n)))
+		mu.Unlock()
 		reply(w, 200, body, "")
 	case path == "/state":
 		local := isLocal(r)
@@ -1097,7 +1183,7 @@ func playerAction(w http.ResponseWriter, r *http.Request) {
 	if st == nil {
 		st = map[string]any{}
 	}
-	if st["playerEdits"] == false && act["action"] != "php" && act["action"] != "pmode" && act["action"] != "sheet" { // sharing HP isn't changing the fight
+	if st["playerEdits"] == false && act["action"] != "php" && act["action"] != "pmode" && act["action"] != "sheet" && !invActs[str(act["action"])] { // sharing HP and the own items isn't changing the fight
 		reply(w, 403, []byte(`{"error":"the DM has locked changes"}`), "")
 		return
 	}
@@ -1130,6 +1216,30 @@ func playerAction(w http.ResponseWriter, r *http.Request) {
 		for _, it := range list {
 			if c, ok := it.(map[string]any); ok && to != id && str(c["id"]) == to && c["kind"] == "pc" && !truthy(c["hidden"]) {
 				found = true
+			}
+		}
+	}
+	if found && invActs[a] { // items and coins: only the character's own, the party's loot, and someone else in the fight to give to
+		name := ""
+		for _, it := range list {
+			if c, ok := it.(map[string]any); ok && str(c["id"]) == id {
+				name = str(c["name"])
+			}
+		}
+		iid := str(act["iid"])
+		switch a {
+		case "item_set", "item_use", "item_ch", "item_drop", "item_give":
+			found = invHas(invOf(st, name), iid)
+		case "loot_take":
+			l, _ := st["loot"].(map[string]any)
+			found = invHas(l, iid)
+		}
+		if to, has := act["to"].(string); found && has && (a == "item_give" || a == "coins") {
+			found = false
+			for _, it := range list {
+				if c, ok := it.(map[string]any); ok && to != id && str(c["id"]) == to && c["kind"] == "pc" && !truthy(c["hidden"]) {
+					found = true
+				}
 			}
 		}
 	}
@@ -1406,10 +1516,191 @@ func parseAction(r *http.Request) (act map[string]any, ok bool) {
 			return nil, false
 		}
 		act["kind"], act["n"] = k, num(data["n"], 0, 999)
+	case "coins": // coins gained or spent, or given to another player ("to")
+		d, ok := data["d"].(map[string]any)
+		if !ok {
+			return nil, false
+		}
+		cs, got := map[string]any{}, false
+		for _, k := range coinKinds {
+			if v, has := d[k]; has && v != nil {
+				n := num(v, -999999, 999999)
+				if n != 0 {
+					cs[k], got = n, true
+				}
+			}
+		}
+		if !got {
+			return nil, false
+		}
+		if to, has := data["to"]; has && to != nil {
+			for _, v := range cs {
+				if v.(int64) < 0 {
+					return nil, false
+				}
+			}
+			act["to"] = cut(str(to), 20)
+		}
+		act["d"] = cs
+	case "item_add": // an item the player adds: from the game data, or written by hand
+		it, ok := cleanItem(data["item"])
+		if !ok {
+			return nil, false
+		}
+		act["item"] = it
+		if p, ok := data["pay"].(map[string]any); ok { // bought: the price comes off the coins
+			pay := map[string]any{}
+			for _, k := range coinKinds {
+				if v, has := p[k]; has && v != nil {
+					if n := num(v, 0, 999999); n > 0 {
+						pay[k] = n
+					}
+				}
+			}
+			if len(pay) > 0 {
+				act["pay"] = pay
+			}
+		}
+	case "item_set", "item_use", "item_ch", "item_give", "item_drop", "loot_take":
+		iid, ok := data["iid"].(string)
+		if !ok || iid == "" || len(iid) > 20 {
+			return nil, false
+		}
+		act["iid"] = iid
+		switch action {
+		case "item_set":
+			n := 0
+			for _, k := range []string{"eq", "at"} {
+				if v, has := data[k]; has {
+					b, isB := v.(bool)
+					if !isB {
+						return nil, false
+					}
+					act[k] = b
+					n++
+				}
+			}
+			if n == 0 {
+				return nil, false
+			}
+		case "item_use":
+			act["n"] = num(data["n"], 1, 99)
+		case "item_ch":
+			act["c"] = num(data["c"], 0, 99)
+		case "item_give", "item_drop":
+			q := any(json.Number("1"))
+			if v, has := data["q"]; has {
+				q = v
+			}
+			act["q"] = num(q, 1, 999)
+			if action == "item_give" {
+				to, isS := data["to"].(string)
+				if !isS || to == "" {
+					return nil, false
+				}
+				act["to"] = cut(to, 20)
+			}
+		}
 	default:
 		return nil, false
 	}
 	return act, true
+}
+
+// ---------- items and coins ----------
+
+var coinKinds = []string{"gp", "sp", "cp"}
+var invActs = map[string]bool{"coins": true, "item_add": true, "item_set": true, "item_use": true, "item_ch": true, "item_give": true, "item_drop": true, "loot_take": true}
+var itemRecharge = map[string]bool{"": true, "dawn": true, "long": true, "short": true}
+var diceText = regexp.MustCompile(`^\d{1,2}(d\d{1,3})?( ?[+-] ?\d{1,3})?$`)
+
+// sstr: a string field of a phone's request, trimmed and cut, or "" when it isn't a string
+func sstr(m map[string]any, k string, n int) string {
+	s, ok := m[k].(string)
+	if !ok {
+		return ""
+	}
+	return cut(strings.TrimSpace(s), n)
+}
+
+// cleanItem keeps only the fields an item may have, each checked; a player can never send an unidentified item
+func cleanItem(v any) (map[string]any, bool) {
+	m, ok := v.(map[string]any)
+	if !ok {
+		return nil, false
+	}
+	it := map[string]any{"n": sstr(m, "n", 60)}
+	if it["n"] == "" {
+		return nil, false
+	}
+	for k, n := range map[string]int{"ty": 30, "r": 20, "d": 3000, "src": 20} {
+		if s := sstr(m, k, n); s != "" {
+			it[k] = s
+		}
+	}
+	q := any(json.Number("1"))
+	if x, has := m["q"]; has {
+		q = x
+	}
+	it["q"] = num(q, 1, 999)
+	if truthy(m["att"]) {
+		it["att"] = true
+	}
+	if ch, ok := m["ch"].(map[string]any); ok {
+		mx := num(ch["m"], 1, 99)
+		c := num(ch["c"], 0, 99)
+		if c > mx {
+			c = mx
+		}
+		re := sstr(ch, "re", 8)
+		amt := sstr(ch, "amt", 15)
+		if !itemRecharge[re] || (amt != "" && !diceText.MatchString(amt)) {
+			return nil, false
+		}
+		it["ch"] = map[string]any{"m": mx, "c": c, "re": re, "amt": amt}
+	}
+	if h := sstr(m, "heal", 15); h != "" {
+		if !diceText.MatchString(h) {
+			return nil, false
+		}
+		it["heal"] = h
+	}
+	if w, ok := m["wpn"].(map[string]any); ok {
+		dmg := sstr(w, "dmg", 15)
+		if dmg == "" || !diceText.MatchString(dmg) {
+			return nil, false
+		}
+		ww := map[string]any{"dmg": dmg, "dt": sstr(w, "dt", 15)}
+		if truthy(w["f"]) {
+			ww["f"] = true
+		}
+		if truthy(w["rg"]) {
+			ww["rg"] = true
+		}
+		if x, has := w["b"]; has && x != nil {
+			ww["b"] = num(x, -5, 10)
+		}
+		it["wpn"] = ww
+	}
+	for _, k := range []string{"acb", "svb"} {
+		if x, has := m[k]; has && x != nil {
+			if n := num(x, -5, 10); n != 0 {
+				it[k] = n
+			}
+		}
+	}
+	if l, ok := m["sp"].([]any); ok {
+		sp := []any{}
+		for _, x := range l {
+			if s, ok := x.(string); ok && strings.TrimSpace(s) != "" && len(sp) < 4 {
+				sp = append(sp, cut(strings.TrimSpace(s), 40))
+			}
+		}
+		if len(sp) > 0 {
+			it["sp"] = sp
+		}
+	}
+	return it, true
 }
 
 // ---------- start ----------
