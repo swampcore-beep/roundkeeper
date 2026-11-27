@@ -9,7 +9,6 @@
 
 <p align="center">
   <a href="../../releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/swampcore-beep/roundkeeper?label=release&color=e3a54a"></a>
-  <a href="../../releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/swampcore-beep/roundkeeper/total?color=6cb4cc"></a>
   <img alt="Windows, Mac, Linux" src="https://img.shields.io/badge/runs%20on-Windows%20%C2%B7%20Mac%20%C2%B7%20Linux-8fa0b5">
   <img alt="Works offline" src="https://img.shields.io/badge/works-offline-5ea37a">
   <a href="LICENSE"><img alt="License: AGPL-3.0" src="https://img.shields.io/badge/license-AGPL--3.0-d66a5b"></a>
